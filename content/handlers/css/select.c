@@ -16,123 +16,123 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <assert.h>
-#include <string.h>
-#include <strings.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <strings.h>
 
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/nsurl.h"
-#include "netsurf/plot_style.h"
-#include "netsurf/url_db.h"
-#include "desktop/system_colour.h"
+#ಅನ್ತರ್ಭಾವ "utils/nsoption.h"
+#ಅನ್ತರ್ಭಾವ "utils/corestrings.h"
+#ಅನ್ತರ್ಭಾವ "utils/log.h"
+#ಅನ್ತರ್ಭಾವ "utils/nsurl.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/plot_style.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/url_db.h"
+#ಅನ್ತರ್ಭಾವ "desktop/system_colour.h"
 
-#include "css/internal.h"
-#include "css/hints.h"
-#include "css/select.h"
+#ಅನ್ತರ್ಭಾವ "css/internal.h"
+#ಅನ್ತರ್ಭಾವ "css/hints.h"
+#ಅನ್ತರ್ಭಾವ "css/select.h"
 
-static css_error node_name(void *pw, void *node, css_qname *qname);
-static css_error node_classes(void *pw, void *node,
+ಸ್ಥಿರ css_error ಗಂಟು_name(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, css_qname *qname);
+ಸ್ಥಿರ css_error ಗಂಟು_classes(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
 		lwc_string ***classes, uint32_t *n_classes);
-static css_error node_id(void *pw, void *node, lwc_string **id);
-static css_error named_parent_node(void *pw, void *node,
-		const css_qname *qname, void **parent);
-static css_error named_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling);
-static css_error named_generic_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling);
-static css_error parent_node(void *pw, void *node, void **parent);
-static css_error sibling_node(void *pw, void *node, void **sibling);
-static css_error node_has_name(void *pw, void *node,
-		const css_qname *qname, bool *match);
-static css_error node_has_class(void *pw, void *node,
-		lwc_string *name, bool *match);
-static css_error node_has_id(void *pw, void *node,
-		lwc_string *name, bool *match);
-static css_error node_has_attribute(void *pw, void *node,
-		const css_qname *qname, bool *match);
-static css_error node_has_attribute_equal(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_has_attribute_dashmatch(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_has_attribute_includes(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_has_attribute_prefix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_has_attribute_suffix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_has_attribute_substring(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match);
-static css_error node_is_root(void *pw, void *node, bool *match);
-static css_error node_count_siblings(void *pw, void *node,
-		bool same_name, bool after, int32_t *count);
-static css_error node_is_empty(void *pw, void *node, bool *match);
-static css_error node_is_link(void *pw, void *node, bool *match);
-static css_error node_is_hover(void *pw, void *node, bool *match);
-static css_error node_is_active(void *pw, void *node, bool *match);
-static css_error node_is_focus(void *pw, void *node, bool *match);
-static css_error node_is_enabled(void *pw, void *node, bool *match);
-static css_error node_is_disabled(void *pw, void *node, bool *match);
-static css_error node_is_checked(void *pw, void *node, bool *match);
-static css_error node_is_target(void *pw, void *node, bool *match);
-static css_error node_is_lang(void *pw, void *node,
-		lwc_string *lang, bool *match);
-static css_error ua_default_for_property(void *pw, uint32_t property,
+ಸ್ಥಿರ css_error ಗಂಟು_id(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, lwc_string **id);
+ಸ್ಥಿರ css_error named_ಪೋಷಕ_ಗಂಟು(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, ಶೂನ್ಯ **ಪೋಷಕ);
+ಸ್ಥಿರ css_error named_sibling_ಗಂಟು(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, ಶೂನ್ಯ **sibling);
+ಸ್ಥಿರ css_error named_generic_sibling_ಗಂಟು(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, ಶೂನ್ಯ **sibling);
+ಸ್ಥಿರ css_error ಪೋಷಕ_ಗಂಟು(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, ಶೂನ್ಯ **ಪೋಷಕ);
+ಸ್ಥಿರ css_error sibling_ಗಂಟು(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, ಶೂನ್ಯ **sibling);
+ಸ್ಥಿರ css_error ಗಂಟು_has_name(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, bool *ಹೊಂದಿಕೆ);
+ಸ್ಥಿರ css_error ಗಂಟು_has_class(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		lwc_string *name, bool *ಹೊಂದಿಕೆ);
+ಸ್ಥಿರ css_error ಗಂಟು_has_id(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		lwc_string *name, bool *ಹೊಂದಿಕೆ);
+ಸ್ಥಿರ css_error ಗಂಟು_has_attribute(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, bool *ಹೊಂದಿಕೆ);
+ಸ್ಥಿರ css_error ಗಂಟು_has_attribute_equal(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, lwc_string *ಮೌಲ್ಯ,
+		bool *ಹೊಂದಿಕೆ);
+ಸ್ಥಿರ css_error ಗಂಟು_has_attribute_dashmatch(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, lwc_string *ಮೌಲ್ಯ,
+		bool *ಹೊಂದಿಕೆ);
+ಸ್ಥಿರ css_error ಗಂಟು_has_attribute_includes(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, lwc_string *ಮೌಲ್ಯ,
+		bool *ಹೊಂದಿಕೆ);
+ಸ್ಥಿರ css_error ಗಂಟು_has_attribute_ಪೂರ್ವಪ್ರತ್ಯಯ(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, lwc_string *ಮೌಲ್ಯ,
+		bool *ಹೊಂದಿಕೆ);
+ಸ್ಥಿರ css_error ಗಂಟು_has_attribute_suffix(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, lwc_string *ಮೌಲ್ಯ,
+		bool *ಹೊಂದಿಕೆ);
+ಸ್ಥಿರ css_error ಗಂಟು_has_attribute_substring(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, lwc_string *ಮೌಲ್ಯ,
+		bool *ಹೊಂದಿಕೆ);
+ಸ್ಥಿರ css_error ಗಂಟು_is_ಬೇರು(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, bool *ಹೊಂದಿಕೆ);
+ಸ್ಥಿರ css_error ಗಂಟು_ಎಣಿಕೆ_siblings(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		bool same_name, bool after, int32_t *ಎಣಿಕೆ_2);
+ಸ್ಥಿರ css_error ಗಂಟು_is_ಖಾಲಿಗಳು(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, bool *ಹೊಂದಿಕೆ);
+ಸ್ಥಿರ css_error ಗಂಟು_is_link(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, bool *ಹೊಂದಿಕೆ);
+ಸ್ಥಿರ css_error ಗಂಟು_is_hover(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, bool *ಹೊಂದಿಕೆ);
+ಸ್ಥಿರ css_error ಗಂಟು_is_ಸಕ್ರಿಯ(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, bool *ಹೊಂದಿಕೆ);
+ಸ್ಥಿರ css_error ಗಂಟು_is_focus(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, bool *ಹೊಂದಿಕೆ);
+ಸ್ಥಿರ css_error ಗಂಟು_is_enabled(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, bool *ಹೊಂದಿಕೆ);
+ಸ್ಥಿರ css_error ಗಂಟು_is_disabled(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, bool *ಹೊಂದಿಕೆ);
+ಸ್ಥಿರ css_error ಗಂಟು_is_checked(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, bool *ಹೊಂದಿಕೆ);
+ಸ್ಥಿರ css_error ಗಂಟು_is_ಗುರಿ(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, bool *ಹೊಂದಿಕೆ);
+ಸ್ಥಿರ css_error ಗಂಟು_is_lang(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		lwc_string *lang, bool *ಹೊಂದಿಕೆ);
+ಸ್ಥಿರ css_error ua_default_for_property(ಶೂನ್ಯ *pw, uint32_t property,
 		css_hint *hint);
-static css_error set_libcss_node_data(void *pw, void *node,
-		void *libcss_node_data);
-static css_error get_libcss_node_data(void *pw, void *node,
-		void **libcss_node_data);
+ಸ್ಥಿರ css_error ಗಣ_libcss_ಗಂಟು_ದತ್ತಾಂಶ(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಶೂನ್ಯ *libcss_ಗಂಟು_ದತ್ತಾಂಶ);
+ಸ್ಥಿರ css_error get_libcss_ಗಂಟು_ದತ್ತಾಂಶ(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಶೂನ್ಯ **libcss_ಗಂಟು_ದತ್ತಾಂಶ);
 
 /**
  * Selection callback table for libcss
  */
-static css_select_handler selection_handler = {
-	CSS_SELECT_HANDLER_VERSION_1,
+ಸ್ಥಿರ css_select_handler selection_handler = {
+	CSS_SELECT_HANDLER_ಆವೃತ್ತಿ_1,
 
-	node_name,
-	node_classes,
-	node_id,
-	named_ancestor_node,
-	named_parent_node,
-	named_sibling_node,
-	named_generic_sibling_node,
-	parent_node,
-	sibling_node,
-	node_has_name,
-	node_has_class,
-	node_has_id,
-	node_has_attribute,
-	node_has_attribute_equal,
-	node_has_attribute_dashmatch,
-	node_has_attribute_includes,
-	node_has_attribute_prefix,
-	node_has_attribute_suffix,
-	node_has_attribute_substring,
-	node_is_root,
-	node_count_siblings,
-	node_is_empty,
-	node_is_link,
-	node_is_visited,
-	node_is_hover,
-	node_is_active,
-	node_is_focus,
-	node_is_enabled,
-	node_is_disabled,
-	node_is_checked,
-	node_is_target,
-	node_is_lang,
-	node_presentational_hint,
+	ಗಂಟು_name,
+	ಗಂಟು_classes,
+	ಗಂಟು_id,
+	named_ancestor_ಗಂಟು,
+	named_ಪೋಷಕ_ಗಂಟು,
+	named_sibling_ಗಂಟು,
+	named_generic_sibling_ಗಂಟು,
+	ಪೋಷಕ_ಗಂಟು,
+	sibling_ಗಂಟು,
+	ಗಂಟು_has_name,
+	ಗಂಟು_has_class,
+	ಗಂಟು_has_id,
+	ಗಂಟು_has_attribute,
+	ಗಂಟು_has_attribute_equal,
+	ಗಂಟು_has_attribute_dashmatch,
+	ಗಂಟು_has_attribute_includes,
+	ಗಂಟು_has_attribute_ಪೂರ್ವಪ್ರತ್ಯಯ,
+	ಗಂಟು_has_attribute_suffix,
+	ಗಂಟು_has_attribute_substring,
+	ಗಂಟು_is_ಬೇರು,
+	ಗಂಟು_ಎಣಿಕೆ_siblings,
+	ಗಂಟು_is_ಖಾಲಿಗಳು,
+	ಗಂಟು_is_link,
+	ಗಂಟು_is_ಭೇಟಿಯಾದ,
+	ಗಂಟು_is_hover,
+	ಗಂಟು_is_ಸಕ್ರಿಯ,
+	ಗಂಟು_is_focus,
+	ಗಂಟು_is_enabled,
+	ಗಂಟು_is_disabled,
+	ಗಂಟು_is_checked,
+	ಗಂಟು_is_ಗುರಿ,
+	ಗಂಟು_is_lang,
+	ಗಂಟು_presentational_hint,
 	ua_default_for_property,
-	set_libcss_node_data,
-	get_libcss_node_data,
+	ಗಣ_libcss_ಗಂಟು_ದತ್ತಾಂಶ,
+	get_libcss_ಗಂಟು_ದತ್ತಾಂಶ,
 };
 
 /**
@@ -145,97 +145,97 @@ static css_select_handler selection_handler = {
  * \param allow_quirks  True to permit CSS parsing quirks
  * \return Pointer to stylesheet, or NULL on failure.
  */
-css_stylesheet *nscss_create_inline_style(const uint8_t *data, size_t len,
-		const char *charset, const char *url, bool allow_quirks)
+css_stylesheet *nscss_create_inline_style(ಸ್ಥಿರಾಂಕ uint8_t *ದತ್ತಾಂಶ, size_t len,
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *charset, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *url, bool allow_quirks)
 {
 	css_stylesheet_params params;
 	css_stylesheet *sheet;
 	css_error error;
 
-	params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
+	params.params_ಆವೃತ್ತಿ = CSS_STYLESHEET_PARAMS_ಆವೃತ್ತಿ_1;
 	params.level = CSS_LEVEL_DEFAULT;
 	params.charset = charset;
 	params.url = url;
-	params.title = NULL;
+	params.title = ಖಾಲಿ;
 	params.allow_quirks = allow_quirks;
 	params.inline_style = true;
 	params.resolve = nscss_resolve_url;
-	params.resolve_pw = NULL;
-	params.import = NULL;
-	params.import_pw = NULL;
-	params.color = ns_system_colour;
-	params.color_pw = NULL;
-	params.font = NULL;
-	params.font_pw = NULL;
+	params.resolve_pw = ಖಾಲಿ;
+	params.import = ಖಾಲಿ;
+	params.import_pw = ಖಾಲಿ;
+	params.color = ns_system_ಬಣ್ಣ;
+	params.color_pw = ಖಾಲಿ;
+	params.font = ಖಾಲಿ;
+	params.font_pw = ಖಾಲಿ;
 
 	error = css_stylesheet_create(&params, &sheet);
-	if (error != CSS_OK) {
+	ಆದರೆ (error != CSS_OK) {
 		NSLOG(netsurf, INFO, "Failed creating sheet: %d", error);
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
-	error = css_stylesheet_append_data(sheet, data, len);
-	if (error != CSS_OK && error != CSS_NEEDDATA) {
+	error = css_stylesheet_append_ದತ್ತಾಂಶ(sheet, ದತ್ತಾಂಶ, len);
+	ಆದರೆ (error != CSS_OK && error != CSS_NEEDDATA) {
 		NSLOG(netsurf, INFO, "failed appending data: %d", error);
 		css_stylesheet_destroy(sheet);
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
-	error = css_stylesheet_data_done(sheet);
-	if (error != CSS_OK) {
+	error = css_stylesheet_ದತ್ತಾಂಶ_ಮುಗಿದ(sheet);
+	ಆದರೆ (error != CSS_OK) {
 		NSLOG(netsurf, INFO, "failed completing parse: %d", error);
 		css_stylesheet_destroy(sheet);
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
-	return sheet;
+	ಹಿಂತಿರುಗಿ sheet;
 }
 
 /* Handler for libcss_node_data, stored as libdom node user data */
-static void nscss_dom_user_data_handler(dom_node_operation operation,
-		dom_string *key, void *data, struct dom_node *src,
-		struct dom_node *dst)
+ಸ್ಥಿರ ಶೂನ್ಯ nscss_dom_user_ದತ್ತಾಂಶ_handler(dom_ಗಂಟು_operation operation,
+		dom_string *ಕೀಲಿ, ಶೂನ್ಯ *ದತ್ತಾಂಶ, ರಚನೆ dom_ಗಂಟು *src,
+		ರಚನೆ dom_ಗಂಟು *dst)
 {
 	css_error error;
 
-	if (dom_string_isequal(corestring_dom___ns_key_libcss_node_data,
-			key) == false || data == NULL) {
-		return;
+	ಆದರೆ (dom_string_isequal(corestring_dom_ns_ಕೀಲಿ_libcss_ಗಂಟು_ದತ್ತಾಂಶ,
+			ಕೀಲಿ) == false || ದತ್ತಾಂಶ == ಖಾಲಿ) {
+		ಹಿಂತಿರುಗಿ;
 	}
 
-	switch (operation) {
-	case DOM_NODE_CLONED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_CLONED,
-				NULL, src, dst, data);
-		if (error != CSS_OK)
+	ಆಯ್ಕೆ (operation) {
+	ಸ್ಥಿತಿ DOM_ಗಂಟು_CLONED:
+		error = css_libcss_ಗಂಟು_ದತ್ತಾಂಶ_handler(&selection_handler,
+				CSS_ಗಂಟು_CLONED,
+				ಖಾಲಿ, src, dst, ದತ್ತಾಂಶ);
+		ಆದರೆ (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to clone libcss_node_data.");
-		break;
+		ನಿಲ್ಲಿಸು;
 
-	case DOM_NODE_RENAMED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_MODIFIED,
-				NULL, src, NULL, data);
-		if (error != CSS_OK)
+	ಸ್ಥಿತಿ DOM_ಗಂಟು_RENAMED:
+		error = css_libcss_ಗಂಟು_ದತ್ತಾಂಶ_handler(&selection_handler,
+				CSS_ಗಂಟು_MODIFIED,
+				ಖಾಲಿ, src, ಖಾಲಿ, ದತ್ತಾಂಶ);
+		ಆದರೆ (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to update libcss_node_data.");
-		break;
+		ನಿಲ್ಲಿಸು;
 
-	case DOM_NODE_IMPORTED:
-	case DOM_NODE_ADOPTED:
-	case DOM_NODE_DELETED:
-		error = css_libcss_node_data_handler(&selection_handler,
-				CSS_NODE_DELETED,
-				NULL, src, NULL, data);
-		if (error != CSS_OK)
+	ಸ್ಥಿತಿ DOM_ಗಂಟು_IMPORTED:
+	ಸ್ಥಿತಿ DOM_ಗಂಟು_ADOPTED:
+	ಸ್ಥಿತಿ DOM_ಗಂಟು_DELETED:
+		error = css_libcss_ಗಂಟು_ದತ್ತಾಂಶ_handler(&selection_handler,
+				CSS_ಗಂಟು_DELETED,
+				ಖಾಲಿ, src, ಖಾಲಿ, ದತ್ತಾಂಶ);
+		ಆದರೆ (error != CSS_OK)
 			NSLOG(netsurf, INFO,
 			      "Failed to delete libcss_node_data.");
-		break;
+		ನಿಲ್ಲಿಸು;
 
-	default:
+	ಪೂರ್ವನಿಯೋಜಿತ:
 		NSLOG(netsurf, INFO, "User data operation not handled.");
-		assert(0);
+		ಪ್ರತಿಜ್ಞಾ(0);
 	}
 }
 
@@ -250,36 +250,36 @@ static void nscss_dom_user_data_handler(dom_node_operation operation,
  * \return Pointer to selection results (containing computed styles),
  *         or NULL on failure
  */
-css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
-		const css_media *media,
-		const css_unit_ctx *unit_len_ctx,
-		const css_stylesheet *inline_style)
+css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_ಗಂಟು *n,
+		ಸ್ಥಿರಾಂಕ css_media *media,
+		ಸ್ಥಿರಾಂಕ css_unit_ctx *unit_len_ctx,
+		ಸ್ಥಿರಾಂಕ css_stylesheet *inline_style)
 {
 	css_computed_style *composed;
 	css_select_results *styles;
-	int pseudo_element;
+	ಪೂರ್ಣಾಂಕ pseudo_element;
 	css_error error;
 
 	/* Select style for node */
 	error = css_select_style(ctx->ctx, n, unit_len_ctx, media, inline_style,
 			&selection_handler, ctx, &styles);
 
-	if (error != CSS_OK || styles == NULL) {
+	ಆದರೆ (error != CSS_OK || styles == ಖಾಲಿ) {
 		/* Failed selecting partial style -- bail out */
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
 	/* If there's a parent style, compose with partial to obtain
 	 * complete computed style for element */
-	if (ctx->parent_style != NULL) {
+	ಆದರೆ (ctx->ಪೋಷಕ_style != ಖಾಲಿ) {
 		/* Complete the computed style, by composing with the parent
 		 * element's style */
-		error = css_computed_style_compose(ctx->parent_style,
+		error = css_computed_style_compose(ctx->ಪೋಷಕ_style,
 				styles->styles[CSS_PSEUDO_ELEMENT_NONE],
 				unit_len_ctx, &composed);
-		if (error != CSS_OK) {
+		ಆದರೆ (error != CSS_OK) {
 			css_select_results_destroy(styles);
-			return NULL;
+			ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 		}
 
 		/* Replace select_results style with composed style */
@@ -288,19 +288,19 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 		styles->styles[CSS_PSEUDO_ELEMENT_NONE] = composed;
 	}
 
-	for (pseudo_element = CSS_PSEUDO_ELEMENT_NONE + 1;
-			pseudo_element < CSS_PSEUDO_ELEMENT_COUNT;
+	ಗಾಗಿ (pseudo_element = CSS_PSEUDO_ELEMENT_NONE + 1;
+			pseudo_element < CSS_PSEUDO_ELEMENT_ಎಣಿಕೆ;
 			pseudo_element++) {
 
-		if (pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LETTER ||
-				pseudo_element == CSS_PSEUDO_ELEMENT_FIRST_LINE)
+		ಆದರೆ (pseudo_element == CSS_PSEUDO_ELEMENT_ಮೊದಲ_LETTER ||
+				pseudo_element == CSS_PSEUDO_ELEMENT_ಮೊದಲ_ಸಾಲು)
 			/* TODO: Handle first-line and first-letter pseudo
 			 *       element computed style completion */
-			continue;
+			ಮುಂದುವರಿ;
 
-		if (styles->styles[pseudo_element] == NULL)
+		ಆದರೆ (styles->styles[pseudo_element] == ಖಾಲಿ)
 			/* There were no rules concerning this pseudo element */
-			continue;
+			ಮುಂದುವರಿ;
 
 		/* Complete the pseudo element's computed style, by composing
 		 * with the base element's style */
@@ -308,11 +308,11 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 				styles->styles[CSS_PSEUDO_ELEMENT_NONE],
 				styles->styles[pseudo_element],
 				unit_len_ctx, &composed);
-		if (error != CSS_OK) {
+		ಆದರೆ (error != CSS_OK) {
 			/* TODO: perhaps this shouldn't be quite so
 			 * catastrophic? */
 			css_select_results_destroy(styles);
-			return NULL;
+			ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 		}
 
 		/* Replace select_results style with composed style */
@@ -320,7 +320,7 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
 		styles->styles[pseudo_element] = composed;
 	}
 
-	return styles;
+	ಹಿಂತಿರುಗಿ styles;
 }
 
 /**
@@ -332,29 +332,29 @@ css_select_results *nscss_get_style(nscss_select_ctx *ctx, dom_node *n,
  * \return Pointer to blank style, or NULL on failure
  */
 css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *parent)
+		ಸ್ಥಿರಾಂಕ css_unit_ctx *unit_len_ctx,
+		ಸ್ಥಿರಾಂಕ css_computed_style *ಪೋಷಕ)
 {
 	css_computed_style *partial, *composed;
 	css_error error;
 
 	error = css_select_default_style(ctx->ctx,
 			&selection_handler, ctx, &partial);
-	if (error != CSS_OK) {
-		return NULL;
+	ಆದರೆ (error != CSS_OK) {
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
 	/* TODO: Do we really need to compose?  Initial style shouldn't
 	 * have any inherited properties. */
-	error = css_computed_style_compose(parent, partial,
+	error = css_computed_style_compose(ಪೋಷಕ, partial,
 			unit_len_ctx, &composed);
 	css_computed_style_destroy(partial);
-	if (error != CSS_OK) {
+	ಆದರೆ (error != CSS_OK) {
 		css_computed_style_destroy(composed);
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
-	return composed;
+	ಹಿಂತಿರುಗಿ composed;
 }
 
 /******************************************************************************
@@ -370,27 +370,27 @@ css_computed_style *nscss_get_blank_style(nscss_select_ctx *ctx,
  * \return CSS_OK on success,
  *         CSS_NOMEM on memory exhaustion.
  */
-css_error node_name(void *pw, void *node, css_qname *qname)
+css_error ಗಂಟು_name(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, css_qname *qname)
 {
-	dom_node *n = node;
+	dom_ಗಂಟು *n = ಗಂಟು;
 	dom_string *name;
 	dom_exception err;
 
-	err = dom_node_get_node_name(n, &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	err = dom_ಗಂಟು_get_ಗಂಟು_name(n, &name);
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ CSS_NOMEM;
 
-	qname->ns = NULL;
+	qname->ns = ಖಾಲಿ;
 
 	err = dom_string_intern(name, &qname->name);
-	if (err != DOM_NO_ERR) {
+	ಆದರೆ (err != DOM_NO_ERR) {
 		dom_string_unref(name);
-		return CSS_NOMEM;
+		ಹಿಂತಿರುಗಿ CSS_NOMEM;
 	}
 
 	dom_string_unref(name);
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -407,20 +407,20 @@ css_error node_name(void *pw, void *node, css_qname *qname)
  *       be allocated using the same allocator as used by libcss during style
  *       selection.
  */
-css_error node_classes(void *pw, void *node,
+css_error ಗಂಟು_classes(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
 		lwc_string ***classes, uint32_t *n_classes)
 {
-	dom_node *n = node;
+	dom_ಗಂಟು *n = ಗಂಟು;
 	dom_exception err;
 
-	*classes = NULL;
+	*classes = ಖಾಲಿ;
 	*n_classes = 0;
 
 	err = dom_element_get_classes(n, classes, n_classes);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ CSS_NOMEM;
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -432,29 +432,29 @@ css_error node_classes(void *pw, void *node,
  * \return CSS_OK on success,
  *         CSS_NOMEM on memory exhaustion.
  */
-css_error node_id(void *pw, void *node, lwc_string **id)
+css_error ಗಂಟು_id(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, lwc_string **id)
 {
-	dom_node *n = node;
+	dom_ಗಂಟು *n = ಗಂಟು;
 	dom_string *attr;
 	dom_exception err;
 
-	*id = NULL;
+	*id = ಖಾಲಿ;
 
 	/** \todo Assumes an HTML DOM */
 	err = dom_html_element_get_id(n, &attr);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ CSS_NOMEM;
 
-	if (attr != NULL) {
+	ಆದರೆ (attr != ಖಾಲಿ) {
 		err = dom_string_intern(attr, id);
-		if (err != DOM_NO_ERR) {
+		ಆದರೆ (err != DOM_NO_ERR) {
 			dom_string_unref(attr);
-			return CSS_NOMEM;
+			ಹಿಂತಿರುಗಿ CSS_NOMEM;
 		}
 		dom_string_unref(attr);
 	}
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -468,14 +468,14 @@ css_error node_id(void *pw, void *node, lwc_string **id)
  *
  * \post \a ancestor will contain the result, or NULL if there is no match
  */
-css_error named_ancestor_node(void *pw, void *node,
-		const css_qname *qname, void **ancestor)
+css_error named_ancestor_ಗಂಟು(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, ಶೂನ್ಯ **ancestor)
 {
-	dom_element_named_ancestor_node(node, qname->name,
-			(struct dom_element **)ancestor);
-	dom_node_unref(*ancestor);
+	dom_element_named_ancestor_ಗಂಟು(ಗಂಟು, qname->name,
+			(ರಚನೆ dom_element **)ancestor);
+	dom_ಗಂಟು_unref(*ancestor);
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -489,14 +489,14 @@ css_error named_ancestor_node(void *pw, void *node,
  *
  * \post \a parent will contain the result, or NULL if there is no match
  */
-css_error named_parent_node(void *pw, void *node,
-		const css_qname *qname, void **parent)
+css_error named_ಪೋಷಕ_ಗಂಟು(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, ಶೂನ್ಯ **ಪೋಷಕ)
 {
-	dom_element_named_parent_node(node, qname->name,
-			(struct dom_element **)parent);
-	dom_node_unref(*parent);
+	dom_element_named_ಪೋಷಕ_ಗಂಟು(ಗಂಟು, qname->name,
+			(ರಚನೆ dom_element **)ಪೋಷಕ);
+	dom_ಗಂಟು_unref(*ಪೋಷಕ);
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -510,61 +510,61 @@ css_error named_parent_node(void *pw, void *node,
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error named_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling)
+css_error named_sibling_ಗಂಟು(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, ಶೂನ್ಯ **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_ಗಂಟು *n = ಗಂಟು;
+	dom_ಗಂಟು *prev;
 	dom_exception err;
 
-	*sibling = NULL;
+	*sibling = ಖಾಲಿ;
 
 	/* Find sibling element */
-	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	err = dom_ಗಂಟು_get_ಹಿಂದಿನ_sibling(n, &n);
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ CSS_OK;
 
-	while (n != NULL) {
-		dom_node_type type;
+	ಆಗ (n != ಖಾಲಿ) {
+		dom_ಗಂಟು_type type;
 
-		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_ಗಂಟು_get_ಗಂಟು_type(n, &type);
+		ಆದರೆ (err != DOM_NO_ERR) {
+			dom_ಗಂಟು_unref(n);
+			ಹಿಂತಿರುಗಿ CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE)
-			break;
+		ಆದರೆ (type == DOM_ELEMENT_ಗಂಟು)
+			ನಿಲ್ಲಿಸು;
 
-		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_ಗಂಟು_get_ಹಿಂದಿನ_sibling(n, &prev);
+		ಆದರೆ (err != DOM_NO_ERR) {
+			dom_ಗಂಟು_unref(n);
+			ಹಿಂತಿರುಗಿ CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_ಗಂಟು_unref(n);
 		n = prev;
 	}
 
-	if (n != NULL) {
+	ಆದರೆ (n != ಖಾಲಿ) {
 		dom_string *name;
 
-		err = dom_node_get_node_name(n, &name);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_ಗಂಟು_get_ಗಂಟು_name(n, &name);
+		ಆದರೆ (err != DOM_NO_ERR) {
+			dom_ಗಂಟು_unref(n);
+			ಹಿಂತಿರುಗಿ CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_ಗಂಟು_unref(n);
 
-		if (dom_string_caseless_lwc_isequal(name, qname->name)) {
+		ಆದರೆ (dom_string_caseless_lwc_isequal(name, qname->name)) {
 			*sibling = n;
 		}
 
 		dom_string_unref(name);
 	}
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -578,57 +578,57 @@ css_error named_sibling_node(void *pw, void *node,
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error named_generic_sibling_node(void *pw, void *node,
-		const css_qname *qname, void **sibling)
+css_error named_generic_sibling_ಗಂಟು(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, ಶೂನ್ಯ **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_ಗಂಟು *n = ಗಂಟು;
+	dom_ಗಂಟು *prev;
 	dom_exception err;
 
-	*sibling = NULL;
+	*sibling = ಖಾಲಿ;
 
-	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	err = dom_ಗಂಟು_get_ಹಿಂದಿನ_sibling(n, &n);
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ CSS_OK;
 
-	while (n != NULL) {
-		dom_node_type type;
+	ಆಗ (n != ಖಾಲಿ) {
+		dom_ಗಂಟು_type type;
 		dom_string *name;
 
-		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_ಗಂಟು_get_ಗಂಟು_type(n, &type);
+		ಆದರೆ (err != DOM_NO_ERR) {
+			dom_ಗಂಟು_unref(n);
+			ಹಿಂತಿರುಗಿ CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE) {
-			err = dom_node_get_node_name(n, &name);
-			if (err != DOM_NO_ERR) {
-				dom_node_unref(n);
-				return CSS_OK;
+		ಆದರೆ (type == DOM_ELEMENT_ಗಂಟು) {
+			err = dom_ಗಂಟು_get_ಗಂಟು_name(n, &name);
+			ಆದರೆ (err != DOM_NO_ERR) {
+				dom_ಗಂಟು_unref(n);
+				ಹಿಂತಿರುಗಿ CSS_OK;
 			}
 
-			if (dom_string_caseless_lwc_isequal(name,
+			ಆದರೆ (dom_string_caseless_lwc_isequal(name,
 					qname->name)) {
 				dom_string_unref(name);
-				dom_node_unref(n);
+				dom_ಗಂಟು_unref(n);
 				*sibling = n;
-				break;
+				ನಿಲ್ಲಿಸು;
 			}
 			dom_string_unref(name);
 		}
 
-		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_ಗಂಟು_get_ಹಿಂದಿನ_sibling(n, &prev);
+		ಆದರೆ (err != DOM_NO_ERR) {
+			dom_ಗಂಟು_unref(n);
+			ಹಿಂತಿರುಗಿ CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_ಗಂಟು_unref(n);
 		n = prev;
 	}
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -641,12 +641,12 @@ css_error named_generic_sibling_node(void *pw, void *node,
  *
  * \post \a parent will contain the result, or NULL if there is no match
  */
-css_error parent_node(void *pw, void *node, void **parent)
+css_error ಪೋಷಕ_ಗಂಟು(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, ಶೂನ್ಯ **ಪೋಷಕ)
 {
-	dom_element_parent_node(node, (struct dom_element **)parent);
-	dom_node_unref(*parent);
+	dom_element_ಪೋಷಕ_ಗಂಟು(ಗಂಟು, (ರಚನೆ dom_element **)ಪೋಷಕ);
+	dom_ಗಂಟು_unref(*ಪೋಷಕ);
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -659,49 +659,49 @@ css_error parent_node(void *pw, void *node, void **parent)
  *
  * \post \a sibling will contain the result, or NULL if there is no match
  */
-css_error sibling_node(void *pw, void *node, void **sibling)
+css_error sibling_ಗಂಟು(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, ಶೂನ್ಯ **sibling)
 {
-	dom_node *n = node;
-	dom_node *prev;
+	dom_ಗಂಟು *n = ಗಂಟು;
+	dom_ಗಂಟು *prev;
 	dom_exception err;
 
-	*sibling = NULL;
+	*sibling = ಖಾಲಿ;
 
 	/* Find sibling element */
-	err = dom_node_get_previous_sibling(n, &n);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	err = dom_ಗಂಟು_get_ಹಿಂದಿನ_sibling(n, &n);
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ CSS_OK;
 
-	while (n != NULL) {
-		dom_node_type type;
+	ಆಗ (n != ಖಾಲಿ) {
+		dom_ಗಂಟು_type type;
 
-		err = dom_node_get_node_type(n, &type);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_ಗಂಟು_get_ಗಂಟು_type(n, &type);
+		ಆದರೆ (err != DOM_NO_ERR) {
+			dom_ಗಂಟು_unref(n);
+			ಹಿಂತಿರುಗಿ CSS_OK;
 		}
 
-		if (type == DOM_ELEMENT_NODE)
-			break;
+		ಆದರೆ (type == DOM_ELEMENT_ಗಂಟು)
+			ನಿಲ್ಲಿಸು;
 
-		err = dom_node_get_previous_sibling(n, &prev);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_OK;
+		err = dom_ಗಂಟು_get_ಹಿಂದಿನ_sibling(n, &prev);
+		ಆದರೆ (err != DOM_NO_ERR) {
+			dom_ಗಂಟು_unref(n);
+			ಹಿಂತಿರುಗಿ CSS_OK;
 		}
 
-		dom_node_unref(n);
+		dom_ಗಂಟು_unref(n);
 		n = prev;
 	}
 
-	if (n != NULL) {
+	ಆದರೆ (n != ಖಾಲಿ) {
 		/** \todo Sort out reference counting */
-		dom_node_unref(n);
+		dom_ಗಂಟು_unref(n);
 
 		*sibling = n;
 	}
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -715,28 +715,28 @@ css_error sibling_node(void *pw, void *node, void **sibling)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_name(void *pw, void *node,
-		const css_qname *qname, bool *match)
+css_error ಗಂಟು_has_name(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, bool *ಹೊಂದಿಕೆ)
 {
 	nscss_select_ctx *ctx = pw;
-	dom_node *n = node;
+	dom_ಗಂಟು *n = ಗಂಟು;
 
-	if (lwc_string_isequal(qname->name, ctx->universal, match) ==
-			lwc_error_ok && *match == false) {
+	ಆದರೆ (lwc_string_isequal(qname->name, ctx->universal, ಹೊಂದಿಕೆ) ==
+			lwc_error_ok && *ಹೊಂದಿಕೆ == false) {
 		dom_string *name;
 		dom_exception err;
 
-		err = dom_node_get_node_name(n, &name);
-		if (err != DOM_NO_ERR)
-			return CSS_OK;
+		err = dom_ಗಂಟು_get_ಗಂಟು_name(n, &name);
+		ಆದರೆ (err != DOM_NO_ERR)
+			ಹಿಂತಿರುಗಿ CSS_OK;
 
 		/* Element names are case insensitive in HTML */
-		*match = dom_string_caseless_lwc_isequal(name, qname->name);
+		*ಹೊಂದಿಕೆ = dom_string_caseless_lwc_isequal(name, qname->name);
 
 		dom_string_unref(name);
 	}
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -750,19 +750,19 @@ css_error node_has_name(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_class(void *pw, void *node,
-		lwc_string *name, bool *match)
+css_error ಗಂಟು_has_class(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		lwc_string *name, bool *ಹೊಂದಿಕೆ)
 {
-	dom_node *n = node;
+	dom_ಗಂಟು *n = ಗಂಟು;
 	dom_exception err;
 
 	/** \todo: Ensure that libdom performs case-insensitive
 	 * matching in quirks mode */
-	err = dom_element_has_class(n, name, match);
+	err = dom_element_has_class(n, name, ಹೊಂದಿಕೆ);
 
-	assert(err == DOM_NO_ERR);
+	ಪ್ರತಿಜ್ಞಾ(err == DOM_NO_ERR);
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -776,27 +776,27 @@ css_error node_has_class(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_id(void *pw, void *node,
-		lwc_string *name, bool *match)
+css_error ಗಂಟು_has_id(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		lwc_string *name, bool *ಹೊಂದಿಕೆ)
 {
-	dom_node *n = node;
+	dom_ಗಂಟು *n = ಗಂಟು;
 	dom_string *attr;
 	dom_exception err;
 
-	*match = false;
+	*ಹೊಂದಿಕೆ = false;
 
 	/** \todo Assumes an HTML DOM */
 	err = dom_html_element_get_id(n, &attr);
-	if (err != DOM_NO_ERR)
-		return CSS_OK;
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ CSS_OK;
 
-	if (attr != NULL) {
-		*match = dom_string_lwc_isequal(attr, name);
+	ಆದರೆ (attr != ಖಾಲಿ) {
+		*ಹೊಂದಿಕೆ = dom_string_lwc_isequal(attr, name);
 
 		dom_string_unref(attr);
 	}
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -811,28 +811,28 @@ css_error node_has_id(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute(void *pw, void *node,
-		const css_qname *qname, bool *match)
+css_error ಗಂಟು_has_attribute(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, bool *ಹೊಂದಿಕೆ)
 {
-	dom_node *n = node;
+	dom_ಗಂಟು *n = ಗಂಟು;
 	dom_string *name;
 	dom_exception err;
 
 	err = dom_string_create_interned(
-			(const uint8_t *) lwc_string_data(qname->name),
-			lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+			(ಸ್ಥಿರಾಂಕ uint8_t *) lwc_string_ದತ್ತಾಂಶ(qname->name),
+			lwc_string_ಉದ್ದಳತೆ(qname->name), &name);
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ CSS_NOMEM;
 
-	err = dom_element_has_attribute(n, name, match);
-	if (err != DOM_NO_ERR) {
+	err = dom_element_has_attribute(n, name, ಹೊಂದಿಕೆ);
+	ಆದರೆ (err != DOM_NO_ERR) {
 		dom_string_unref(name);
-		return CSS_OK;
+		ಹಿಂತಿರುಗಿ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -848,42 +848,42 @@ css_error node_has_attribute(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_equal(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error ಗಂಟು_has_attribute_equal(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, lwc_string *ಮೌಲ್ಯ,
+		bool *ಹೊಂದಿಕೆ)
 {
-	dom_node *n = node;
+	dom_ಗಂಟು *n = ಗಂಟು;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_ಉದ್ದಳತೆ(ಮೌಲ್ಯ);
 
-	if (vlen == 0) {
-		*match = false;
-		return CSS_OK;
+	ಆದರೆ (vlen == 0) {
+		*ಹೊಂದಿಕೆ = false;
+		ಹಿಂತಿರುಗಿ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(ಸ್ಥಿರಾಂಕ uint8_t *) lwc_string_ದತ್ತಾಂಶ(qname->name),
+		lwc_string_ಉದ್ದಳತೆ(qname->name), &name);
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	ಆದರೆ ((err != DOM_NO_ERR) || (atr_val == ಖಾಲಿ)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*ಹೊಂದಿಕೆ = false;
+		ಹಿಂತಿರುಗಿ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*ಹೊಂದಿಕೆ = dom_string_caseless_lwc_isequal(atr_val, ಮೌಲ್ಯ);
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -900,55 +900,55 @@ css_error node_has_attribute_equal(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_dashmatch(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error ಗಂಟು_has_attribute_dashmatch(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, lwc_string *ಮೌಲ್ಯ,
+		bool *ಹೊಂದಿಕೆ)
 {
-	dom_node *n = node;
+	dom_ಗಂಟು *n = ಗಂಟು;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_ಉದ್ದಳತೆ(ಮೌಲ್ಯ);
 
-	if (vlen == 0) {
-		*match = false;
-		return CSS_OK;
+	ಆದರೆ (vlen == 0) {
+		*ಹೊಂದಿಕೆ = false;
+		ಹಿಂತಿರುಗಿ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(ಸ್ಥಿರಾಂಕ uint8_t *) lwc_string_ದತ್ತಾಂಶ(qname->name),
+		lwc_string_ಉದ್ದಳತೆ(qname->name), &name);
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	ಆದರೆ ((err != DOM_NO_ERR) || (atr_val == ಖಾಲಿ)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*ಹೊಂದಿಕೆ = false;
+		ಹಿಂತಿರುಗಿ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*ಹೊಂದಿಕೆ = dom_string_caseless_lwc_isequal(atr_val, ಮೌಲ್ಯ);
 
 	/* check for dashmatch */
-	if (*match == false) {
-		const char *vdata = lwc_string_data(value);
-		const char *data = (const char *) dom_string_data(atr_val);
-		size_t len = dom_string_byte_length(atr_val);
+	ಆದರೆ (*ಹೊಂದಿಕೆ == false) {
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *vdata = lwc_string_ದತ್ತಾಂಶ(ಮೌಲ್ಯ);
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ದತ್ತಾಂಶ = (ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *) dom_string_ದತ್ತಾಂಶ(atr_val);
+		size_t len = dom_string_byte_ಉದ್ದಳತೆ(atr_val);
 
-		if (len > vlen && data[vlen] == '-' &&
-		    strncasecmp(data, vdata, vlen) == 0) {
-				*match = true;
+		ಆದರೆ (len > vlen && ದತ್ತಾಂಶ[vlen] == '-' &&
+		    strncasecmp(ದತ್ತಾಂಶ, vdata, vlen) == 0) {
+				*ಹೊಂದಿಕೆ = true;
 		}
 	}
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -965,61 +965,61 @@ css_error node_has_attribute_dashmatch(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_includes(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error ಗಂಟು_has_attribute_includes(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, lwc_string *ಮೌಲ್ಯ,
+		bool *ಹೊಂದಿಕೆ)
 {
-	dom_node *n = node;
+	dom_ಗಂಟು *n = ಗಂಟು;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
-	size_t vlen = lwc_string_length(value);
-	const char *p;
-	const char *start;
-	const char *end;
+	size_t vlen = lwc_string_ಉದ್ದಳತೆ(ಮೌಲ್ಯ);
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *p;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಆರಂಭ;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಕೊನೆ;
 
-	*match = false;
+	*ಹೊಂದಿಕೆ = false;
 
-	if (vlen == 0) {
-		return CSS_OK;
+	ಆದರೆ (vlen == 0) {
+		ಹಿಂತಿರುಗಿ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(ಸ್ಥಿರಾಂಕ uint8_t *) lwc_string_ದತ್ತಾಂಶ(qname->name),
+		lwc_string_ಉದ್ದಳತೆ(qname->name), &name);
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	ಆದರೆ ((err != DOM_NO_ERR) || (atr_val == ಖಾಲಿ)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*ಹೊಂದಿಕೆ = false;
+		ಹಿಂತಿರುಗಿ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for match */
-	start = (const char *) dom_string_data(atr_val);
-	end = start + dom_string_byte_length(atr_val);
+	ಆರಂಭ = (ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *) dom_string_ದತ್ತಾಂಶ(atr_val);
+	ಕೊನೆ = ಆರಂಭ + dom_string_byte_ಉದ್ದಳತೆ(atr_val);
 
-	for (p = start; p <= end; p++) {
-		if (*p == ' ' || *p == '\0') {
-			if ((size_t) (p - start) == vlen &&
-			    strncasecmp(start,
-					lwc_string_data(value),
+	ಗಾಗಿ (p = ಆರಂಭ; p <= ಕೊನೆ; p++) {
+		ಆದರೆ (*p == ' ' || *p == '\0') {
+			ಆದರೆ ((size_t) (p - ಆರಂಭ) == vlen &&
+			    strncasecmp(ಆರಂಭ,
+					lwc_string_ದತ್ತಾಂಶ(ಮೌಲ್ಯ),
 					vlen) == 0) {
-				*match = true;
-				break;
+				*ಹೊಂದಿಕೆ = true;
+				ನಿಲ್ಲಿಸು;
 			}
 
-			start = p + 1;
+			ಆರಂಭ = p + 1;
 		}
 	}
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -1036,54 +1036,54 @@ css_error node_has_attribute_includes(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_prefix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error ಗಂಟು_has_attribute_ಪೂರ್ವಪ್ರತ್ಯಯ(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, lwc_string *ಮೌಲ್ಯ,
+		bool *ಹೊಂದಿಕೆ)
 {
-	dom_node *n = node;
+	dom_ಗಂಟು *n = ಗಂಟು;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_ಉದ್ದಳತೆ(ಮೌಲ್ಯ);
 
-	if (vlen == 0) {
-		*match = false;
-		return CSS_OK;
+	ಆದರೆ (vlen == 0) {
+		*ಹೊಂದಿಕೆ = false;
+		ಹಿಂತಿರುಗಿ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(ಸ್ಥಿರಾಂಕ uint8_t *) lwc_string_ದತ್ತಾಂಶ(qname->name),
+		lwc_string_ಉದ್ದಳತೆ(qname->name), &name);
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	ಆದರೆ ((err != DOM_NO_ERR) || (atr_val == ಖಾಲಿ)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*ಹೊಂದಿಕೆ = false;
+		ಹಿಂತಿರುಗಿ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*ಹೊಂದಿಕೆ = dom_string_caseless_lwc_isequal(atr_val, ಮೌಲ್ಯ);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *data = (const char *) dom_string_data(atr_val);
-		size_t len = dom_string_byte_length(atr_val);
+	ಆದರೆ (*ಹೊಂದಿಕೆ == false) {
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ದತ್ತಾಂಶ = (ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *) dom_string_ದತ್ತಾಂಶ(atr_val);
+		size_t len = dom_string_byte_ಉದ್ದಳತೆ(atr_val);
 
-		if ((len >= vlen) &&
-		    (strncasecmp(data, lwc_string_data(value), vlen) == 0)) {
-			*match = true;
+		ಆದರೆ ((len >= vlen) &&
+		    (strncasecmp(ದತ್ತಾಂಶ, lwc_string_ದತ್ತಾಂಶ(ಮೌಲ್ಯ), vlen) == 0)) {
+			*ಹೊಂದಿಕೆ = true;
 		}
 	}
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -1100,50 +1100,50 @@ css_error node_has_attribute_prefix(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_suffix(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error ಗಂಟು_has_attribute_suffix(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, lwc_string *ಮೌಲ್ಯ,
+		bool *ಹೊಂದಿಕೆ)
 {
-	dom_node *n = node;
+	dom_ಗಂಟು *n = ಗಂಟು;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_ಉದ್ದಳತೆ(ಮೌಲ್ಯ);
 
-	if (vlen == 0) {
-		*match = false;
-		return CSS_OK;
+	ಆದರೆ (vlen == 0) {
+		*ಹೊಂದಿಕೆ = false;
+		ಹಿಂತಿರುಗಿ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(ಸ್ಥಿರಾಂಕ uint8_t *) lwc_string_ದತ್ತಾಂಶ(qname->name),
+		lwc_string_ಉದ್ದಳತೆ(qname->name), &name);
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	ಆದರೆ ((err != DOM_NO_ERR) || (atr_val == ಖಾಲಿ)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*ಹೊಂದಿಕೆ = false;
+		ಹಿಂತಿರುಗಿ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*ಹೊಂದಿಕೆ = dom_string_caseless_lwc_isequal(atr_val, ಮೌಲ್ಯ);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *data = (const char *) dom_string_data(atr_val);
-		size_t len = dom_string_byte_length(atr_val);
+	ಆದರೆ (*ಹೊಂದಿಕೆ == false) {
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ದತ್ತಾಂಶ = (ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *) dom_string_ದತ್ತಾಂಶ(atr_val);
+		size_t len = dom_string_byte_ಉದ್ದಳತೆ(atr_val);
 
-		const char *start = (char *) data + len - vlen;
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಆರಂಭ = (ಅಕ್ಷರ *) ದತ್ತಾಂಶ + len - vlen;
 
-		if ((len >= vlen) &&
-		    (strncasecmp(start, lwc_string_data(value), vlen) == 0)) {
-			*match = true;
+		ಆದರೆ ((len >= vlen) &&
+		    (strncasecmp(ಆರಂಭ, lwc_string_ದತ್ತಾಂಶ(ಮೌಲ್ಯ), vlen) == 0)) {
+			*ಹೊಂದಿಕೆ = true;
 		}
 
 
@@ -1151,7 +1151,7 @@ css_error node_has_attribute_suffix(void *pw, void *node,
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -1168,63 +1168,63 @@ css_error node_has_attribute_suffix(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_has_attribute_substring(void *pw, void *node,
-		const css_qname *qname, lwc_string *value,
-		bool *match)
+css_error ಗಂಟು_has_attribute_substring(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		ಸ್ಥಿರಾಂಕ css_qname *qname, lwc_string *ಮೌಲ್ಯ,
+		bool *ಹೊಂದಿಕೆ)
 {
-	dom_node *n = node;
+	dom_ಗಂಟು *n = ಗಂಟು;
 	dom_string *name;
 	dom_string *atr_val;
 	dom_exception err;
 
-	size_t vlen = lwc_string_length(value);
+	size_t vlen = lwc_string_ಉದ್ದಳತೆ(ಮೌಲ್ಯ);
 
-	if (vlen == 0) {
-		*match = false;
-		return CSS_OK;
+	ಆದರೆ (vlen == 0) {
+		*ಹೊಂದಿಕೆ = false;
+		ಹಿಂತಿರುಗಿ CSS_OK;
 	}
 
 	err = dom_string_create_interned(
-		(const uint8_t *) lwc_string_data(qname->name),
-		lwc_string_length(qname->name), &name);
-	if (err != DOM_NO_ERR)
-		return CSS_NOMEM;
+		(ಸ್ಥಿರಾಂಕ uint8_t *) lwc_string_ದತ್ತಾಂಶ(qname->name),
+		lwc_string_ಉದ್ದಳತೆ(qname->name), &name);
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ CSS_NOMEM;
 
 	err = dom_element_get_attribute(n, name, &atr_val);
-	if ((err != DOM_NO_ERR) || (atr_val == NULL)) {
+	ಆದರೆ ((err != DOM_NO_ERR) || (atr_val == ಖಾಲಿ)) {
 		dom_string_unref(name);
-		*match = false;
-		return CSS_OK;
+		*ಹೊಂದಿಕೆ = false;
+		ಹಿಂತಿರುಗಿ CSS_OK;
 	}
 
 	dom_string_unref(name);
 
 	/* check for exact match */
-	*match = dom_string_caseless_lwc_isequal(atr_val, value);
+	*ಹೊಂದಿಕೆ = dom_string_caseless_lwc_isequal(atr_val, ಮೌಲ್ಯ);
 
 	/* check for prefix match */
-	if (*match == false) {
-		const char *vdata = lwc_string_data(value);
-		const char *start = (const char *) dom_string_data(atr_val);
-		size_t len = dom_string_byte_length(atr_val);
-		const char *last_start = start + len - vlen;
+	ಆದರೆ (*ಹೊಂದಿಕೆ == false) {
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *vdata = lwc_string_ದತ್ತಾಂಶ(ಮೌಲ್ಯ);
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಆರಂಭ = (ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *) dom_string_ದತ್ತಾಂಶ(atr_val);
+		size_t len = dom_string_byte_ಉದ್ದಳತೆ(atr_val);
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಕೊನೆಯ_ಆರಂಭ = ಆರಂಭ + len - vlen;
 
-		if (len >= vlen) {
-			while (start <= last_start) {
-				if (strncasecmp(start, vdata,
+		ಆದರೆ (len >= vlen) {
+			ಆಗ (ಆರಂಭ <= ಕೊನೆಯ_ಆರಂಭ) {
+				ಆದರೆ (strncasecmp(ಆರಂಭ, vdata,
 						vlen) == 0) {
-					*match = true;
-					break;
+					*ಹೊಂದಿಕೆ = true;
+					ನಿಲ್ಲಿಸು;
 				}
 
-				start++;
+				ಆರಂಭ++;
 			}
 		}
 	}
 
 	dom_string_unref(atr_val);
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -1237,71 +1237,71 @@ css_error node_has_attribute_substring(void *pw, void *node,
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_root(void *pw, void *node, bool *match)
+css_error ಗಂಟು_is_ಬೇರು(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, bool *ಹೊಂದಿಕೆ)
 {
-	dom_node *n = node;
-	dom_node *parent;
-	dom_node_type type;
+	dom_ಗಂಟು *n = ಗಂಟು;
+	dom_ಗಂಟು *ಪೋಷಕ;
+	dom_ಗಂಟು_type type;
 	dom_exception err;
 
-	err = dom_node_get_parent_node(n, &parent);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	err = dom_ಗಂಟು_get_ಪೋಷಕ_ಗಂಟು(n, &ಪೋಷಕ);
+	ಆದರೆ (err != DOM_NO_ERR) {
+		ಹಿಂತಿರುಗಿ CSS_NOMEM;
 	}
 
-	if (parent != NULL) {
-		err = dom_node_get_node_type(parent, &type);
+	ಆದರೆ (ಪೋಷಕ != ಖಾಲಿ) {
+		err = dom_ಗಂಟು_get_ಗಂಟು_type(ಪೋಷಕ, &type);
 
-		dom_node_unref(parent);
+		dom_ಗಂಟು_unref(ಪೋಷಕ);
 
-		if (err != DOM_NO_ERR)
-			return CSS_NOMEM;
+		ಆದರೆ (err != DOM_NO_ERR)
+			ಹಿಂತಿರುಗಿ CSS_NOMEM;
 
-		if (type != DOM_DOCUMENT_NODE) {
-			*match = false;
-			return CSS_OK;
+		ಆದರೆ (type != DOM_DOCUMENT_ಗಂಟು) {
+			*ಹೊಂದಿಕೆ = false;
+			ಹಿಂತಿರುಗಿ CSS_OK;
 		}
 	}
 
-	*match = true;
+	*ಹೊಂದಿಕೆ = true;
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
-static int
-node_count_siblings_check(dom_node *node,
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+ಗಂಟು_ಎಣಿಕೆ_siblings_check(dom_ಗಂಟು *ಗಂಟು,
 			  bool check_name,
 			  dom_string *name)
 {
-	dom_node_type type;
-	int ret = 0;
+	dom_ಗಂಟು_type type;
+	ಪೂರ್ಣಾಂಕ ret = 0;
 	dom_exception exc;
 
-	if (node == NULL)
-		return 0;
+	ಆದರೆ (ಗಂಟು == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ 0;
 
-	exc = dom_node_get_node_type(node, &type);
-	if ((exc != DOM_NO_ERR) || (type != DOM_ELEMENT_NODE)) {
-		return 0;
+	exc = dom_ಗಂಟು_get_ಗಂಟು_type(ಗಂಟು, &type);
+	ಆದರೆ ((exc != DOM_NO_ERR) || (type != DOM_ELEMENT_ಗಂಟು)) {
+		ಹಿಂತಿರುಗಿ 0;
 	}
 
-	if (check_name) {
-		dom_string *node_name = NULL;
-		exc = dom_node_get_node_name(node, &node_name);
+	ಆದರೆ (check_name) {
+		dom_string *ಗಂಟು_name = ಖಾಲಿ;
+		exc = dom_ಗಂಟು_get_ಗಂಟು_name(ಗಂಟು, &ಗಂಟು_name);
 
-		if ((exc == DOM_NO_ERR) && (node_name != NULL)) {
+		ಆದರೆ ((exc == DOM_NO_ERR) && (ಗಂಟು_name != ಖಾಲಿ)) {
 
-			if (dom_string_caseless_isequal(name,
-							node_name)) {
+			ಆದರೆ (dom_string_caseless_isequal(name,
+							ಗಂಟು_name)) {
 				ret = 1;
 			}
-			dom_string_unref(node_name);
+			dom_string_unref(ಗಂಟು_name);
 		}
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		ret = 1;
 	}
 
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
 /**
@@ -1316,58 +1316,58 @@ node_count_siblings_check(dom_node *node,
  *
  * \post \a count will contain the number of siblings
  */
-css_error node_count_siblings(void *pw, void *n, bool same_name,
-		bool after, int32_t *count)
+css_error ಗಂಟು_ಎಣಿಕೆ_siblings(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *n, bool same_name,
+		bool after, int32_t *ಎಣಿಕೆ_2)
 {
 	int32_t cnt = 0;
 	dom_exception exc;
-	dom_string *node_name = NULL;
+	dom_string *ಗಂಟು_name = ಖಾಲಿ;
 
-	if (same_name) {
-		dom_node *node = n;
-		exc = dom_node_get_node_name(node, &node_name);
-		if ((exc != DOM_NO_ERR) || (node_name == NULL)) {
-			return CSS_NOMEM;
+	ಆದರೆ (same_name) {
+		dom_ಗಂಟು *ಗಂಟು = n;
+		exc = dom_ಗಂಟು_get_ಗಂಟು_name(ಗಂಟು, &ಗಂಟು_name);
+		ಆದರೆ ((exc != DOM_NO_ERR) || (ಗಂಟು_name == ಖಾಲಿ)) {
+			ಹಿಂತಿರುಗಿ CSS_NOMEM;
 		}
 	}
 
-	if (after) {
-		dom_node *node = dom_node_ref(n);
-		dom_node *next;
+	ಆದರೆ (after) {
+		dom_ಗಂಟು *ಗಂಟು = dom_ಗಂಟು_ref(n);
+		dom_ಗಂಟು *ಮುಂದಿನ;
 
-		do {
-			exc = dom_node_get_next_sibling(node, &next);
-			if ((exc != DOM_NO_ERR))
-				break;
+		ಮಾಡು {
+			exc = dom_ಗಂಟು_get_ಮುಂದಿನ_sibling(ಗಂಟು, &ಮುಂದಿನ);
+			ಆದರೆ ((exc != DOM_NO_ERR))
+				ನಿಲ್ಲಿಸು;
 
-			dom_node_unref(node);
-			node = next;
+			dom_ಗಂಟು_unref(ಗಂಟು);
+			ಗಂಟು = ಮುಂದಿನ;
 
-			cnt += node_count_siblings_check(node, same_name, node_name);
-		} while (node != NULL);
-	} else {
-		dom_node *node = dom_node_ref(n);
-		dom_node *next;
+			cnt += ಗಂಟು_ಎಣಿಕೆ_siblings_check(ಗಂಟು, same_name, ಗಂಟು_name);
+		} ಆಗ (ಗಂಟು != ಖಾಲಿ);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		dom_ಗಂಟು *ಗಂಟು = dom_ಗಂಟು_ref(n);
+		dom_ಗಂಟು *ಮುಂದಿನ;
 
-		do {
-			exc = dom_node_get_previous_sibling(node, &next);
-			if ((exc != DOM_NO_ERR))
-				break;
+		ಮಾಡು {
+			exc = dom_ಗಂಟು_get_ಹಿಂದಿನ_sibling(ಗಂಟು, &ಮುಂದಿನ);
+			ಆದರೆ ((exc != DOM_NO_ERR))
+				ನಿಲ್ಲಿಸು;
 
-			dom_node_unref(node);
-			node = next;
+			dom_ಗಂಟು_unref(ಗಂಟು);
+			ಗಂಟು = ಮುಂದಿನ;
 
-			cnt += node_count_siblings_check(node, same_name, node_name);
+			cnt += ಗಂಟು_ಎಣಿಕೆ_siblings_check(ಗಂಟು, same_name, ಗಂಟು_name);
 
-		} while (node != NULL);
+		} ಆಗ (ಗಂಟು != ಖಾಲಿ);
 	}
 
-	if (node_name != NULL) {
-		dom_string_unref(node_name);
+	ಆದರೆ (ಗಂಟು_name != ಖಾಲಿ) {
+		dom_string_unref(ಗಂಟು_name);
 	}
 
-	*count = cnt;
-	return CSS_OK;
+	*ಎಣಿಕೆ_2 = cnt;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -1380,43 +1380,43 @@ css_error node_count_siblings(void *pw, void *n, bool same_name,
  *
  * \post \a match will contain true if the node is empty and false otherwise.
  */
-css_error node_is_empty(void *pw, void *node, bool *match)
+css_error ಗಂಟು_is_ಖಾಲಿಗಳು(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, bool *ಹೊಂದಿಕೆ)
 {
-	dom_node *n = node, *next;
+	dom_ಗಂಟು *n = ಗಂಟು, *ಮುಂದಿನ;
 	dom_exception err;
 
-	*match = true;
+	*ಹೊಂದಿಕೆ = true;
 
-	err = dom_node_get_first_child(n, &n);
-	if (err != DOM_NO_ERR) {
-		return CSS_BADPARM;
+	err = dom_ಗಂಟು_get_ಮೊದಲ_ಮಗು(n, &n);
+	ಆದರೆ (err != DOM_NO_ERR) {
+		ಹಿಂತಿರುಗಿ CSS_BADPARM;
 	}
 
-	while (n != NULL) {
-		dom_node_type ntype;
-		err = dom_node_get_node_type(n, &ntype);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_BADPARM;
+	ಆಗ (n != ಖಾಲಿ) {
+		dom_ಗಂಟು_type ntype;
+		err = dom_ಗಂಟು_get_ಗಂಟು_type(n, &ntype);
+		ಆದರೆ (err != DOM_NO_ERR) {
+			dom_ಗಂಟು_unref(n);
+			ಹಿಂತಿರುಗಿ CSS_BADPARM;
 		}
 
-		if (ntype == DOM_ELEMENT_NODE ||
-		    ntype == DOM_TEXT_NODE) {
-			*match = false;
-			dom_node_unref(n);
-			break;
+		ಆದರೆ (ntype == DOM_ELEMENT_ಗಂಟು ||
+		    ntype == DOM_ಪಠ್ಯ_ಗಂಟು) {
+			*ಹೊಂದಿಕೆ = false;
+			dom_ಗಂಟು_unref(n);
+			ನಿಲ್ಲಿಸು;
 		}
 
-		err = dom_node_get_next_sibling(n, &next);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return CSS_BADPARM;
+		err = dom_ಗಂಟು_get_ಮುಂದಿನ_sibling(n, &ಮುಂದಿನ);
+		ಆದರೆ (err != DOM_NO_ERR) {
+			dom_ಗಂಟು_unref(n);
+			ಹಿಂತಿರುಗಿ CSS_BADPARM;
 		}
-		dom_node_unref(n);
-		n = next;
+		dom_ಗಂಟು_unref(n);
+		n = ಮುಂದಿನ;
 	}
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -1429,32 +1429,32 @@ css_error node_is_empty(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_link(void *pw, void *n, bool *match)
+css_error ಗಂಟು_is_link(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *n, bool *ಹೊಂದಿಕೆ)
 {
-	dom_node *node = n;
+	dom_ಗಂಟು *ಗಂಟು = n;
 	dom_exception exc;
-	dom_string *node_name = NULL;
+	dom_string *ಗಂಟು_name = ಖಾಲಿ;
 
-	exc = dom_node_get_node_name(node, &node_name);
-	if ((exc != DOM_NO_ERR) || (node_name == NULL)) {
-		return CSS_NOMEM;
+	exc = dom_ಗಂಟು_get_ಗಂಟು_name(ಗಂಟು, &ಗಂಟು_name);
+	ಆದರೆ ((exc != DOM_NO_ERR) || (ಗಂಟು_name == ಖಾಲಿ)) {
+		ಹಿಂತಿರುಗಿ CSS_NOMEM;
 	}
 
-	if (dom_string_caseless_lwc_isequal(node_name, corestring_lwc_a)) {
+	ಆದರೆ (dom_string_caseless_lwc_isequal(ಗಂಟು_name, corestring_lwc_a)) {
 		bool has_href;
-		exc = dom_element_has_attribute(node, corestring_dom_href,
+		exc = dom_element_has_attribute(ಗಂಟು, corestring_dom_href,
 				&has_href);
-		if ((exc == DOM_NO_ERR) && (has_href)) {
-			*match = true;
-		} else {
-			*match = false;
+		ಆದರೆ ((exc == DOM_NO_ERR) && (has_href)) {
+			*ಹೊಂದಿಕೆ = true;
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			*ಹೊಂದಿಕೆ = false;
 		}
-	} else {
-		*match = false;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		*ಹೊಂದಿಕೆ = false;
 	}
-	dom_string_unref(node_name);
+	dom_string_unref(ಗಂಟು_name);
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -1468,63 +1468,63 @@ css_error node_is_link(void *pw, void *n, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_visited(void *pw, void *node, bool *match)
+css_error ಗಂಟು_is_ಭೇಟಿಯಾದ(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, bool *ಹೊಂದಿಕೆ)
 {
 	nscss_select_ctx *ctx = pw;
 	nsurl *url;
 	nserror error;
-	const struct url_data *data;
+	ಸ್ಥಿರಾಂಕ ರಚನೆ url_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ;
 
 	dom_exception exc;
-	dom_node *n = node;
-	dom_string *s = NULL;
+	dom_ಗಂಟು *n = ಗಂಟು;
+	dom_string *s = ಖಾಲಿ;
 
-	*match = false;
+	*ಹೊಂದಿಕೆ = false;
 
-	exc = dom_node_get_node_name(n, &s);
-	if ((exc != DOM_NO_ERR) || (s == NULL)) {
-		return CSS_NOMEM;
+	exc = dom_ಗಂಟು_get_ಗಂಟು_name(n, &s);
+	ಆದರೆ ((exc != DOM_NO_ERR) || (s == ಖಾಲಿ)) {
+		ಹಿಂತಿರುಗಿ CSS_NOMEM;
 	}
 
-	if (!dom_string_caseless_lwc_isequal(s, corestring_lwc_a)) {
+	ಆದರೆ (!dom_string_caseless_lwc_isequal(s, corestring_lwc_a)) {
 		/* Can't be visited; not ancher element */
 		dom_string_unref(s);
-		return CSS_OK;
+		ಹಿಂತಿರುಗಿ CSS_OK;
 	}
 
 	/* Finished with node name string */
 	dom_string_unref(s);
-	s = NULL;
+	s = ಖಾಲಿ;
 
 	exc = dom_element_get_attribute(n, corestring_dom_href, &s);
-	if ((exc != DOM_NO_ERR) || (s == NULL)) {
+	ಆದರೆ ((exc != DOM_NO_ERR) || (s == ಖಾಲಿ)) {
 		/* Can't be visited; not got a URL */
-		return CSS_OK;
+		ಹಿಂತಿರುಗಿ CSS_OK;
 	}
 
 	/* Make href absolute */
 	/* TODO: this duplicates what we do for box->href
 	 *       should we put the absolute URL on the dom node? */
-	error = nsurl_join(ctx->base_url, dom_string_data(s), &url);
+	error = nsurl_join(ctx->ತಳ_url, dom_string_ದತ್ತಾಂಶ(s), &url);
 
 	/* Finished with href string */
 	dom_string_unref(s);
 
-	if (error != NSERROR_OK) {
+	ಆದರೆ (error != NSERROR_OK) {
 		/* Couldn't make nsurl object */
-		return CSS_NOMEM;
+		ಹಿಂತಿರುಗಿ CSS_NOMEM;
 	}
 
-	data = urldb_get_url_data(url);
+	ದತ್ತಾಂಶ = urldb_get_url_ದತ್ತಾಂಶ(url);
 
 	/* Visited if in the db and has
 	 * non-zero visit count */
-	if (data != NULL && data->visits > 0)
-		*match = true;
+	ಆದರೆ (ದತ್ತಾಂಶ != ಖಾಲಿ && ದತ್ತಾಂಶ->visits > 0)
+		*ಹೊಂದಿಕೆ = true;
 
 	nsurl_unref(url);
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -1537,13 +1537,13 @@ css_error node_is_visited(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_hover(void *pw, void *node, bool *match)
+css_error ಗಂಟು_is_hover(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, bool *ಹೊಂದಿಕೆ)
 {
 	/** \todo Support hovering */
 
-	*match = false;
+	*ಹೊಂದಿಕೆ = false;
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -1556,13 +1556,13 @@ css_error node_is_hover(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_active(void *pw, void *node, bool *match)
+css_error ಗಂಟು_is_ಸಕ್ರಿಯ(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, bool *ಹೊಂದಿಕೆ)
 {
 	/** \todo Support active nodes */
 
-	*match = false;
+	*ಹೊಂದಿಕೆ = false;
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -1575,13 +1575,13 @@ css_error node_is_active(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_focus(void *pw, void *node, bool *match)
+css_error ಗಂಟು_is_focus(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, bool *ಹೊಂದಿಕೆ)
 {
 	/** \todo Support focussed nodes */
 
-	*match = false;
+	*ಹೊಂದಿಕೆ = false;
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -1594,13 +1594,13 @@ css_error node_is_focus(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is enabled and false otherwise.
  */
-css_error node_is_enabled(void *pw, void *node, bool *match)
+css_error ಗಂಟು_is_enabled(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, bool *ಹೊಂದಿಕೆ)
 {
 	/** \todo Support enabled nodes */
 
-	*match = false;
+	*ಹೊಂದಿಕೆ = false;
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -1613,13 +1613,13 @@ css_error node_is_enabled(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is disabled and false otherwise.
  */
-css_error node_is_disabled(void *pw, void *node, bool *match)
+css_error ಗಂಟು_is_disabled(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, bool *ಹೊಂದಿಕೆ)
 {
 	/** \todo Support disabled nodes */
 
-	*match = false;
+	*ಹೊಂದಿಕೆ = false;
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -1632,13 +1632,13 @@ css_error node_is_disabled(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node is checked and false otherwise.
  */
-css_error node_is_checked(void *pw, void *node, bool *match)
+css_error ಗಂಟು_is_checked(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, bool *ಹೊಂದಿಕೆ)
 {
 	/** \todo Support checked nodes */
 
-	*match = false;
+	*ಹೊಂದಿಕೆ = false;
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -1651,13 +1651,13 @@ css_error node_is_checked(void *pw, void *node, bool *match)
  *
  * \post \a match with contain true if the node matches and false otherwise.
  */
-css_error node_is_target(void *pw, void *node, bool *match)
+css_error ಗಂಟು_is_ಗುರಿ(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, bool *ಹೊಂದಿಕೆ)
 {
 	/** \todo Support target */
 
-	*match = false;
+	*ಹೊಂದಿಕೆ = false;
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -1671,14 +1671,14 @@ css_error node_is_target(void *pw, void *node, bool *match)
  *
  * \post \a match will contain true if the node matches and false otherwise.
  */
-css_error node_is_lang(void *pw, void *node,
-		lwc_string *lang, bool *match)
+css_error ಗಂಟು_is_lang(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು,
+		lwc_string *lang, bool *ಹೊಂದಿಕೆ)
 {
 	/** \todo Support languages */
 
-	*match = false;
+	*ಹೊಂದಿಕೆ = false;
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -1690,77 +1690,77 @@ css_error node_is_lang(void *pw, void *node,
  * \return CSS_OK       on success,
  *         CSS_INVALID  if the property should not have a user-agent default.
  */
-css_error ua_default_for_property(void *pw, uint32_t property, css_hint *hint)
+css_error ua_default_for_property(ಶೂನ್ಯ *pw, uint32_t property, css_hint *hint)
 {
-	if (property == CSS_PROP_COLOR) {
-		hint->data.color = 0xff000000;
-		hint->status = CSS_COLOR_COLOR;
-	} else if (property == CSS_PROP_FONT_FAMILY) {
-		hint->data.strings = NULL;
-		switch (nsoption_int(font_default)) {
-		case PLOT_FONT_FAMILY_SANS_SERIF:
-			hint->status = CSS_FONT_FAMILY_SANS_SERIF;
-			break;
-		case PLOT_FONT_FAMILY_SERIF:
-			hint->status = CSS_FONT_FAMILY_SERIF;
-			break;
-		case PLOT_FONT_FAMILY_MONOSPACE:
-			hint->status = CSS_FONT_FAMILY_MONOSPACE;
-			break;
-		case PLOT_FONT_FAMILY_CURSIVE:
-			hint->status = CSS_FONT_FAMILY_CURSIVE;
-			break;
-		case PLOT_FONT_FAMILY_FANTASY:
-			hint->status = CSS_FONT_FAMILY_FANTASY;
-			break;
+	ಆದರೆ (property == CSS_PROP_COLOR) {
+		hint->ದತ್ತಾಂಶ.color = 0xff000000;
+		hint->ಸ್ಥಿತಿ_2 = CSS_COLOR_COLOR;
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (property == CSS_PROP_FONT_FAMILY) {
+		hint->ದತ್ತಾಂಶ.ಅಕ್ಷರಸರಣಿಗಳು = ಖಾಲಿ;
+		ಆಯ್ಕೆ (nsoption_int(font_default)) {
+		ಸ್ಥಿತಿ PLOT_FONT_FAMILY_SANS_SERIF:
+			hint->ಸ್ಥಿತಿ_2 = CSS_FONT_FAMILY_SANS_SERIF;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ PLOT_FONT_FAMILY_SERIF:
+			hint->ಸ್ಥಿತಿ_2 = CSS_FONT_FAMILY_SERIF;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ PLOT_FONT_FAMILY_MONOSPACE:
+			hint->ಸ್ಥಿತಿ_2 = CSS_FONT_FAMILY_MONOSPACE;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ PLOT_FONT_FAMILY_CURSIVE:
+			hint->ಸ್ಥಿತಿ_2 = CSS_FONT_FAMILY_CURSIVE;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ PLOT_FONT_FAMILY_FANTASY:
+			hint->ಸ್ಥಿತಿ_2 = CSS_FONT_FAMILY_FANTASY;
+			ನಿಲ್ಲಿಸು;
 		}
-	} else if (property == CSS_PROP_QUOTES) {
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (property == CSS_PROP_QUOTES) {
 		/** \todo Not exactly useful :) */
-		hint->data.strings = NULL;
-		hint->status = CSS_QUOTES_NONE;
-	} else if (property == CSS_PROP_VOICE_FAMILY) {
+		hint->ದತ್ತಾಂಶ.ಅಕ್ಷರಸರಣಿಗಳು = ಖಾಲಿ;
+		hint->ಸ್ಥಿತಿ_2 = CSS_QUOTES_NONE;
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (property == CSS_PROP_VOICE_FAMILY) {
 		/** \todo Fix this when we have voice-family done */
-		hint->data.strings = NULL;
-		hint->status = 0;
-	} else {
-		return CSS_INVALID;
+		hint->ದತ್ತಾಂಶ.ಅಕ್ಷರಸರಣಿಗಳು = ಖಾಲಿ;
+		hint->ಸ್ಥಿತಿ_2 = 0;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಹಿಂತಿರುಗಿ CSS_INVALID;
 	}
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
-css_error set_libcss_node_data(void *pw, void *node, void *libcss_node_data)
+css_error ಗಣ_libcss_ಗಂಟು_ದತ್ತಾಂಶ(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, ಶೂನ್ಯ *libcss_ಗಂಟು_ದತ್ತಾಂಶ)
 {
-	dom_node *n = node;
+	dom_ಗಂಟು *n = ಗಂಟು;
 	dom_exception err;
-	void *old_node_data;
+	ಶೂನ್ಯ *old_ಗಂಟು_ದತ್ತಾಂಶ;
 
 	/* Set this node's node data */
-	err = dom_node_set_user_data(n,
-			corestring_dom___ns_key_libcss_node_data,
-			libcss_node_data, nscss_dom_user_data_handler,
-			(void *) &old_node_data);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	err = dom_ಗಂಟು_ಗಣ_user_ದತ್ತಾಂಶ(n,
+			corestring_dom_ns_ಕೀಲಿ_libcss_ಗಂಟು_ದತ್ತಾಂಶ,
+			libcss_ಗಂಟು_ದತ್ತಾಂಶ, nscss_dom_user_ದತ್ತಾಂಶ_handler,
+			(ಶೂನ್ಯ *) &old_ಗಂಟು_ದತ್ತಾಂಶ);
+	ಆದರೆ (err != DOM_NO_ERR) {
+		ಹಿಂತಿರುಗಿ CSS_NOMEM;
 	}
 
-	assert(old_node_data == NULL);
+	ಪ್ರತಿಜ್ಞಾ(old_ಗಂಟು_ದತ್ತಾಂಶ == ಖಾಲಿ);
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
-css_error get_libcss_node_data(void *pw, void *node, void **libcss_node_data)
+css_error get_libcss_ಗಂಟು_ದತ್ತಾಂಶ(ಶೂನ್ಯ *pw, ಶೂನ್ಯ *ಗಂಟು, ಶೂನ್ಯ **libcss_ಗಂಟು_ದತ್ತಾಂಶ)
 {
-	dom_node *n = node;
+	dom_ಗಂಟು *n = ಗಂಟು;
 	dom_exception err;
 
 	/* Get this node's node data */
-	err = dom_node_get_user_data(n,
-			corestring_dom___ns_key_libcss_node_data,
-			libcss_node_data);
-	if (err != DOM_NO_ERR) {
-		return CSS_NOMEM;
+	err = dom_ಗಂಟು_get_user_ದತ್ತಾಂಶ(n,
+			corestring_dom_ns_ಕೀಲಿ_libcss_ಗಂಟು_ದತ್ತಾಂಶ,
+			libcss_ಗಂಟು_ದತ್ತಾಂಶ);
+	ಆದರೆ (err != DOM_NO_ERR) {
+		ಹಿಂತಿರುಗಿ CSS_NOMEM;
 	}
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }

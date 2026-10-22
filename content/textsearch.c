@@ -22,91 +22,91 @@
  * Free text search
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include "utils/errors.h"
-#include "utils/utils.h"
-#include "utils/ascii.h"
-#include "netsurf/types.h"
-#include "desktop/selection.h"
+#ಅನ್ತರ್ಭಾವ "utils/errors.h"
+#ಅನ್ತರ್ಭಾವ "utils/utils.h"
+#ಅನ್ತರ್ಭಾವ "utils/ascii.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/types.h"
+#ಅನ್ತರ್ಭಾವ "desktop/selection.h"
 
-#include "content/content.h"
-#include "content/content_protected.h"
-#include "content/hlcache.h"
-#include "content/textsearch.h"
+#ಅನ್ತರ್ಭಾವ "content/content.h"
+#ಅನ್ತರ್ಭಾವ "content/content_protected.h"
+#ಅನ್ತರ್ಭಾವ "content/hlcache.h"
+#ಅನ್ತರ್ಭಾವ "content/textsearch.h"
 
 /**
  * search match
  */
-struct list_entry {
+ರಚನೆ list_ನಮೂದು {
 	/**
 	 * previous match
 	 */
-	struct list_entry *prev;
+	ರಚನೆ list_ನಮೂದು *prev;
 
 	/**
 	 * next match
 	 */
-	struct list_entry *next;
+	ರಚನೆ list_ನಮೂದು *ಮುಂದಿನ;
 
 	/**
 	 * start position of match
 	 */
-	unsigned start_idx;
+	ಚಿಹ್ನೆರಹಿತ ಆರಂಭ_idx;
 
 	/**
 	 * end of match
 	 */
-	unsigned end_idx;
+	ಚಿಹ್ನೆರಹಿತ ಕೊನೆ_idx;
 
 	/**
 	 * content opaque start pointer
 	 */
-	struct box *start_box;
+	ರಚನೆ box *ಆರಂಭ_box;
 
 	/**
 	 * content opaque end pointer
 	 */
-	struct box *end_box;
+	ರಚನೆ box *ಕೊನೆ_box;
 
 	/**
 	 * content specific selection object
 	 */
-	struct selection *sel;
+	ರಚನೆ selection *sel;
 };
 
 /**
  * The context for a free text search
  */
-struct textsearch_context {
+ರಚನೆ textsearch_context {
 
 	/**
 	 * content search was performed upon
 	 */
-	struct content *c;
+	ರಚನೆ content *c;
 
 	/**
 	 * opaque pointer passed to constructor.
 	 */
-	void *gui_p;
+	ಶೂನ್ಯ *gui_p;
 
 	/**
 	 * List of matches
 	 */
-	struct list_entry *found;
+	ರಚನೆ list_ನಮೂದು *ಸಿಕ್ಕಿತು;
 
 	/**
 	 * current selected match
 	 */
-	struct list_entry *current; /* first for select all */
+	ರಚನೆ list_ನಮೂದು *current; /* first for select all */
 
 	/**
 	 * query string search results are for
 	 */
-	char *string;
+	ಅಕ್ಷರ *string;
 	bool prev_case_sens;
 	bool newsearch;
 };
@@ -115,18 +115,18 @@ struct textsearch_context {
 /**
  * broadcast textsearch message
  */
-static inline void
-textsearch_broadcast(struct textsearch_context *textsearch,
-		     int type,
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ
+textsearch_ಪ್ರಸಾರ(ರಚನೆ textsearch_context *textsearch,
+		     ಪೂರ್ಣಾಂಕ type,
 		     bool state,
-		     const char *string)
+		     ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *string)
 {
-	union content_msg_data msg_data;
-	msg_data.textsearch.type = type;
-	msg_data.textsearch.ctx = textsearch->gui_p;
-	msg_data.textsearch.state = state;
-	msg_data.textsearch.string = string;
-	content_broadcast(textsearch->c, CONTENT_MSG_TEXTSEARCH, &msg_data);
+	ಒಕ್ಕೂಟ content_ಸಂದೇಶ_ದತ್ತಾಂಶ ಸಂದೇಶ_ದತ್ತಾಂಶ;
+	ಸಂದೇಶ_ದತ್ತಾಂಶ.textsearch.type = type;
+	ಸಂದೇಶ_ದತ್ತಾಂಶ.textsearch.ctx = textsearch->gui_p;
+	ಸಂದೇಶ_ದತ್ತಾಂಶ.textsearch.state = state;
+	ಸಂದೇಶ_ದತ್ತಾಂಶ.textsearch.string = string;
+	content_ಪ್ರಸಾರ(textsearch->c, CONTENT_ಸಂದೇಶ_TEXTSEARCH, &ಸಂದೇಶ_ದತ್ತಾಂಶ);
 }
 
 
@@ -134,12 +134,12 @@ textsearch_broadcast(struct textsearch_context *textsearch,
  * Release the memory used by the list of matches,
  * deleting selection objects too
  */
-static void free_matches(struct textsearch_context *textsearch)
+ಸ್ಥಿರ ಶೂನ್ಯ free_matches(ರಚನೆ textsearch_context *textsearch)
 {
-	struct list_entry *cur;
-	struct list_entry *nxt;
+	ರಚನೆ list_ನಮೂದು *cur;
+	ರಚನೆ list_ನಮೂದು *nxt;
 
-	cur = textsearch->found->next;
+	cur = textsearch->ಸಿಕ್ಕಿತು->ಮುಂದಿನ;
 
 	/*
 	 * empty the list before clearing and deleting the selections
@@ -147,15 +147,15 @@ static void free_matches(struct textsearch_context *textsearch)
 	 * causing nested accesses to the list
 	 */
 
-	textsearch->found->prev = NULL;
-	textsearch->found->next = NULL;
+	textsearch->ಸಿಕ್ಕಿತು->prev = ಖಾಲಿ;
+	textsearch->ಸಿಕ್ಕಿತು->ಮುಂದಿನ = ಖಾಲಿ;
 
-	for (; cur; cur = nxt) {
-		nxt = cur->next;
-		if (cur->sel) {
+	ಗಾಗಿ (; cur; cur = nxt) {
+		nxt = cur->ಮುಂದಿನ;
+		ಆದರೆ (cur->sel) {
 			selection_destroy(cur->sel);
 		}
-		free(cur);
+		ಬಿಡುಗಡೆ(cur);
 	}
 }
 
@@ -164,28 +164,28 @@ static void free_matches(struct textsearch_context *textsearch)
  * Specifies whether all matches or just the current match should
  * be highlighted in the search text.
  */
-static void search_show_all(bool all, struct textsearch_context *context)
+ಸ್ಥಿರ ಶೂನ್ಯ ಹುಡುಕು_show_all(bool all, ರಚನೆ textsearch_context *context)
 {
-	struct list_entry *a;
+	ರಚನೆ list_ನಮೂದು *a;
 
-	for (a = context->found->next; a; a = a->next) {
-		bool add = true;
-		if (!all && a != context->current) {
-			add = false;
-			if (a->sel) {
+	ಗಾಗಿ (a = context->ಸಿಕ್ಕಿತು->ಮುಂದಿನ; a; a = a->ಮುಂದಿನ) {
+		bool ಕೂಡಿಸು = true;
+		ಆದರೆ (!all && a != context->current) {
+			ಕೂಡಿಸು = false;
+			ಆದರೆ (a->sel) {
 				selection_destroy(a->sel);
-				a->sel = NULL;
+				a->sel = ಖಾಲಿ;
 			}
 		}
 
-		if (add && !a->sel) {
+		ಆದರೆ (ಕೂಡಿಸು && !a->sel) {
 
 			a->sel = selection_create(context->c);
-			if (a->sel != NULL) {
+			ಆದರೆ (a->sel != ಖಾಲಿ) {
 				selection_init(a->sel);
-				selection_set_position(a->sel,
-						       a->start_idx,
-						       a->end_idx);
+				selection_ಗಣ_position(a->sel,
+						       a->ಆರಂಭ_idx,
+						       a->ಕೊನೆ_idx);
 			}
 		}
 	}
@@ -200,124 +200,124 @@ static void search_show_all(bool all, struct textsearch_context *context)
  * \param string_len length of search string
  * \param flags flags to control the search.
  */
-static nserror
-search_text(struct textsearch_context *context,
-	    const char *string,
-	    int string_len,
-	    search_flags_t flags)
+ಸ್ಥಿರ nserror
+ಹುಡುಕು_ಪಠ್ಯ(ರಚನೆ textsearch_context *context,
+	    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *string,
+	    ಪೂರ್ಣಾಂಕ string_len,
+	    ಹುಡುಕು_flags_t flags)
 {
-	struct rect bounds;
-	union content_msg_data msg_data;
+	ರಚನೆ rect bounds;
+	ಒಕ್ಕೂಟ content_ಸಂದೇಶ_ದತ್ತಾಂಶ ಸಂದೇಶ_ದತ್ತಾಂಶ;
 	bool case_sensitive, forwards, showall;
 	nserror res = NSERROR_OK;
 
-	case_sensitive = ((flags & SEARCH_FLAG_CASE_SENSITIVE) != 0) ?
+	case_sensitive = ((flags & ಹುಡುಕು_FLAG_CASE_SENSITIVE) != 0) ?
 			true : false;
-	forwards = ((flags & SEARCH_FLAG_FORWARDS) != 0) ? true : false;
-	showall = ((flags & SEARCH_FLAG_SHOWALL) != 0) ? true : false;
+	forwards = ((flags & ಹುಡುಕು_FLAG_FORWARDS) != 0) ? true : false;
+	showall = ((flags & ಹುಡುಕು_FLAG_SHOWALL) != 0) ? true : false;
 
-	if (context->c == NULL) {
-		return res;
+	ಆದರೆ (context->c == ಖಾಲಿ) {
+		ಹಿಂತಿರುಗಿ res;
 	}
 
 	/* check if we need to start a new search or continue an old one */
-	if ((context->newsearch) ||
+	ಆದರೆ ((context->newsearch) ||
 	    (context->prev_case_sens != case_sensitive)) {
 
-		if (context->string != NULL) {
-			free(context->string);
+		ಆದರೆ (context->string != ಖಾಲಿ) {
+			ಬಿಡುಗಡೆ(context->string);
 		}
 
-		context->current = NULL;
+		context->current = ಖಾಲಿ;
 		free_matches(context);
 
-		context->string = malloc(string_len + 1);
-		if (context->string != NULL) {
-			memcpy(context->string, string, string_len);
+		context->string = ಸ್ಮರಣೆ_ಕೊಡು(string_len + 1);
+		ಆದರೆ (context->string != ಖಾಲಿ) {
+			ಸ್ಮರಣೆ_ನಕಲು(context->string, string, string_len);
 			context->string[string_len] = '\0';
 		}
 
 		/* indicate find operation starting */
-		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, true, NULL);
+		textsearch_ಪ್ರಸಾರ(context, CONTENT_TEXTSEARCH_ಕಂಡುಹಿಡಿ, true, ಖಾಲಿ);
 
 
 		/* call content find handler */
-		res = context->c->handler->textsearch_find(context->c,
+		res = context->c->handler->textsearch_ಕಂಡುಹಿಡಿ(context->c,
 							   context,
 							   string,
 							   string_len,
 							   case_sensitive);
 
 		/* indicate find operation finished */
-		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, false, NULL);
+		textsearch_ಪ್ರಸಾರ(context, CONTENT_TEXTSEARCH_ಕಂಡುಹಿಡಿ, false, ಖಾಲಿ);
 
-		if (res != NSERROR_OK) {
+		ಆದರೆ (res != NSERROR_OK) {
 			free_matches(context);
-			return res;
+			ಹಿಂತಿರುಗಿ res;
 		}
 
 		context->prev_case_sens = case_sensitive;
 
 		/* new search, beginning at the top of the page */
-		context->current = context->found->next;
+		context->current = context->ಸಿಕ್ಕಿತು->ಮುಂದಿನ;
 		context->newsearch = false;
 
-	} else if (context->current != NULL) {
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (context->current != ಖಾಲಿ) {
 		/* continued search in the direction specified */
-		if (forwards) {
-			if (context->current->next)
-				context->current = context->current->next;
-		} else {
-			if (context->current->prev)
+		ಆದರೆ (forwards) {
+			ಆದರೆ (context->current->ಮುಂದಿನ)
+				context->current = context->current->ಮುಂದಿನ;
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			ಆದರೆ (context->current->prev)
 				context->current = context->current->prev;
 		}
 	}
 
 	/* update match state */
-	textsearch_broadcast(context,
-			     CONTENT_TEXTSEARCH_MATCH,
-			     (context->current != NULL),
-			     NULL);
+	textsearch_ಪ್ರಸಾರ(context,
+			     CONTENT_TEXTSEARCH_ಹೊಂದಿಕೆ,
+			     (context->current != ಖಾಲಿ),
+			     ಖಾಲಿ);
 
-	search_show_all(showall, context);
+	ಹುಡುಕು_show_all(showall, context);
 
 	/* update back state */
-	textsearch_broadcast(context,
-			     CONTENT_TEXTSEARCH_BACK,
-			     ((context->current != NULL) &&
-			      (context->current->prev != NULL)),
-			     NULL);
+	textsearch_ಪ್ರಸಾರ(context,
+			     CONTENT_TEXTSEARCH_ಹಿಂಭಾಗ,
+			     ((context->current != ಖಾಲಿ) &&
+			      (context->current->prev != ಖಾಲಿ)),
+			     ಖಾಲಿ);
 
 	/* update forward state */
-	textsearch_broadcast(context,
+	textsearch_ಪ್ರಸಾರ(context,
 			     CONTENT_TEXTSEARCH_FORWARD,
-			     ((context->current != NULL) &&
-			      (context->current->next != NULL)),
-			     NULL);
+			     ((context->current != ಖಾಲಿ) &&
+			      (context->current->ಮುಂದಿನ != ಖಾಲಿ)),
+			     ಖಾಲಿ);
 
 
-	if (context->current == NULL) {
+	ಆದರೆ (context->current == ಖಾಲಿ) {
 		/* no current match */
-		return res;
+		ಹಿಂತಿರುಗಿ res;
 	}
 
 	/* call content match bounds handler */
 	res = context->c->handler->textsearch_bounds(context->c,
-					context->current->start_idx,
-					context->current->end_idx,
-					context->current->start_box,
-					context->current->end_box,
+					context->current->ಆರಂಭ_idx,
+					context->current->ಕೊನೆ_idx,
+					context->current->ಆರಂಭ_box,
+					context->current->ಕೊನೆ_box,
 					&bounds);
-	if (res == NSERROR_OK) {
-		msg_data.scroll.area = true;
-		msg_data.scroll.x0 = bounds.x0;
-		msg_data.scroll.y0 = bounds.y0;
-		msg_data.scroll.x1 = bounds.x1;
-		msg_data.scroll.y1 = bounds.y1;
-		content_broadcast(context->c, CONTENT_MSG_SCROLL, &msg_data);
+	ಆದರೆ (res == NSERROR_OK) {
+		ಸಂದೇಶ_ದತ್ತಾಂಶ.scroll.area = true;
+		ಸಂದೇಶ_ದತ್ತಾಂಶ.scroll.x0 = bounds.x0;
+		ಸಂದೇಶ_ದತ್ತಾಂಶ.scroll.y0 = bounds.y0;
+		ಸಂದೇಶ_ದತ್ತಾಂಶ.scroll.x1 = bounds.x1;
+		ಸಂದೇಶ_ದತ್ತಾಂಶ.scroll.y1 = bounds.y1;
+		content_ಪ್ರಸಾರ(context->c, CONTENT_ಸಂದೇಶ_SCROLL, &ಸಂದೇಶ_ದತ್ತಾಂಶ);
 	}
 
-	return res;
+	ಹಿಂತಿರುಗಿ res;
 }
 
 
@@ -330,64 +330,64 @@ search_text(struct textsearch_context *context,
  * \param flags   The flags forward/back etc
  * \param string  The string to match
  */
-static nserror
-content_textsearch_step(struct textsearch_context *textsearch,
-			search_flags_t flags,
-			const char *string)
+ಸ್ಥಿರ nserror
+content_textsearch_ಹೆಜ್ಜೆ(ರಚನೆ textsearch_context *textsearch,
+			ಹುಡುಕು_flags_t flags,
+			ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *string)
 {
-	int string_len;
-	int i = 0;
+	ಪೂರ್ಣಾಂಕ string_len;
+	ಪೂರ್ಣಾಂಕ i = 0;
 	nserror res = NSERROR_OK;
 
-	assert(textsearch != NULL);
+	ಪ್ರತಿಜ್ಞಾ(textsearch != ಖಾಲಿ);
 
 	/* broadcast recent query string */
-	textsearch_broadcast(textsearch,
+	textsearch_ಪ್ರಸಾರ(textsearch,
 			     CONTENT_TEXTSEARCH_RECENT,
 			     false,
 			     string);
 
-	string_len = strlen(string);
-	for (i = 0; i < string_len; i++) {
-		if (string[i] != '#' && string[i] != '*')
-			break;
+	string_len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(string);
+	ಗಾಗಿ (i = 0; i < string_len; i++) {
+		ಆದರೆ (string[i] != '#' && string[i] != '*')
+			ನಿಲ್ಲಿಸು;
 	}
 
-	if (i < string_len) {
-		res = search_text(textsearch, string, string_len, flags);
-	} else {
-		union content_msg_data msg_data;
+	ಆದರೆ (i < string_len) {
+		res = ಹುಡುಕು_ಪಠ್ಯ(textsearch, string, string_len, flags);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಒಕ್ಕೂಟ content_ಸಂದೇಶ_ದತ್ತಾಂಶ ಸಂದೇಶ_ದತ್ತಾಂಶ;
 
 		free_matches(textsearch);
 
 		/* update match state */
-		textsearch_broadcast(textsearch,
-				     CONTENT_TEXTSEARCH_MATCH,
+		textsearch_ಪ್ರಸಾರ(textsearch,
+				     CONTENT_TEXTSEARCH_ಹೊಂದಿಕೆ,
 				     true,
-				     NULL);
+				     ಖಾಲಿ);
 
 		/* update back state */
-		textsearch_broadcast(textsearch,
-				     CONTENT_TEXTSEARCH_BACK,
+		textsearch_ಪ್ರಸಾರ(textsearch,
+				     CONTENT_TEXTSEARCH_ಹಿಂಭಾಗ,
 				     false,
-				     NULL);
+				     ಖಾಲಿ);
 
 		/* update forward state */
-		textsearch_broadcast(textsearch,
+		textsearch_ಪ್ರಸಾರ(textsearch,
 				     CONTENT_TEXTSEARCH_FORWARD,
 				     false,
-				     NULL);
+				     ಖಾಲಿ);
 
 		/* clear scroll */
-		msg_data.scroll.area = false;
-		msg_data.scroll.x0 = 0;
-		msg_data.scroll.y0 = 0;
-		content_broadcast(textsearch->c,
-				  CONTENT_MSG_SCROLL,
-				  &msg_data);
+		ಸಂದೇಶ_ದತ್ತಾಂಶ.scroll.area = false;
+		ಸಂದೇಶ_ದತ್ತಾಂಶ.scroll.x0 = 0;
+		ಸಂದೇಶ_ದತ್ತಾಂಶ.scroll.y0 = 0;
+		content_ಪ್ರಸಾರ(textsearch->c,
+				  CONTENT_ಸಂದೇಶ_SCROLL,
+				  &ಸಂದೇಶ_ದತ್ತಾಂಶ);
 	}
 
-	return res;
+	ಹಿಂತಿರುಗಿ res;
 }
 
 
@@ -396,16 +396,16 @@ content_textsearch_step(struct textsearch_context *textsearch,
  *
  * \param c content to clear
  */
-static nserror content_textsearch__clear(struct content *c)
+ಸ್ಥಿರ nserror content_textsearch__clear(ರಚನೆ content *c)
 {
-	free(c->textsearch.string);
-	c->textsearch.string = NULL;
+	ಬಿಡುಗಡೆ(c->textsearch.string);
+	c->textsearch.string = ಖಾಲಿ;
 
-	if (c->textsearch.context != NULL) {
+	ಆದರೆ (c->textsearch.context != ಖಾಲಿ) {
 		content_textsearch_destroy(c->textsearch.context);
-		c->textsearch.context = NULL;
+		c->textsearch.context = ಖಾಲಿ;
 	}
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
 
@@ -417,324 +417,324 @@ static nserror content_textsearch__clear(struct content *c)
  * \param search_out A pointer to recive the new text search context
  * \return NSERROR_OK on success and \a search_out updated else error code
  */
-static nserror
-content_textsearch_create(struct content *c,
-			  void *gui_data,
-			  struct textsearch_context **textsearch_out)
+ಸ್ಥಿರ nserror
+content_textsearch_create(ರಚನೆ content *c,
+			  ಶೂನ್ಯ *gui_ದತ್ತಾಂಶ,
+			  ರಚನೆ textsearch_context **textsearch_ಹೊರಹೋಗು)
 {
-	struct textsearch_context *context;
-	struct list_entry *search_head;
+	ರಚನೆ textsearch_context *context;
+	ರಚನೆ list_ನಮೂದು *ಹುಡುಕು_ತಲೆ;
 	content_type type;
 
-	if ((c->handler->textsearch_find == NULL) ||
-	    (c->handler->textsearch_bounds == NULL)) {
+	ಆದರೆ ((c->handler->textsearch_ಕಂಡುಹಿಡಿ == ಖಾಲಿ) ||
+	    (c->handler->textsearch_bounds == ಖಾಲಿ)) {
 		/*
 		 * content has no free text find handler so searching
 		 *   is unsupported.
 		 */
-		return NSERROR_NOT_IMPLEMENTED;
+		ಹಿಂತಿರುಗಿ NSERROR_NOT_IMPLEMENTED;
 	}
 
 	type = c->handler->type();
 
-	context = malloc(sizeof(struct textsearch_context));
-	if (context == NULL) {
-		return NSERROR_NOMEM;
+	context = ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ(ರಚನೆ textsearch_context));
+	ಆದರೆ (context == ಖಾಲಿ) {
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 	}
 
-	search_head = malloc(sizeof(struct list_entry));
-	if (search_head == NULL) {
-		free(context);
-		return NSERROR_NOMEM;
+	ಹುಡುಕು_ತಲೆ = ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ(ರಚನೆ list_ನಮೂದು));
+	ಆದರೆ (ಹುಡುಕು_ತಲೆ == ಖಾಲಿ) {
+		ಬಿಡುಗಡೆ(context);
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 	}
 
-	search_head->start_idx = 0;
-	search_head->end_idx = 0;
-	search_head->start_box = NULL;
-	search_head->end_box = NULL;
-	search_head->sel = NULL;
-	search_head->prev = NULL;
-	search_head->next = NULL;
+	ಹುಡುಕು_ತಲೆ->ಆರಂಭ_idx = 0;
+	ಹುಡುಕು_ತಲೆ->ಕೊನೆ_idx = 0;
+	ಹುಡುಕು_ತಲೆ->ಆರಂಭ_box = ಖಾಲಿ;
+	ಹುಡುಕು_ತಲೆ->ಕೊನೆ_box = ಖಾಲಿ;
+	ಹುಡುಕು_ತಲೆ->sel = ಖಾಲಿ;
+	ಹುಡುಕು_ತಲೆ->prev = ಖಾಲಿ;
+	ಹುಡುಕು_ತಲೆ->ಮುಂದಿನ = ಖಾಲಿ;
 
-	context->found = search_head;
-	context->current = NULL;
-	context->string = NULL;
+	context->ಸಿಕ್ಕಿತು = ಹುಡುಕು_ತಲೆ;
+	context->current = ಖಾಲಿ;
+	context->string = ಖಾಲಿ;
 	context->prev_case_sens = false;
 	context->newsearch = true;
 	context->c = c;
-	context->gui_p = gui_data;
+	context->gui_p = gui_ದತ್ತಾಂಶ;
 
-	*textsearch_out = context;
+	*textsearch_ಹೊರಹೋಗು = context;
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
-const char *
-content_textsearch_find_pattern(const char *string,
-				int s_len,
-				const char *pattern,
-				int p_len,
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+content_textsearch_ಕಂಡುಹಿಡಿ_ನಮೂನೆ(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *string,
+				ಪೂರ್ಣಾಂಕ s_len,
+				ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ನಮೂನೆ,
+				ಪೂರ್ಣಾಂಕ p_len,
 				bool case_sens,
-				unsigned int *m_len)
+				ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ *m_len)
 {
-	struct { const char *ss, *s, *p; bool first; } context[16];
-	const char *ep = pattern + p_len;
-	const char *es = string  + s_len;
-	const char *p = pattern - 1;  /* a virtual '*' before the pattern */
-	const char *ss = string;
-	const char *s = string;
-	bool first = true;
-	int top = 0;
+	ರಚನೆ { ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ss, *s, *p; bool ಮೊದಲ; } context[16];
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ep = ನಮೂನೆ + p_len;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *es = string  + s_len;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *p = ನಮೂನೆ - 1;  /* a virtual '*' before the pattern */
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ss = string;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s = string;
+	bool ಮೊದಲ = true;
+	ಪೂರ್ಣಾಂಕ ತುದಿ = 0;
 
-	while (p < ep) {
+	ಆಗ (p < ep) {
 		bool matches;
-		if (p < pattern || *p == '*') {
-			char ch;
+		ಆದರೆ (p < ನಮೂನೆ || *p == '*') {
+			ಅಕ್ಷರ ch;
 
 			/* skip any further asterisks; one is the same as many
 			*/
-			do p++; while (p < ep && *p == '*');
+			ಮಾಡು p++; ಆಗ (p < ep && *p == '*');
 
 			/* if we're at the end of the pattern, yes, it matches
 			*/
-			if (p >= ep) break;
+			ಆದರೆ (p >= ep) ನಿಲ್ಲಿಸು;
 
 			/* anything matches a # so continue matching from
 			   here, and stack a context that will try to match
 			   the wildcard against the next character */
 
 			ch = *p;
-			if (ch != '#') {
+			ಆದರೆ (ch != '#') {
 				/* scan forwards until we find a match for
 				   this char */
-				if (!case_sens) ch = ascii_to_upper(ch);
-				while (s < es) {
-					if (case_sens) {
-						if (*s == ch) break;
-					} else if (ascii_to_upper(*s) == ch)
-						break;
+				ಆದರೆ (!case_sens) ch = ascii_ಗಮ್ಯ_ಊರ್ಧ್ವ(ch);
+				ಆಗ (s < es) {
+					ಆದರೆ (case_sens) {
+						ಆದರೆ (*s == ch) ನಿಲ್ಲಿಸು;
+					} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ascii_ಗಮ್ಯ_ಊರ್ಧ್ವ(*s) == ch)
+						ನಿಲ್ಲಿಸು;
 					s++;
 				}
 			}
 
-			if (s < es) {
+			ಆದರೆ (s < es) {
 				/* remember where we are in case the match
 				   fails; we may then resume */
-				if (top < (int)NOF_ELEMENTS(context)) {
-					context[top].ss = ss;
-					context[top].s  = s + 1;
-					context[top].p  = p - 1;
+				ಆದರೆ (ತುದಿ < (ಪೂರ್ಣಾಂಕ)NOF_ELEMENTS(context)) {
+					context[ತುದಿ].ss = ss;
+					context[ತುದಿ].s  = s + 1;
+					context[ತುದಿ].p  = p - 1;
 					/* ptr to last asterisk */
-					context[top].first = first;
-					top++;
+					context[ತುದಿ].ಮೊದಲ = ಮೊದಲ;
+					ತುದಿ++;
 				}
 
-				if (first) {
+				ಆದರೆ (ಮೊದಲ) {
 					ss = s;
 					/* remember first non-'*' char */
-					first = false;
+					ಮೊದಲ = false;
 				}
 
 				matches = true;
-			} else {
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				matches = false;
 			}
 
-		} else if (s < es) {
-			char ch = *p;
-			if (ch == '#')
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (s < es) {
+			ಅಕ್ಷರ ch = *p;
+			ಆದರೆ (ch == '#')
 				matches = true;
-			else {
-				if (case_sens)
+			ಇಲ್ಲದಿದ್ದರೆ {
+				ಆದರೆ (case_sens)
 					matches = (*s == ch);
-				else
-					matches = (ascii_to_upper(*s) == ascii_to_upper(ch));
+				ಇಲ್ಲದಿದ್ದರೆ
+					matches = (ascii_ಗಮ್ಯ_ಊರ್ಧ್ವ(*s) == ascii_ಗಮ್ಯ_ಊರ್ಧ್ವ(ch));
 			}
-			if (matches && first) {
+			ಆದರೆ (matches && ಮೊದಲ) {
 				ss = s;  /* remember first non-'*' char */
-				first = false;
+				ಮೊದಲ = false;
 			}
-		} else {
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			matches = false;
 		}
 
-		if (matches) {
+		ಆದರೆ (matches) {
 			p++; s++;
-		} else {
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			/* doesn't match,
 			 * resume with stacked context if we have one */
-			if (--top < 0)
-				return NULL;  /* no match, give up */
+			ಆದರೆ (--ತುದಿ < 0)
+				ಹಿಂತಿರುಗಿ ಖಾಲಿ;  /* no match, give up */
 
-			ss = context[top].ss;
-			s  = context[top].s;
-			p  = context[top].p;
-			first = context[top].first;
+			ss = context[ತುದಿ].ss;
+			s  = context[ತುದಿ].s;
+			p  = context[ತುದಿ].p;
+			ಮೊದಲ = context[ತುದಿ].ಮೊದಲ;
 		}
 	}
 
 	/* end of pattern reached */
 	*m_len = max(s - ss, 1);
-	return ss;
+	ಹಿಂತಿರುಗಿ ss;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
 nserror
-content_textsearch_add_match(struct textsearch_context *context,
-			     unsigned start_idx,
-			     unsigned end_idx,
-			     struct box *start_box,
-			     struct box *end_box)
+content_textsearch_ಕೂಡಿಸು_ಹೊಂದಿಕೆ(ರಚನೆ textsearch_context *context,
+			     ಚಿಹ್ನೆರಹಿತ ಆರಂಭ_idx,
+			     ಚಿಹ್ನೆರಹಿತ ಕೊನೆ_idx,
+			     ರಚನೆ box *ಆರಂಭ_box,
+			     ರಚನೆ box *ಕೊನೆ_box)
 {
-	struct list_entry *entry;
+	ರಚನೆ list_ನಮೂದು *ನಮೂದು;
 
 	/* found string in box => add to list */
-	entry = calloc(1, sizeof(*entry));
-	if (entry == NULL) {
-		return NSERROR_NOMEM;
+	ನಮೂದು = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(*ನಮೂದು));
+	ಆದರೆ (ನಮೂದು == ಖಾಲಿ) {
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 	}
 
-	entry->start_idx = start_idx;
-	entry->end_idx = end_idx;
-	entry->start_box = start_box;
-	entry->end_box = end_box;
-	entry->sel = NULL;
+	ನಮೂದು->ಆರಂಭ_idx = ಆರಂಭ_idx;
+	ನಮೂದು->ಕೊನೆ_idx = ಕೊನೆ_idx;
+	ನಮೂದು->ಆರಂಭ_box = ಆರಂಭ_box;
+	ನಮೂದು->ಕೊನೆ_box = ಕೊನೆ_box;
+	ನಮೂದು->sel = ಖಾಲಿ;
 
-	entry->next = NULL;
-	entry->prev = context->found->prev;
+	ನಮೂದು->ಮುಂದಿನ = ಖಾಲಿ;
+	ನಮೂದು->prev = context->ಸಿಕ್ಕಿತು->prev;
 
-	if (context->found->prev == NULL) {
-		context->found->next = entry;
-	} else {
-		context->found->prev->next = entry;
+	ಆದರೆ (context->ಸಿಕ್ಕಿತು->prev == ಖಾಲಿ) {
+		context->ಸಿಕ್ಕಿತು->ಮುಂದಿನ = ನಮೂದು;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		context->ಸಿಕ್ಕಿತು->prev->ಮುಂದಿನ = ನಮೂದು;
 	}
 
-	context->found->prev = entry;
+	context->ಸಿಕ್ಕಿತು->prev = ನಮೂದು;
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
 bool
-content_textsearch_ishighlighted(struct textsearch_context *textsearch,
-				 unsigned start_offset,
-				 unsigned end_offset,
-				 unsigned *start_idx,
-				 unsigned *end_idx)
+content_textsearch_ishighlighted(ರಚನೆ textsearch_context *textsearch,
+				 ಚಿಹ್ನೆರಹಿತ ಆರಂಭ_ಸ್ಥಾನಾಂತರ,
+				 ಚಿಹ್ನೆರಹಿತ ಕೊನೆ_ಸ್ಥಾನಾಂತರ,
+				 ಚಿಹ್ನೆರಹಿತ *ಆರಂಭ_idx,
+				 ಚಿಹ್ನೆರಹಿತ *ಕೊನೆ_idx)
 {
-	struct list_entry *cur;
+	ರಚನೆ list_ನಮೂದು *cur;
 
-	for (cur = textsearch->found->next; cur != NULL; cur = cur->next) {
-		if (cur->sel &&
+	ಗಾಗಿ (cur = textsearch->ಸಿಕ್ಕಿತು->ಮುಂದಿನ; cur != ಖಾಲಿ; cur = cur->ಮುಂದಿನ) {
+		ಆದರೆ (cur->sel &&
 		    selection_highlighted(cur->sel,
-					  start_offset,
-					  end_offset,
-					  start_idx,
-					  end_idx)) {
-			return true;
+					  ಆರಂಭ_ಸ್ಥಾನಾಂತರ,
+					  ಕೊನೆ_ಸ್ಥಾನಾಂತರ,
+					  ಆರಂಭ_idx,
+					  ಕೊನೆ_idx)) {
+			ಹಿಂತಿರುಗಿ true;
 		}
 	}
 
-	return false;
+	ಹಿಂತಿರುಗಿ false;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
-nserror content_textsearch_destroy(struct textsearch_context *textsearch)
+nserror content_textsearch_destroy(ರಚನೆ textsearch_context *textsearch)
 {
-	assert(textsearch != NULL);
+	ಪ್ರತಿಜ್ಞಾ(textsearch != ಖಾಲಿ);
 
-	if (textsearch->string != NULL) {
+	ಆದರೆ (textsearch->string != ಖಾಲಿ) {
 		/* broadcast recent query string */
-		textsearch_broadcast(textsearch,
+		textsearch_ಪ್ರಸಾರ(textsearch,
 				     CONTENT_TEXTSEARCH_RECENT,
 				     false,
 				     textsearch->string);
 
-		free(textsearch->string);
+		ಬಿಡುಗಡೆ(textsearch->string);
 	}
 
 	/* update back state */
-	textsearch_broadcast(textsearch,
-			     CONTENT_TEXTSEARCH_BACK,
+	textsearch_ಪ್ರಸಾರ(textsearch,
+			     CONTENT_TEXTSEARCH_ಹಿಂಭಾಗ,
 			     true,
-			     NULL);
+			     ಖಾಲಿ);
 
 	/* update forward state */
-	textsearch_broadcast(textsearch,
+	textsearch_ಪ್ರಸಾರ(textsearch,
 			     CONTENT_TEXTSEARCH_FORWARD,
 			     true,
-			     NULL);
+			     ಖಾಲಿ);
 
 	free_matches(textsearch);
-	free(textsearch);
+	ಬಿಡುಗಡೆ(textsearch);
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/content.h */
 nserror
-content_textsearch(struct hlcache_handle *h,
-		   void *context,
-		   search_flags_t flags,
-		   const char *string)
+content_textsearch(ರಚನೆ hlcache_handle *h,
+		   ಶೂನ್ಯ *context,
+		   ಹುಡುಕು_flags_t flags,
+		   ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *string)
 {
-	struct content *c = hlcache_handle_get_content(h);
+	ರಚನೆ content *c = hlcache_handle_get_content(h);
 	nserror res;
 
-	assert(c != NULL);
+	ಪ್ರತಿಜ್ಞಾ(c != ಖಾಲಿ);
 
-	if (string != NULL &&
-	    c->textsearch.string != NULL &&
-	    c->textsearch.context != NULL &&
+	ಆದರೆ (string != ಖಾಲಿ &&
+	    c->textsearch.string != ಖಾಲಿ &&
+	    c->textsearch.context != ಖಾಲಿ &&
 	    strcmp(string, c->textsearch.string) == 0) {
 		/* Continue prev. search */
-		content_textsearch_step(c->textsearch.context, flags, string);
+		content_textsearch_ಹೆಜ್ಜೆ(c->textsearch.context, flags, string);
 
-	} else if (string != NULL) {
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (string != ಖಾಲಿ) {
 		/* New search */
-		free(c->textsearch.string);
+		ಬಿಡುಗಡೆ(c->textsearch.string);
 		c->textsearch.string = strdup(string);
-		if (c->textsearch.string == NULL) {
-			return NSERROR_NOMEM;
+		ಆದರೆ (c->textsearch.string == ಖಾಲಿ) {
+			ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 		}
 
-		if (c->textsearch.context != NULL) {
+		ಆದರೆ (c->textsearch.context != ಖಾಲಿ) {
 			content_textsearch_destroy(c->textsearch.context);
-			c->textsearch.context = NULL;
+			c->textsearch.context = ಖಾಲಿ;
 		}
 
 		res = content_textsearch_create(c,
 						context,
 						&c->textsearch.context);
-		if (res != NSERROR_OK) {
-			return res;
+		ಆದರೆ (res != NSERROR_OK) {
+			ಹಿಂತಿರುಗಿ res;
 		}
 
-		content_textsearch_step(c->textsearch.context, flags, string);
+		content_textsearch_ಹೆಜ್ಜೆ(c->textsearch.context, flags, string);
 
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		/* Clear search */
 		content_textsearch__clear(c);
 
-		free(c->textsearch.string);
-		c->textsearch.string = NULL;
+		ಬಿಡುಗಡೆ(c->textsearch.string);
+		c->textsearch.string = ಖಾಲಿ;
 	}
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/content.h */
-nserror content_textsearch_clear(struct hlcache_handle *h)
+nserror content_textsearch_clear(ರಚನೆ hlcache_handle *h)
 {
-	struct content *c = hlcache_handle_get_content(h);
-	assert(c != 0);
+	ರಚನೆ content *c = hlcache_handle_get_content(h);
+	ಪ್ರತಿಜ್ಞಾ(c != 0);
 
-	return(content_textsearch__clear(c));
+	ಹಿಂತಿರುಗಿ(content_textsearch__clear(c));
 }

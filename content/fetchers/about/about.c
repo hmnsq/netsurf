@@ -26,70 +26,70 @@
  * information from the browser from a known, fixed URL.
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
 
-#include "netsurf/inttypes.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/inttypes.h"
 
-#include "utils/errors.h"
-#include "utils/nsurl.h"
-#include "utils/corestrings.h"
-#include "utils/utils.h"
-#include "utils/ring.h"
-#include "utils/messages.h"
+#ಅನ್ತರ್ಭಾವ "utils/errors.h"
+#ಅನ್ತರ್ಭಾವ "utils/nsurl.h"
+#ಅನ್ತರ್ಭಾವ "utils/corestrings.h"
+#ಅನ್ತರ್ಭಾವ "utils/utils.h"
+#ಅನ್ತರ್ಭಾವ "utils/ring.h"
+#ಅನ್ತರ್ಭಾವ "utils/messages.h"
 
-#include "content/fetch.h"
-#include "content/fetchers.h"
+#ಅನ್ತರ್ಭಾವ "content/fetch.h"
+#ಅನ್ತರ್ಭಾವ "content/fetchers.h"
 
-#include "private.h"
-#include "about.h"
-#include "blank.h"
-#include "certificate.h"
-#include "config.h"
-#include "chart.h"
-#include "choices.h"
-#include "imagecache.h"
-#include "nscolours.h"
-#include "query.h"
-#include "query_auth.h"
-#include "query_fetcherror.h"
-#include "query_privacy.h"
-#include "query_timeout.h"
-#include "atestament.h"
-#include "websearch.h"
+#ಅನ್ತರ್ಭಾವ "private.h"
+#ಅನ್ತರ್ಭಾವ "about.h"
+#ಅನ್ತರ್ಭಾವ "blank.h"
+#ಅನ್ತರ್ಭಾವ "certificate.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ "chart.h"
+#ಅನ್ತರ್ಭಾವ "choices.h"
+#ಅನ್ತರ್ಭಾವ "imagecache.h"
+#ಅನ್ತರ್ಭಾವ "nscolours.h"
+#ಅನ್ತರ್ಭಾವ "query.h"
+#ಅನ್ತರ್ಭಾವ "query_auth.h"
+#ಅನ್ತರ್ಭಾವ "query_fetcherror.h"
+#ಅನ್ತರ್ಭಾವ "query_privacy.h"
+#ಅನ್ತರ್ಭಾವ "query_timeout.h"
+#ಅನ್ತರ್ಭಾವ "atestament.h"
+#ಅನ್ತರ್ಭಾವ "websearch.h"
 
-typedef bool (*fetch_about_handler)(struct fetch_about_context *);
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ bool (*fetch_about_handler)(ರಚನೆ fetch_about_context *);
 
 /**
  * Context for an about fetch
  */
-struct fetch_about_context {
-	struct fetch_about_context *r_next, *r_prev;
+ರಚನೆ fetch_about_context {
+	ರಚನೆ fetch_about_context *r_ಮುಂದಿನ, *r_prev;
 
-	struct fetch *fetchh; /**< Handle for this fetch */
+	ರಚನೆ fetch *fetchh; /**< Handle for this fetch */
 
 	bool aborted; /**< Flag indicating fetch has been aborted */
 	bool locked; /**< Flag indicating entry is already entered */
 
 	nsurl *url; /**< The full url the fetch refers to */
 
-	const struct fetch_multipart_data *multipart; /**< post data */
+	ಸ್ಥಿರಾಂಕ ರಚನೆ fetch_multipart_ದತ್ತಾಂಶ *multipart; /**< post data */
 
 	fetch_about_handler handler;
 };
 
-static struct fetch_about_context *ring = NULL;
+ಸ್ಥಿರ ರಚನೆ fetch_about_context *ring = ಖಾಲಿ;
 
 /**
  * handler info for about scheme
  */
-struct about_handlers {
-	const char *name; /**< name to match in url */
-	int name_len;
+ರಚನೆ about_handlers {
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name; /**< name to match in url */
+	ಪೂರ್ಣಾಂಕ name_len;
 	lwc_string *lname; /**< Interned name */
 	fetch_about_handler handler; /**< handler for the url */
 	bool hidden; /**< If entry should be hidden in listing */
@@ -100,102 +100,102 @@ struct about_handlers {
 /**
  * issue fetch callbacks with locking
  */
-static bool
-fetch_about_send_callback(const fetch_msg *msg, struct fetch_about_context *ctx)
+ಸ್ಥಿರ bool
+fetch_about_send_callback(ಸ್ಥಿರಾಂಕ fetch_ಸಂದೇಶ *ಸಂದೇಶ, ರಚನೆ fetch_about_context *ctx)
 {
 	ctx->locked = true;
-	fetch_send_callback(msg, ctx->fetchh);
+	fetch_send_callback(ಸಂದೇಶ, ctx->fetchh);
 	ctx->locked = false;
 
-	return ctx->aborted;
+	ಹಿಂತಿರುಗಿ ctx->aborted;
 }
 
 /* exported interface documented in about/private.h */
 bool
-fetch_about_send_finished(struct fetch_about_context *ctx)
+fetch_about_send_ಪೂರ್ಣಗೊಂಡ(ರಚನೆ fetch_about_context *ctx)
 {
-	fetch_msg msg;
-	msg.type = FETCH_FINISHED;
-	return fetch_about_send_callback(&msg, ctx);
+	fetch_ಸಂದೇಶ ಸಂದೇಶ;
+	ಸಂದೇಶ.type = FETCH_ಪೂರ್ಣಗೊಂಡ;
+	ಹಿಂತಿರುಗಿ fetch_about_send_callback(&ಸಂದೇಶ, ctx);
 }
 
 /* exported interface documented in about/private.h */
-bool fetch_about_set_http_code(struct fetch_about_context *ctx, long code)
+bool fetch_about_ಗಣ_http_ಸಂಕೇತ(ರಚನೆ fetch_about_context *ctx, ದೀರ್ಘ ಸಂಕೇತ_2)
 {
-	fetch_set_http_code(ctx->fetchh, code);
+	fetch_ಗಣ_http_ಸಂಕೇತ(ctx->fetchh, ಸಂಕೇತ_2);
 
-	return ctx->aborted;
+	ಹಿಂತಿರುಗಿ ctx->aborted;
 }
 
 /* exported interface documented in about/private.h */
 bool
-fetch_about_send_header(struct fetch_about_context *ctx, const char *fmt, ...)
+fetch_about_send_ಶೀರ್ಷಿಕೆ(ರಚನೆ fetch_about_context *ctx, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, ...)
 {
-	char header[64];
-	fetch_msg msg;
+	ಅಕ್ಷರ ಶೀರ್ಷಿಕೆ[64];
+	fetch_ಸಂದೇಶ ಸಂದೇಶ;
 	va_list ap;
 
 	va_start(ap, fmt);
 
-	vsnprintf(header, sizeof header, fmt, ap);
+	vsnprintf(ಶೀರ್ಷಿಕೆ, ಗಾತ್ರ ಶೀರ್ಷಿಕೆ, fmt, ap);
 
 	va_end(ap);
 
-	msg.type = FETCH_HEADER;
-	msg.data.header_or_data.buf = (const uint8_t *) header;
-	msg.data.header_or_data.len = strlen(header);
+	ಸಂದೇಶ.type = FETCH_ಶೀರ್ಷಿಕೆ;
+	ಸಂದೇಶ.ದತ್ತಾಂಶ.ಶೀರ್ಷಿಕೆ_or_ದತ್ತಾಂಶ.buf = (ಸ್ಥಿರಾಂಕ uint8_t *) ಶೀರ್ಷಿಕೆ;
+	ಸಂದೇಶ.ದತ್ತಾಂಶ.ಶೀರ್ಷಿಕೆ_or_ದತ್ತಾಂಶ.len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಶೀರ್ಷಿಕೆ);
 
-	return fetch_about_send_callback(&msg, ctx);
+	ಹಿಂತಿರುಗಿ fetch_about_send_callback(&ಸಂದೇಶ, ctx);
 }
 
 /* exported interface documented in about/private.h */
 nserror
-fetch_about_senddata(struct fetch_about_context *ctx, const uint8_t *data, size_t data_len)
+fetch_about_senddata(ರಚನೆ fetch_about_context *ctx, ಸ್ಥಿರಾಂಕ uint8_t *ದತ್ತಾಂಶ, size_t ದತ್ತಾಂಶ_len)
 {
-	fetch_msg msg;
+	fetch_ಸಂದೇಶ ಸಂದೇಶ;
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = data;
-	msg.data.header_or_data.len = data_len;
+	ಸಂದೇಶ.type = FETCH_ದತ್ತಾಂಶ;
+	ಸಂದೇಶ.ದತ್ತಾಂಶ.ಶೀರ್ಷಿಕೆ_or_ದತ್ತಾಂಶ.buf = ದತ್ತಾಂಶ;
+	ಸಂದೇಶ.ದತ್ತಾಂಶ.ಶೀರ್ಷಿಕೆ_or_ದತ್ತಾಂಶ.len = ದತ್ತಾಂಶ_len;
 
-	if (fetch_about_send_callback(&msg, ctx)) {
-		return NSERROR_INVALID;
+	ಆದರೆ (fetch_about_send_callback(&ಸಂದೇಶ, ctx)) {
+		ಹಿಂತಿರುಗಿ NSERROR_INVALID;
 	}
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
 /* exported interface documented in about/private.h */
 nserror
-fetch_about_ssenddataf(struct fetch_about_context *ctx, const char *fmt, ...)
+fetch_about_ssenddataf(ರಚನೆ fetch_about_context *ctx, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, ...)
 {
-	char buffer[1024];
-	char *dbuff;
-	fetch_msg msg;
+	ಅಕ್ಷರ ಬಫರ್[1024];
+	ಅಕ್ಷರ *dbuff;
+	fetch_ಸಂದೇಶ ಸಂದೇಶ;
 	va_list ap;
-	int slen;
+	ಪೂರ್ಣಾಂಕ slen;
 
 	va_start(ap, fmt);
 
-	slen = vsnprintf(buffer, sizeof(buffer), fmt, ap);
+	slen = vsnprintf(ಬಫರ್, ಗಾತ್ರ(ಬಫರ್), fmt, ap);
 
 	va_end(ap);
 
-	if (slen < (int)sizeof(buffer)) {
-		msg.type = FETCH_DATA;
-		msg.data.header_or_data.buf = (const uint8_t *) buffer;
-		msg.data.header_or_data.len = slen;
+	ಆದರೆ (slen < (ಪೂರ್ಣಾಂಕ)ಗಾತ್ರ(ಬಫರ್)) {
+		ಸಂದೇಶ.type = FETCH_ದತ್ತಾಂಶ;
+		ಸಂದೇಶ.ದತ್ತಾಂಶ.ಶೀರ್ಷಿಕೆ_or_ದತ್ತಾಂಶ.buf = (ಸ್ಥಿರಾಂಕ uint8_t *) ಬಫರ್;
+		ಸಂದೇಶ.ದತ್ತಾಂಶ.ಶೀರ್ಷಿಕೆ_or_ದತ್ತಾಂಶ.len = slen;
 
-		if (fetch_about_send_callback(&msg, ctx)) {
-			return NSERROR_INVALID;
+		ಆದರೆ (fetch_about_send_callback(&ಸಂದೇಶ, ctx)) {
+			ಹಿಂತಿರುಗಿ NSERROR_INVALID;
 		}
 
-		return NSERROR_OK;
+		ಹಿಂತಿರುಗಿ NSERROR_OK;
 	}
 
-	dbuff = malloc(slen + 1);
-	if (dbuff == NULL) {
-		return NSERROR_NOSPACE;
+	dbuff = ಸ್ಮರಣೆ_ಕೊಡು(slen + 1);
+	ಆದರೆ (dbuff == ಖಾಲಿ) {
+		ಹಿಂತಿರುಗಿ NSERROR_NOSPACE;
 	}
 
 	va_start(ap, fmt);
@@ -204,71 +204,71 @@ fetch_about_ssenddataf(struct fetch_about_context *ctx, const char *fmt, ...)
 
 	va_end(ap);
 
-	msg.type = FETCH_DATA;
-	msg.data.header_or_data.buf = (const uint8_t *)dbuff;
-	msg.data.header_or_data.len = slen;
+	ಸಂದೇಶ.type = FETCH_ದತ್ತಾಂಶ;
+	ಸಂದೇಶ.ದತ್ತಾಂಶ.ಶೀರ್ಷಿಕೆ_or_ದತ್ತಾಂಶ.buf = (ಸ್ಥಿರಾಂಕ uint8_t *)dbuff;
+	ಸಂದೇಶ.ದತ್ತಾಂಶ.ಶೀರ್ಷಿಕೆ_or_ದತ್ತಾಂಶ.len = slen;
 
-	if (fetch_about_send_callback(&msg, ctx)) {
-		free(dbuff);
-		return NSERROR_INVALID;
+	ಆದರೆ (fetch_about_send_callback(&ಸಂದೇಶ, ctx)) {
+		ಬಿಡುಗಡೆ(dbuff);
+		ಹಿಂತಿರುಗಿ NSERROR_INVALID;
 	}
 
-	free(dbuff);
-	return NSERROR_OK;
+	ಬಿಡುಗಡೆ(dbuff);
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
 
 /* exported interface documented in about/private.h */
-nsurl *fetch_about_get_url(struct fetch_about_context *ctx)
+nsurl *fetch_about_get_url(ರಚನೆ fetch_about_context *ctx)
 {
-	return ctx->url;
+	ಹಿಂತಿರುಗಿ ctx->url;
 }
 
 
 /* exported interface documented in about/private.h */
-const struct fetch_multipart_data *
-fetch_about_get_multipart(struct fetch_about_context *ctx)
+ಸ್ಥಿರಾಂಕ ರಚನೆ fetch_multipart_ದತ್ತಾಂಶ *
+fetch_about_get_multipart(ರಚನೆ fetch_about_context *ctx)
 {
-	return ctx->multipart;
+	ಹಿಂತಿರುಗಿ ctx->multipart;
 }
 
 
 /* exported interface documented in about/private.h */
-bool fetch_about_srverror(struct fetch_about_context *ctx)
+bool fetch_about_srverror(ರಚನೆ fetch_about_context *ctx)
 {
 	nserror res;
 
-	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_INTERNAL_SERVER_ERROR);
+	fetch_ಗಣ_http_ಸಂಕೇತ(ctx->fetchh, HTTP_RESPONSE_ಆಂತರಿಕ_SERVER_ERROR);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/plain"))
-		return false;
+	ಆದರೆ (fetch_about_send_ಶೀರ್ಷಿಕೆ(ctx, "Content-Type: text/plain"))
+		ಹಿಂತಿರುಗಿ false;
 
 	res = fetch_about_ssenddataf(ctx, "%s 500 %s",
 				     messages_get("FetchErrorCode"),
 				     messages_get("HTTP500"));
-	if (res != NSERROR_OK) {
-		return false;
+	ಆದರೆ (res != NSERROR_OK) {
+		ಹಿಂತಿರುಗಿ false;
 	}
 
-	fetch_about_send_finished(ctx);
+	fetch_about_send_ಪೂರ್ಣಗೊಂಡ(ctx);
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
 
 /* exported interface documented in about/private.h */
-bool fetch_about_redirect(struct fetch_about_context *ctx, const char *target)
+bool fetch_about_redirect(ರಚನೆ fetch_about_context *ctx, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಗುರಿ)
 {
-	fetch_msg msg;
+	fetch_ಸಂದೇಶ ಸಂದೇಶ;
 
 	/* content is going to return redirect */
-	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_FOUND);
+	fetch_ಗಣ_http_ಸಂಕೇತ(ctx->fetchh, HTTP_RESPONSE_ಸಿಕ್ಕಿತು);
 
-	msg.type = FETCH_REDIRECT;
-	msg.data.redirect = target;
+	ಸಂದೇಶ.type = FETCH_REDIRECT;
+	ಸಂದೇಶ.ದತ್ತಾಂಶ.redirect = ಗುರಿ;
 
-	return fetch_about_send_callback(&msg, ctx);
+	ಹಿಂತಿರುಗಿ fetch_about_send_callback(&ಸಂದೇಶ, ctx);
 }
 
 /**
@@ -277,9 +277,9 @@ bool fetch_about_redirect(struct fetch_about_context *ctx, const char *target)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-static bool fetch_about_credits_handler(struct fetch_about_context *ctx)
+ಸ್ಥಿರ bool fetch_about_credits_handler(ರಚನೆ fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:credits.html");
+	ಹಿಂತಿರುಗಿ fetch_about_redirect(ctx, "resource:credits.html");
 }
 
 
@@ -289,9 +289,9 @@ static bool fetch_about_credits_handler(struct fetch_about_context *ctx)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-static bool fetch_about_licence_handler(struct fetch_about_context *ctx)
+ಸ್ಥಿರ bool fetch_about_licence_handler(ರಚನೆ fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:licence.html");
+	ಹಿಂತಿರುಗಿ fetch_about_redirect(ctx, "resource:licence.html");
 }
 
 
@@ -301,9 +301,9 @@ static bool fetch_about_licence_handler(struct fetch_about_context *ctx)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-static bool fetch_about_logo_handler(struct fetch_about_context *ctx)
+ಸ್ಥಿರ bool fetch_about_logo_handler(ರಚನೆ fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:netsurf.png");
+	ಹಿಂತಿರುಗಿ fetch_about_redirect(ctx, "resource:netsurf.png");
 }
 
 
@@ -313,86 +313,86 @@ static bool fetch_about_logo_handler(struct fetch_about_context *ctx)
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-static bool fetch_about_welcome_handler(struct fetch_about_context *ctx)
+ಸ್ಥಿರ bool fetch_about_welcome_handler(ರಚನೆ fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:welcome.html");
+	ಹಿಂತಿರುಗಿ fetch_about_redirect(ctx, "resource:welcome.html");
 }
 
 
 /* Forward declaration because this handler requires the handler table. */
-static bool fetch_about_about_handler(struct fetch_about_context *ctx);
+ಸ್ಥಿರ bool fetch_about_about_handler(ರಚನೆ fetch_about_context *ctx);
 
 /**
  * List of about paths and their handlers
  */
-struct about_handlers about_handler_list[] = {
+ರಚನೆ about_handlers about_handler_list[] = {
 	{
 		"credits",
 		SLEN("credits"),
-		NULL,
+		ಖಾಲಿ,
 		fetch_about_credits_handler,
 		false
 	},
 	{
 		"licence",
 		SLEN("licence"),
-		NULL,
+		ಖಾಲಿ,
 		fetch_about_licence_handler,
 		false
 	},
 	{
 		"license",
 		SLEN("license"),
-		NULL,
+		ಖಾಲಿ,
 		fetch_about_licence_handler,
 		true
 	},
 	{
 		"welcome",
 		SLEN("welcome"),
-		NULL,
+		ಖಾಲಿ,
 		fetch_about_welcome_handler,
 		false
 	},
 	{
 		"config",
 		SLEN("config"),
-		NULL,
+		ಖಾಲಿ,
 		fetch_about_config_handler,
 		false
 	},
 	{
 		"Choices",
 		SLEN("Choices"),
-		NULL,
+		ಖಾಲಿ,
 		fetch_about_choices_handler,
 		false
 	},
 	{
 		"testament",
 		SLEN("testament"),
-		NULL,
+		ಖಾಲಿ,
 		fetch_about_testament_handler,
 		false
 	},
 	{
 		"about",
 		SLEN("about"),
-		NULL,
+		ಖಾಲಿ,
 		fetch_about_about_handler,
 		true
 	},
 	{
 		"nscolours.css",
 		SLEN("nscolours.css"),
-		NULL,
+		ಖಾಲಿ,
 		fetch_about_nscolours_handler,
 		true
 	},
 	{
 		"logo",
 		SLEN("logo"),
-		NULL,
+		ಖಾಲಿ,
 		fetch_about_logo_handler,
 		true
 	},
@@ -400,7 +400,7 @@ struct about_handlers about_handler_list[] = {
 		/* details about the image cache */
 		"imagecache",
 		SLEN("imagecache"),
-		NULL,
+		ಖಾಲಿ,
 		fetch_about_imagecache_handler,
 		true
 	},
@@ -408,7 +408,7 @@ struct about_handlers about_handler_list[] = {
 		/* The default blank page */
 		"blank",
 		SLEN("blank"),
-		NULL,
+		ಖಾಲಿ,
 		fetch_about_blank_handler,
 		true
 	},
@@ -416,7 +416,7 @@ struct about_handlers about_handler_list[] = {
 		/* details about a certificate */
 		"certificate",
 		SLEN("certificate"),
-		NULL,
+		ಖಾಲಿ,
 		fetch_about_certificate_handler,
 		true
 	},
@@ -424,35 +424,35 @@ struct about_handlers about_handler_list[] = {
 		/* chart generator */
 		"chart",
 		SLEN("chart"),
-		NULL,
+		ಖಾಲಿ,
 		fetch_about_chart_handler,
 		true
 	},
 	{
 		"query/auth",
 		SLEN("query/auth"),
-		NULL,
+		ಖಾಲಿ,
 		fetch_about_query_auth_handler,
 		true
 	},
 	{
 		"query/ssl",
 		SLEN("query/ssl"),
-		NULL,
+		ಖಾಲಿ,
 		fetch_about_query_privacy_handler,
 		true
 	},
 	{
 		"query/timeout",
 		SLEN("query/timeout"),
-		NULL,
+		ಖಾಲಿ,
 		fetch_about_query_timeout_handler,
 		true
 	},
 	{
 		"query/fetcherror",
 		SLEN("query/fetcherror"),
-		NULL,
+		ಖಾಲಿ,
 		fetch_about_query_fetcherror_handler,
 		true
 	},
@@ -460,14 +460,14 @@ struct about_handlers about_handler_list[] = {
 		/* web search using the configured provider */
 		"websearch",
 		SLEN("websearch"),
-		NULL,
+		ಖಾಲಿ,
 		fetch_about_websearch_handler,
 		true
 	}
 };
 
-#define about_handler_list_len \
-	(sizeof(about_handler_list) / sizeof(struct about_handlers))
+#ವ್ಯಾಖ್ಯಾನಿಸು about_handler_list_len \
+	(ಗಾತ್ರ(about_handler_list) / ಗಾತ್ರ(ರಚನೆ about_handlers))
 
 /**
  * List all the valid about: paths available
@@ -475,17 +475,17 @@ struct about_handlers about_handler_list[] = {
  * \param ctx The fetch context.
  * \return true for sucess or false to generate an error.
  */
-static bool fetch_about_about_handler(struct fetch_about_context *ctx)
+ಸ್ಥಿರ bool fetch_about_about_handler(ರಚನೆ fetch_about_context *ctx)
 {
 	nserror res;
-	unsigned int abt_loop = 0;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ abt_loop = 0;
 
 	/* content is going to return ok */
-	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_OK);
+	fetch_ಗಣ_http_ಸಂಕೇತ(ctx->fetchh, HTTP_RESPONSE_OK);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
-		goto fetch_about_config_handler_aborted;
+	ಆದರೆ (fetch_about_send_ಶೀರ್ಷಿಕೆ(ctx, "Content-Type: text/html; charset=utf-8"))
+		ಹೋಗು fetch_about_config_handler_aborted;
 
 	res = fetch_about_ssenddataf(ctx,
 			"<html>\n<head>\n"
@@ -496,51 +496,51 @@ static bool fetch_about_about_handler(struct fetch_about_context *ctx)
 			"<body class=\"ns-even-bg ns-even-fg ns-border\">\n"
 			"<h1 class =\"ns-border\">List of NetSurf pages</h1>\n"
 			"<ul>\n");
-	if (res != NSERROR_OK) {
-		goto fetch_about_config_handler_aborted;
+	ಆದರೆ (res != NSERROR_OK) {
+		ಹೋಗು fetch_about_config_handler_aborted;
 	}
 
-	for (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
+	ಗಾಗಿ (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
 
 		/* Skip over hidden entries */
-		if (about_handler_list[abt_loop].hidden)
-			continue;
+		ಆದರೆ (about_handler_list[abt_loop].hidden)
+			ಮುಂದುವರಿ;
 
 		res = fetch_about_ssenddataf(ctx,
 			       "<li><a href=\"about:%s\">about:%s</a></li>\n",
 			       about_handler_list[abt_loop].name,
 			       about_handler_list[abt_loop].name);
-		if (res != NSERROR_OK) {
-			goto fetch_about_config_handler_aborted;
+		ಆದರೆ (res != NSERROR_OK) {
+			ಹೋಗು fetch_about_config_handler_aborted;
 		}
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</ul>\n</body>\n</html>\n");
-	if (res != NSERROR_OK) {
-		goto fetch_about_config_handler_aborted;
+	ಆದರೆ (res != NSERROR_OK) {
+		ಹೋಗು fetch_about_config_handler_aborted;
 	}
 
-	fetch_about_send_finished(ctx);
+	fetch_about_send_ಪೂರ್ಣಗೊಂಡ(ctx);
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 
 fetch_about_config_handler_aborted:
-	return false;
+	ಹಿಂತಿರುಗಿ false;
 }
 
-static bool
-fetch_about_404_handler(struct fetch_about_context *ctx)
+ಸ್ಥಿರ bool
+fetch_about_404_handler(ರಚನೆ fetch_about_context *ctx)
 {
 	nserror res;
-	const char *title;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *title;
 
 	/* content is going to return 404 */
-	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_NOT_FOUND);
+	fetch_ಗಣ_http_ಸಂಕೇತ(ctx->fetchh, HTTP_RESPONSE_NOT_ಸಿಕ್ಕಿತು);
 
 	/* content type */
-	if (fetch_about_send_header(ctx,
+	ಆದರೆ (fetch_about_send_ಶೀರ್ಷಿಕೆ(ctx,
 			"Content-Type: text/html; charset=utf-8")) {
-		return false;
+		ಹಿಂತಿರುಗಿ false;
 	}
 
 	title = messages_get("HTTP404");
@@ -556,54 +556,54 @@ fetch_about_404_handler(struct fetch_about_context *ctx)
 		"</body>\n</html>\n",
 		title, title, messages_get("FetchErrorCode"), 404,
 		messages_get("FetchFile"),nsurl_access(ctx->url));
-	if (res != NSERROR_OK) {
-		return false;
+	ಆದರೆ (res != NSERROR_OK) {
+		ಹಿಂತಿರುಗಿ false;
 	}
 
-	fetch_about_send_finished(ctx);
+	fetch_about_send_ಪೂರ್ಣಗೊಂಡ(ctx);
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
 /**
  * callback to initialise the about scheme fetcher.
  */
-static bool fetch_about_initialise(lwc_string *scheme)
+ಸ್ಥಿರ bool fetch_about_initialise(lwc_string *scheme)
 {
-	unsigned int abt_loop = 0;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ abt_loop = 0;
 	lwc_error error;
 
-	for (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
+	ಗಾಗಿ (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
 		error = lwc_intern_string(about_handler_list[abt_loop].name,
 					about_handler_list[abt_loop].name_len,
 					&about_handler_list[abt_loop].lname);
-		if (error != lwc_error_ok) {
-			while (abt_loop-- != 0) {
+		ಆದರೆ (error != lwc_error_ok) {
+			ಆಗ (abt_loop-- != 0) {
 				lwc_string_unref(about_handler_list[abt_loop].lname);
 			}
-			return false;
+			ಹಿಂತಿರುಗಿ false;
 		}
 	}
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
 
 /**
  * callback to finalise the about scheme fetcher.
  */
-static void fetch_about_finalise(lwc_string *scheme)
+ಸ್ಥಿರ ಶೂನ್ಯ fetch_about_finalise(lwc_string *scheme)
 {
-	unsigned int abt_loop = 0;
-	for (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ abt_loop = 0;
+	ಗಾಗಿ (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
 		lwc_string_unref(about_handler_list[abt_loop].lname);
 	}
 }
 
 
-static bool fetch_about_can_fetch(const nsurl *url)
+ಸ್ಥಿರ bool fetch_about_can_fetch(ಸ್ಥಿರಾಂಕ nsurl *url)
 {
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
 
@@ -615,75 +615,75 @@ static bool fetch_about_can_fetch(const nsurl *url)
  * \param post_multipart post data in multipart format, owned by the llcache
  *                        object hence valid the entire lifetime of the fetch.
  */
-static void *
-fetch_about_setup(struct fetch *fetchh,
+ಸ್ಥಿರ ಶೂನ್ಯ *
+fetch_about_ಸಿದ್ಧತೆ(ರಚನೆ fetch *fetchh,
 		  nsurl *url,
 		  bool only_2xx,
 		  bool downgrade_tls,
-		  const char *post_urlenc,
-		  const struct fetch_multipart_data *post_multipart,
-		  const char **headers)
+		  ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *post_urlenc,
+		  ಸ್ಥಿರಾಂಕ ರಚನೆ fetch_multipart_ದತ್ತಾಂಶ *post_multipart,
+		  ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ **ಶೀರ್ಷಿಕೆಗಳು)
 {
-	struct fetch_about_context *ctx;
-	unsigned int handler_loop;
-	lwc_string *path;
-	bool match;
+	ರಚನೆ fetch_about_context *ctx;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ handler_loop;
+	lwc_string *ಮಾರ್ಗ;
+	bool ಹೊಂದಿಕೆ;
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	ctx = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(*ctx));
+	ಆದರೆ (ctx == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-	path = nsurl_get_component(url, NSURL_PATH);
+	ಮಾರ್ಗ = nsurl_get_component(url, NSURL_ಮಾರ್ಗ);
 
-	for (handler_loop = 0;
+	ಗಾಗಿ (handler_loop = 0;
 	     handler_loop < about_handler_list_len;
 	     handler_loop++) {
-		if (lwc_string_isequal(path,
+		ಆದರೆ (lwc_string_isequal(ಮಾರ್ಗ,
 				       about_handler_list[handler_loop].lname,
-				       &match) == lwc_error_ok && match) {
+				       &ಹೊಂದಿಕೆ) == lwc_error_ok && ಹೊಂದಿಕೆ) {
 			ctx->handler = about_handler_list[handler_loop].handler;
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 	}
 
-	lwc_string_unref(path);
+	lwc_string_unref(ಮಾರ್ಗ);
 
 	ctx->fetchh = fetchh;
 	ctx->url = nsurl_ref(url);
 	ctx->multipart = post_multipart;
 
-	RING_INSERT(ring, ctx);
+	RING_ಸೇರಿಸು(ring, ctx);
 
-	return ctx;
+	ಹಿಂತಿರುಗಿ ctx;
 }
 
 
 /**
  * callback to free a about scheme fetch
  */
-static void fetch_about_free(void *ctx)
+ಸ್ಥಿರ ಶೂನ್ಯ fetch_about_free(ಶೂನ್ಯ *ctx)
 {
-	struct fetch_about_context *c = ctx;
+	ರಚನೆ fetch_about_context *c = ctx;
 	nsurl_unref(c->url);
-	free(ctx);
+	ಬಿಡುಗಡೆ(ctx);
 }
 
 
 /**
  * callback to start an about scheme fetch
  */
-static bool fetch_about_start(void *ctx)
+ಸ್ಥಿರ bool fetch_about_ಆರಂಭ(ಶೂನ್ಯ *ctx)
 {
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
 
 /**
  * callback to abort a about fetch
  */
-static void fetch_about_abort(void *ctx)
+ಸ್ಥಿರ ಶೂನ್ಯ fetch_about_abort(ಶೂನ್ಯ *ctx)
 {
-	struct fetch_about_context *c = ctx;
+	ರಚನೆ fetch_about_context *c = ctx;
 
 	/* To avoid the poll loop having to deal with the fetch context
 	 * disappearing from under it, we simply flag the abort here.
@@ -696,12 +696,12 @@ static void fetch_about_abort(void *ctx)
 /**
  * callback to poll for additional about fetch contents
  */
-static void fetch_about_poll(lwc_string *scheme)
+ಸ್ಥಿರ ಶೂನ್ಯ fetch_about_poll(lwc_string *scheme)
 {
-	struct fetch_about_context *c, *save_ring = NULL;
+	ರಚನೆ fetch_about_context *c, *save_ring = ಖಾಲಿ;
 
 	/* Iterate over ring, processing each pending fetch */
-	while (ring != NULL) {
+	ಆಗ (ring != ಖಾಲಿ) {
 		/* Take the first entry from the ring */
 		c = ring;
 		RING_REMOVE(ring, c);
@@ -712,17 +712,17 @@ static void fetch_about_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
-			RING_INSERT(save_ring, c);
-			continue;
+		ಆದರೆ (c->locked == true) {
+			RING_ಸೇರಿಸು(save_ring, c);
+			ಮುಂದುವರಿ;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false) {
+		ಆದರೆ (c->aborted == false) {
 			/* about fetches can be processed in one go */
-			if (c->handler == NULL) {
+			ಆದರೆ (c->handler == ಖಾಲಿ) {
 				fetch_about_404_handler(c);
-			} else {
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				c->handler(c);
 			}
 		}
@@ -739,19 +739,19 @@ static void fetch_about_poll(lwc_string *scheme)
 }
 
 
-nserror fetch_about_register(void)
+nserror fetch_about_ರಿಜಿಸ್ಟರ್(ಶೂನ್ಯ)
 {
 	lwc_string *scheme = lwc_string_ref(corestring_lwc_about);
-	const struct fetcher_operation_table fetcher_ops = {
+	ಸ್ಥಿರಾಂಕ ರಚನೆ fetcher_operation_ಕೋಷ್ಟಕ fetcher_ops = {
 		.initialise = fetch_about_initialise,
 		.acceptable = fetch_about_can_fetch,
-		.setup = fetch_about_setup,
-		.start = fetch_about_start,
+		.ಸಿದ್ಧತೆ = fetch_about_ಸಿದ್ಧತೆ,
+		.ಆರಂಭ = fetch_about_ಆರಂಭ,
 		.abort = fetch_about_abort,
-		.free = fetch_about_free,
+		.ಬಿಡುಗಡೆ = fetch_about_free,
 		.poll = fetch_about_poll,
 		.finalise = fetch_about_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	ಹಿಂತಿರುಗಿ fetcher_ಕೂಡಿಸು(scheme, &fetcher_ops);
 }

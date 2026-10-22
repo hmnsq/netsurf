@@ -20,61 +20,61 @@
  * Dummy implementation of javascript engine functions.
  */
 
-#include "utils/errors.h"
-#include "content/content.h"
-#include "utils/nsoption.h"
+#ಅನ್ತರ್ಭಾವ "utils/errors.h"
+#ಅನ್ತರ್ಭಾವ "content/content.h"
+#ಅನ್ತರ್ಭಾವ "utils/nsoption.h"
 
-#include "javascript/js.h"
-#include "utils/log.h"
+#ಅನ್ತರ್ಭಾವ "javascript/js.h"
+#ಅನ್ತರ್ಭಾವ "utils/log.h"
 
-void js_initialise(void)
+ಶೂನ್ಯ js_initialise(ಶೂನ್ಯ)
 {
-	nsoption_set_bool(enable_javascript, false);
+	nsoption_ಗಣ_bool(enable_javascript, false);
 }
 
-void js_finalise(void)
-{
-}
-
-nserror js_newheap(int timeout, jsheap **heap)
-{
-	*heap = NULL;
-	return NSERROR_OK;
-}
-
-void js_destroyheap(jsheap *heap)
+ಶೂನ್ಯ js_finalise(ಶೂನ್ಯ)
 {
 }
 
-nserror js_newthread(jsheap *heap, void *win_priv, void *doc_priv, jsthread **thread)
+nserror js_newheap(ಪೂರ್ಣಾಂಕ timeout, jsheap **ರಾಶಿ)
 {
-	*thread = NULL;
-	return NSERROR_NOT_IMPLEMENTED;
+	*ರಾಶಿ = ಖಾಲಿ;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
+}
+
+ಶೂನ್ಯ js_destroyheap(jsheap *ರಾಶಿ)
+{
+}
+
+nserror js_newthread(jsheap *ರಾಶಿ, ಶೂನ್ಯ *win_priv, ಶೂನ್ಯ *doc_priv, jsthread **thread)
+{
+	*thread = ಖಾಲಿ;
+	ಹಿಂತಿರುಗಿ NSERROR_NOT_IMPLEMENTED;
 }
 
 nserror js_closethread(jsthread *thread)
 {
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
-void js_destroythread(jsthread *thread)
+ಶೂನ್ಯ js_destroythread(jsthread *thread)
 {
 }
 
-bool js_exec(jsthread *thread, const uint8_t *txt, size_t txtlen, const char *name)
+bool js_exec(jsthread *thread, ಸ್ಥಿರಾಂಕ uint8_t *txt, size_t txtlen, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name)
 {
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
-bool js_fire_event(jsthread *thread, const char *type, struct dom_document *doc, struct dom_node *target)
+bool js_fire_event(jsthread *thread, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *type, ರಚನೆ dom_document *doc, ರಚನೆ dom_ಗಂಟು *ಗುರಿ)
 {
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
-void js_handle_new_element(jsthread *thread, struct dom_element *node)
+ಶೂನ್ಯ js_handle_new_element(jsthread *thread, ರಚನೆ dom_element *ಗಂಟು)
 {
 }
 
-void js_event_cleanup(jsthread *thread, struct dom_event *evt)
+ಶೂನ್ಯ js_event_cleanup(jsthread *thread, ರಚನೆ dom_event *evt)
 {
 }

@@ -28,290 +28,290 @@
  * function to render it for redraw requests.
  */
 
-#include <stdlib.h>
-#include <stdbool.h>
-#include <assert.h>
-#include <string.h>
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include <librsvg/rsvg.h>
-#ifndef RSVG_CAIRO_H
-#include <librsvg/rsvg-cairo.h>
-#endif
+#ಅನ್ತರ್ಭಾವ <librsvg/rsvg.h>
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ RSVG_CAIRO_H
+#ಅನ್ತರ್ಭಾವ <librsvg/rsvg-cairo.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include <nsutils/endian.h>
+#ಅನ್ತರ್ಭಾವ <nsutils/endian.h>
 
-#include "utils/log.h"
-#include "utils/utils.h"
-#include "utils/messages.h"
-#include "netsurf/plotters.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#ಅನ್ತರ್ಭಾವ "utils/log.h"
+#ಅನ್ತರ್ಭಾವ "utils/utils.h"
+#ಅನ್ತರ್ಭಾವ "utils/messages.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/plotters.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/bitmap.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/content.h"
+#ಅನ್ತರ್ಭಾವ "content/llcache.h"
+#ಅನ್ತರ್ಭಾವ "content/content_protected.h"
+#ಅನ್ತರ್ಭಾವ "content/content_factory.h"
+#ಅನ್ತರ್ಭಾವ "desktop/gui_internal.h"
+#ಅನ್ತರ್ಭಾವ "desktop/bitmap.h"
 
-#include "image/rsvg.h"
+#ಅನ್ತರ್ಭಾವ "image/rsvg.h"
 
-typedef struct rsvg_content {
-	struct content base;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ rsvg_content {
+	ರಚನೆ content ತಳ;
 
 	RsvgHandle *rsvgh;	/**< Context handle for RSVG renderer */
 	cairo_surface_t *cs;	/**< The surface built inside a nsbitmap */
 	cairo_t *ct;		/**< Cairo drawing context */
-	struct bitmap *bitmap;	/**< Created NetSurf bitmap */
+	ರಚನೆ bitmap *bitmap;	/**< Created NetSurf bitmap */
 } rsvg_content;
 
-static nserror rsvg_create_svg_data(rsvg_content *c)
+ಸ್ಥಿರ nserror rsvg_create_svg_ದತ್ತಾಂಶ(rsvg_content *c)
 {
-	c->rsvgh = NULL;
-	c->cs = NULL;
-	c->ct = NULL;
-	c->bitmap = NULL;
+	c->rsvgh = ಖಾಲಿ;
+	c->cs = ಖಾಲಿ;
+	c->ct = ಖಾಲಿ;
+	c->bitmap = ಖಾಲಿ;
 
-	if ((c->rsvgh = rsvg_handle_new()) == NULL) {
+	ಆದರೆ ((c->rsvgh = rsvg_handle_new()) == ಖಾಲಿ) {
 		NSLOG(netsurf, INFO, "rsvg_handle_new() returned NULL.");
-		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return NSERROR_NOMEM;
+		content_ಪ್ರಸಾರ_error(&c->ತಳ, NSERROR_NOMEM, ಖಾಲಿ);
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 	}
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
 
-static nserror rsvg_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+ಸ್ಥಿರ nserror rsvg_create(ಸ್ಥಿರಾಂಕ content_handler *handler,
+		lwc_string *imime_type, ಸ್ಥಿರಾಂಕ ರಚನೆ http_parameter *params,
+		llcache_handle *llcache, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fallback_charset,
+		bool quirks, ರಚನೆ content **c)
 {
 	rsvg_content *svg;
 	nserror error;
 
-	svg = calloc(1, sizeof(rsvg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	svg = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(rsvg_content));
+	ಆದರೆ (svg == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 
-	error = content__init(&svg->base, handler, imime_type, params,
+	error = content__init(&svg->ತಳ, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(svg);
-		return error;
+	ಆದರೆ (error != NSERROR_OK) {
+		ಬಿಡುಗಡೆ(svg);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
-	error = rsvg_create_svg_data(svg);
-	if (error != NSERROR_OK) {
-		free(svg);
-		return error;
+	error = rsvg_create_svg_ದತ್ತಾಂಶ(svg);
+	ಆದರೆ (error != NSERROR_OK) {
+		ಬಿಡುಗಡೆ(svg);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
-	*c = (struct content *) svg;
+	*c = (ರಚನೆ content *) svg;
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
 
-static bool rsvg_process_data(struct content *c, const char *data,
-			unsigned int size)
+ಸ್ಥಿರ bool rsvg_process_ದತ್ತಾಂಶ(ರಚನೆ content *c, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ದತ್ತಾಂಶ,
+			ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಗಾತ್ರ_2)
 {
 	rsvg_content *d = (rsvg_content *) c;
-	GError *err = NULL;
+	GError *err = ಖಾಲಿ;
 
-	if (rsvg_handle_write(d->rsvgh, (const guchar *)data, (gsize)size,
+	ಆದರೆ (rsvg_handle_write(d->rsvgh, (ಸ್ಥಿರಾಂಕ guchar *)ದತ್ತಾಂಶ, (gsize)ಗಾತ್ರ_2,
 				&err) == FALSE) {
 		NSLOG(netsurf, INFO,
-		      "rsvg_handle_write returned an error: %s", err->message);
-		content_broadcast_error(c, NSERROR_SVG_ERROR, NULL);
-		return false;
+		      "rsvg_handle_write returned an error: %s", err->ಸಂದೇಶ_2);
+		content_ಪ್ರಸಾರ_error(c, NSERROR_SVG_ERROR, ಖಾಲಿ);
+		ಹಿಂತಿರುಗಿ false;
 	}
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
-static bool rsvg_convert(struct content *c)
+ಸ್ಥಿರ bool rsvg_convert(ರಚನೆ content *c)
 {
 	rsvg_content *d = (rsvg_content *) c;
-	RsvgDimensionData rsvgsize;
-	GError *err = NULL;
+	Rsvg_Dimension_ದತ್ತಾಂಶ rsvgsize;
+	GError *err = ಖಾಲಿ;
 
-	if (rsvg_handle_close(d->rsvgh, &err) == FALSE) {
+	ಆದರೆ (rsvg_handle_close(d->rsvgh, &err) == FALSE) {
 		NSLOG(netsurf, INFO,
-		      "rsvg_handle_close returned an error: %s", err->message);
-		content_broadcast_error(c, NSERROR_SVG_ERROR, NULL);
-		return false;
+		      "rsvg_handle_close returned an error: %s", err->ಸಂದೇಶ_2);
+		content_ಪ್ರಸಾರ_error(c, NSERROR_SVG_ERROR, ಖಾಲಿ);
+		ಹಿಂತಿರುಗಿ false;
 	}
 
-	assert(err == NULL);
+	ಪ್ರತಿಜ್ಞಾ(err == ಖಾಲಿ);
 
 	/* we should now be able to query librsvg for the natural size of the
 	 * graphic, so we can create our bitmap.
 	 */
 
 	rsvg_handle_get_dimensions(d->rsvgh, &rsvgsize);
-	c->width = rsvgsize.width;
-	c->height = rsvgsize.height;
+	c->ಅಗಲ = rsvgsize.ಅಗಲ;
+	c->ಎತ್ತರ = rsvgsize.ಎತ್ತರ;
 
-	if ((d->bitmap = guit->bitmap->create(c->width, c->height,
-			BITMAP_NONE)) == NULL) {
+	ಆದರೆ ((d->bitmap = guit->bitmap->create(c->ಅಗಲ, c->ಎತ್ತರ,
+			BITMAP_NONE)) == ಖಾಲಿ) {
 		NSLOG(netsurf, INFO,
 		      "Failed to create bitmap for rsvg render.");
-		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
+		content_ಪ್ರಸಾರ_error(c, NSERROR_NOMEM, ಖಾಲಿ);
+		ಹಿಂತಿರುಗಿ false;
 	}
 
-	if ((d->cs = cairo_image_surface_create_for_data(
-			(unsigned char *)guit->bitmap->get_buffer(d->bitmap),
+	ಆದರೆ ((d->cs = cairo_image_surface_create_for_ದತ್ತಾಂಶ(
+			(ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *)guit->bitmap->get_ಬಫರ್(d->bitmap),
 			CAIRO_FORMAT_ARGB32,
-			c->width, c->height,
-			guit->bitmap->get_rowstride(d->bitmap))) == NULL) {
+			c->ಅಗಲ, c->ಎತ್ತರ,
+			guit->bitmap->get_rowstride(d->bitmap))) == ಖಾಲಿ) {
 		NSLOG(netsurf, INFO,
 		      "Failed to create Cairo image surface for rsvg render.");
-		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
+		content_ಪ್ರಸಾರ_error(c, NSERROR_NOMEM, ಖಾಲಿ);
+		ಹಿಂತಿರುಗಿ false;
 	}
 
-	if ((d->ct = cairo_create(d->cs)) == NULL) {
+	ಆದರೆ ((d->ct = cairo_create(d->cs)) == ಖಾಲಿ) {
 		NSLOG(netsurf, INFO,
 		      "Failed to create Cairo drawing context for rsvg render.");
-		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
+		content_ಪ್ರಸಾರ_error(c, NSERROR_NOMEM, ಖಾಲಿ);
+		ಹಿಂತಿರುಗಿ false;
 	}
 
 	rsvg_handle_render_cairo(d->rsvgh, d->ct);
 
-	bitmap_format_to_client(d->bitmap, &(bitmap_fmt_t) {
+	bitmap_format_ಗಮ್ಯ_client(d->bitmap, &(bitmap_fmt_t) {
 		.layout = BITMAP_LAYOUT_ARGB8888,
 	});
 	guit->bitmap->modified(d->bitmap);
-	content_set_ready(c);
-	content_set_done(c);
+	content_ಗಣ_ready(c);
+	content_ಗಣ_ಮುಗಿದ(c);
 	/* Done: update status bar */
-	content_set_status(c, "");
+	content_ಗಣ_ಸ್ಥಿತಿ(c, "");
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
-static bool rsvg_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx)
+ಸ್ಥಿರ bool rsvg_redraw(ರಚನೆ content *c, ರಚನೆ content_redraw_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ,
+		ಸ್ಥಿರಾಂಕ ರಚನೆ rect *clip, ಸ್ಥಿರಾಂಕ ರಚನೆ redraw_context *ctx)
 {
 	rsvg_content *rsvgcontent = (rsvg_content *) c;
 	bitmap_flags_t flags = BITMAPF_NONE;
 
-	assert(rsvgcontent->bitmap != NULL);
+	ಪ್ರತಿಜ್ಞಾ(rsvgcontent->bitmap != ಖಾಲಿ);
 
-	if (data->repeat_x)
+	ಆದರೆ (ದತ್ತಾಂಶ->repeat_x)
 		flags |= BITMAPF_REPEAT_X;
-	if (data->repeat_y)
+	ಆದರೆ (ದತ್ತಾಂಶ->repeat_y)
 		flags |= BITMAPF_REPEAT_Y;
 
-	return (ctx->plot->bitmap(ctx,
+	ಹಿಂತಿರುಗಿ (ctx->plot->bitmap(ctx,
 				  rsvgcontent->bitmap,
-				  data->x, data->y,
-				  data->width, data->height,
-				  data->background_colour,
+				  ದತ್ತಾಂಶ->x, ದತ್ತಾಂಶ->y,
+				  ದತ್ತಾಂಶ->ಅಗಲ, ದತ್ತಾಂಶ->ಎತ್ತರ,
+				  ದತ್ತಾಂಶ->background_ಬಣ್ಣ,
 				  flags) == NSERROR_OK);
 }
 
-static void rsvg_destroy(struct content *c)
+ಸ್ಥಿರ ಶೂನ್ಯ rsvg_destroy(ರಚನೆ content *c)
 {
 	rsvg_content *d = (rsvg_content *) c;
 
-	if (d->bitmap != NULL) guit->bitmap->destroy(d->bitmap);
-	if (d->rsvgh != NULL) g_object_unref(d->rsvgh);
-	if (d->ct != NULL) cairo_destroy(d->ct);
-	if (d->cs != NULL) cairo_surface_destroy(d->cs);
+	ಆದರೆ (d->bitmap != ಖಾಲಿ) guit->bitmap->destroy(d->bitmap);
+	ಆದರೆ (d->rsvgh != ಖಾಲಿ) g_object_unref(d->rsvgh);
+	ಆದರೆ (d->ct != ಖಾಲಿ) cairo_destroy(d->ct);
+	ಆದರೆ (d->cs != ಖಾಲಿ) cairo_surface_destroy(d->cs);
 
-	return;
+	ಹಿಂತಿರುಗಿ;
 }
 
-static nserror rsvg_clone(const struct content *old, struct content **newc)
+ಸ್ಥಿರ nserror rsvg_clone(ಸ್ಥಿರಾಂಕ ರಚನೆ content *old, ರಚನೆ content **newc)
 {
 	rsvg_content *svg;
 	nserror error;
-	const uint8_t *data;
-	size_t size;
+	ಸ್ಥಿರಾಂಕ uint8_t *ದತ್ತಾಂಶ;
+	size_t ಗಾತ್ರ_2;
 
-	svg = calloc(1, sizeof(rsvg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	svg = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(rsvg_content));
+	ಆದರೆ (svg == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 
-	error = content__clone(old, &svg->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&svg->base);
-		return error;
+	error = content__clone(old, &svg->ತಳ);
+	ಆದರೆ (error != NSERROR_OK) {
+		content_destroy(&svg->ತಳ);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
 	/* Simply replay create/process/convert */
-	error = rsvg_create_svg_data(svg);
-	if (error != NSERROR_OK) {
-		content_destroy(&svg->base);
-		return error;
+	error = rsvg_create_svg_ದತ್ತಾಂಶ(svg);
+	ಆದರೆ (error != NSERROR_OK) {
+		content_destroy(&svg->ತಳ);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
-	data = content__get_source_data(&svg->base, &size);
-	if (size > 0) {
-		if (rsvg_process_data(&svg->base, (const char *)data, size) == false) {
-			content_destroy(&svg->base);
-			return NSERROR_NOMEM;
+	ದತ್ತಾಂಶ = content_get_ಮೂಲ_ದತ್ತಾಂಶ_2(&svg->ತಳ, &ಗಾತ್ರ_2);
+	ಆದರೆ (ಗಾತ್ರ_2 > 0) {
+		ಆದರೆ (rsvg_process_ದತ್ತಾಂಶ(&svg->ತಳ, (ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *)ದತ್ತಾಂಶ, ಗಾತ್ರ_2) == false) {
+			content_destroy(&svg->ತಳ);
+			ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 		}
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
-			old->status == CONTENT_STATUS_DONE) {
-		if (rsvg_convert(&svg->base) == false) {
-			content_destroy(&svg->base);
-			return NSERROR_CLONE_FAILED;
+	ಆದರೆ (old->ಸ್ಥಿತಿ_2 == CONTENT_ಸ್ಥಿತಿ_READY ||
+			old->ಸ್ಥಿತಿ_2 == CONTENT_ಸ್ಥಿತಿ_ಮುಗಿದ) {
+		ಆದರೆ (rsvg_convert(&svg->ತಳ) == false) {
+			content_destroy(&svg->ತಳ);
+			ಹಿಂತಿರುಗಿ NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) svg;
+	*newc = (ರಚನೆ content *) svg;
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
-static void *rsvg_get_internal(const struct content *c, void *context)
+ಸ್ಥಿರ ಶೂನ್ಯ *rsvg_get_ಆಂತರಿಕ(ಸ್ಥಿರಾಂಕ ರಚನೆ content *c, ಶೂನ್ಯ *context)
 {
 	rsvg_content *d = (rsvg_content *) c;
 
-	return d->bitmap;
+	ಹಿಂತಿರುಗಿ d->bitmap;
 }
 
-static content_type rsvg_content_type(void)
+ಸ್ಥಿರ content_type rsvg_content_type(ಶೂನ್ಯ)
 {
-	return CONTENT_IMAGE;
+	ಹಿಂತಿರುಗಿ CONTENT_IMAGE;
 }
 
 
-static bool rsvg_content_is_opaque(struct content *c)
+ಸ್ಥಿರ bool rsvg_content_is_opaque(ರಚನೆ content *c)
 {
 	rsvg_content *d = (rsvg_content *) c;
 
-	if (d->bitmap != NULL) {
-		return guit->bitmap->get_opaque(d->bitmap);
+	ಆದರೆ (d->bitmap != ಖಾಲಿ) {
+		ಹಿಂತಿರುಗಿ guit->bitmap->get_opaque(d->bitmap);
 	}
 
-	return false;
+	ಹಿಂತಿರುಗಿ false;
 }
 
 
-static const content_handler rsvg_content_handler = {
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ content_handler rsvg_content_handler = {
 	.create = rsvg_create,
-	.process_data = rsvg_process_data,
-	.data_complete = rsvg_convert,
+	.process_ದತ್ತಾಂಶ = rsvg_process_ದತ್ತಾಂಶ,
+	.ದತ್ತಾಂಶ_complete = rsvg_convert,
 	.destroy = rsvg_destroy,
 	.redraw = rsvg_redraw,
 	.clone = rsvg_clone,
-	.get_internal = rsvg_get_internal,
+	.get_ಆಂತರಿಕ = rsvg_get_ಆಂತರಿಕ,
 	.type = rsvg_content_type,
 	.is_opaque = rsvg_content_is_opaque,
 	.no_share = false,
 };
 
-static const char *rsvg_types[] = {
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *rsvg_types[] = {
 	"image/svg",
 	"image/svg+xml"
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(nsrsvg, rsvg_types, rsvg_content_handler);
+CONTENT_FACTORY_ರಿಜಿಸ್ಟರ್_TYPES(nsrsvg, rsvg_types, rsvg_content_handler);
 

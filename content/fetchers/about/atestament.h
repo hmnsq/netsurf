@@ -21,8 +21,8 @@
  * about scheme testament handler interface
  */
 
-#ifndef NETSURF_CONTENT_FETCHERS_ABOUT_TESTAMENT_H
-#define NETSURF_CONTENT_FETCHERS_ABOUT_TESTAMENT_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NETSURF_CONTENT_FETCHERS_ABOUT_TESTAMENT_H
+#ವ್ಯಾಖ್ಯಾನಿಸು NETSURF_CONTENT_FETCHERS_ABOUT_TESTAMENT_H
 
 /**
  * Handler to generate about scheme testament page.
@@ -30,6 +30,6 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_testament_handler(struct fetch_about_context *ctx);
+bool fetch_about_testament_handler(ರಚನೆ fetch_about_context *ctx);
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

@@ -20,32 +20,32 @@
  * Fetching of data from a URL (interface).
  */
 
-#ifndef _NETSURF_DESKTOP_FETCH_H_
-#define _NETSURF_DESKTOP_FETCH_H_
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _NETSURF_DESKTOP_FETCH_H_
+#ವ್ಯಾಖ್ಯಾನಿಸು _NETSURF_DESKTOP_FETCH_H_
 
-#include <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
 
-#include "utils/config.h"
-#include "utils/nsurl.h"
-#include "utils/inet.h"
-#include "utils/http/response-codes.h"
+#ಅನ್ತರ್ಭಾವ "utils/config.h"
+#ಅನ್ತರ್ಭಾವ "utils/nsurl.h"
+#ಅನ್ತರ್ಭಾವ "utils/inet.h"
+#ಅನ್ತರ್ಭಾವ "utils/http/response-codes.h"
 
-#include "netsurf/ssl_certs.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/ssl_certs.h"
 
-struct content;
-struct fetch;
-struct ssl_cert_info;
+ರಚನೆ content;
+ರಚನೆ fetch;
+ರಚನೆ ssl_cert_info;
 
 /**
  * Fetcher message types
  */
-typedef enum {
-	FETCH_PROGRESS,
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಎಣಿಕೆ {
+	FETCH_ಪ್ರಗತಿ,
 	FETCH_CERTS,
-	FETCH_HEADER,
-	FETCH_DATA,
+	FETCH_ಶೀರ್ಷಿಕೆ,
+	FETCH_ದತ್ತಾಂಶ,
 	/* Anything after here is a completed fetch of some kind. */
-	FETCH_FINISHED,
+	FETCH_ಪೂರ್ಣಗೊಂಡ,
 	FETCH_TIMEDOUT,
 	FETCH_ERROR,
 	FETCH_REDIRECT,
@@ -53,52 +53,52 @@ typedef enum {
 	FETCH_AUTH,
 	FETCH_CERT_ERR,
 	FETCH_SSL_ERR
-} fetch_msg_type;
+} fetch_ಸಂದೇಶ_type;
 
 /** Minimum finished message type.
  *
  * If a fetch does not progress this far, it's an error and the fetch machinery
  * will send FETCH_ERROR to the llcache on fetch_free()
  */
-#define FETCH_MIN_FINISHED_MSG FETCH_FINISHED
+#ವ್ಯಾಖ್ಯಾನಿಸು FETCH_MIN_ಪೂರ್ಣಗೊಂಡ_ಸಂದೇಶ FETCH_ಪೂರ್ಣಗೊಂಡ
 
 /**
  * This message is actually an internal message used to indicate
  * that a fetch was aborted.  Do not send this, nor expect it.
  */
-#define FETCH__INTERNAL_ABORTED FETCH_ERROR
+#ವ್ಯಾಖ್ಯಾನಿಸು FETCH_ಆಂತರಿಕ_ABORTED FETCH_ERROR
 
 /**
  * Fetcher message data
  */
-typedef struct fetch_msg {
-	fetch_msg_type type;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ fetch_ಸಂದೇಶ {
+	fetch_ಸಂದೇಶ_type type;
 
-	union {
-		const char *progress;
+	ಒಕ್ಕೂಟ {
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಪ್ರಗತಿ;
 
-		struct {
-			const uint8_t *buf;
+		ರಚನೆ {
+			ಸ್ಥಿರಾಂಕ uint8_t *buf;
 			size_t len;
-		} header_or_data;
+		} ಶೀರ್ಷಿಕೆ_or_ದತ್ತಾಂಶ;
 
-		const char *error;
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *error;
 
 		/** \todo Use nsurl */
-		const char *redirect;
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *redirect;
 
-		struct {
-			const char *realm;
+		ರಚನೆ {
+			ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *realm;
 		} auth;
 
-		const struct cert_chain *chain;
-	} data;
-} fetch_msg;
+		ಸ್ಥಿರಾಂಕ ರಚನೆ cert_chain *chain;
+	} ದತ್ತಾಂಶ;
+} fetch_ಸಂದೇಶ;
 
 /**
  * Fetcher post data types
  */
-typedef enum {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಎಣಿಕೆ {
 	FETCH_POSTDATA_NONE,
 	FETCH_POSTDATA_URLENC,
 	FETCH_POSTDATA_MULTIPART,
@@ -108,31 +108,31 @@ typedef enum {
 /**
  * Fetch POST multipart data
  */
-struct fetch_multipart_data {
-	struct fetch_multipart_data *next; /**< Next in linked list */
+ರಚನೆ fetch_multipart_ದತ್ತಾಂಶ {
+	ರಚನೆ fetch_multipart_ದತ್ತಾಂಶ *ಮುಂದಿನ; /**< Next in linked list */
 
-	char *name; /**< Name of item */
-	char *value; /**< Item value */
+	ಅಕ್ಷರ *name; /**< Name of item */
+	ಅಕ್ಷರ *ಮೌಲ್ಯ; /**< Item value */
 
-	char *rawfile; /**< Raw filename if file is true */
+	ಅಕ್ಷರ *rawfile; /**< Raw filename if file is true */
 	bool file; /**< Item is a file */
 };
 
 /**
  * fetch POST data
  */
-struct fetch_postdata {
+ರಚನೆ fetch_postdata {
 	fetch_postdata_type type;
-	union {
+	ಒಕ್ಕೂಟ {
 		/** Url encoded POST string if type is FETCH_POSTDATA_URLENC */
-		char *urlenc;
+		ಅಕ್ಷರ *urlenc;
 		/** Multipart post data if type is FETCH_POSTDATA_MULTIPART */
-		struct fetch_multipart_data *multipart;
-	} data;
+		ರಚನೆ fetch_multipart_ದತ್ತಾಂಶ *multipart;
+	} ದತ್ತಾಂಶ;
 };
 
 
-typedef void (*fetch_callback)(const fetch_msg *msg, void *p);
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಶೂನ್ಯ (*fetch_callback)(ಸ್ಥಿರಾಂಕ fetch_ಸಂದೇಶ *ಸಂದೇಶ, ಶೂನ್ಯ *p);
 
 /**
  * Start fetching data for the given URL.
@@ -165,16 +165,16 @@ typedef void (*fetch_callback)(const fetch_msg *msg, void *p);
  * \param fetch_out ponter to recive new fetch object.
  * \return NSERROR_OK and fetch_out updated else appropriate error code
  */
-nserror fetch_start(nsurl *url, nsurl *referer, fetch_callback callback,
-		    void *p, bool only_2xx, const char *post_urlenc,
-		    const struct fetch_multipart_data *post_multipart,
+nserror fetch_ಆರಂಭ(nsurl *url, nsurl *referer, fetch_callback callback,
+		    ಶೂನ್ಯ *p, bool only_2xx, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *post_urlenc,
+		    ಸ್ಥಿರಾಂಕ ರಚನೆ fetch_multipart_ದತ್ತಾಂಶ *post_multipart,
 		    bool verifiable, bool downgrade_tls,
-		    const char *headers[], struct fetch **fetch_out);
+		    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಶೀರ್ಷಿಕೆಗಳು[], ರಚನೆ fetch **fetch_ಹೊರಹೋಗು);
 
 /**
  * Abort a fetch.
  */
-void fetch_abort(struct fetch *f);
+ಶೂನ್ಯ fetch_abort(ರಚನೆ fetch *f);
 
 
 /**
@@ -183,17 +183,17 @@ void fetch_abort(struct fetch *f);
  * \param  url  URL to check
  * \return  true if the scheme is supported
  */
-bool fetch_can_fetch(const nsurl *url);
+bool fetch_can_fetch(ಸ್ಥಿರಾಂಕ nsurl *url);
 
 /**
  * Change the callback function for a fetch.
  */
-void fetch_change_callback(struct fetch *fetch, fetch_callback callback, void *p);
+ಶೂನ್ಯ fetch_change_callback(ರಚನೆ fetch *fetch, fetch_callback callback, ಶೂನ್ಯ *p);
 
 /**
  * Get the HTTP response code.
  */
-http_response_code fetch_http_code(struct fetch *fetch);
+http_response_ಸಂಕೇತ fetch_http_ಸಂಕೇತ(ರಚನೆ fetch *fetch);
 
 
 /**
@@ -201,7 +201,7 @@ http_response_code fetch_http_code(struct fetch *fetch);
  *
  * \param list Pointer to head of list to free
  */
-void fetch_multipart_data_destroy(struct fetch_multipart_data *list);
+ಶೂನ್ಯ fetch_multipart_ದತ್ತಾಂಶ_destroy(ರಚನೆ fetch_multipart_ದತ್ತಾಂಶ *list);
 
 /**
  * Clone a linked list of fetch_multipart_data.
@@ -209,7 +209,7 @@ void fetch_multipart_data_destroy(struct fetch_multipart_data *list);
  * \param list  List to clone
  * \return Pointer to head of cloned list, or NULL on failure
  */
-struct fetch_multipart_data *fetch_multipart_data_clone(const struct fetch_multipart_data *list);
+ರಚನೆ fetch_multipart_ದತ್ತಾಂಶ *fetch_multipart_ದತ್ತಾಂಶ_clone(ಸ್ಥಿರಾಂಕ ರಚನೆ fetch_multipart_ದತ್ತಾಂಶ *list);
 
 /**
  * Find an entry in a fetch_multipart_data
@@ -218,8 +218,8 @@ struct fetch_multipart_data *fetch_multipart_data_clone(const struct fetch_multi
  * \param name The name to look for in the list
  * \return The value found, or NULL if not present
  */
-const char *fetch_multipart_data_find(const struct fetch_multipart_data *list,
-				      const char *name);
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fetch_multipart_ದತ್ತಾಂಶ_ಕಂಡುಹಿಡಿ(ಸ್ಥಿರಾಂಕ ರಚನೆ fetch_multipart_ದತ್ತಾಂಶ *list,
+				      ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name);
 
 /**
  * Create an entry for a fetch_multipart_data
@@ -231,34 +231,34 @@ const char *fetch_multipart_data_find(const struct fetch_multipart_data *list,
  * \param value The value of the entry to create
  * \return The result of the attempt
  */
-nserror fetch_multipart_data_new_kv(struct fetch_multipart_data **list,
-				    const char *name,
-				    const char *value);
+nserror fetch_multipart_ದತ್ತಾಂಶ_new_kv(ರಚನೆ fetch_multipart_ದತ್ತಾಂಶ **list,
+				    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name,
+				    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮೌಲ್ಯ);
 
 /**
  * send message to fetch
  */
-void fetch_send_callback(const fetch_msg *msg, struct fetch *fetch);
+ಶೂನ್ಯ fetch_send_callback(ಸ್ಥಿರಾಂಕ fetch_ಸಂದೇಶ *ಸಂದೇಶ, ರಚನೆ fetch *fetch);
 
 /**
  * remove a queued fetch
  */
-void fetch_remove_from_queues(struct fetch *fetch);
+ಶೂನ್ಯ fetch_remove_from_queues(ರಚನೆ fetch *fetch);
 
 /**
  * Free a fetch structure and associated resources.
  */
-void fetch_free(struct fetch *f);
+ಶೂನ್ಯ fetch_free(ರಚನೆ fetch *f);
 
 /**
  * set the http code of a fetch
  */
-nserror fetch_set_http_code(struct fetch *fetch, http_response_code http_code);
+nserror fetch_ಗಣ_http_ಸಂಕೇತ(ರಚನೆ fetch *fetch, http_response_ಸಂಕೇತ http_ಸಂಕೇತ);
 
 /**
  * set cookie data on a fetch
  */
-void fetch_set_cookie(struct fetch *fetch, const char *data);
+ಶೂನ್ಯ fetch_ಗಣ_cookie(ರಚನೆ fetch *fetch, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ದತ್ತಾಂಶ);
 
 /**
  * Get the set of file descriptors the fetchers are currently using.
@@ -284,6 +284,6 @@ void fetch_set_cookie(struct fetch *fetch, const char *data);
  * \param[out] maxfd The highest fd number in the set or -1 if no fd available.
  * \return NSERROR_OK on success or appropriate error code.
  */
-nserror fetch_fdset(fd_set *read_fd_set, fd_set *write_fd_set, fd_set *except_fd_set, int *maxfd);
+nserror fetch_fdset(fd_set *read_fd_ಗಣ, fd_set *write_fd_ಗಣ, fd_set *except_fd_ಗಣ, ಪೂರ್ಣಾಂಕ *maxfd);
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

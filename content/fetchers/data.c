@@ -21,126 +21,126 @@
  * data scheme handling.  See http://tools.ietf.org/html/rfc2397
  */
 
-#include <stdbool.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <libwapcaplet/libwapcaplet.h>
-#include <nsutils/base64.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <libwapcaplet/libwapcaplet.h>
+#ಅನ್ತರ್ಭಾವ <nsutils/base64.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/url.h"
-#include "utils/nsurl.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/utils.h"
-#include "utils/ring.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/inttypes.h"
+#ಅನ್ತರ್ಭಾವ "utils/url.h"
+#ಅನ್ತರ್ಭಾವ "utils/nsurl.h"
+#ಅನ್ತರ್ಭಾವ "utils/corestrings.h"
+#ಅನ್ತರ್ಭಾವ "utils/log.h"
+#ಅನ್ತರ್ಭಾವ "utils/utils.h"
+#ಅನ್ತರ್ಭಾವ "utils/ring.h"
 
-#include "content/fetch.h"
-#include "content/fetchers.h"
-#include "content/fetchers/data.h"
+#ಅನ್ತರ್ಭಾವ "content/fetch.h"
+#ಅನ್ತರ್ಭಾವ "content/fetchers.h"
+#ಅನ್ತರ್ಭಾವ "content/fetchers/data.h"
 
-struct fetch_data_context {
-	struct fetch *parent_fetch;
+ರಚನೆ fetch_ದತ್ತಾಂಶ_context {
+	ರಚನೆ fetch *ಪೋಷಕ_fetch;
 	nsurl *url;
-	char *mimetype;
-	char *data;
+	ಅಕ್ಷರ *mimetype;
+	ಅಕ್ಷರ *ದತ್ತಾಂಶ;
 	size_t datalen;
 	bool base64;
 
 	bool aborted;
 	bool locked;
 	
-	struct fetch_data_context *r_next, *r_prev;
+	ರಚನೆ fetch_ದತ್ತಾಂಶ_context *r_ಮುಂದಿನ, *r_prev;
 };
 
-static struct fetch_data_context *ring = NULL;
+ಸ್ಥಿರ ರಚನೆ fetch_ದತ್ತಾಂಶ_context *ring = ಖಾಲಿ;
 
-static bool fetch_data_initialise(lwc_string *scheme)
+ಸ್ಥಿರ bool fetch_ದತ್ತಾಂಶ_initialise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "fetch_data_initialise called for %s",
-	      lwc_string_data(scheme));
+	      lwc_string_ದತ್ತಾಂಶ(scheme));
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
-static void fetch_data_finalise(lwc_string *scheme)
+ಸ್ಥಿರ ಶೂನ್ಯ fetch_ದತ್ತಾಂಶ_finalise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "fetch_data_finalise called for %s",
-	      lwc_string_data(scheme));
+	      lwc_string_ದತ್ತಾಂಶ(scheme));
 }
 
-static bool fetch_data_can_fetch(const nsurl *url)
+ಸ್ಥಿರ bool fetch_ದತ್ತಾಂಶ_can_fetch(ಸ್ಥಿರಾಂಕ nsurl *url)
 {
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
-static void fetch_data_send_callback(const fetch_msg *msg,
-		struct fetch_data_context *c)
+ಸ್ಥಿರ ಶೂನ್ಯ fetch_ದತ್ತಾಂಶ_send_callback(ಸ್ಥಿರಾಂಕ fetch_ಸಂದೇಶ *ಸಂದೇಶ,
+		ರಚನೆ fetch_ದತ್ತಾಂಶ_context *c)
 {
 	c->locked = true;
-	fetch_send_callback(msg, c->parent_fetch);
+	fetch_send_callback(ಸಂದೇಶ, c->ಪೋಷಕ_fetch);
 	c->locked = false;
 }
 
-static void fetch_data_send_header(struct fetch_data_context *ctx,
-		const char *fmt, ...)
+ಸ್ಥಿರ ಶೂನ್ಯ fetch_ದತ್ತಾಂಶ_send_ಶೀರ್ಷಿಕೆ(ರಚನೆ fetch_ದತ್ತಾಂಶ_context *ctx,
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, ...)
 {
-	char header[64];
-	fetch_msg msg;
+	ಅಕ್ಷರ ಶೀರ್ಷಿಕೆ[64];
+	fetch_ಸಂದೇಶ ಸಂದೇಶ;
 	va_list ap;
-	int len;
+	ಪೂರ್ಣಾಂಕ len;
 
 	va_start(ap, fmt);
-	len = vsnprintf(header, sizeof(header), fmt, ap);
+	len = vsnprintf(ಶೀರ್ಷಿಕೆ, ಗಾತ್ರ(ಶೀರ್ಷಿಕೆ), fmt, ap);
 	va_end(ap);
 
-	if (len >= (int)sizeof(header) || len < 0) {
-		return;
+	ಆದರೆ (len >= (ಪೂರ್ಣಾಂಕ)ಗಾತ್ರ(ಶೀರ್ಷಿಕೆ) || len < 0) {
+		ಹಿಂತಿರುಗಿ;
 	}
 
-	msg.type = FETCH_HEADER;
-	msg.data.header_or_data.len = len;
-	msg.data.header_or_data.buf = (const uint8_t *)header;
-	fetch_data_send_callback(&msg, ctx);
+	ಸಂದೇಶ.type = FETCH_ಶೀರ್ಷಿಕೆ;
+	ಸಂದೇಶ.ದತ್ತಾಂಶ.ಶೀರ್ಷಿಕೆ_or_ದತ್ತಾಂಶ.len = len;
+	ಸಂದೇಶ.ದತ್ತಾಂಶ.ಶೀರ್ಷಿಕೆ_or_ದತ್ತಾಂಶ.buf = (ಸ್ಥಿರಾಂಕ uint8_t *)ಶೀರ್ಷಿಕೆ;
+	fetch_ದತ್ತಾಂಶ_send_callback(&ಸಂದೇಶ, ctx);
 }
 
-static void *fetch_data_setup(struct fetch *parent_fetch, nsurl *url,
-		 bool only_2xx, bool downgrade_tls, const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+ಸ್ಥಿರ ಶೂನ್ಯ *fetch_ದತ್ತಾಂಶ_ಸಿದ್ಧತೆ(ರಚನೆ fetch *ಪೋಷಕ_fetch, nsurl *url,
+		 bool only_2xx, bool downgrade_tls, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *post_urlenc,
+		 ಸ್ಥಿರಾಂಕ ರಚನೆ fetch_multipart_ದತ್ತಾಂಶ *post_multipart,
+		 ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ **ಶೀರ್ಷಿಕೆಗಳು)
 {
-	struct fetch_data_context *ctx = calloc(1, sizeof(*ctx));
+	ರಚನೆ fetch_ದತ್ತಾಂಶ_context *ctx = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(*ctx));
 	
-	if (ctx == NULL)
-		return NULL;
+	ಆದರೆ (ctx == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 		
-	ctx->parent_fetch = parent_fetch;
+	ctx->ಪೋಷಕ_fetch = ಪೋಷಕ_fetch;
 	ctx->url = nsurl_ref(url);
 
-	RING_INSERT(ring, ctx);
+	RING_ಸೇರಿಸು(ring, ctx);
 	
-	return ctx;
+	ಹಿಂತಿರುಗಿ ctx;
 }
 
-static bool fetch_data_start(void *ctx)
+ಸ್ಥಿರ bool fetch_ದತ್ತಾಂಶ_ಆರಂಭ(ಶೂನ್ಯ *ctx)
 {
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
-static void fetch_data_free(void *ctx)
+ಸ್ಥಿರ ಶೂನ್ಯ fetch_ದತ್ತಾಂಶ_free(ಶೂನ್ಯ *ctx)
 {
-	struct fetch_data_context *c = ctx;
+	ರಚನೆ fetch_ದತ್ತಾಂಶ_context *c = ctx;
 
 	nsurl_unref(c->url);
-	free(c->data);
-	free(c->mimetype);
-	free(ctx);
+	ಬಿಡುಗಡೆ(c->ದತ್ತಾಂಶ);
+	ಬಿಡುಗಡೆ(c->mimetype);
+	ಬಿಡುಗಡೆ(ctx);
 }
 
-static void fetch_data_abort(void *ctx)
+ಸ್ಥಿರ ಶೂನ್ಯ fetch_ದತ್ತಾಂಶ_abort(ಶೂನ್ಯ *ctx)
 {
-	struct fetch_data_context *c = ctx;
+	ರಚನೆ fetch_ದತ್ತಾಂಶ_context *c = ctx;
 
 	/* To avoid the poll loop having to deal with the fetch context
 	 * disappearing from under it, we simply flag the abort here. 
@@ -149,13 +149,13 @@ static void fetch_data_abort(void *ctx)
 	c->aborted = true;
 }
 
-static bool fetch_data_process(struct fetch_data_context *c)
+ಸ್ಥಿರ bool fetch_ದತ್ತಾಂಶ_process(ರಚನೆ fetch_ದತ್ತಾಂಶ_context *c)
 {
 	nserror res;
-	fetch_msg msg;
-	const char *params;
-	const char *comma;
-	char *unescaped;
+	fetch_ಸಂದೇಶ ಸಂದೇಶ;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *params;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *comma;
+	ಅಕ್ಷರ *unescaped;
 	size_t unescaped_len;
 	
 	/* format of a data: URL is:
@@ -166,45 +166,45 @@ static bool fetch_data_process(struct fetch_data_context *c)
 	
 	NSLOG(netsurf, DEEPDEBUG, "url: %.140s", nsurl_access(c->url));
 	
-	if (nsurl_length(c->url) < 6) {
+	ಆದರೆ (nsurl_ಉದ್ದಳತೆ(c->url) < 6) {
 		/* 6 is the minimum possible length (data:,) */
-		msg.type = FETCH_ERROR;
-		msg.data.error = "Malformed data: URL";
-		fetch_data_send_callback(&msg, c);
-		return false;
+		ಸಂದೇಶ.type = FETCH_ERROR;
+		ಸಂದೇಶ.ದತ್ತಾಂಶ.error = "Malformed data: URL";
+		fetch_ದತ್ತಾಂಶ_send_callback(&ಸಂದೇಶ, c);
+		ಹಿಂತಿರುಗಿ false;
 	}
 	
 	/* skip the data: part */
 	params = nsurl_access(c->url) + SLEN("data:");
 	
 	/* find the comma */
-	if ( (comma = strchr(params, ',')) == NULL) {
-		msg.type = FETCH_ERROR;
-		msg.data.error = "Malformed data: URL";
-		fetch_data_send_callback(&msg, c);
-		return false;
+	ಆದರೆ ( (comma = strchr(params, ',')) == ಖಾಲಿ) {
+		ಸಂದೇಶ.type = FETCH_ERROR;
+		ಸಂದೇಶ.ದತ್ತಾಂಶ.error = "Malformed data: URL";
+		fetch_ದತ್ತಾಂಶ_send_callback(&ಸಂದೇಶ, c);
+		ಹಿಂತಿರುಗಿ false;
 	}
 	
-	if (params[0] == ',') {
+	ಆದರೆ (params[0] == ',') {
 		/* there is no mimetype here, assume text/plain */
 		c->mimetype = strdup("text/plain;charset=US-ASCII");
-	} else {	
+	} ಇಲ್ಲದಿದ್ದರೆ {	
 		/* make a copy of everything between data: and the comma */
 		c->mimetype = strndup(params, comma - params);
 	}
 	
-	if (c->mimetype == NULL) {
-		msg.type = FETCH_ERROR;
-		msg.data.error = 
+	ಆದರೆ (c->mimetype == ಖಾಲಿ) {
+		ಸಂದೇಶ.type = FETCH_ERROR;
+		ಸಂದೇಶ.ದತ್ತಾಂಶ.error = 
 			"Unable to allocate memory for mimetype in data: URL";
-		fetch_data_send_callback(&msg, c);
-		return false;
+		fetch_ದತ್ತಾಂಶ_send_callback(&ಸಂದೇಶ, c);
+		ಹಿಂತಿರುಗಿ false;
 	}
 	
-	if (strcmp(c->mimetype + strlen(c->mimetype) - 7, ";base64") == 0) {
+	ಆದರೆ (strcmp(c->mimetype + ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(c->mimetype) - 7, ";base64") == 0) {
 		c->base64 = true;
-		c->mimetype[strlen(c->mimetype) - 7] = '\0';
-	} else {
+		c->mimetype[ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(c->mimetype) - 7] = '\0';
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		c->base64 = false;
 	}
 	
@@ -212,42 +212,42 @@ static bool fetch_data_process(struct fetch_data_context *c)
 	 * decides to nest URL and base64 encoding.  Like, say, Acid2.
 	 */
 	res = url_unescape(comma + 1, 0, &unescaped_len, &unescaped);
-	if (res != NSERROR_OK) {
-		msg.type = FETCH_ERROR;
-		msg.data.error = "Unable to URL decode data: URL";
-		fetch_data_send_callback(&msg, c);
-		return false;
+	ಆದರೆ (res != NSERROR_OK) {
+		ಸಂದೇಶ.type = FETCH_ERROR;
+		ಸಂದೇಶ.ದತ್ತಾಂಶ.error = "Unable to URL decode data: URL";
+		fetch_ದತ್ತಾಂಶ_send_callback(&ಸಂದೇಶ, c);
+		ಹಿಂತಿರುಗಿ false;
 	}
 	
-	if (c->base64) {
-		if ((nsu_base64_decode_alloc((uint8_t *)unescaped,
+	ಆದರೆ (c->base64) {
+		ಆದರೆ ((nsu_base64_decode_alloc((uint8_t *)unescaped,
 					     unescaped_len,
-					     (uint8_t **)&c->data,
+					     (uint8_t **)&c->ದತ್ತಾಂಶ,
 					     &c->datalen) != NSUERROR_OK) ||
-		    (c->data == NULL)) {
-			msg.type = FETCH_ERROR;
-			msg.data.error = "Unable to Base64 decode data: URL";
-			fetch_data_send_callback(&msg, c);
-			free(unescaped);
-			return false;
+		    (c->ದತ್ತಾಂಶ == ಖಾಲಿ)) {
+			ಸಂದೇಶ.type = FETCH_ERROR;
+			ಸಂದೇಶ.ದತ್ತಾಂಶ.error = "Unable to Base64 decode data: URL";
+			fetch_ದತ್ತಾಂಶ_send_callback(&ಸಂದೇಶ, c);
+			ಬಿಡುಗಡೆ(unescaped);
+			ಹಿಂತಿರುಗಿ false;
 		}
-		free(unescaped);
-	} else {
+		ಬಿಡುಗಡೆ(unescaped);
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		c->datalen = unescaped_len;
-		c->data = unescaped;
+		c->ದತ್ತಾಂಶ = unescaped;
 	}
 	
 	
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
-static void fetch_data_poll(lwc_string *scheme)
+ಸ್ಥಿರ ಶೂನ್ಯ fetch_ದತ್ತಾಂಶ_poll(lwc_string *scheme)
 {
-	fetch_msg msg;
-	struct fetch_data_context *c, *save_ring = NULL;
+	fetch_ಸಂದೇಶ ಸಂದೇಶ;
+	ರಚನೆ fetch_ದತ್ತಾಂಶ_context *c, *save_ring = ಖಾಲಿ;
 	
 	/* Iterate over ring, processing each pending fetch */
-	while (ring != NULL) {
+	ಆಗ (ring != ಖಾಲಿ) {
 		/* Take the first entry from the ring */
 		c = ring;
 		RING_REMOVE(ring, c);
@@ -258,14 +258,14 @@ static void fetch_data_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called 
 		 * again.
 		 */
-		if (c->locked == true) {
-			RING_INSERT(save_ring, c);
-			continue;
+		ಆದರೆ (c->locked == true) {
+			RING_ಸೇರಿಸು(save_ring, c);
+			ಮುಂದುವರಿ;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false && fetch_data_process(c) == true) {
-			fetch_set_http_code(c->parent_fetch, 200);
+		ಆದರೆ (c->aborted == false && fetch_ದತ್ತಾಂಶ_process(c) == true) {
+			fetch_ಗಣ_http_ಸಂಕೇತ(c->ಪೋಷಕ_fetch, 200);
 			NSLOG(netsurf, INFO,
 			      "setting data: MIME type to %s, length to %"PRIsizet,
 			      c->mimetype,
@@ -274,45 +274,45 @@ static void fetch_data_poll(lwc_string *scheme)
 			 * Therefore, we _must_ check for this after _every_
 			 * call to fetch_data_send_callback().
 			 */
-			fetch_data_send_header(c, "Content-Type: %s",
+			fetch_ದತ್ತಾಂಶ_send_ಶೀರ್ಷಿಕೆ(c, "Content-Type: %s",
 					c->mimetype);
 
-			if (c->aborted == false) {
-				fetch_data_send_header(c, "Content-Length: %"
+			ಆದರೆ (c->aborted == false) {
+				fetch_ದತ್ತಾಂಶ_send_ಶೀರ್ಷಿಕೆ(c, "Content-Length: %"
 						PRIsizet, c->datalen);
 			}
 
-			if (c->aborted == false) {
+			ಆದರೆ (c->aborted == false) {
 				/* Set max-age to 1 year. */
-				fetch_data_send_header(c, "Cache-Control: "
+				fetch_ದತ್ತಾಂಶ_send_ಶೀರ್ಷಿಕೆ(c, "Cache-Control: "
 						"max-age=31536000");
 			}
 
-			if (c->aborted == false) {
-				msg.type = FETCH_DATA;
-				msg.data.header_or_data.buf = 
-						(const uint8_t *) c->data;
-				msg.data.header_or_data.len = c->datalen;
-				fetch_data_send_callback(&msg, c);
+			ಆದರೆ (c->aborted == false) {
+				ಸಂದೇಶ.type = FETCH_ದತ್ತಾಂಶ;
+				ಸಂದೇಶ.ದತ್ತಾಂಶ.ಶೀರ್ಷಿಕೆ_or_ದತ್ತಾಂಶ.buf = 
+						(ಸ್ಥಿರಾಂಕ uint8_t *) c->ದತ್ತಾಂಶ;
+				ಸಂದೇಶ.ದತ್ತಾಂಶ.ಶೀರ್ಷಿಕೆ_or_ದತ್ತಾಂಶ.len = c->datalen;
+				fetch_ದತ್ತಾಂಶ_send_callback(&ಸಂದೇಶ, c);
 			}
 
-			if (c->aborted == false) {
-				msg.type = FETCH_FINISHED;
-				fetch_data_send_callback(&msg, c);
+			ಆದರೆ (c->aborted == false) {
+				ಸಂದೇಶ.type = FETCH_ಪೂರ್ಣಗೊಂಡ;
+				fetch_ದತ್ತಾಂಶ_send_callback(&ಸಂದೇಶ, c);
 			}
-		} else {
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			NSLOG(netsurf, INFO, "Processing of %.140s failed!",
 			      nsurl_access(c->url));
 
 			/* Ensure that we're unlocked here. If we aren't, 
 			 * then fetch_data_process() is broken.
 			 */
-			assert(c->locked == false);
+			ಪ್ರತಿಜ್ಞಾ(c->locked == false);
 		}
 
 		/* And now finish */
-		fetch_remove_from_queues(c->parent_fetch);
-		fetch_free(c->parent_fetch);
+		fetch_remove_from_queues(c->ಪೋಷಕ_fetch);
+		fetch_free(c->ಪೋಷಕ_fetch);
 	}
 
 	/* Finally, if we saved any fetches which were locked, put them back
@@ -321,19 +321,19 @@ static void fetch_data_poll(lwc_string *scheme)
 	ring = save_ring;
 }
 
-nserror fetch_data_register(void)
+nserror fetch_ದತ್ತಾಂಶ_ರಿಜಿಸ್ಟರ್(ಶೂನ್ಯ)
 {
-	lwc_string *scheme = lwc_string_ref(corestring_lwc_data);
-	const struct fetcher_operation_table fetcher_ops = {
-		.initialise = fetch_data_initialise,
-		.acceptable = fetch_data_can_fetch,
-		.setup = fetch_data_setup,
-		.start = fetch_data_start,
-		.abort = fetch_data_abort,
-		.free = fetch_data_free,
-		.poll = fetch_data_poll,
-		.finalise = fetch_data_finalise
+	lwc_string *scheme = lwc_string_ref(corestring_lwc_ದತ್ತಾಂಶ);
+	ಸ್ಥಿರಾಂಕ ರಚನೆ fetcher_operation_ಕೋಷ್ಟಕ fetcher_ops = {
+		.initialise = fetch_ದತ್ತಾಂಶ_initialise,
+		.acceptable = fetch_ದತ್ತಾಂಶ_can_fetch,
+		.ಸಿದ್ಧತೆ = fetch_ದತ್ತಾಂಶ_ಸಿದ್ಧತೆ,
+		.ಆರಂಭ = fetch_ದತ್ತಾಂಶ_ಆರಂಭ,
+		.abort = fetch_ದತ್ತಾಂಶ_abort,
+		.ಬಿಡುಗಡೆ = fetch_ದತ್ತಾಂಶ_free,
+		.poll = fetch_ದತ್ತಾಂಶ_poll,
+		.finalise = fetch_ದತ್ತಾಂಶ_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	ಹಿಂತಿರುಗಿ fetcher_ಕೂಡಿಸು(scheme, &fetcher_ops);
 }

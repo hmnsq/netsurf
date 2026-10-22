@@ -21,8 +21,8 @@
  * HTML Box tree inspection interface.
  */
 
-#ifndef NETSURF_HTML_BOX_INSPECT_H
-#define NETSURF_HTML_BOX_INSPECT_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NETSURF_HTML_BOX_INSPECT_H
+#ವ್ಯಾಖ್ಯಾನಿಸು NETSURF_HTML_BOX_INSPECT_H
 
 /**
  * Find the absolute coordinates of a box.
@@ -31,7 +31,7 @@
  * \param  x    updated to x coordinate
  * \param  y    updated to y coordinate
  */
-void box_coords(struct box *box, int *x, int *y);
+ಶೂನ್ಯ box_coords(ರಚನೆ box *box, ಪೂರ್ಣಾಂಕ *x, ಪೂರ್ಣಾಂಕ *y);
 
 
 /**
@@ -40,7 +40,7 @@ void box_coords(struct box *box, int *x, int *y);
  * \param  box  the box to calculate bounds of
  * \param  r    receives bounds
  */
-void box_bounds(struct box *box, struct rect *r);
+ಶೂನ್ಯ box_bounds(ರಚನೆ box *box, ರಚನೆ rect *r);
 
 
 /**
@@ -67,7 +67,7 @@ void box_bounds(struct box *box, struct rect *r);
  *	}
  * \endcode
  */
-struct box *box_at_point(const css_unit_ctx *unit_len_ctx, struct box *box, const int x, const int y, int *box_x, int *box_y);
+ರಚನೆ box *box_at_ಬಿಂದು(ಸ್ಥಿರಾಂಕ css_unit_ctx *unit_len_ctx, ರಚನೆ box *box, ಸ್ಥಿರಾಂಕ ಪೂರ್ಣಾಂಕ x, ಸ್ಥಿರಾಂಕ ಪೂರ್ಣಾಂಕ y, ಪೂರ್ಣಾಂಕ *box_x, ಪೂರ್ಣಾಂಕ *box_y);
 
 
 /**
@@ -77,7 +77,7 @@ struct box *box_at_point(const css_unit_ctx *unit_len_ctx, struct box *box, cons
  * \param  id   id to look for
  * \return  the box or 0 if not found
  */
-struct box *box_find_by_id(struct box *box, lwc_string *id);
+ರಚನೆ box *box_ಕಂಡುಹಿಡಿ_by_id(ರಚನೆ box *box, lwc_string *id);
 
 
 /**
@@ -86,13 +86,13 @@ struct box *box_find_by_id(struct box *box, lwc_string *id);
  * \param  box  box to check
  * \return  true iff the box is rendered
  */
-bool box_visible(struct box *box);
+bool box_visible(ರಚನೆ box *box);
 
 
 /**
  * Print a box tree to a file.
  */
-void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style);
+ಶೂನ್ಯ box_dump(FILE *ಹರಿವು, ರಚನೆ box *box, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಆಳ, bool style);
 
 
 /**
@@ -101,7 +101,7 @@ void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style);
  * \param  box  scrolling box
  * \return the box has a vertical scrollbar
  */
-bool box_vscrollbar_present(const struct box *box);
+bool box_vscrollbar_present(ಸ್ಥಿರಾಂಕ ರಚನೆ box *box);
 
 
 /**
@@ -110,7 +110,7 @@ bool box_vscrollbar_present(const struct box *box);
  * \param  box  scrolling box
  * \return the box has a horizontal scrollbar
  */
-bool box_hscrollbar_present(const struct box *box);
+bool box_hscrollbar_present(ಸ್ಥಿರಾಂಕ ರಚನೆ box *box);
 
 
 /**
@@ -125,7 +125,7 @@ bool box_hscrollbar_present(const struct box *box);
  * \param dx	receives x ordinate of mouse relative to text box
  * \param dy	receives y ordinate of mouse relative to text box
  */
-struct box *box_pick_text_box(struct html_content *html, int x, int y, int dir, int *dx, int *dy);
+ರಚನೆ box *box_pick_ಪಠ್ಯ_box(ರಚನೆ html_content *html, ಪೂರ್ಣಾಂಕ x, ಪೂರ್ಣಾಂಕ y, ಪೂರ್ಣಾಂಕ dir, ಪೂರ್ಣಾಂಕ *dx, ಪೂರ್ಣಾಂಕ *dy);
 
 
 /**
@@ -134,22 +134,22 @@ struct box *box_pick_text_box(struct html_content *html, int x, int y, int dir, 
  * \param[in] b  Box to check.
  * \return true iff box is first child.
  */
-static inline bool box_is_first_child(struct box *b)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool box_is_ಮೊದಲ_ಮಗು(ರಚನೆ box *b)
 {
-	return (b->parent == NULL || b == b->parent->children);
+	ಹಿಂತಿರುಗಿ (b->ಪೋಷಕ == ಖಾಲಿ || b == b->ಪೋಷಕ->children);
 }
 
-static inline unsigned box_count_children(const struct box *b)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಚಿಹ್ನೆರಹಿತ box_ಎಣಿಕೆ_children(ಸ್ಥಿರಾಂಕ ರಚನೆ box *b)
 {
-	const struct box *c = b->children;
-	unsigned count = 0;
+	ಸ್ಥಿರಾಂಕ ರಚನೆ box *c = b->children;
+	ಚಿಹ್ನೆರಹಿತ ಎಣಿಕೆ_2 = 0;
 
-	while (c != NULL) {
-		count++;
-		c = c->next;
+	ಆಗ (c != ಖಾಲಿ) {
+		ಎಣಿಕೆ_2++;
+		c = c->ಮುಂದಿನ;
 	}
 
-	return count;
+	ಹಿಂತಿರುಗಿ ಎಣಿಕೆ_2;
 }
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

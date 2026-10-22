@@ -21,28 +21,28 @@
  * implementation for image/ico content handler
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <libnsbmp.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <libnsbmp.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#ಅನ್ತರ್ಭಾವ "utils/utils.h"
+#ಅನ್ತರ್ಭಾವ "utils/log.h"
+#ಅನ್ತರ್ಭಾವ "utils/messages.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/bitmap.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/content.h"
+#ಅನ್ತರ್ಭಾವ "content/llcache.h"
+#ಅನ್ತರ್ಭಾವ "content/content_protected.h"
+#ಅನ್ತರ್ಭಾವ "content/content_factory.h"
+#ಅನ್ತರ್ಭಾವ "desktop/gui_internal.h"
+#ಅನ್ತರ್ಭಾವ "desktop/bitmap.h"
 
-#include "image/image.h"
-#include "image/ico.h"
+#ಅನ್ತರ್ಭಾವ "image/image.h"
+#ಅನ್ತರ್ಭಾವ "image/ico.h"
 
-typedef struct nsico_content {
-	struct content base;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ nsico_content {
+	ರಚನೆ content ತಳ;
 
-	struct ico_collection *ico; /** ICO collection data */
+	ರಚನೆ ico_collection *ico; /** ICO collection data */
 } nsico_content;
 
 /**
@@ -53,272 +53,272 @@ typedef struct nsico_content {
  * \param  bmp_state A flag word indicating the initial state
  * \return an opaque struct bitmap, or NULL on memory exhaustion
  */
-static void *nsico_bitmap_create(int width, int height, unsigned int bmp_state)
+ಸ್ಥಿರ ಶೂನ್ಯ *nsico_bitmap_create(ಪೂರ್ಣಾಂಕ ಅಗಲ, ಪೂರ್ಣಾಂಕ ಎತ್ತರ, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ bmp_state)
 {
-	unsigned int bitmap_state = BITMAP_NONE;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ bitmap_state = BITMAP_NONE;
 
 	/* set bitmap state based on bmp state */
 	bitmap_state |= (bmp_state & BMP_OPAQUE) ? BITMAP_OPAQUE : 0;
-	bitmap_state |= (bmp_state & BMP_CLEAR_MEMORY) ?
+	bitmap_state |= (bmp_state & BMP_CLEAR_ಸ್ಮರಣೆ) ?
 			BITMAP_CLEAR : 0;
 
 	/* return the created bitmap */
-	return guit->bitmap->create(width, height, bitmap_state);
+	ಹಿಂತಿರುಗಿ guit->bitmap->create(ಅಗಲ, ಎತ್ತರ, bitmap_state);
 }
 
-static nserror nsico_create_ico_data(nsico_content *c)
+ಸ್ಥಿರ nserror nsico_create_ico_ದತ್ತಾಂಶ(nsico_content *c)
 {
 	bmp_bitmap_callback_vt bmp_bitmap_callbacks = {
 		.bitmap_create = nsico_bitmap_create,
 		.bitmap_destroy = guit->bitmap->destroy,
-		.bitmap_get_buffer = guit->bitmap->get_buffer,
+		.bitmap_get_ಬಫರ್ = guit->bitmap->get_ಬಫರ್,
 	};
 
-	c->ico = calloc(1, sizeof(ico_collection));
-	if (c->ico == NULL) {
-		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return NSERROR_NOMEM;
+	c->ico = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(ico_collection));
+	ಆದರೆ (c->ico == ಖಾಲಿ) {
+		content_ಪ್ರಸಾರ_error(&c->ತಳ, NSERROR_NOMEM, ಖಾಲಿ);
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 	}
 	ico_collection_create(c->ico, &bmp_bitmap_callbacks);
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
 
-static nserror nsico_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+ಸ್ಥಿರ nserror nsico_create(ಸ್ಥಿರಾಂಕ content_handler *handler,
+		lwc_string *imime_type, ಸ್ಥಿರಾಂಕ ರಚನೆ http_parameter *params,
+		llcache_handle *llcache, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fallback_charset,
+		bool quirks, ರಚನೆ content **c)
 {
-	nsico_content *result;
+	nsico_content *ಫಲಿತಾಂಶ;
 	nserror error;
 
-	result = calloc(1, sizeof(nsico_content));
-	if (result == NULL)
-		return NSERROR_NOMEM;
+	ಫಲಿತಾಂಶ = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(nsico_content));
+	ಆದರೆ (ಫಲಿತಾಂಶ == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 
-	error = content__init(&result->base, handler, imime_type, params,
+	error = content__init(&ಫಲಿತಾಂಶ->ತಳ, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(result);
-		return error;
+	ಆದರೆ (error != NSERROR_OK) {
+		ಬಿಡುಗಡೆ(ಫಲಿತಾಂಶ);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
-	error = nsico_create_ico_data(result);
-	if (error != NSERROR_OK) {
-		free(result);
-		return error;
+	error = nsico_create_ico_ದತ್ತಾಂಶ(ಫಲಿತಾಂಶ);
+	ಆದರೆ (error != NSERROR_OK) {
+		ಬಿಡುಗಡೆ(ಫಲಿತಾಂಶ);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
-	*c = (struct content *) result;
+	*c = (ರಚನೆ content *) ಫಲಿತಾಂಶ;
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
 
 
-static bool nsico_convert(struct content *c)
+ಸ್ಥಿರ bool nsico_convert(ರಚನೆ content *c)
 {
 	nsico_content *ico = (nsico_content *) c;
-	struct bmp_image *bmp;
-	bmp_result res;
-	const uint8_t *data;
-	size_t size;
-	char *title;
+	ರಚನೆ bmp_image *bmp;
+	bmp_ಫಲಿತಾಂಶ res;
+	ಸ್ಥಿರಾಂಕ uint8_t *ದತ್ತಾಂಶ;
+	size_t ಗಾತ್ರ_2;
+	ಅಕ್ಷರ *title;
 
 	/* set the ico data */
-	data = content__get_source_data(c, &size);
+	ದತ್ತಾಂಶ = content_get_ಮೂಲ_ದತ್ತಾಂಶ_2(c, &ಗಾತ್ರ_2);
 
 	/* analyse the ico */
-	res = ico_analyse(ico->ico, size, (unsigned char *) data);
+	res = ico_analyse(ico->ico, ಗಾತ್ರ_2, (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *) ದತ್ತಾಂಶ);
 
-	switch (res) {
-	case BMP_OK:
-		break;
-	case BMP_INSUFFICIENT_MEMORY:
-		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
-	case BMP_INSUFFICIENT_DATA:
-	case BMP_DATA_ERROR:
-		content_broadcast_error(c, NSERROR_ICO_ERROR, NULL);
-		return false;
+	ಆಯ್ಕೆ (res) {
+	ಸ್ಥಿತಿ BMP_OK:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ BMP_INSUFFICIENT_ಸ್ಮರಣೆ:
+		content_ಪ್ರಸಾರ_error(c, NSERROR_NOMEM, ಖಾಲಿ);
+		ಹಿಂತಿರುಗಿ false;
+	ಸ್ಥಿತಿ BMP_INSUFFICIENT_ದತ್ತಾಂಶ:
+	ಸ್ಥಿತಿ BMP_ದತ್ತಾಂಶ_ERROR:
+		content_ಪ್ರಸಾರ_error(c, NSERROR_ICO_ERROR, ಖಾಲಿ);
+		ಹಿಂತಿರುಗಿ false;
 	}
 
 	/* Store our content width, height and calculate size */
-	c->width = ico->ico->width;
-	c->height = ico->ico->height;
-	c->size += (ico->ico->width * ico->ico->height * 4) + 16 + 44;
+	c->ಅಗಲ = ico->ico->ಅಗಲ;
+	c->ಎತ್ತರ = ico->ico->ಎತ್ತರ;
+	c->ಗಾತ್ರ_2 += (ico->ico->ಅಗಲ * ico->ico->ಎತ್ತರ * 4) + 16 + 44;
 
 	/* set title text */
 	title = messages_get_buff("ICOTitle",
-			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
-			c->width, c->height);
-	if (title != NULL) {
-		content__set_title(c, title);
-		free(title);
+			nsurl_access_ಎಲೆ(llcache_handle_get_url(c->llcache)),
+			c->ಅಗಲ, c->ಎತ್ತರ);
+	ಆದರೆ (title != ಖಾಲಿ) {
+		content_ಗಣ_title(c, title);
+		ಬಿಡುಗಡೆ(title);
 	}
 
 	/* select largest icon to ensure one can be selected */
-	bmp = ico_find(ico->ico, 255, 255);
-	if (bmp == NULL) {
+	bmp = ico_ಕಂಡುಹಿಡಿ(ico->ico, 255, 255);
+	ಆದರೆ (bmp == ಖಾಲಿ) {
 		/* return error */
 		NSLOG(netsurf, INFO, "Failed to select icon");
-		return false;
+		ಹಿಂತಿರುಗಿ false;
 	}
 
-	content_set_ready(c);
-	content_set_done(c);
+	content_ಗಣ_ready(c);
+	content_ಗಣ_ಮುಗಿದ(c);
 
 	/* Done: update status bar */
-	content_set_status(c, "");
-	return true;
+	content_ಗಣ_ಸ್ಥಿತಿ(c, "");
+	ಹಿಂತಿರುಗಿ true;
 }
 
-static bool nsico__decode(struct bmp_image *ico)
+ಸ್ಥಿರ bool nsico__decode(ರಚನೆ bmp_image *ico)
 {
-	if (ico->decoded == false) {
+	ಆದರೆ (ico->decoded == false) {
 		NSLOG(netsurf, DEBUG, "Decoding ICO %p", ico);
-		if (bmp_decode(ico) != BMP_OK) {
-			return false;
+		ಆದರೆ (bmp_decode(ico) != BMP_OK) {
+			ಹಿಂತಿರುಗಿ false;
 		}
 
-		bitmap_format_to_client(ico->bitmap, &(bitmap_fmt_t) {
+		bitmap_format_ಗಮ್ಯ_client(ico->bitmap, &(bitmap_fmt_t) {
 			.layout = BITMAP_LAYOUT_R8G8B8A8,
 		});
 		guit->bitmap->modified(ico->bitmap);
 
 	}
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
-static bool nsico_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx)
+ಸ್ಥಿರ bool nsico_redraw(ರಚನೆ content *c, ರಚನೆ content_redraw_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ,
+		ಸ್ಥಿರಾಂಕ ರಚನೆ rect *clip, ಸ್ಥಿರಾಂಕ ರಚನೆ redraw_context *ctx)
 {
 	nsico_content *ico = (nsico_content *)c;
-	struct bmp_image *bmp;
+	ರಚನೆ bmp_image *bmp;
 
 	/* select most appropriate sized icon for size */
-	bmp = ico_find(ico->ico, data->width, data->height);
-	if (bmp == NULL) {
+	bmp = ico_ಕಂಡುಹಿಡಿ(ico->ico, ದತ್ತಾಂಶ->ಅಗಲ, ದತ್ತಾಂಶ->ಎತ್ತರ);
+	ಆದರೆ (bmp == ಖಾಲಿ) {
 		/* return error */
 		NSLOG(netsurf, INFO, "Failed to select icon");
-		return false;
+		ಹಿಂತಿರುಗಿ false;
 	}
 
 	/* ensure its decided */
-	if (!nsico__decode(bmp)) {
-		return false;
+	ಆದರೆ (!nsico__decode(bmp)) {
+		ಹಿಂತಿರುಗಿ false;
 	}
 
-	return image_bitmap_plot(bmp->bitmap, data, clip, ctx);
+	ಹಿಂತಿರುಗಿ image_bitmap_plot(bmp->bitmap, ದತ್ತಾಂಶ, clip, ctx);
 }
 
 
-static void nsico_destroy(struct content *c)
+ಸ್ಥಿರ ಶೂನ್ಯ nsico_destroy(ರಚನೆ content *c)
 {
 	nsico_content *ico = (nsico_content *) c;
 
 	ico_finalise(ico->ico);
-	free(ico->ico);
+	ಬಿಡುಗಡೆ(ico->ico);
 }
 
-static nserror nsico_clone(const struct content *old, struct content **newc)
+ಸ್ಥಿರ nserror nsico_clone(ಸ್ಥಿರಾಂಕ ರಚನೆ content *old, ರಚನೆ content **newc)
 {
 	nsico_content *ico;
 	nserror error;
 
-	ico = calloc(1, sizeof(nsico_content));
-	if (ico == NULL)
-		return NSERROR_NOMEM;
+	ico = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(nsico_content));
+	ಆದರೆ (ico == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 
-	error = content__clone(old, &ico->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&ico->base);
-		return error;
+	error = content__clone(old, &ico->ತಳ);
+	ಆದರೆ (error != NSERROR_OK) {
+		content_destroy(&ico->ತಳ);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
 	/* Simply replay creation and conversion */
-	error = nsico_create_ico_data(ico);
-	if (error != NSERROR_OK) {
-		content_destroy(&ico->base);
-		return error;
+	error = nsico_create_ico_ದತ್ತಾಂಶ(ico);
+	ಆದರೆ (error != NSERROR_OK) {
+		content_destroy(&ico->ತಳ);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
-			old->status == CONTENT_STATUS_DONE) {
-		if (nsico_convert(&ico->base) == false) {
-			content_destroy(&ico->base);
-			return NSERROR_CLONE_FAILED;
+	ಆದರೆ (old->ಸ್ಥಿತಿ_2 == CONTENT_ಸ್ಥಿತಿ_READY ||
+			old->ಸ್ಥಿತಿ_2 == CONTENT_ಸ್ಥಿತಿ_ಮುಗಿದ) {
+		ಆದರೆ (nsico_convert(&ico->ತಳ) == false) {
+			content_destroy(&ico->ತಳ);
+			ಹಿಂತಿರುಗಿ NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) ico;
+	*newc = (ರಚನೆ content *) ico;
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
-static void *nsico_get_internal(const struct content *c, void *context)
+ಸ್ಥಿರ ಶೂನ್ಯ *nsico_get_ಆಂತರಿಕ(ಸ್ಥಿರಾಂಕ ರಚನೆ content *c, ಶೂನ್ಯ *context)
 {
 	nsico_content *ico = (nsico_content *) c;
 	/* TODO: Pick best size for purpose.
 	 *       Currently assumes it's for a URL bar. */
-	struct bmp_image *bmp;
+	ರಚನೆ bmp_image *bmp;
 
-	bmp = ico_find(ico->ico, 16, 16);
-	if (bmp == NULL) {
+	bmp = ico_ಕಂಡುಹಿಡಿ(ico->ico, 16, 16);
+	ಆದರೆ (bmp == ಖಾಲಿ) {
 		/* return error */
 		NSLOG(netsurf, INFO, "Failed to select icon");
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
-	if (!nsico__decode(bmp)) {
-		return NULL;
+	ಆದರೆ (!nsico__decode(bmp)) {
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
-	return bmp->bitmap;
+	ಹಿಂತಿರುಗಿ bmp->bitmap;
 }
 
-static content_type nsico_content_type(void)
+ಸ್ಥಿರ content_type nsico_content_type(ಶೂನ್ಯ)
 {
-	return CONTENT_IMAGE;
+	ಹಿಂತಿರುಗಿ CONTENT_IMAGE;
 }
 
-static bool nsico_is_opaque(struct content *c)
+ಸ್ಥಿರ bool nsico_is_opaque(ರಚನೆ content *c)
 {
 	nsico_content *ico = (nsico_content *) c;
-	struct bmp_image *bmp;
+	ರಚನೆ bmp_image *bmp;
 
 	/**
 	 * \todo Pick best size for purpose. Currently assumes
 	 *         it's for a URL bar.
 	 */
-	bmp = ico_find(ico->ico, 16, 16);
-	if (bmp == NULL) {
+	bmp = ico_ಕಂಡುಹಿಡಿ(ico->ico, 16, 16);
+	ಆದರೆ (bmp == ಖಾಲಿ) {
 		/* return error */
 		NSLOG(netsurf, INFO, "Failed to select icon");
-		return false;
+		ಹಿಂತಿರುಗಿ false;
 	}
 
-	if (!nsico__decode(bmp)) {
-		return false;
+	ಆದರೆ (!nsico__decode(bmp)) {
+		ಹಿಂತಿರುಗಿ false;
 	}
 
-	return guit->bitmap->get_opaque(bmp->bitmap);
+	ಹಿಂತಿರುಗಿ guit->bitmap->get_opaque(bmp->bitmap);
 }
 
-static const content_handler nsico_content_handler = {
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ content_handler nsico_content_handler = {
 	.create = nsico_create,
-	.data_complete = nsico_convert,
+	.ದತ್ತಾಂಶ_complete = nsico_convert,
 	.destroy = nsico_destroy,
 	.redraw = nsico_redraw,
 	.clone = nsico_clone,
-	.get_internal = nsico_get_internal,
+	.get_ಆಂತರಿಕ = nsico_get_ಆಂತರಿಕ,
 	.type = nsico_content_type,
 	.is_opaque = nsico_is_opaque,
 	.no_share = false,
 };
 
-static const char *nsico_types[] = {
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *nsico_types[] = {
 	"application/ico",
 	"application/x-ico",
 	"image/ico",
@@ -326,4 +326,4 @@ static const char *nsico_types[] = {
 	"image/x-icon"
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(nsico, nsico_types, nsico_content_handler);
+CONTENT_FACTORY_ರಿಜಿಸ್ಟರ್_TYPES(nsico, nsico_types, nsico_content_handler);

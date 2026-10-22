@@ -21,48 +21,48 @@
  * implementation of content for image/svg using libsvgtiny.
  */
 
-#include <assert.h>
-#include <limits.h>
-#include <string.h>
-#include <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
 
-#include <svgtiny.h>
+#ಅನ್ತರ್ಭಾವ <svgtiny.h>
 
-#include "utils/messages.h"
-#include "utils/utils.h"
-#include "utils/nsurl.h"
-#include "netsurf/plotters.h"
-#include "netsurf/content.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
+#ಅನ್ತರ್ಭಾವ "utils/messages.h"
+#ಅನ್ತರ್ಭಾವ "utils/utils.h"
+#ಅನ್ತರ್ಭಾವ "utils/nsurl.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/plotters.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/content.h"
+#ಅನ್ತರ್ಭಾವ "content/content_protected.h"
+#ಅನ್ತರ್ಭಾವ "content/content_factory.h"
 
-#include "image/svg.h"
+#ಅನ್ತರ್ಭಾವ "image/svg.h"
 
-typedef struct svg_content {
-	struct content base;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ svg_content {
+	ರಚನೆ content ತಳ;
 
-	struct svgtiny_diagram *diagram;
+	ರಚನೆ svgtiny_diagram *diagram;
 
-	int current_width;
-	int current_height;
+	ಪೂರ್ಣಾಂಕ current_ಅಗಲ;
+	ಪೂರ್ಣಾಂಕ current_ಎತ್ತರ;
 } svg_content;
 
 
 
-static nserror svg_create_svg_data(svg_content *c)
+ಸ್ಥಿರ nserror svg_create_svg_ದತ್ತಾಂಶ(svg_content *c)
 {
 	c->diagram = svgtiny_create();
-	if (c->diagram == NULL)
-		goto no_memory;
+	ಆದರೆ (c->diagram == ಖಾಲಿ)
+		ಹೋಗು no_ಸ್ಮರಣೆ;
 
-	c->current_width = INT_MAX;
-	c->current_height = INT_MAX;
+	c->current_ಅಗಲ = ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ;
+	c->current_ಎತ್ತರ = ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ;
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 
-no_memory:
-	content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-	return NSERROR_NOMEM;
+no_ಸ್ಮರಣೆ:
+	content_ಪ್ರಸಾರ_error(&c->ತಳ, NSERROR_NOMEM, ಖಾಲಿ);
+	ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 }
 
 
@@ -70,34 +70,34 @@ no_memory:
  * Create a CONTENT_SVG.
  */
 
-static nserror svg_create(const content_handler *handler,
-		lwc_string *imime_type, const struct http_parameter *params,
-		struct llcache_handle *llcache, const char *fallback_charset,
-		bool quirks, struct content **c)
+ಸ್ಥಿರ nserror svg_create(ಸ್ಥಿರಾಂಕ content_handler *handler,
+		lwc_string *imime_type, ಸ್ಥಿರಾಂಕ ರಚನೆ http_parameter *params,
+		ರಚನೆ llcache_handle *llcache, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fallback_charset,
+		bool quirks, ರಚನೆ content **c)
 {
 	svg_content *svg;
 	nserror error;
 
-	svg = calloc(1, sizeof(svg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	svg = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(svg_content));
+	ಆದರೆ (svg == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 
-	error = content__init(&svg->base, handler, imime_type, params,
+	error = content__init(&svg->ತಳ, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(svg);
-		return error;
+	ಆದರೆ (error != NSERROR_OK) {
+		ಬಿಡುಗಡೆ(svg);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
-	error = svg_create_svg_data(svg);
-	if (error != NSERROR_OK) {
-		free(svg);
-		return error;
+	error = svg_create_svg_ದತ್ತಾಂಶ(svg);
+	ಆದರೆ (error != NSERROR_OK) {
+		ಬಿಡುಗಡೆ(svg);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
-	*c = (struct content *) svg;
+	*c = (ರಚನೆ content *) svg;
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
 
@@ -106,50 +106,50 @@ static nserror svg_create(const content_handler *handler,
  * Convert a CONTENT_SVG for display.
  */
 
-static bool svg_convert(struct content *c)
+ಸ್ಥಿರ bool svg_convert(ರಚನೆ content *c)
 {
 	/*c->title = malloc(100);
 	if (c->title)
 		snprintf(c->title, 100, messages_get("svgTitle"),
 				width, height, c->source_size);*/
 	//c->size += ?;
-	content_set_ready(c);
-	content_set_done(c);
+	content_ಗಣ_ready(c);
+	content_ಗಣ_ಮುಗಿದ(c);
 	/* Done: update status bar */
-	content_set_status(c, "");
+	content_ಗಣ_ಸ್ಥಿತಿ(c, "");
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
 /**
  * Reformat a CONTENT_SVG.
  */
 
-static void svg_reformat(struct content *c, int width, int height)
+ಸ್ಥಿರ ಶೂನ್ಯ svg_reformat(ರಚನೆ content *c, ಪೂರ್ಣಾಂಕ ಅಗಲ, ಪೂರ್ಣಾಂಕ ಎತ್ತರ)
 {
 	svg_content *svg = (svg_content *) c;
-	const uint8_t *source_data;
-	size_t source_size;
+	ಸ್ಥಿರಾಂಕ uint8_t *ಮೂಲ_ದತ್ತಾಂಶ;
+	size_t ಮೂಲ_ಗಾತ್ರ;
 
-	assert(svg->diagram);
+	ಪ್ರತಿಜ್ಞಾ(svg->diagram);
 
 	/* Avoid reformats to same width/height as we already reformatted to */
-	if (width != svg->current_width || height != svg->current_height) {
-		source_data = content__get_source_data(c, &source_size);
+	ಆದರೆ (ಅಗಲ != svg->current_ಅಗಲ || ಎತ್ತರ != svg->current_ಎತ್ತರ) {
+		ಮೂಲ_ದತ್ತಾಂಶ = content_get_ಮೂಲ_ದತ್ತಾಂಶ_2(c, &ಮೂಲ_ಗಾತ್ರ);
 
 		svgtiny_parse(svg->diagram,
-			      (const char *)source_data,
-			      source_size,
+			      (ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *)ಮೂಲ_ದತ್ತಾಂಶ,
+			      ಮೂಲ_ಗಾತ್ರ,
 			      nsurl_access(content_get_url(c)),
-			      width,
-			      height);
+			      ಅಗಲ,
+			      ಎತ್ತರ);
 
-		svg->current_width = width;
-		svg->current_height = height;
+		svg->current_ಅಗಲ = ಅಗಲ;
+		svg->current_ಎತ್ತರ = ಎತ್ತರ;
 	}
 
-	c->width = svg->diagram->width;
-	c->height = svg->diagram->height;
+	c->ಅಗಲ = svg->diagram->ಅಗಲ;
+	c->ಎತ್ತರ = svg->diagram->ಎತ್ತರ;
 }
 
 
@@ -157,168 +157,168 @@ static void svg_reformat(struct content *c, int width, int height)
  * Redraw a CONTENT_SVG.
  */
 
-static bool
-svg_redraw_internal(svg_content *svg,
-		    int x,
-		    int y,
-		    int width,
-		    int height,
-		    const struct rect *clip,
-		    const struct redraw_context *ctx,
-		    float scale,
-		    colour background_colour)
+ಸ್ಥಿರ bool
+svg_redraw_ಆಂತರಿಕ(svg_content *svg,
+		    ಪೂರ್ಣಾಂಕ x,
+		    ಪೂರ್ಣಾಂಕ y,
+		    ಪೂರ್ಣಾಂಕ ಅಗಲ,
+		    ಪೂರ್ಣಾಂಕ ಎತ್ತರ,
+		    ಸ್ಥಿರಾಂಕ ರಚನೆ rect *clip,
+		    ಸ್ಥಿರಾಂಕ ರಚನೆ redraw_context *ctx,
+		    ದಶಮಾಂಶ scale,
+		    ಬಣ್ಣ background_ಬಣ್ಣ)
 {
-	float transform[6];
-	struct svgtiny_diagram *diagram = svg->diagram;
-	int px, py;
-	unsigned int i;
+	ದಶಮಾಂಶ transform[6];
+	ರಚನೆ svgtiny_diagram *diagram = svg->diagram;
+	ಪೂರ್ಣಾಂಕ px, py;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ i;
 	plot_font_style_t fstyle = *plot_style_font;
 	plot_style_t pstyle;
 	nserror res;
 
-	assert(diagram);
+	ಪ್ರತಿಜ್ಞಾ(diagram);
 
-	transform[0] = (float) width / (float) svg->base.width;
+	transform[0] = (ದಶಮಾಂಶ) ಅಗಲ / (ದಶಮಾಂಶ) svg->ತಳ.ಅಗಲ;
 	transform[1] = 0;
 	transform[2] = 0;
-	transform[3] = (float) height / (float) svg->base.height;
+	transform[3] = (ದಶಮಾಂಶ) ಎತ್ತರ / (ದಶಮಾಂಶ) svg->ತಳ.ಎತ್ತರ;
 	transform[4] = x;
 	transform[5] = y;
 
-#define BGR(c) (((svgtiny_RED((c))) |					\
+#ವ್ಯಾಖ್ಯಾನಿಸು BGR(c) (((svgtiny_RED((c))) |					\
 		 (svgtiny_GREEN((c)) << 8) |				\
 		 (svgtiny_BLUE((c)) << 16)))
 
-	for (i = 0; i != diagram->shape_count; i++) {
-		if (diagram->shape[i].path) {
+	ಗಾಗಿ (i = 0; i != diagram->shape_ಎಣಿಕೆ; i++) {
+		ಆದರೆ (diagram->shape[i].ಮಾರ್ಗ) {
 			/* stroke style */
-			if (diagram->shape[i].stroke == svgtiny_TRANSPARENT) {
+			ಆದರೆ (diagram->shape[i].stroke == svgtiny_TRANSPARENT) {
 				pstyle.stroke_type = PLOT_OP_TYPE_NONE;
-				pstyle.stroke_colour = NS_TRANSPARENT;
-			} else {
+				pstyle.stroke_ಬಣ್ಣ = NS_TRANSPARENT;
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				pstyle.stroke_type = PLOT_OP_TYPE_SOLID;
-				pstyle.stroke_colour = BGR(diagram->shape[i].stroke);
+				pstyle.stroke_ಬಣ್ಣ = BGR(diagram->shape[i].stroke);
 			}
-			pstyle.stroke_width = plot_style_int_to_fixed(
-					diagram->shape[i].stroke_width);
+			pstyle.stroke_ಅಗಲ = plot_style_int_ಗಮ್ಯ_fixed(
+					diagram->shape[i].stroke_ಅಗಲ);
 
 			/* fill style */
-			if (diagram->shape[i].fill == svgtiny_TRANSPARENT) {
+			ಆದರೆ (diagram->shape[i].fill == svgtiny_TRANSPARENT) {
 				pstyle.fill_type = PLOT_OP_TYPE_NONE;
-				pstyle.fill_colour = NS_TRANSPARENT;
-			} else {
+				pstyle.fill_ಬಣ್ಣ = NS_TRANSPARENT;
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				pstyle.fill_type = PLOT_OP_TYPE_SOLID;
-				pstyle.fill_colour = BGR(diagram->shape[i].fill);
+				pstyle.fill_ಬಣ್ಣ = BGR(diagram->shape[i].fill);
 			}
 
 			/* draw the path */
-			res = ctx->plot->path(ctx,
+			res = ctx->plot->ಮಾರ್ಗ(ctx,
 					&pstyle,
-					diagram->shape[i].path,
-					diagram->shape[i].path_length,
+					diagram->shape[i].ಮಾರ್ಗ,
+					diagram->shape[i].ಮಾರ್ಗ_ಉದ್ದಳತೆ,
 					transform);
-			if (res != NSERROR_OK) {
-				return false;
+			ಆದರೆ (res != NSERROR_OK) {
+				ಹಿಂತಿರುಗಿ false;
 			}
 
-		} else if (diagram->shape[i].text) {
-			px = transform[0] * diagram->shape[i].text_x +
-				transform[2] * diagram->shape[i].text_y +
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (diagram->shape[i].ಪಠ್ಯ) {
+			px = transform[0] * diagram->shape[i].ಪಠ್ಯ_x +
+				transform[2] * diagram->shape[i].ಪಠ್ಯ_y +
 				transform[4];
-			py = transform[1] * diagram->shape[i].text_x +
-				transform[3] * diagram->shape[i].text_y +
+			py = transform[1] * diagram->shape[i].ಪಠ್ಯ_x +
+				transform[3] * diagram->shape[i].ಪಠ್ಯ_y +
 				transform[5];
 
 			fstyle.background = 0xffffff;
 			fstyle.foreground = 0x000000;
-			fstyle.size = (8 * PLOT_STYLE_SCALE) * scale;
+			fstyle.ಗಾತ್ರ_2 = (8 * PLOT_STYLE_SCALE) * scale;
 
-			res = ctx->plot->text(ctx,
+			res = ctx->plot->ಪಠ್ಯ(ctx,
 					      &fstyle,
 					      px, py,
-					      diagram->shape[i].text,
-					      strlen(diagram->shape[i].text));
-			if (res != NSERROR_OK) {
-				return false;
+					      diagram->shape[i].ಪಠ್ಯ,
+					      ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(diagram->shape[i].ಪಠ್ಯ));
+			ಆದರೆ (res != NSERROR_OK) {
+				ಹಿಂತಿರುಗಿ false;
 			}
 		}
 	}
 
-#undef BGR
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು BGR
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
 
-static bool
-svg_redraw_tiled_internal(svg_content *svg,
-			  struct content_redraw_data *data,
-			  const struct rect *clip,
-			  const struct redraw_context *ctx)
+ಸ್ಥಿರ bool
+svg_redraw_tiled_ಆಂತರಿಕ(svg_content *svg,
+			  ರಚನೆ content_redraw_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ,
+			  ಸ್ಥಿರಾಂಕ ರಚನೆ rect *clip,
+			  ಸ್ಥಿರಾಂಕ ರಚನೆ redraw_context *ctx)
 {
 	/* Tiled redraw required.  SVG repeats to extents of clip
 	 * rectangle, in x, y or both directions */
-	int x, y, x0, y0, x1, y1;
+	ಪೂರ್ಣಾಂಕ x, y, x0, y0, x1, y1;
 
-	x = x0 = data->x;
-	y = y0 = data->y;
+	x = x0 = ದತ್ತಾಂಶ->x;
+	y = y0 = ದತ್ತಾಂಶ->y;
 
 	/* Find the redraw boundaries to loop within */
-	if (data->repeat_x) {
-		for (; x0 > clip->x0; x0 -= data->width);
+	ಆದರೆ (ದತ್ತಾಂಶ->repeat_x) {
+		ಗಾಗಿ (; x0 > clip->x0; x0 -= ದತ್ತಾಂಶ->ಅಗಲ);
 		x1 = clip->x1;
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		x1 = x + 1;
 	}
-	if (data->repeat_y) {
-		for (; y0 > clip->y0; y0 -= data->height);
+	ಆದರೆ (ದತ್ತಾಂಶ->repeat_y) {
+		ಗಾಗಿ (; y0 > clip->y0; y0 -= ದತ್ತಾಂಶ->ಎತ್ತರ);
 		y1 = clip->y1;
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		y1 = y + 1;
 	}
 
 	/* Repeatedly plot the SVG across the area */
-	for (y = y0; y < y1; y += data->height) {
-		for (x = x0; x < x1; x += data->width) {
-			if (!svg_redraw_internal(svg, x, y,
-						 data->width, data->height,
-						 clip, ctx, data->scale,
-						 data->background_colour)) {
-				return false;
+	ಗಾಗಿ (y = y0; y < y1; y += ದತ್ತಾಂಶ->ಎತ್ತರ) {
+		ಗಾಗಿ (x = x0; x < x1; x += ದತ್ತಾಂಶ->ಅಗಲ) {
+			ಆದರೆ (!svg_redraw_ಆಂತರಿಕ(svg, x, y,
+						 ದತ್ತಾಂಶ->ಅಗಲ, ದತ್ತಾಂಶ->ಎತ್ತರ,
+						 clip, ctx, ದತ್ತಾಂಶ->scale,
+						 ದತ್ತಾಂಶ->background_ಬಣ್ಣ)) {
+				ಹಿಂತಿರುಗಿ false;
 			}
 		}
 	}
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
 
 /**
  * Redraw a CONTENT_SVG.
  */
-static bool
-svg_redraw(struct content *c,
-	   struct content_redraw_data *data,
-	   const struct rect *clip,
-	   const struct redraw_context *ctx)
+ಸ್ಥಿರ bool
+svg_redraw(ರಚನೆ content *c,
+	   ರಚನೆ content_redraw_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ,
+	   ಸ್ಥಿರಾಂಕ ರಚನೆ rect *clip,
+	   ಸ್ಥಿರಾಂಕ ರಚನೆ redraw_context *ctx)
 {
 	svg_content *svg = (svg_content *)c;
 
-	if ((data->width <= 0) && (data->height <= 0)) {
+	ಆದರೆ ((ದತ್ತಾಂಶ->ಅಗಲ <= 0) && (ದತ್ತಾಂಶ->ಎತ್ತರ <= 0)) {
 		/* No point trying to plot SVG if it does not occupy a valid
 		 * area */
-		return true;
+		ಹಿಂತಿರುಗಿ true;
 	}
 
-	if ((data->repeat_x == false) && (data->repeat_y == false)) {
+	ಆದರೆ ((ದತ್ತಾಂಶ->repeat_x == false) && (ದತ್ತಾಂಶ->repeat_y == false)) {
 		/* Simple case: SVG is not tiled */
-		return svg_redraw_internal(svg, data->x, data->y,
-				data->width, data->height,
-				clip, ctx, data->scale,
-				data->background_colour);
+		ಹಿಂತಿರುಗಿ svg_redraw_ಆಂತರಿಕ(svg, ದತ್ತಾಂಶ->x, ದತ್ತಾಂಶ->y,
+				ದತ್ತಾಂಶ->ಅಗಲ, ದತ್ತಾಂಶ->ಎತ್ತರ,
+				clip, ctx, ದತ್ತಾಂಶ->scale,
+				ದತ್ತಾಂಶ->background_ಬಣ್ಣ);
 	}
 
-	return svg_redraw_tiled_internal(svg, data, clip, ctx);
+	ಹಿಂತಿರುಗಿ svg_redraw_tiled_ಆಂತರಿಕ(svg, ದತ್ತಾಂಶ, clip, ctx);
 }
 
 
@@ -326,58 +326,58 @@ svg_redraw(struct content *c,
  * Destroy a CONTENT_SVG and free all resources it owns.
  */
 
-static void svg_destroy(struct content *c)
+ಸ್ಥಿರ ಶೂನ್ಯ svg_destroy(ರಚನೆ content *c)
 {
 	svg_content *svg = (svg_content *) c;
 
-	if (svg->diagram != NULL)
+	ಆದರೆ (svg->diagram != ಖಾಲಿ)
 		svgtiny_free(svg->diagram);
 }
 
 
-static nserror svg_clone(const struct content *old, struct content **newc)
+ಸ್ಥಿರ nserror svg_clone(ಸ್ಥಿರಾಂಕ ರಚನೆ content *old, ರಚನೆ content **newc)
 {
 	svg_content *svg;
 	nserror error;
 
-	svg = calloc(1, sizeof(svg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	svg = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(svg_content));
+	ಆದರೆ (svg == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 
-	error = content__clone(old, &svg->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&svg->base);
-		return error;
+	error = content__clone(old, &svg->ತಳ);
+	ಆದರೆ (error != NSERROR_OK) {
+		content_destroy(&svg->ತಳ);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
 	/* Simply replay create/convert */
-	error = svg_create_svg_data(svg);
-	if (error != NSERROR_OK) {
-		content_destroy(&svg->base);
-		return error;
+	error = svg_create_svg_ದತ್ತಾಂಶ(svg);
+	ಆದರೆ (error != NSERROR_OK) {
+		content_destroy(&svg->ತಳ);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
-			old->status == CONTENT_STATUS_DONE) {
-		if (svg_convert(&svg->base) == false) {
-			content_destroy(&svg->base);
-			return NSERROR_CLONE_FAILED;
+	ಆದರೆ (old->ಸ್ಥಿತಿ_2 == CONTENT_ಸ್ಥಿತಿ_READY ||
+			old->ಸ್ಥಿತಿ_2 == CONTENT_ಸ್ಥಿತಿ_ಮುಗಿದ) {
+		ಆದರೆ (svg_convert(&svg->ತಳ) == false) {
+			content_destroy(&svg->ತಳ);
+			ಹಿಂತಿರುಗಿ NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) svg;
+	*newc = (ರಚನೆ content *) svg;
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
-static content_type svg_content_type(void)
+ಸ್ಥಿರ content_type svg_content_type(ಶೂನ್ಯ)
 {
-	return CONTENT_IMAGE;
+	ಹಿಂತಿರುಗಿ CONTENT_IMAGE;
 }
 
-static const content_handler svg_content_handler = {
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ content_handler svg_content_handler = {
 	.create = svg_create,
-	.data_complete = svg_convert,
+	.ದತ್ತಾಂಶ_complete = svg_convert,
 	.reformat = svg_reformat,
 	.destroy = svg_destroy,
 	.redraw = svg_redraw,
@@ -386,10 +386,10 @@ static const content_handler svg_content_handler = {
 	.no_share = true
 };
 
-static const char *svg_types[] = {
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *svg_types[] = {
 	"image/svg",
 	"image/svg+xml"
 };
 
 
-CONTENT_FACTORY_REGISTER_TYPES(svg, svg_types, svg_content_handler);
+CONTENT_FACTORY_ರಿಜಿಸ್ಟರ್_TYPES(svg, svg_types, svg_content_handler);

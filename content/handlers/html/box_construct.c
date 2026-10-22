@@ -25,92 +25,92 @@
  * Implementation of conversion from DOM tree to box tree.
  */
 
-#include <string.h>
-#include <dom/dom.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <dom/dom.h>
 
-#include "utils/errors.h"
-#include "utils/nsoption.h"
-#include "utils/corestrings.h"
-#include "utils/talloc.h"
-#include "utils/string.h"
-#include "utils/ascii.h"
-#include "utils/nsurl.h"
-#include "utils/utils.h"
-#include "netsurf/misc.h"
-#include "css/select.h"
-#include "desktop/gui_internal.h"
+#ಅನ್ತರ್ಭಾವ "utils/errors.h"
+#ಅನ್ತರ್ಭಾವ "utils/nsoption.h"
+#ಅನ್ತರ್ಭಾವ "utils/corestrings.h"
+#ಅನ್ತರ್ಭಾವ "utils/talloc.h"
+#ಅನ್ತರ್ಭಾವ "utils/string.h"
+#ಅನ್ತರ್ಭಾವ "utils/ascii.h"
+#ಅನ್ತರ್ಭಾವ "utils/nsurl.h"
+#ಅನ್ತರ್ಭಾವ "utils/utils.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/misc.h"
+#ಅನ್ತರ್ಭಾವ "css/select.h"
+#ಅನ್ತರ್ಭಾವ "desktop/gui_internal.h"
 
-#include "html/private.h"
-#include "html/object.h"
-#include "html/box.h"
-#include "html/box_manipulate.h"
-#include "html/box_construct.h"
-#include "html/box_special.h"
-#include "html/box_normalise.h"
-#include "html/form_internal.h"
+#ಅನ್ತರ್ಭಾವ "html/private.h"
+#ಅನ್ತರ್ಭಾವ "html/object.h"
+#ಅನ್ತರ್ಭಾವ "html/box.h"
+#ಅನ್ತರ್ಭಾವ "html/box_manipulate.h"
+#ಅನ್ತರ್ಭಾವ "html/box_construct.h"
+#ಅನ್ತರ್ಭಾವ "html/box_special.h"
+#ಅನ್ತರ್ಭಾವ "html/box_normalise.h"
+#ಅನ್ತರ್ಭಾವ "html/form_internal.h"
 
 /**
  * Context for box tree construction
  */
-struct box_construct_ctx {
+ರಚನೆ box_construct_ctx {
 	html_content *content;		/**< Content we're constructing for */
 
-	dom_node *n;			/**< Current node to process */
+	dom_ಗಂಟು *n;			/**< Current node to process */
 
-	struct box *root_box;		/**< Root box in the tree */
+	ರಚನೆ box *ಬೇರು_box;		/**< Root box in the tree */
 
 	box_construct_complete_cb cb;	/**< Callback to invoke on completion */
 
-	int *bctx;			/**< talloc context */
+	ಪೂರ್ಣಾಂಕ *bctx;			/**< talloc context */
 };
 
 /**
  * Transient properties for construction of current node
  */
-struct box_construct_props {
+ರಚನೆ box_construct_props {
 	/** Style from which to inherit, or NULL if none */
-	const css_computed_style *parent_style;
+	ಸ್ಥಿರಾಂಕ css_computed_style *ಪೋಷಕ_style;
 	/** Current link target, or NULL if none */
-	struct nsurl *href;
+	ರಚನೆ nsurl *href;
 	/** Current frame target, or NULL if none */
-	const char *target;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಗುರಿ;
 	/** Current title attribute, or NULL if none */
-	const char *title;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *title;
 	/** Identity of the current block-level container */
-	struct box *containing_block;
+	ರಚನೆ box *containing_ಖಂಡ;
 	/** Current container for inlines, or NULL if none
 	 * \note If non-NULL, will be the last child of containing_block */
-	struct box *inline_container;
+	ರಚನೆ box *inline_container;
 	/** Whether the current node is the root of the DOM tree */
-	bool node_is_root;
+	bool ಗಂಟು_is_ಬೇರು;
 };
 
-static const content_type image_types = CONTENT_IMAGE;
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ content_type image_types = CONTENT_IMAGE;
 
 /* mapping from CSS display to box type
  * this table must be in sync with libcss' css_display enum */
-static const box_type box_map[] = {
-	BOX_BLOCK,           /* CSS_DISPLAY_INHERIT */
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ box_type box_map[] = {
+	BOX_ಖಂಡ,           /* CSS_DISPLAY_INHERIT */
 	BOX_INLINE,          /* CSS_DISPLAY_INLINE */
-	BOX_BLOCK,           /* CSS_DISPLAY_BLOCK */
-	BOX_BLOCK,           /* CSS_DISPLAY_LIST_ITEM */
+	BOX_ಖಂಡ,           /* CSS_DISPLAY_BLOCK */
+	BOX_ಖಂಡ,           /* CSS_DISPLAY_LIST_ITEM */
 	BOX_INLINE,          /* CSS_DISPLAY_RUN_IN */
-	BOX_INLINE_BLOCK,    /* CSS_DISPLAY_INLINE_BLOCK */
-	BOX_TABLE,           /* CSS_DISPLAY_TABLE */
-	BOX_TABLE,           /* CSS_DISPLAY_INLINE_TABLE */
-	BOX_TABLE_ROW_GROUP, /* CSS_DISPLAY_TABLE_ROW_GROUP */
-	BOX_TABLE_ROW_GROUP, /* CSS_DISPLAY_TABLE_HEADER_GROUP */
-	BOX_TABLE_ROW_GROUP, /* CSS_DISPLAY_TABLE_FOOTER_GROUP */
-	BOX_TABLE_ROW,       /* CSS_DISPLAY_TABLE_ROW */
+	BOX_INLINE_ಖಂಡ,    /* CSS_DISPLAY_INLINE_BLOCK */
+	BOX_ಕೋಷ್ಟಕ,           /* CSS_DISPLAY_TABLE */
+	BOX_ಕೋಷ್ಟಕ,           /* CSS_DISPLAY_INLINE_TABLE */
+	BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು, /* CSS_DISPLAY_TABLE_ROW_GROUP */
+	BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು, /* CSS_DISPLAY_TABLE_HEADER_GROUP */
+	BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು, /* CSS_DISPLAY_TABLE_FOOTER_GROUP */
+	BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು,       /* CSS_DISPLAY_TABLE_ROW */
 	BOX_NONE,            /* CSS_DISPLAY_TABLE_COLUMN_GROUP */
 	BOX_NONE,            /* CSS_DISPLAY_TABLE_COLUMN */
-	BOX_TABLE_CELL,      /* CSS_DISPLAY_TABLE_CELL */
+	BOX_ಕೋಷ್ಟಕ_CELL,      /* CSS_DISPLAY_TABLE_CELL */
 	BOX_INLINE,          /* CSS_DISPLAY_TABLE_CAPTION */
 	BOX_NONE,            /* CSS_DISPLAY_NONE */
 	BOX_FLEX,            /* CSS_DISPLAY_FLEX */
 	BOX_INLINE_FLEX,     /* CSS_DISPLAY_INLINE_FLEX */
-	BOX_BLOCK,           /* CSS_DISPLAY_GRID */
-	BOX_INLINE_BLOCK,    /* CSS_DISPLAY_INLINE_GRID */
+	BOX_ಖಂಡ,           /* CSS_DISPLAY_GRID */
+	BOX_INLINE_ಖಂಡ,    /* CSS_DISPLAY_INLINE_GRID */
 };
 
 
@@ -120,29 +120,29 @@ static const box_type box_map[] = {
  * \param n node to check
  * \return true if node is root else false.
  */
-static inline bool box_is_root(dom_node *n)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool box_is_ಬೇರು(dom_ಗಂಟು *n)
 {
-	dom_node *parent;
-	dom_node_type type;
+	dom_ಗಂಟು *ಪೋಷಕ;
+	dom_ಗಂಟು_type type;
 	dom_exception err;
 
-	err = dom_node_get_parent_node(n, &parent);
-	if (err != DOM_NO_ERR)
-		return false;
+	err = dom_ಗಂಟು_get_ಪೋಷಕ_ಗಂಟು(n, &ಪೋಷಕ);
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ false;
 
-	if (parent != NULL) {
-		err = dom_node_get_node_type(parent, &type);
+	ಆದರೆ (ಪೋಷಕ != ಖಾಲಿ) {
+		err = dom_ಗಂಟು_get_ಗಂಟು_type(ಪೋಷಕ, &type);
 
-		dom_node_unref(parent);
+		dom_ಗಂಟು_unref(ಪೋಷಕ);
 
-		if (err != DOM_NO_ERR)
-			return false;
+		ಆದರೆ (err != DOM_NO_ERR)
+			ಹಿಂತಿರುಗಿ false;
 
-		if (type != DOM_DOCUMENT_NODE)
-			return false;
+		ಆದರೆ (type != DOM_DOCUMENT_ಗಂಟು)
+			ಹಿಂತಿರುಗಿ false;
 	}
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
 /**
@@ -151,61 +151,61 @@ static inline bool box_is_root(dom_node *n)
  * \param n      Current DOM node to convert
  * \param props  Property object to populate
  */
-static void
-box_extract_properties(dom_node *n, struct box_construct_props *props)
+ಸ್ಥಿರ ಶೂನ್ಯ
+box_ಹೊರತೆಗೆ_properties(dom_ಗಂಟು *n, ರಚನೆ box_construct_props *props)
 {
-	memset(props, 0, sizeof(*props));
+	memset(props, 0, ಗಾತ್ರ(*props));
 
-	props->node_is_root = box_is_root(n);
+	props->ಗಂಟು_is_ಬೇರು = box_is_ಬೇರು(n);
 
 	/* Extract properties from containing DOM node */
-	if (props->node_is_root == false) {
-		dom_node *current_node = n;
-		dom_node *parent_node = NULL;
-		struct box *parent_box;
+	ಆದರೆ (props->ಗಂಟು_is_ಬೇರು == false) {
+		dom_ಗಂಟು *current_ಗಂಟು = n;
+		dom_ಗಂಟು *ಪೋಷಕ_ಗಂಟು = ಖಾಲಿ;
+		ರಚನೆ box *ಪೋಷಕ_box;
 		dom_exception err;
 
 		/* Find ancestor node containing parent box */
-		while (true) {
-			err = dom_node_get_parent_node(current_node,
-					&parent_node);
-			if (err != DOM_NO_ERR || parent_node == NULL)
-				break;
+		ಆಗ (true) {
+			err = dom_ಗಂಟು_get_ಪೋಷಕ_ಗಂಟು(current_ಗಂಟು,
+					&ಪೋಷಕ_ಗಂಟು);
+			ಆದರೆ (err != DOM_NO_ERR || ಪೋಷಕ_ಗಂಟು == ಖಾಲಿ)
+				ನಿಲ್ಲಿಸು;
 
-			parent_box = box_for_node(parent_node);
+			ಪೋಷಕ_box = box_for_ಗಂಟು(ಪೋಷಕ_ಗಂಟು);
 
-			if (parent_box != NULL) {
-				props->parent_style = parent_box->style;
-				props->href = parent_box->href;
-				props->target = parent_box->target;
-				props->title = parent_box->title;
+			ಆದರೆ (ಪೋಷಕ_box != ಖಾಲಿ) {
+				props->ಪೋಷಕ_style = ಪೋಷಕ_box->style;
+				props->href = ಪೋಷಕ_box->href;
+				props->ಗುರಿ = ಪೋಷಕ_box->ಗುರಿ;
+				props->title = ಪೋಷಕ_box->title;
 
-				dom_node_unref(parent_node);
-				break;
-			} else {
-				if (current_node != n)
-					dom_node_unref(current_node);
-				current_node = parent_node;
-				parent_node = NULL;
+				dom_ಗಂಟು_unref(ಪೋಷಕ_ಗಂಟು);
+				ನಿಲ್ಲಿಸು;
+			} ಇಲ್ಲದಿದ್ದರೆ {
+				ಆದರೆ (current_ಗಂಟು != n)
+					dom_ಗಂಟು_unref(current_ಗಂಟು);
+				current_ಗಂಟು = ಪೋಷಕ_ಗಂಟು;
+				ಪೋಷಕ_ಗಂಟು = ಖಾಲಿ;
 			}
 		}
 
 		/* Find containing block (may be parent) */
-		while (true) {
-			struct box *b;
+		ಆಗ (true) {
+			ರಚನೆ box *b;
 
-			err = dom_node_get_parent_node(current_node,
-					&parent_node);
-			if (err != DOM_NO_ERR || parent_node == NULL) {
-				if (current_node != n)
-					dom_node_unref(current_node);
-				break;
+			err = dom_ಗಂಟು_get_ಪೋಷಕ_ಗಂಟು(current_ಗಂಟು,
+					&ಪೋಷಕ_ಗಂಟು);
+			ಆದರೆ (err != DOM_NO_ERR || ಪೋಷಕ_ಗಂಟು == ಖಾಲಿ) {
+				ಆದರೆ (current_ಗಂಟು != n)
+					dom_ಗಂಟು_unref(current_ಗಂಟು);
+				ನಿಲ್ಲಿಸು;
 			}
 
-			if (current_node != n)
-				dom_node_unref(current_node);
+			ಆದರೆ (current_ಗಂಟು != n)
+				dom_ಗಂಟು_unref(current_ಗಂಟು);
 
-			b = box_for_node(parent_node);
+			b = box_for_ಗಂಟು(ಪೋಷಕ_ಗಂಟು);
 
 			/* Children of nodes that created an inline box
 			 * will generate boxes which are attached as
@@ -213,25 +213,25 @@ box_extract_properties(dom_node *n, struct box_construct_props *props)
 			 * parent node. Note, however, that we'll still
 			 * use the parent node's styling as the parent
 			 * style, above. */
-			if (b != NULL && b->type != BOX_INLINE &&
+			ಆದರೆ (b != ಖಾಲಿ && b->type != BOX_INLINE &&
 					b->type != BOX_BR) {
-				props->containing_block = b;
+				props->containing_ಖಂಡ = b;
 
-				dom_node_unref(parent_node);
-				break;
-			} else {
-				current_node = parent_node;
-				parent_node = NULL;
+				dom_ಗಂಟು_unref(ಪೋಷಕ_ಗಂಟು);
+				ನಿಲ್ಲಿಸು;
+			} ಇಲ್ಲದಿದ್ದರೆ {
+				current_ಗಂಟು = ಪೋಷಕ_ಗಂಟು;
+				ಪೋಷಕ_ಗಂಟು = ಖಾಲಿ;
 			}
 		}
 	}
 
 	/* Compute current inline container, if any */
-	if (props->containing_block != NULL &&
-			props->containing_block->last != NULL &&
-			props->containing_block->last->type ==
+	ಆದರೆ (props->containing_ಖಂಡ != ಖಾಲಿ &&
+			props->containing_ಖಂಡ->ಕೊನೆಯ != ಖಾಲಿ &&
+			props->containing_ಖಂಡ->ಕೊನೆಯ->type ==
 				BOX_INLINE_CONTAINER)
-		props->inline_container = props->containing_block->last;
+		props->inline_container = props->containing_ಖಂಡ->ಕೊನೆಯ;
 }
 
 
@@ -244,57 +244,57 @@ box_extract_properties(dom_node *n, struct box_construct_props *props)
  * \param  n               node in xml tree
  * \return  the new style, or NULL on memory exhaustion
  */
-static css_select_results *
+ಸ್ಥಿರ css_select_results *
 box_get_style(html_content *c,
-	      const css_computed_style *parent_style,
-	      const css_computed_style *root_style,
-	      dom_node *n)
+	      ಸ್ಥಿರಾಂಕ css_computed_style *ಪೋಷಕ_style,
+	      ಸ್ಥಿರಾಂಕ css_computed_style *ಬೇರು_style,
+	      dom_ಗಂಟು *n)
 {
-	dom_string *s = NULL;
-	css_stylesheet *inline_style = NULL;
+	dom_string *s = ಖಾಲಿ;
+	css_stylesheet *inline_style = ಖಾಲಿ;
 	css_select_results *styles;
 	nscss_select_ctx ctx;
 
 	/* Firstly, construct inline stylesheet, if any */
-	if (nsoption_bool(author_level_css)) {
+	ಆದರೆ (nsoption_bool(author_level_css)) {
 		dom_exception err;
 		err = dom_element_get_attribute(n, corestring_dom_style, &s);
-		if (err != DOM_NO_ERR) {
-			return NULL;
+		ಆದರೆ (err != DOM_NO_ERR) {
+			ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 		}
 	}
 
-	if (s != NULL) {
+	ಆದರೆ (s != ಖಾಲಿ) {
 		inline_style = nscss_create_inline_style(
-				(const uint8_t *) dom_string_data(s),
-				dom_string_byte_length(s),
+				(ಸ್ಥಿರಾಂಕ uint8_t *) dom_string_ದತ್ತಾಂಶ(s),
+				dom_string_byte_ಉದ್ದಳತೆ(s),
 				c->encoding,
-				nsurl_access(c->base_url),
-				c->quirks != DOM_DOCUMENT_QUIRKS_MODE_NONE);
+				nsurl_access(c->ತಳ_url),
+				c->quirks != DOM_DOCUMENT_QUIRKS_ಬಹುಲಕ_NONE);
 
 		dom_string_unref(s);
 
-		if (inline_style == NULL)
-			return NULL;
+		ಆದರೆ (inline_style == ಖಾಲಿ)
+			ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
 	/* Populate selection context */
 	ctx.ctx = c->select_ctx;
-	ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-	ctx.base_url = c->base_url;
+	ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_ಬಹುಲಕ_ತುಂಬಿದ);
+	ctx.ತಳ_url = c->ತಳ_url;
 	ctx.universal = c->universal;
-	ctx.root_style = root_style;
-	ctx.parent_style = parent_style;
+	ctx.ಬೇರು_style = ಬೇರು_style;
+	ctx.ಪೋಷಕ_style = ಪೋಷಕ_style;
 
 	/* Select style for element */
 	styles = nscss_get_style(&ctx, n, &c->media, &c->unit_len_ctx,
 			inline_style);
 
 	/* No longer need inline style */
-	if (inline_style != NULL)
+	ಆದರೆ (inline_style != ಖಾಲಿ)
 		css_stylesheet_destroy(inline_style);
 
-	return styles;
+	ಹಿಂತಿರುಗಿ styles;
 }
 
 
@@ -309,48 +309,48 @@ box_get_style(html_content *c,
  * \todo This is currently incomplete. It just does enough to support
  * the clearfix hack. (http://www.positioniseverything.net/easyclearing.html )
  */
-static void
-box_construct_generate(dom_node *n,
+ಸ್ಥಿರ ಶೂನ್ಯ
+box_construct_generate(dom_ಗಂಟು *n,
 		       html_content *content,
-		       struct box *box,
-		       const css_computed_style *style)
+		       ರಚನೆ box *box,
+		       ಸ್ಥಿರಾಂಕ css_computed_style *style)
 {
-	struct box *gen = NULL;
-	enum css_display_e computed_display;
-	const css_computed_content_item *c_item;
+	ರಚನೆ box *gen = ಖಾಲಿ;
+	ಎಣಿಕೆ css_display_e computed_display;
+	ಸ್ಥಿರಾಂಕ css_computed_content_ಅಂಶ *c_ಅಂಶ;
 
 	/* Nothing to generate if the parent box is not a block */
-	if (box->type != BOX_BLOCK)
-		return;
+	ಆದರೆ (box->type != BOX_ಖಂಡ)
+		ಹಿಂತಿರುಗಿ;
 
 	/* To determine if an element has a pseudo element, we select
 	 * for it and test to see if the returned style's content
 	 * property is set to normal. */
-	if (style == NULL ||
-			css_computed_content(style, &c_item) ==
-			CSS_CONTENT_NORMAL) {
+	ಆದರೆ (style == ಖಾಲಿ ||
+			css_computed_content(style, &c_ಅಂಶ) ==
+			CSS_CONTENT_ಸಾಮಾನ್ಯ) {
 		/* No pseudo element */
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
 
 	/* create box for this element */
-	computed_display = ns_computed_display(style, box_is_root(n));
-	if (computed_display == CSS_DISPLAY_BLOCK ||
-			computed_display == CSS_DISPLAY_TABLE) {
+	computed_display = ns_computed_display(style, box_is_ಬೇರು(n));
+	ಆದರೆ (computed_display == CSS_DISPLAY_ಖಂಡ ||
+			computed_display == CSS_DISPLAY_ಕೋಷ್ಟಕ) {
 		/* currently only support block level boxes */
 
 		/** \todo Not wise to drop const from the computed style */
-		gen = box_create(NULL, (css_computed_style *) style,
-				false, NULL, NULL, NULL, NULL, content->bctx);
-		if (gen == NULL) {
-			return;
+		gen = box_create(ಖಾಲಿ, (css_computed_style *) style,
+				false, ಖಾಲಿ, ಖಾಲಿ, ಖಾಲಿ, ಖಾಲಿ, content->bctx);
+		ಆದರೆ (gen == ಖಾಲಿ) {
+			ಹಿಂತಿರುಗಿ;
 		}
 
 		/* set box type from computed display */
 		gen->type = box_map[ns_computed_display(
-				style, box_is_root(n))];
+				style, box_is_ಬೇರು(n))];
 
-		box_add_child(box, gen);
+		box_ಕೂಡಿಸು_ಮಗು(box, gen);
 	}
 }
 
@@ -364,56 +364,56 @@ box_construct_generate(dom_node *n,
  * \param parent   Current block-level container
  * \return true on success, false on memory exhaustion
  */
-static bool
-box_construct_marker(struct box *box,
-		     const char *title,
-		     struct box_construct_ctx *ctx,
-		     struct box *parent)
+ಸ್ಥಿರ bool
+box_construct_marker(ರಚನೆ box *box,
+		     ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *title,
+		     ರಚನೆ box_construct_ctx *ctx,
+		     ರಚನೆ box *ಪೋಷಕ)
 {
 	lwc_string *image_uri;
-	struct box *marker;
-	enum css_list_style_type_e list_style_type;
+	ರಚನೆ box *marker;
+	ಎಣಿಕೆ css_list_style_type_e list_style_type;
 
-	marker = box_create(NULL, box->style, false, NULL, NULL, title,
-			NULL, ctx->bctx);
-	if (marker == false)
-		return false;
+	marker = box_create(ಖಾಲಿ, box->style, false, ಖಾಲಿ, ಖಾಲಿ, title,
+			ಖಾಲಿ, ctx->bctx);
+	ಆದರೆ (marker == false)
+		ಹಿಂತಿರುಗಿ false;
 
-	marker->type = BOX_BLOCK;
+	marker->type = BOX_ಖಂಡ;
 
 	list_style_type = css_computed_list_style_type(box->style);
 
 	/** \todo marker content (list-style-type) */
-	switch (list_style_type) {
-	case CSS_LIST_STYLE_TYPE_DISC:
+	ಆಯ್ಕೆ (list_style_type) {
+	ಸ್ಥಿತಿ CSS_LIST_STYLE_TYPE_DISC:
 		/* 2022 BULLET */
-		marker->text = (char *) "\342\200\242";
-		marker->length = 3;
-		break;
+		marker->ಪಠ್ಯ = (ಅಕ್ಷರ *) "\342\200\242";
+		marker->ಉದ್ದಳತೆ = 3;
+		ನಿಲ್ಲಿಸು;
 
-	case CSS_LIST_STYLE_TYPE_CIRCLE:
+	ಸ್ಥಿತಿ CSS_LIST_STYLE_TYPE_CIRCLE:
 		/* 25CB WHITE CIRCLE */
-		marker->text = (char *) "\342\227\213";
-		marker->length = 3;
-		break;
+		marker->ಪಠ್ಯ = (ಅಕ್ಷರ *) "\342\227\213";
+		marker->ಉದ್ದಳತೆ = 3;
+		ನಿಲ್ಲಿಸು;
 
-	case CSS_LIST_STYLE_TYPE_SQUARE:
+	ಸ್ಥಿತಿ CSS_LIST_STYLE_TYPE_ವರ್ಗಫಲ:
 		/* 25AA BLACK SMALL SQUARE */
-		marker->text = (char *) "\342\226\252";
-		marker->length = 3;
-		break;
+		marker->ಪಠ್ಯ = (ಅಕ್ಷರ *) "\342\226\252";
+		marker->ಉದ್ದಳತೆ = 3;
+		ನಿಲ್ಲಿಸು;
 
-	default:
+	ಪೂರ್ವನಿಯೋಜಿತ:
 		/* Numerical list counters get handled in layout. */
 		/* Fall through. */
-	case CSS_LIST_STYLE_TYPE_NONE:
-		marker->text = NULL;
-		marker->length = 0;
-		break;
+	ಸ್ಥಿತಿ CSS_LIST_STYLE_TYPE_NONE:
+		marker->ಪಠ್ಯ = ಖಾಲಿ;
+		marker->ಉದ್ದಳತೆ = 0;
+		ನಿಲ್ಲಿಸು;
 	}
 
-	if (css_computed_list_style_image(box->style, &image_uri) == CSS_LIST_STYLE_IMAGE_URI &&
-	    (image_uri != NULL) &&
+	ಆದರೆ (css_computed_list_style_image(box->style, &image_uri) == CSS_LIST_STYLE_IMAGE_URI &&
+	    (image_uri != ಖಾಲಿ) &&
 	    (nsoption_bool(foreground_images) == true)) {
 		nsurl *url;
 		nserror error;
@@ -422,43 +422,43 @@ box_construct_marker(struct box *box,
 		 *       earlier we already had it as a nsurl after we
 		 *       nsurl_joined it.  Can this be improved?
 		 *       For now, just making another nsurl. */
-		error = nsurl_create(lwc_string_data(image_uri), &url);
-		if (error != NSERROR_OK)
-			return false;
+		error = nsurl_create(lwc_string_ದತ್ತಾಂಶ(image_uri), &url);
+		ಆದರೆ (error != NSERROR_OK)
+			ಹಿಂತಿರುಗಿ false;
 
-		if (html_fetch_object(ctx->content,
+		ಆದರೆ (html_fetch_object(ctx->content,
 				      url,
 				      marker,
 				      image_types,
 				      false) ==	false) {
 			nsurl_unref(url);
-			return false;
+			ಹಿಂತಿರುಗಿ false;
 		}
 		nsurl_unref(url);
 	}
 
 	box->list_marker = marker;
-	marker->parent = box;
+	marker->ಪೋಷಕ = box;
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
-static inline bool box__style_is_float(const struct box *box)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool box__style_is_float(ಸ್ಥಿರಾಂಕ ರಚನೆ box *box)
 {
-	return css_computed_float(box->style) == CSS_FLOAT_LEFT ||
-	       css_computed_float(box->style) == CSS_FLOAT_RIGHT;
+	ಹಿಂತಿರುಗಿ css_computed_float(box->style) == CSS_FLOAT_ಎಡ ||
+	       css_computed_float(box->style) == CSS_FLOAT_ಬಲ;
 }
 
-static inline bool box__is_flex(const struct box *box)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool box__is_flex(ಸ್ಥಿರಾಂಕ ರಚನೆ box *box)
 {
-	return box->type == BOX_FLEX || box->type == BOX_INLINE_FLEX;
+	ಹಿಂತಿರುಗಿ box->type == BOX_FLEX || box->type == BOX_INLINE_FLEX;
 }
 
-static inline bool box__containing_block_is_flex(
-		const struct box_construct_props *props)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool box_containing_ಖಂಡ_is_flex(
+		ಸ್ಥಿರಾಂಕ ರಚನೆ box_construct_props *props)
 {
-	return props->containing_block != NULL &&
-	       box__is_flex(props->containing_block);
+	ಹಿಂತಿರುಗಿ props->containing_ಖಂಡ != ಖಾಲಿ &&
+	       box__is_flex(props->containing_ಖಂಡ);
 }
 
 /**
@@ -468,108 +468,108 @@ static inline bool box__containing_block_is_flex(
  * \param convert_children  Whether to convert children
  * \return  true on success, false on memory exhaustion
  */
-static bool
-box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
+ಸ್ಥಿರ bool
+box_construct_element(ರಚನೆ box_construct_ctx *ctx, bool *convert_children)
 {
 	dom_string *title0, *s;
-	lwc_string *id = NULL;
-	enum css_display_e css_display;
-	struct box *box = NULL, *old_box;
-	css_select_results *styles = NULL;
+	lwc_string *id = ಖಾಲಿ;
+	ಎಣಿಕೆ css_display_e css_display;
+	ರಚನೆ box *box = ಖಾಲಿ, *old_box;
+	css_select_results *styles = ಖಾಲಿ;
 	lwc_string *bgimage_uri;
 	dom_exception err;
-	struct box_construct_props props;
-	const css_computed_style *root_style = NULL;
+	ರಚನೆ box_construct_props props;
+	ಸ್ಥಿರಾಂಕ css_computed_style *ಬೇರು_style = ಖಾಲಿ;
 
-	assert(ctx->n != NULL);
+	ಪ್ರತಿಜ್ಞಾ(ctx->n != ಖಾಲಿ);
 
-	box_extract_properties(ctx->n, &props);
+	box_ಹೊರತೆಗೆ_properties(ctx->n, &props);
 
-	if (props.containing_block != NULL) {
+	ಆದರೆ (props.containing_ಖಂಡ != ಖಾಲಿ) {
 		/* In case the containing block is a pre block, we clear
 		 * the PRE_STRIP flag since it is not used if we follow
 		 * the pre with a tag */
-		props.containing_block->flags &= ~PRE_STRIP;
+		props.containing_ಖಂಡ->flags &= ~PRE_STRIP;
 	}
 
-	if (props.node_is_root == false) {
-		root_style = ctx->root_box->style;
+	ಆದರೆ (props.ಗಂಟು_is_ಬೇರು == false) {
+		ಬೇರು_style = ctx->ಬೇರು_box->style;
 	}
 
-	styles = box_get_style(ctx->content, props.parent_style, root_style,
+	styles = box_get_style(ctx->content, props.ಪೋಷಕ_style, ಬೇರು_style,
 			ctx->n);
-	if (styles == NULL)
-		return false;
+	ಆದರೆ (styles == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ false;
 
 	/* Extract title attribute, if present */
 	err = dom_element_get_attribute(ctx->n, corestring_dom_title, &title0);
-	if (err != DOM_NO_ERR)
-		return false;
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ false;
 
-	if (title0 != NULL) {
-		char *t = squash_whitespace(dom_string_data(title0));
+	ಆದರೆ (title0 != ಖಾಲಿ) {
+		ಅಕ್ಷರ *t = squash_whitespace(dom_string_ದತ್ತಾಂಶ(title0));
 
 		dom_string_unref(title0);
 
-		if (t == NULL)
-			return false;
+		ಆದರೆ (t == ಖಾಲಿ)
+			ಹಿಂತಿರುಗಿ false;
 
 		props.title = talloc_strdup(ctx->bctx, t);
 
-		free(t);
+		ಬಿಡುಗಡೆ(t);
 
-		if (props.title == NULL)
-			return false;
+		ಆದರೆ (props.title == ಖಾಲಿ)
+			ಹಿಂತಿರುಗಿ false;
 	}
 
 	/* Extract id attribute, if present */
 	err = dom_element_get_attribute(ctx->n, corestring_dom_id, &s);
-	if (err != DOM_NO_ERR)
-		return false;
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ false;
 
-	if (s != NULL) {
+	ಆದರೆ (s != ಖಾಲಿ) {
 		err = dom_string_intern(s, &id);
-		if (err != DOM_NO_ERR)
-			id = NULL;
+		ಆದರೆ (err != DOM_NO_ERR)
+			id = ಖಾಲಿ;
 
 		dom_string_unref(s);
 	}
 
 	box = box_create(styles, styles->styles[CSS_PSEUDO_ELEMENT_NONE], false,
-			props.href, props.target, props.title, id,
+			props.href, props.ಗುರಿ, props.title, id,
 			ctx->bctx);
-	if (box == NULL)
-		return false;
+	ಆದರೆ (box == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ false;
 
 	/* If this is the root box, add it to the context */
-	if (props.node_is_root)
-		ctx->root_box = box;
+	ಆದರೆ (props.ಗಂಟು_is_ಬೇರು)
+		ctx->ಬೇರು_box = box;
 
 	/* Deal with colspan/rowspan */
 	err = dom_element_get_attribute(ctx->n, corestring_dom_colspan, &s);
-	if (err != DOM_NO_ERR)
-		return false;
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ false;
 
-	if (s != NULL) {
-		const char *val = dom_string_data(s);
+	ಆದರೆ (s != ಖಾಲಿ) {
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *val = dom_string_ದತ್ತಾಂಶ(s);
 
 		/* Convert to a number, clamping to [1,1000] according to 4.9.11 */
-		if ('0' <= val[0] && val[0] <= '9')
-			box->columns = clamp(strtol(val, NULL, 10), 1, 1000);
+		ಆದರೆ ('0' <= val[0] && val[0] <= '9')
+			box->columns = clamp(strtol(val, ಖಾಲಿ, 10), 1, 1000);
 
 		dom_string_unref(s);
 	}
 
 	err = dom_element_get_attribute(ctx->n, corestring_dom_rowspan, &s);
-	if (err != DOM_NO_ERR)
-		return false;
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ false;
 
-	if (s != NULL) {
-		const char *val = dom_string_data(s);
+	ಆದರೆ (s != ಖಾಲಿ) {
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *val = dom_string_ದತ್ತಾಂಶ(s);
 
 		/* Convert to a number, clamping to [0,65534] according to 4.9.11 */
-		if ('0' <= val[0] && val[0] <= '9')
-			box->rows = clamp(strtol(val, NULL, 10), 0, 65534);
+		ಆದರೆ ('0' <= val[0] && val[0] <= '9')
+			box->ಅಡ್ಡಸಾಲುಗಳು = clamp(strtol(val, ಖಾಲಿ, 10), 0, 65534);
 
 		dom_string_unref(s);
 	}
@@ -577,66 +577,66 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 	css_display = ns_computed_display_static(box->style);
 
 	/* Set box type from computed display */
-	if ((css_computed_position(box->style) == CSS_POSITION_ABSOLUTE ||
+	ಆದರೆ ((css_computed_position(box->style) == CSS_POSITION_ABSOLUTE ||
 	     css_computed_position(box->style) == CSS_POSITION_FIXED) &&
 			(css_display == CSS_DISPLAY_INLINE ||
-			 css_display == CSS_DISPLAY_INLINE_BLOCK ||
-			 css_display == CSS_DISPLAY_INLINE_TABLE ||
+			 css_display == CSS_DISPLAY_INLINE_ಖಂಡ ||
+			 css_display == CSS_DISPLAY_INLINE_ಕೋಷ್ಟಕ ||
 			 css_display == CSS_DISPLAY_INLINE_FLEX)) {
 		/* Special case for absolute positioning: make absolute inlines
 		 * into inline block so that the boxes are constructed in an
 		 * inline container as if they were not absolutely positioned.
 		 * Layout expects and handles this. */
-		box->type = box_map[CSS_DISPLAY_INLINE_BLOCK];
-	} else if (props.node_is_root) {
+		box->type = box_map[CSS_DISPLAY_INLINE_ಖಂಡ];
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (props.ಗಂಟು_is_ಬೇರು) {
 		/* Special case for root element: force it to BLOCK, or the
 		 * rest of the layout will break. */
-		box->type = BOX_BLOCK;
-	} else {
+		box->type = BOX_ಖಂಡ;
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		/* Normal mapping */
 		box->type = box_map[ns_computed_display(box->style,
-				props.node_is_root)];
+				props.ಗಂಟು_is_ಬೇರು)];
 
-		if (props.containing_block->type == BOX_FLEX ||
-		    props.containing_block->type == BOX_INLINE_FLEX) {
+		ಆದರೆ (props.containing_ಖಂಡ->type == BOX_FLEX ||
+		    props.containing_ಖಂಡ->type == BOX_INLINE_FLEX) {
 			/* Blockification */
-			switch (box->type) {
-			case BOX_INLINE_FLEX:
+			ಆಯ್ಕೆ (box->type) {
+			ಸ್ಥಿತಿ BOX_INLINE_FLEX:
 				box->type = BOX_FLEX;
-				break;
-			case BOX_INLINE_BLOCK:
-				box->type = BOX_BLOCK;
-				break;
-			default:
-				break;
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ BOX_INLINE_ಖಂಡ:
+				box->type = BOX_ಖಂಡ;
+				ನಿಲ್ಲಿಸು;
+			ಪೂರ್ವನಿಯೋಜಿತ:
+				ನಿಲ್ಲಿಸು;
 			}
 		}
 	}
 
-	if (convert_special_elements(ctx->n,
+	ಆದರೆ (convert_special_elements(ctx->n,
 				     ctx->content,
 				     box,
 				     convert_children) == false) {
-		return false;
+		ಹಿಂತಿರುಗಿ false;
 	}
 
 	/* Handle the :before pseudo element */
-	if (!(box->flags & IS_REPLACED)) {
+	ಆದರೆ (!(box->flags & IS_REPLACED)) {
 		box_construct_generate(ctx->n, ctx->content, box,
 				box->styles->styles[CSS_PSEUDO_ELEMENT_BEFORE]);
 	}
 
-	if (box->type == BOX_NONE || (ns_computed_display(box->style,
-			props.node_is_root) == CSS_DISPLAY_NONE &&
-			props.node_is_root == false)) {
+	ಆದರೆ (box->type == BOX_NONE || (ns_computed_display(box->style,
+			props.ಗಂಟು_is_ಬೇರು) == CSS_DISPLAY_NONE &&
+			props.ಗಂಟು_is_ಬೇರು == false)) {
 		css_select_results_destroy(styles);
-		box->styles = NULL;
-		box->style = NULL;
+		box->styles = ಖಾಲಿ;
+		box->style = ಖಾಲಿ;
 
 		/* Invalidate associated gadget, if any */
-		if (box->gadget != NULL) {
-			box->gadget->box = NULL;
-			box->gadget = NULL;
+		ಆದರೆ (box->gadget != ಖಾಲಿ) {
+			box->gadget->box = ಖಾಲಿ;
+			box->gadget = ಖಾಲಿ;
 		}
 
 		/* Can't do this, because the lifetimes of boxes and gadgets
@@ -646,46 +646,46 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 
 		*convert_children = false;
 
-		return true;
+		ಹಿಂತಿರುಗಿ true;
 	}
 
 	/* Attach DOM node to box */
-	err = dom_node_set_user_data(ctx->n,
-			corestring_dom___ns_key_box_node_data, box, NULL,
-			(void *) &old_box);
-	if (err != DOM_NO_ERR)
-		return false;
+	err = dom_ಗಂಟು_ಗಣ_user_ದತ್ತಾಂಶ(ctx->n,
+			corestring_dom_ns_ಕೀಲಿ_box_ಗಂಟು_ದತ್ತಾಂಶ, box, ಖಾಲಿ,
+			(ಶೂನ್ಯ *) &old_box);
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ false;
 
 	/* Attach box to DOM node */
-	box->node = dom_node_ref(ctx->n);
+	box->ಗಂಟು = dom_ಗಂಟು_ref(ctx->n);
 
-	if (props.inline_container == NULL &&
+	ಆದರೆ (props.inline_container == ಖಾಲಿ &&
 			(box->type == BOX_INLINE ||
 			 box->type == BOX_BR ||
-			 box->type == BOX_INLINE_BLOCK ||
+			 box->type == BOX_INLINE_ಖಂಡ ||
 			 box->type == BOX_INLINE_FLEX ||
 			 (box__style_is_float(box) &&
-			  !box__containing_block_is_flex(&props))) &&
-			props.node_is_root == false) {
+			  !box_containing_ಖಂಡ_is_flex(&props))) &&
+			props.ಗಂಟು_is_ಬೇರು == false) {
 		/* Found an inline child of a block without a current container
 		 * (i.e. this box is the first child of its parent, or was
 		 * preceded by block-level siblings) */
-		assert(props.containing_block != NULL &&
+		ಪ್ರತಿಜ್ಞಾ(props.containing_ಖಂಡ != ಖಾಲಿ &&
 				"Box must have containing block.");
 
-		props.inline_container = box_create(NULL, NULL, false, NULL,
-				NULL, NULL, NULL, ctx->bctx);
-		if (props.inline_container == NULL)
-			return false;
+		props.inline_container = box_create(ಖಾಲಿ, ಖಾಲಿ, false, ಖಾಲಿ,
+				ಖಾಲಿ, ಖಾಲಿ, ಖಾಲಿ, ctx->bctx);
+		ಆದರೆ (props.inline_container == ಖಾಲಿ)
+			ಹಿಂತಿರುಗಿ false;
 
 		props.inline_container->type = BOX_INLINE_CONTAINER;
 
-		box_add_child(props.containing_block, props.inline_container);
+		box_ಕೂಡಿಸು_ಮಗು(props.containing_ಖಂಡ, props.inline_container);
 	}
 
 	/* Kick off fetch for any background image */
-	if (css_computed_background_image(box->style, &bgimage_uri) ==
-			CSS_BACKGROUND_IMAGE_IMAGE && bgimage_uri != NULL &&
+	ಆದರೆ (css_computed_background_image(box->style, &bgimage_uri) ==
+			CSS_BACKGROUND_IMAGE_IMAGE && bgimage_uri != ಖಾಲಿ &&
 			nsoption_bool(background_images) == true) {
 		nsurl *url;
 		nserror error;
@@ -694,71 +694,71 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
 		 *       earlier we already had it as a nsurl after we
 		 *       nsurl_joined it.  Can this be improved?
 		 *       For now, just making another nsurl. */
-		error = nsurl_create(lwc_string_data(bgimage_uri), &url);
-		if (error == NSERROR_OK) {
+		error = nsurl_create(lwc_string_ದತ್ತಾಂಶ(bgimage_uri), &url);
+		ಆದರೆ (error == NSERROR_OK) {
 			/* Fetch image if we got a valid URL */
-			if (html_fetch_object(ctx->content,
+			ಆದರೆ (html_fetch_object(ctx->content,
 					      url,
 					      box,
 					      image_types,
 					      true) == false) {
 				nsurl_unref(url);
-				return false;
+				ಹಿಂತಿರುಗಿ false;
 			}
 			nsurl_unref(url);
 		}
 	}
 
-	if (*convert_children)
+	ಆದರೆ (*convert_children)
 		box->flags |= CONVERT_CHILDREN;
 
-	if (box->type == BOX_INLINE || box->type == BOX_BR ||
+	ಆದರೆ (box->type == BOX_INLINE || box->type == BOX_BR ||
 			box->type == BOX_INLINE_FLEX ||
-			box->type == BOX_INLINE_BLOCK) {
+			box->type == BOX_INLINE_ಖಂಡ) {
 		/* Inline container must exist, as we'll have
 		 * created it above if it didn't */
-		assert(props.inline_container != NULL);
+		ಪ್ರತಿಜ್ಞಾ(props.inline_container != ಖಾಲಿ);
 
-		box_add_child(props.inline_container, box);
-	} else {
-		if (ns_computed_display(box->style, props.node_is_root) ==
-				CSS_DISPLAY_LIST_ITEM) {
+		box_ಕೂಡಿಸು_ಮಗು(props.inline_container, box);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಆದರೆ (ns_computed_display(box->style, props.ಗಂಟು_is_ಬೇರು) ==
+				CSS_DISPLAY_LIST_ಅಂಶ) {
 			/* List item: compute marker */
-			if (box_construct_marker(box, props.title, ctx,
-					props.containing_block) == false)
-				return false;
+			ಆದರೆ (box_construct_marker(box, props.title, ctx,
+					props.containing_ಖಂಡ) == false)
+				ಹಿಂತಿರುಗಿ false;
 		}
 
-		if (props.node_is_root == false &&
-				box__containing_block_is_flex(&props) == false &&
+		ಆದರೆ (props.ಗಂಟು_is_ಬೇರು == false &&
+				box_containing_ಖಂಡ_is_flex(&props) == false &&
 				(css_computed_float(box->style) ==
-				CSS_FLOAT_LEFT ||
+				CSS_FLOAT_ಎಡ ||
 				css_computed_float(box->style) ==
-				CSS_FLOAT_RIGHT)) {
+				CSS_FLOAT_ಬಲ)) {
 			/* Float: insert a float between the parent and box. */
-			struct box *flt = box_create(NULL, NULL, false,
-					props.href, props.target, props.title,
-					NULL, ctx->bctx);
-			if (flt == NULL)
-				return false;
+			ರಚನೆ box *flt = box_create(ಖಾಲಿ, ಖಾಲಿ, false,
+					props.href, props.ಗುರಿ, props.title,
+					ಖಾಲಿ, ctx->bctx);
+			ಆದರೆ (flt == ಖಾಲಿ)
+				ಹಿಂತಿರುಗಿ false;
 
-			if (css_computed_float(box->style) == CSS_FLOAT_LEFT)
-				flt->type = BOX_FLOAT_LEFT;
-			else
-				flt->type = BOX_FLOAT_RIGHT;
+			ಆದರೆ (css_computed_float(box->style) == CSS_FLOAT_ಎಡ)
+				flt->type = BOX_FLOAT_ಎಡ;
+			ಇಲ್ಲದಿದ್ದರೆ
+				flt->type = BOX_FLOAT_ಬಲ;
 
-			box_add_child(props.inline_container, flt);
-			box_add_child(flt, box);
-		} else {
+			box_ಕೂಡಿಸು_ಮಗು(props.inline_container, flt);
+			box_ಕೂಡಿಸು_ಮಗು(flt, box);
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			/* Non-floated block-level box: add to containing block
 			 * if there is one. If we're the root box, then there
 			 * won't be. */
-			if (props.containing_block != NULL)
-				box_add_child(props.containing_block, box);
+			ಆದರೆ (props.containing_ಖಂಡ != ಖಾಲಿ)
+				box_ಕೂಡಿಸು_ಮಗು(props.containing_ಖಂಡ, box);
 		}
 	}
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
 
@@ -770,59 +770,59 @@ box_construct_element(struct box_construct_ctx *ctx, bool *convert_children)
  *
  * This will be called after all children of an element have been processed
  */
-static void box_construct_element_after(dom_node *n, html_content *content)
+ಸ್ಥಿರ ಶೂನ್ಯ box_construct_element_after(dom_ಗಂಟು *n, html_content *content)
 {
-	struct box_construct_props props;
-	struct box *box = box_for_node(n);
+	ರಚನೆ box_construct_props props;
+	ರಚನೆ box *box = box_for_ಗಂಟು(n);
 
-	assert(box != NULL);
+	ಪ್ರತಿಜ್ಞಾ(box != ಖಾಲಿ);
 
-	box_extract_properties(n, &props);
+	box_ಹೊರತೆಗೆ_properties(n, &props);
 
-	if (box->type == BOX_INLINE || box->type == BOX_BR) {
+	ಆದರೆ (box->type == BOX_INLINE || box->type == BOX_BR) {
 		/* Insert INLINE_END into containing block */
-		struct box *inline_end;
+		ರಚನೆ box *inline_ಕೊನೆ;
 		bool has_children;
 		dom_exception err;
 
-		err = dom_node_has_child_nodes(n, &has_children);
-		if (err != DOM_NO_ERR)
-			return;
+		err = dom_ಗಂಟು_has_ಮಗು_nodes(n, &has_children);
+		ಆದರೆ (err != DOM_NO_ERR)
+			ಹಿಂತಿರುಗಿ;
 
-		if (has_children == false ||
+		ಆದರೆ (has_children == false ||
 				(box->flags & CONVERT_CHILDREN) == 0) {
 			/* No children, or didn't want children converted */
-			return;
+			ಹಿಂತಿರುಗಿ;
 		}
 
-		if (props.inline_container == NULL) {
+		ಆದರೆ (props.inline_container == ಖಾಲಿ) {
 			/* Create inline container if we don't have one */
-			props.inline_container = box_create(NULL, NULL, false,
-					NULL, NULL, NULL, NULL, content->bctx);
-			if (props.inline_container == NULL)
-				return;
+			props.inline_container = box_create(ಖಾಲಿ, ಖಾಲಿ, false,
+					ಖಾಲಿ, ಖಾಲಿ, ಖಾಲಿ, ಖಾಲಿ, content->bctx);
+			ಆದರೆ (props.inline_container == ಖಾಲಿ)
+				ಹಿಂತಿರುಗಿ;
 
 			props.inline_container->type = BOX_INLINE_CONTAINER;
 
-			box_add_child(props.containing_block,
+			box_ಕೂಡಿಸು_ಮಗು(props.containing_ಖಂಡ,
 					props.inline_container);
 		}
 
-		inline_end = box_create(NULL, box->style, false,
-				box->href, box->target, box->title,
-				box->id == NULL ? NULL :
+		inline_ಕೊನೆ = box_create(ಖಾಲಿ, box->style, false,
+				box->href, box->ಗುರಿ, box->title,
+				box->id == ಖಾಲಿ ? ಖಾಲಿ :
 				lwc_string_ref(box->id), content->bctx);
-		if (inline_end != NULL) {
-			inline_end->type = BOX_INLINE_END;
+		ಆದರೆ (inline_ಕೊನೆ != ಖಾಲಿ) {
+			inline_ಕೊನೆ->type = BOX_INLINE_ಕೊನೆ;
 
-			assert(props.inline_container != NULL);
+			ಪ್ರತಿಜ್ಞಾ(props.inline_container != ಖಾಲಿ);
 
-			box_add_child(props.inline_container, inline_end);
+			box_ಕೂಡಿಸು_ಮಗು(props.inline_container, inline_ಕೊನೆ);
 
-			box->inline_end = inline_end;
-			inline_end->inline_end = box;
+			box->inline_ಕೊನೆ = inline_ಕೊನೆ;
+			inline_ಕೊನೆ->inline_ಕೊನೆ = box;
 		}
-	} else if (!(box->flags & IS_REPLACED)) {
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (!(box->flags & IS_REPLACED)) {
 		/* Handle the :after pseudo element */
 		box_construct_generate(n, content, box,
 				box->styles->styles[CSS_PSEUDO_ELEMENT_AFTER]);
@@ -841,108 +841,108 @@ static void box_construct_element_after(dom_node *n, html_content *content)
  *
  * \note \a n will be unreferenced
  */
-static dom_node *
-next_node(dom_node *n, html_content *content, bool convert_children)
+ಸ್ಥಿರ dom_ಗಂಟು *
+ಮುಂದಿನ_ಗಂಟು(dom_ಗಂಟು *n, html_content *content, bool convert_children)
 {
-	dom_node *next = NULL;
+	dom_ಗಂಟು *ಮುಂದಿನ = ಖಾಲಿ;
 	bool has_children;
 	dom_exception err;
 
-	err = dom_node_has_child_nodes(n, &has_children);
-	if (err != DOM_NO_ERR) {
-		dom_node_unref(n);
-		return NULL;
+	err = dom_ಗಂಟು_has_ಮಗು_nodes(n, &has_children);
+	ಆದರೆ (err != DOM_NO_ERR) {
+		dom_ಗಂಟು_unref(n);
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
-	if (convert_children && has_children) {
-		err = dom_node_get_first_child(n, &next);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return NULL;
+	ಆದರೆ (convert_children && has_children) {
+		err = dom_ಗಂಟು_get_ಮೊದಲ_ಮಗು(n, &ಮುಂದಿನ);
+		ಆದರೆ (err != DOM_NO_ERR) {
+			dom_ಗಂಟು_unref(n);
+			ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 		}
-		dom_node_unref(n);
-	} else {
-		err = dom_node_get_next_sibling(n, &next);
-		if (err != DOM_NO_ERR) {
-			dom_node_unref(n);
-			return NULL;
+		dom_ಗಂಟು_unref(n);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		err = dom_ಗಂಟು_get_ಮುಂದಿನ_sibling(n, &ಮುಂದಿನ);
+		ಆದರೆ (err != DOM_NO_ERR) {
+			dom_ಗಂಟು_unref(n);
+			ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 		}
 
-		if (next != NULL) {
-			if (box_for_node(n) != NULL)
+		ಆದರೆ (ಮುಂದಿನ != ಖಾಲಿ) {
+			ಆದರೆ (box_for_ಗಂಟು(n) != ಖಾಲಿ)
 				box_construct_element_after(n, content);
-			dom_node_unref(n);
-		} else {
-			if (box_for_node(n) != NULL)
+			dom_ಗಂಟು_unref(n);
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			ಆದರೆ (box_for_ಗಂಟು(n) != ಖಾಲಿ)
 				box_construct_element_after(n, content);
 
-			while (box_is_root(n) == false) {
-				dom_node *parent = NULL;
-				dom_node *parent_next = NULL;
+			ಆಗ (box_is_ಬೇರು(n) == false) {
+				dom_ಗಂಟು *ಪೋಷಕ = ಖಾಲಿ;
+				dom_ಗಂಟು *ಪೋಷಕ_ಮುಂದಿನ = ಖಾಲಿ;
 
-				err = dom_node_get_parent_node(n, &parent);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(n);
-					return NULL;
+				err = dom_ಗಂಟು_get_ಪೋಷಕ_ಗಂಟು(n, &ಪೋಷಕ);
+				ಆದರೆ (err != DOM_NO_ERR) {
+					dom_ಗಂಟು_unref(n);
+					ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 				}
 
-				assert(parent != NULL);
+				ಪ್ರತಿಜ್ಞಾ(ಪೋಷಕ != ಖಾಲಿ);
 
-				err = dom_node_get_next_sibling(parent,
-						&parent_next);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(parent);
-					dom_node_unref(n);
-					return NULL;
+				err = dom_ಗಂಟು_get_ಮುಂದಿನ_sibling(ಪೋಷಕ,
+						&ಪೋಷಕ_ಮುಂದಿನ);
+				ಆದರೆ (err != DOM_NO_ERR) {
+					dom_ಗಂಟು_unref(ಪೋಷಕ);
+					dom_ಗಂಟು_unref(n);
+					ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 				}
 
-				if (parent_next != NULL) {
-					dom_node_unref(parent_next);
-					dom_node_unref(parent);
-					break;
+				ಆದರೆ (ಪೋಷಕ_ಮುಂದಿನ != ಖಾಲಿ) {
+					dom_ಗಂಟು_unref(ಪೋಷಕ_ಮುಂದಿನ);
+					dom_ಗಂಟು_unref(ಪೋಷಕ);
+					ನಿಲ್ಲಿಸು;
 				}
 
-				dom_node_unref(n);
-				n = parent;
-				parent = NULL;
+				dom_ಗಂಟು_unref(n);
+				n = ಪೋಷಕ;
+				ಪೋಷಕ = ಖಾಲಿ;
 
-				if (box_for_node(n) != NULL) {
+				ಆದರೆ (box_for_ಗಂಟು(n) != ಖಾಲಿ) {
 					box_construct_element_after(
 							n, content);
 				}
 			}
 
-			if (box_is_root(n) == false) {
-				dom_node *parent = NULL;
+			ಆದರೆ (box_is_ಬೇರು(n) == false) {
+				dom_ಗಂಟು *ಪೋಷಕ = ಖಾಲಿ;
 
-				err = dom_node_get_parent_node(n, &parent);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(n);
-					return NULL;
+				err = dom_ಗಂಟು_get_ಪೋಷಕ_ಗಂಟು(n, &ಪೋಷಕ);
+				ಆದರೆ (err != DOM_NO_ERR) {
+					dom_ಗಂಟು_unref(n);
+					ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 				}
 
-				assert(parent != NULL);
+				ಪ್ರತಿಜ್ಞಾ(ಪೋಷಕ != ಖಾಲಿ);
 
-				err = dom_node_get_next_sibling(parent, &next);
-				if (err != DOM_NO_ERR) {
-					dom_node_unref(parent);
-					dom_node_unref(n);
-					return NULL;
+				err = dom_ಗಂಟು_get_ಮುಂದಿನ_sibling(ಪೋಷಕ, &ಮುಂದಿನ);
+				ಆದರೆ (err != DOM_NO_ERR) {
+					dom_ಗಂಟು_unref(ಪೋಷಕ);
+					dom_ಗಂಟು_unref(n);
+					ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 				}
 
-				if (box_for_node(parent) != NULL) {
-					box_construct_element_after(parent,
+				ಆದರೆ (box_for_ಗಂಟು(ಪೋಷಕ) != ಖಾಲಿ) {
+					box_construct_element_after(ಪೋಷಕ,
 							content);
 				}
 
-				dom_node_unref(parent);
+				dom_ಗಂಟು_unref(ಪೋಷಕ);
 			}
 
-			dom_node_unref(n);
+			dom_ಗಂಟು_unref(n);
 		}
 	}
 
-	return next;
+	ಹಿಂತಿರುಗಿ ಮುಂದಿನ;
 }
 
 
@@ -953,33 +953,33 @@ next_node(dom_node *n, html_content *content, bool convert_children)
  * \param  len  length of s
  * \param  tt	transform type
  */
-static void
-box_text_transform(char *s, unsigned int len, enum css_text_transform_e tt)
+ಸ್ಥಿರ ಶೂನ್ಯ
+box_ಪಠ್ಯ_transform(ಅಕ್ಷರ *s, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ len, ಎಣಿಕೆ css_ಪಠ್ಯ_transform_e tt)
 {
-	unsigned int i;
-	if (len == 0)
-		return;
-	switch (tt) {
-		case CSS_TEXT_TRANSFORM_UPPERCASE:
-			for (i = 0; i < len; ++i)
-				if ((unsigned char) s[i] < 0x80)
-					s[i] = ascii_to_upper(s[i]);
-			break;
-		case CSS_TEXT_TRANSFORM_LOWERCASE:
-			for (i = 0; i < len; ++i)
-				if ((unsigned char) s[i] < 0x80)
-					s[i] = ascii_to_lower(s[i]);
-			break;
-		case CSS_TEXT_TRANSFORM_CAPITALIZE:
-			if ((unsigned char) s[0] < 0x80)
-				s[0] = ascii_to_upper(s[0]);
-			for (i = 1; i < len; ++i)
-				if ((unsigned char) s[i] < 0x80 &&
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ i;
+	ಆದರೆ (len == 0)
+		ಹಿಂತಿರುಗಿ;
+	ಆಯ್ಕೆ (tt) {
+		ಸ್ಥಿತಿ CSS_ಪಠ್ಯ_TRANSFORM_UPPERCASE:
+			ಗಾಗಿ (i = 0; i < len; ++i)
+				ಆದರೆ ((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ) s[i] < 0x80)
+					s[i] = ascii_ಗಮ್ಯ_ಊರ್ಧ್ವ(s[i]);
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ CSS_ಪಠ್ಯ_TRANSFORM_LOWERCASE:
+			ಗಾಗಿ (i = 0; i < len; ++i)
+				ಆದರೆ ((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ) s[i] < 0x80)
+					s[i] = ascii_ಗಮ್ಯ_ಅಧೋ(s[i]);
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ CSS_ಪಠ್ಯ_TRANSFORM_CAPITALIZE:
+			ಆದರೆ ((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ) s[0] < 0x80)
+				s[0] = ascii_ಗಮ್ಯ_ಊರ್ಧ್ವ(s[0]);
+			ಗಾಗಿ (i = 1; i < len; ++i)
+				ಆದರೆ ((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ) s[i] < 0x80 &&
 						ascii_is_space(s[i - 1]))
-					s[i] = ascii_to_upper(s[i]);
-			break;
-		default:
-			break;
+					s[i] = ascii_ಗಮ್ಯ_ಊರ್ಧ್ವ(s[i]);
+			ನಿಲ್ಲಿಸು;
+		ಪೂರ್ವನಿಯೋಜಿತ:
+			ನಿಲ್ಲಿಸು;
 	}
 }
 
@@ -990,240 +990,240 @@ box_text_transform(char *s, unsigned int len, enum css_text_transform_e tt)
  * \param  ctx  Tree construction context
  * \return  true on success, false on memory exhaustion
  */
-static bool box_construct_text(struct box_construct_ctx *ctx)
+ಸ್ಥಿರ bool box_construct_ಪಠ್ಯ(ರಚನೆ box_construct_ctx *ctx)
 {
-	struct box_construct_props props;
-	struct box *box = NULL;
+	ರಚನೆ box_construct_props props;
+	ರಚನೆ box *box = ಖಾಲಿ;
 	dom_string *content;
 	dom_exception err;
 
-	assert(ctx->n != NULL);
+	ಪ್ರತಿಜ್ಞಾ(ctx->n != ಖಾಲಿ);
 
-	box_extract_properties(ctx->n, &props);
+	box_ಹೊರತೆಗೆ_properties(ctx->n, &props);
 
-	assert(props.containing_block != NULL);
+	ಪ್ರತಿಜ್ಞಾ(props.containing_ಖಂಡ != ಖಾಲಿ);
 
-	err = dom_characterdata_get_data(ctx->n, &content);
-	if (err != DOM_NO_ERR || content == NULL)
-		return false;
+	err = dom_characterdata_get_ದತ್ತಾಂಶ(ctx->n, &content);
+	ಆದರೆ (err != DOM_NO_ERR || content == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ false;
 
-	if (css_computed_white_space(props.parent_style) ==
-			CSS_WHITE_SPACE_NORMAL ||
-			css_computed_white_space(props.parent_style) ==
+	ಆದರೆ (css_computed_white_space(props.ಪೋಷಕ_style) ==
+			CSS_WHITE_SPACE_ಸಾಮಾನ್ಯ ||
+			css_computed_white_space(props.ಪೋಷಕ_style) ==
 			CSS_WHITE_SPACE_NOWRAP) {
-		char *text;
+		ಅಕ್ಷರ *ಪಠ್ಯ;
 
-		text = squash_whitespace(dom_string_data(content));
+		ಪಠ್ಯ = squash_whitespace(dom_string_ದತ್ತಾಂಶ(content));
 
 		dom_string_unref(content);
 
-		if (text == NULL)
-			return false;
+		ಆದರೆ (ಪಠ್ಯ == ಖಾಲಿ)
+			ಹಿಂತಿರುಗಿ false;
 
 		/* if the text is just a space, combine it with the preceding
 		 * text node, if any */
-		if (text[0] == ' ' && text[1] == 0) {
-			if (props.inline_container != NULL) {
-				assert(props.inline_container->last != NULL);
+		ಆದರೆ (ಪಠ್ಯ[0] == ' ' && ಪಠ್ಯ[1] == 0) {
+			ಆದರೆ (props.inline_container != ಖಾಲಿ) {
+				ಪ್ರತಿಜ್ಞಾ(props.inline_container->ಕೊನೆಯ != ಖಾಲಿ);
 
-				props.inline_container->last->space =
-						UNKNOWN_WIDTH;
+				props.inline_container->ಕೊನೆಯ->space =
+						UNKNOWN_ಅಗಲ;
 			}
 
-			free(text);
+			ಬಿಡುಗಡೆ(ಪಠ್ಯ);
 
-			return true;
+			ಹಿಂತಿರುಗಿ true;
 		}
 
-		if (props.inline_container == NULL) {
+		ಆದರೆ (props.inline_container == ಖಾಲಿ) {
 			/* Child of a block without a current container
 			 * (i.e. this box is the first child of its parent, or
 			 * was preceded by block-level siblings) */
-			props.inline_container = box_create(NULL, NULL, false,
-					NULL, NULL, NULL, NULL, ctx->bctx);
-			if (props.inline_container == NULL) {
-				free(text);
-				return false;
+			props.inline_container = box_create(ಖಾಲಿ, ಖಾಲಿ, false,
+					ಖಾಲಿ, ಖಾಲಿ, ಖಾಲಿ, ಖಾಲಿ, ctx->bctx);
+			ಆದರೆ (props.inline_container == ಖಾಲಿ) {
+				ಬಿಡುಗಡೆ(ಪಠ್ಯ);
+				ಹಿಂತಿರುಗಿ false;
 			}
 
 			props.inline_container->type = BOX_INLINE_CONTAINER;
 
-			box_add_child(props.containing_block,
+			box_ಕೂಡಿಸು_ಮಗು(props.containing_ಖಂಡ,
 					props.inline_container);
 		}
 
 		/** \todo Dropping const here is not clever */
-		box = box_create(NULL,
-				(css_computed_style *) props.parent_style,
-				false, props.href, props.target, props.title,
-				NULL, ctx->bctx);
-		if (box == NULL) {
-			free(text);
-			return false;
+		box = box_create(ಖಾಲಿ,
+				(css_computed_style *) props.ಪೋಷಕ_style,
+				false, props.href, props.ಗುರಿ, props.title,
+				ಖಾಲಿ, ctx->bctx);
+		ಆದರೆ (box == ಖಾಲಿ) {
+			ಬಿಡುಗಡೆ(ಪಠ್ಯ);
+			ಹಿಂತಿರುಗಿ false;
 		}
 
-		box->type = BOX_TEXT;
+		box->type = BOX_ಪಠ್ಯ;
 
-		box->text = talloc_strdup(ctx->bctx, text);
-		free(text);
-		if (box->text == NULL)
-			return false;
+		box->ಪಠ್ಯ = talloc_strdup(ctx->bctx, ಪಠ್ಯ);
+		ಬಿಡುಗಡೆ(ಪಠ್ಯ);
+		ಆದರೆ (box->ಪಠ್ಯ == ಖಾಲಿ)
+			ಹಿಂತಿರುಗಿ false;
 
-		box->length = strlen(box->text);
+		box->ಉದ್ದಳತೆ = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(box->ಪಠ್ಯ);
 
 		/* strip ending space char off */
-		if (box->length > 1 && box->text[box->length - 1] == ' ') {
-			box->space = UNKNOWN_WIDTH;
-			box->length--;
+		ಆದರೆ (box->ಉದ್ದಳತೆ > 1 && box->ಪಠ್ಯ[box->ಉದ್ದಳತೆ - 1] == ' ') {
+			box->space = UNKNOWN_ಅಗಲ;
+			box->ಉದ್ದಳತೆ--;
 		}
 
-		if (css_computed_text_transform(props.parent_style) !=
-				CSS_TEXT_TRANSFORM_NONE)
-			box_text_transform(box->text, box->length,
-				css_computed_text_transform(
-					props.parent_style));
+		ಆದರೆ (css_computed_ಪಠ್ಯ_transform(props.ಪೋಷಕ_style) !=
+				CSS_ಪಠ್ಯ_TRANSFORM_NONE)
+			box_ಪಠ್ಯ_transform(box->ಪಠ್ಯ, box->ಉದ್ದಳತೆ,
+				css_computed_ಪಠ್ಯ_transform(
+					props.ಪೋಷಕ_style));
 
-		box_add_child(props.inline_container, box);
+		box_ಕೂಡಿಸು_ಮಗು(props.inline_container, box);
 
-		if (box->text[0] == ' ') {
-			box->length--;
+		ಆದರೆ (box->ಪಠ್ಯ[0] == ' ') {
+			box->ಉದ್ದಳತೆ--;
 
-			memmove(box->text, &box->text[1], box->length);
+			memmove(box->ಪಠ್ಯ, &box->ಪಠ್ಯ[1], box->ಉದ್ದಳತೆ);
 
-			if (box->prev != NULL)
-				box->prev->space = UNKNOWN_WIDTH;
+			ಆದರೆ (box->prev != ಖಾಲಿ)
+				box->prev->space = UNKNOWN_ಅಗಲ;
 		}
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		/* white-space: pre */
-		char *text;
-		size_t text_len = dom_string_byte_length(content);
+		ಅಕ್ಷರ *ಪಠ್ಯ;
+		size_t ಪಠ್ಯ_len = dom_string_byte_ಉದ್ದಳತೆ(content);
 		size_t i;
-		char *current;
-		enum css_white_space_e white_space =
-				css_computed_white_space(props.parent_style);
+		ಅಕ್ಷರ *current;
+		ಎಣಿಕೆ css_white_space_e white_space =
+				css_computed_white_space(props.ಪೋಷಕ_style);
 
 		/* note: pre-wrap/pre-line are unimplemented */
-		assert(white_space == CSS_WHITE_SPACE_PRE ||
-				white_space == CSS_WHITE_SPACE_PRE_LINE ||
+		ಪ್ರತಿಜ್ಞಾ(white_space == CSS_WHITE_SPACE_PRE ||
+				white_space == CSS_WHITE_SPACE_PRE_ಸಾಲು ||
 				white_space == CSS_WHITE_SPACE_PRE_WRAP);
 
-		text = malloc(text_len + 1);
+		ಪಠ್ಯ = ಸ್ಮರಣೆ_ಕೊಡು(ಪಠ್ಯ_len + 1);
 		dom_string_unref(content);
 
-		if (text == NULL)
-			return false;
+		ಆದರೆ (ಪಠ್ಯ == ಖಾಲಿ)
+			ಹಿಂತಿರುಗಿ false;
 
-		memcpy(text, dom_string_data(content), text_len);
-		text[text_len] = '\0';
+		ಸ್ಮರಣೆ_ನಕಲು(ಪಠ್ಯ, dom_string_ದತ್ತಾಂಶ(content), ಪಠ್ಯ_len);
+		ಪಠ್ಯ[ಪಠ್ಯ_len] = '\0';
 
 		/* TODO: Handle tabs properly */
-		for (i = 0; i < text_len; i++)
-			if (text[i] == '\t')
-				text[i] = ' ';
+		ಗಾಗಿ (i = 0; i < ಪಠ್ಯ_len; i++)
+			ಆದರೆ (ಪಠ್ಯ[i] == '\t')
+				ಪಠ್ಯ[i] = ' ';
 
-		if (css_computed_text_transform(props.parent_style) !=
-				CSS_TEXT_TRANSFORM_NONE)
-			box_text_transform(text, strlen(text),
-				css_computed_text_transform(
-						props.parent_style));
+		ಆದರೆ (css_computed_ಪಠ್ಯ_transform(props.ಪೋಷಕ_style) !=
+				CSS_ಪಠ್ಯ_TRANSFORM_NONE)
+			box_ಪಠ್ಯ_transform(ಪಠ್ಯ, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಪಠ್ಯ),
+				css_computed_ಪಠ್ಯ_transform(
+						props.ಪೋಷಕ_style));
 
-		current = text;
+		current = ಪಠ್ಯ;
 
 		/* swallow a single leading new line */
-		if (props.containing_block->flags & PRE_STRIP) {
-			switch (*current) {
-			case '\n':
+		ಆದರೆ (props.containing_ಖಂಡ->flags & PRE_STRIP) {
+			ಆಯ್ಕೆ (*current) {
+			ಸ್ಥಿತಿ '\n':
 				current++;
-				break;
-			case '\r':
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ '\r':
 				current++;
-				if (*current == '\n')
+				ಆದರೆ (*current == '\n')
 					current++;
-				break;
+				ನಿಲ್ಲಿಸು;
 			}
-			props.containing_block->flags &= ~PRE_STRIP;
+			props.containing_ಖಂಡ->flags &= ~PRE_STRIP;
 		}
 
-		do {
+		ಮಾಡು {
 			size_t len = strcspn(current, "\r\n");
 
-			char old = current[len];
+			ಅಕ್ಷರ old = current[len];
 
 			current[len] = 0;
 
-			if (props.inline_container == NULL) {
+			ಆದರೆ (props.inline_container == ಖಾಲಿ) {
 				/* Child of a block without a current container
 				 * (i.e. this box is the first child of its
 				 * parent, or was preceded by block-level
 				 * siblings) */
-				props.inline_container = box_create(NULL, NULL,
-						false, NULL, NULL, NULL, NULL,
+				props.inline_container = box_create(ಖಾಲಿ, ಖಾಲಿ,
+						false, ಖಾಲಿ, ಖಾಲಿ, ಖಾಲಿ, ಖಾಲಿ,
 						ctx->bctx);
-				if (props.inline_container == NULL) {
-					free(text);
-					return false;
+				ಆದರೆ (props.inline_container == ಖಾಲಿ) {
+					ಬಿಡುಗಡೆ(ಪಠ್ಯ);
+					ಹಿಂತಿರುಗಿ false;
 				}
 
 				props.inline_container->type =
 						BOX_INLINE_CONTAINER;
 
-				box_add_child(props.containing_block,
+				box_ಕೂಡಿಸು_ಮಗು(props.containing_ಖಂಡ,
 						props.inline_container);
 			}
 
 			/** \todo Dropping const isn't clever */
-			box = box_create(NULL,
-				(css_computed_style *) props.parent_style,
-				false, props.href, props.target, props.title,
-				NULL, ctx->bctx);
-			if (box == NULL) {
-				free(text);
-				return false;
+			box = box_create(ಖಾಲಿ,
+				(css_computed_style *) props.ಪೋಷಕ_style,
+				false, props.href, props.ಗುರಿ, props.title,
+				ಖಾಲಿ, ctx->bctx);
+			ಆದರೆ (box == ಖಾಲಿ) {
+				ಬಿಡುಗಡೆ(ಪಠ್ಯ);
+				ಹಿಂತಿರುಗಿ false;
 			}
 
-			box->type = BOX_TEXT;
+			box->type = BOX_ಪಠ್ಯ;
 
-			box->text = talloc_strdup(ctx->bctx, current);
-			if (box->text == NULL) {
-				free(text);
-				return false;
+			box->ಪಠ್ಯ = talloc_strdup(ctx->bctx, current);
+			ಆದರೆ (box->ಪಠ್ಯ == ಖಾಲಿ) {
+				ಬಿಡುಗಡೆ(ಪಠ್ಯ);
+				ಹಿಂತಿರುಗಿ false;
 			}
 
-			box->length = strlen(box->text);
+			box->ಉದ್ದಳತೆ = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(box->ಪಠ್ಯ);
 
-			box_add_child(props.inline_container, box);
+			box_ಕೂಡಿಸು_ಮಗು(props.inline_container, box);
 
 			current[len] = old;
 
 			current += len;
 
-			if (current[0] != '\0') {
+			ಆದರೆ (current[0] != '\0') {
 				/* Linebreak: create new inline container */
-				props.inline_container = box_create(NULL, NULL,
-						false, NULL, NULL, NULL, NULL,
+				props.inline_container = box_create(ಖಾಲಿ, ಖಾಲಿ,
+						false, ಖಾಲಿ, ಖಾಲಿ, ಖಾಲಿ, ಖಾಲಿ,
 						ctx->bctx);
-				if (props.inline_container == NULL) {
-					free(text);
-					return false;
+				ಆದರೆ (props.inline_container == ಖಾಲಿ) {
+					ಬಿಡುಗಡೆ(ಪಠ್ಯ);
+					ಹಿಂತಿರುಗಿ false;
 				}
 
 				props.inline_container->type =
 						BOX_INLINE_CONTAINER;
 
-				box_add_child(props.containing_block,
+				box_ಕೂಡಿಸು_ಮಗು(props.containing_ಖಂಡ,
 						props.inline_container);
 
-				if (current[0] == '\r' && current[1] == '\n')
+				ಆದರೆ (current[0] == '\r' && current[1] == '\n')
 					current += 2;
-				else
+				ಇಲ್ಲದಿದ್ದರೆ
 					current++;
 			}
-		} while (*current);
+		} ಆಗ (*current);
 
-		free(text);
+		ಬಿಡುಗಡೆ(ಪಠ್ಯ);
 	}
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
 
@@ -1231,210 +1231,210 @@ static bool box_construct_text(struct box_construct_ctx *ctx)
  * Convert an ELEMENT node to a box tree fragment,
  * then schedule conversion of the next ELEMENT node
  */
-static void convert_xml_to_box(struct box_construct_ctx *ctx)
+ಸ್ಥಿರ ಶೂನ್ಯ convert_xml_ಗಮ್ಯ_box(ರಚನೆ box_construct_ctx *ctx)
 {
-	dom_node *next;
+	dom_ಗಂಟು *ಮುಂದಿನ;
 	bool convert_children;
-	uint32_t num_processed = 0;
-	const uint32_t max_processed_before_yield = 10;
+	uint32_t ಅಂಕೆ_processed = 0;
+	ಸ್ಥಿರಾಂಕ uint32_t max_processed_before_yield = 10;
 
-	do {
+	ಮಾಡು {
 		convert_children = true;
 
-		assert(ctx->n != NULL);
+		ಪ್ರತಿಜ್ಞಾ(ctx->n != ಖಾಲಿ);
 
-		if (box_construct_element(ctx, &convert_children) == false) {
+		ಆದರೆ (box_construct_element(ctx, &convert_children) == false) {
 			ctx->cb(ctx->content, false);
-			dom_node_unref(ctx->n);
-			free(ctx);
-			return;
+			dom_ಗಂಟು_unref(ctx->n);
+			ಬಿಡುಗಡೆ(ctx);
+			ಹಿಂತಿರುಗಿ;
 		}
 
 		/* Find next element to process, converting text nodes as we go */
-		next = next_node(ctx->n, ctx->content, convert_children);
-		while (next != NULL) {
-			dom_node_type type;
+		ಮುಂದಿನ = ಮುಂದಿನ_ಗಂಟು(ctx->n, ctx->content, convert_children);
+		ಆಗ (ಮುಂದಿನ != ಖಾಲಿ) {
+			dom_ಗಂಟು_type type;
 			dom_exception err;
 
-			err = dom_node_get_node_type(next, &type);
-			if (err != DOM_NO_ERR) {
+			err = dom_ಗಂಟು_get_ಗಂಟು_type(ಮುಂದಿನ, &type);
+			ಆದರೆ (err != DOM_NO_ERR) {
 				ctx->cb(ctx->content, false);
-				dom_node_unref(next);
-				free(ctx);
-				return;
+				dom_ಗಂಟು_unref(ಮುಂದಿನ);
+				ಬಿಡುಗಡೆ(ctx);
+				ಹಿಂತಿರುಗಿ;
 			}
 
-			if (type == DOM_ELEMENT_NODE)
-				break;
+			ಆದರೆ (type == DOM_ELEMENT_ಗಂಟು)
+				ನಿಲ್ಲಿಸು;
 
-			if (type == DOM_TEXT_NODE) {
-				ctx->n = next;
-				if (box_construct_text(ctx) == false) {
+			ಆದರೆ (type == DOM_ಪಠ್ಯ_ಗಂಟು) {
+				ctx->n = ಮುಂದಿನ;
+				ಆದರೆ (box_construct_ಪಠ್ಯ(ctx) == false) {
 					ctx->cb(ctx->content, false);
-					dom_node_unref(ctx->n);
-					free(ctx);
-					return;
+					dom_ಗಂಟು_unref(ctx->n);
+					ಬಿಡುಗಡೆ(ctx);
+					ಹಿಂತಿರುಗಿ;
 				}
 			}
 
-			next = next_node(next, ctx->content, true);
+			ಮುಂದಿನ = ಮುಂದಿನ_ಗಂಟು(ಮುಂದಿನ, ctx->content, true);
 		}
 
-		ctx->n = next;
+		ctx->n = ಮುಂದಿನ;
 
-		if (next == NULL) {
+		ಆದರೆ (ಮುಂದಿನ == ಖಾಲಿ) {
 			/* Conversion complete */
-			struct box root;
+			ರಚನೆ box ಬೇರು;
 
-			memset(&root, 0, sizeof(root));
+			memset(&ಬೇರು, 0, ಗಾತ್ರ(ಬೇರು));
 
-			root.type = BOX_BLOCK;
-			root.children = root.last = ctx->root_box;
-			root.children->parent = &root;
+			ಬೇರು.type = BOX_ಖಂಡ;
+			ಬೇರು.children = ಬೇರು.ಕೊನೆಯ = ctx->ಬೇರು_box;
+			ಬೇರು.children->ಪೋಷಕ = &ಬೇರು;
 
 			/** \todo Remove box_normalise_block */
-			if (box_normalise_block(&root, ctx->root_box,
+			ಆದರೆ (box_normalise_ಖಂಡ(&ಬೇರು, ctx->ಬೇರು_box,
 					ctx->content) == false) {
 				ctx->cb(ctx->content, false);
-			} else {
-				ctx->content->layout = root.children;
-				ctx->content->layout->parent = NULL;
+			} ಇಲ್ಲದಿದ್ದರೆ {
+				ctx->content->layout = ಬೇರು.children;
+				ctx->content->layout->ಪೋಷಕ = ಖಾಲಿ;
 
 				ctx->cb(ctx->content, true);
 			}
 
-			assert(ctx->n == NULL);
+			ಪ್ರತಿಜ್ಞಾ(ctx->n == ಖಾಲಿ);
 
-			free(ctx);
-			return;
+			ಬಿಡುಗಡೆ(ctx);
+			ಹಿಂತಿರುಗಿ;
 		}
-	} while (++num_processed < max_processed_before_yield);
+	} ಆಗ (++ಅಂಕೆ_processed < max_processed_before_yield);
 
 	/* More work to do: schedule a continuation */
-	guit->misc->schedule(0, (void *)convert_xml_to_box, ctx);
+	guit->misc->ವೇಳಾಪಟ್ಟಿ(0, (ಶೂನ್ಯ *)convert_xml_ಗಮ್ಯ_box, ctx);
 }
 
 
 /* exported function documented in html/box_construct.h */
 nserror
-dom_to_box(dom_node *n,
+dom_ಗಮ್ಯ_box(dom_ಗಂಟು *n,
 	   html_content *c,
 	   box_construct_complete_cb cb,
-	   void **box_conversion_context)
+	   ಶೂನ್ಯ **box_conversion_context)
 {
-	struct box_construct_ctx *ctx;
+	ರಚನೆ box_construct_ctx *ctx;
 
-	assert(box_conversion_context != NULL);
+	ಪ್ರತಿಜ್ಞಾ(box_conversion_context != ಖಾಲಿ);
 
-	if (c->bctx == NULL) {
+	ಆದರೆ (c->bctx == ಖಾಲಿ) {
 		/* create a context allocation for this box tree */
-		c->bctx = talloc_zero(0, int);
-		if (c->bctx == NULL) {
-			return NSERROR_NOMEM;
+		c->bctx = talloc_zero(0, ಪೂರ್ಣಾಂಕ);
+		ಆದರೆ (c->bctx == ಖಾಲಿ) {
+			ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 		}
 	}
 
-	ctx = malloc(sizeof(*ctx));
-	if (ctx == NULL) {
-		return NSERROR_NOMEM;
+	ctx = ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ(*ctx));
+	ಆದರೆ (ctx == ಖಾಲಿ) {
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 	}
 
 	ctx->content = c;
-	ctx->n = dom_node_ref(n);
-	ctx->root_box = NULL;
+	ctx->n = dom_ಗಂಟು_ref(n);
+	ctx->ಬೇರು_box = ಖಾಲಿ;
 	ctx->cb = cb;
 	ctx->bctx = c->bctx;
 
 	*box_conversion_context = ctx;
 
-	return guit->misc->schedule(0, (void *)convert_xml_to_box, ctx);
+	ಹಿಂತಿರುಗಿ guit->misc->ವೇಳಾಪಟ್ಟಿ(0, (ಶೂನ್ಯ *)convert_xml_ಗಮ್ಯ_box, ctx);
 }
 
 
 /* exported function documented in html/box_construct.h */
-nserror cancel_dom_to_box(void *box_conversion_context)
+nserror cancel_dom_ಗಮ್ಯ_box(ಶೂನ್ಯ *box_conversion_context)
 {
-	struct box_construct_ctx *ctx = box_conversion_context;
+	ರಚನೆ box_construct_ctx *ctx = box_conversion_context;
 	nserror err;
 
-	err = guit->misc->schedule(-1, (void *)convert_xml_to_box, ctx);
-	if (err != NSERROR_OK) {
-		return err;
+	err = guit->misc->ವೇಳಾಪಟ್ಟಿ(-1, (ಶೂನ್ಯ *)convert_xml_ಗಮ್ಯ_box, ctx);
+	ಆದರೆ (err != NSERROR_OK) {
+		ಹಿಂತಿರುಗಿ err;
 	}
 
-	dom_node_unref(ctx->n);
-	free(ctx);
+	dom_ಗಂಟು_unref(ctx->n);
+	ಬಿಡುಗಡೆ(ctx);
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
 
 /* exported function documented in html/box_construct.h */
-struct box *box_for_node(dom_node *n)
+ರಚನೆ box *box_for_ಗಂಟು(dom_ಗಂಟು *n)
 {
-	struct box *box = NULL;
+	ರಚನೆ box *box = ಖಾಲಿ;
 	dom_exception err;
 
-	err = dom_node_get_user_data(n, corestring_dom___ns_key_box_node_data,
-			(void *) &box);
-	if (err != DOM_NO_ERR)
-		return NULL;
+	err = dom_ಗಂಟು_get_user_ದತ್ತಾಂಶ(n, corestring_dom_ns_ಕೀಲಿ_box_ಗಂಟು_ದತ್ತಾಂಶ,
+			(ಶೂನ್ಯ *) &box);
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-	return box;
+	ಹಿಂತಿರುಗಿ box;
 }
 
 /* exported function documented in html/box_construct.h */
 bool
-box_extract_link(const html_content *content,
-		 const dom_string *dsrel,
-		 nsurl *base,
-		 nsurl **result)
+box_ಹೊರತೆಗೆ_link(ಸ್ಥಿರಾಂಕ html_content *content,
+		 ಸ್ಥಿರಾಂಕ dom_string *dsrel,
+		 nsurl *ತಳ,
+		 nsurl **ಫಲಿತಾಂಶ)
 {
-	char *s, *s1, *apos0 = 0, *apos1 = 0, *quot0 = 0, *quot1 = 0;
-	unsigned int i, j, end;
+	ಅಕ್ಷರ *s, *s1, *apos0 = 0, *apos1 = 0, *quot0 = 0, *quot1 = 0;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ i, j, ಕೊನೆ;
 	nserror error;
-	const char *rel;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *rel;
 
-	rel = dom_string_data(dsrel);
+	rel = dom_string_ದತ್ತಾಂಶ(dsrel);
 
-	s1 = s = malloc(3 * strlen(rel) + 1);
-	if (!s)
-		return false;
+	s1 = s = ಸ್ಮರಣೆ_ಕೊಡು(3 * ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(rel) + 1);
+	ಆದರೆ (!s)
+		ಹಿಂತಿರುಗಿ false;
 
 	/* copy to s, removing white space and control characters */
-	for (i = 0; rel[i] && ascii_is_space(rel[i]); i++)
+	ಗಾಗಿ (i = 0; rel[i] && ascii_is_space(rel[i]); i++)
 		;
-	for (end = strlen(rel);
-	     (end != i) && ascii_is_space(rel[end - 1]);
-	     end--)
+	ಗಾಗಿ (ಕೊನೆ = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(rel);
+	     (ಕೊನೆ != i) && ascii_is_space(rel[ಕೊನೆ - 1]);
+	     ಕೊನೆ--)
 		;
-	for (j = 0; i != end; i++) {
-		if ((unsigned char) rel[i] < 0x20) {
+	ಗಾಗಿ (j = 0; i != ಕೊನೆ; i++) {
+		ಆದರೆ ((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ) rel[i] < 0x20) {
 			; /* skip control characters */
-		} else if (rel[i] == ' ') {
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (rel[i] == ' ') {
 			s[j++] = '%';
 			s[j++] = '2';
 			s[j++] = '0';
-		} else {
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			s[j++] = rel[i];
 		}
 	}
 	s[j] = 0;
 
-	if (content->enable_scripting == false) {
+	ಆದರೆ (content->enable_scripting == false) {
 		/* extract first quoted string out of "javascript:" link */
-		if (strncmp(s, "javascript:", 11) == 0) {
+		ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(s, "javascript:", 11) == 0) {
 			apos0 = strchr(s, '\'');
-			if (apos0)
+			ಆದರೆ (apos0)
 				apos1 = strchr(apos0 + 1, '\'');
 			quot0 = strchr(s, '"');
-			if (quot0)
+			ಆದರೆ (quot0)
 				quot1 = strchr(quot0 + 1, '"');
-			if (apos0 && apos1 &&
+			ಆದರೆ (apos0 && apos1 &&
 					(!quot0 || !quot1 || apos0 < quot0)) {
 				*apos1 = 0;
 				s1 = apos0 + 1;
-			} else if (quot0 && quot1) {
+			} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (quot0 && quot1) {
 				*quot1 = 0;
 				s1 = quot0 + 1;
 			}
@@ -1442,12 +1442,12 @@ box_extract_link(const html_content *content,
 	}
 
 	/* construct absolute URL */
-	error = nsurl_join(base, s1, result);
-	free(s);
-	if (error != NSERROR_OK) {
-		*result = NULL;
-		return false;
+	error = nsurl_join(ತಳ, s1, ಫಲಿತಾಂಶ);
+	ಬಿಡುಗಡೆ(s);
+	ಆದರೆ (error != NSERROR_OK) {
+		*ಫಲಿತಾಂಶ = ಖಾಲಿ;
+		ಹಿಂತಿರುಗಿ false;
 	}
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }

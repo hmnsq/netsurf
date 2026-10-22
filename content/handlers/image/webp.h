@@ -21,9 +21,9 @@
  * Interface to image/webp content handlers
  */
 
-#ifndef _NETSURF_IMAGE_WEBP_H_
-#define _NETSURF_IMAGE_WEBP_H_
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _NETSURF_IMAGE_WEBP_H_
+#ವ್ಯಾಖ್ಯಾನಿಸು _NETSURF_IMAGE_WEBP_H_
 
-nserror nswebp_init(void);
+nserror nswebp_init(ಶೂನ್ಯ);
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

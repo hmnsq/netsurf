@@ -69,8 +69,8 @@
  * Here implied boxes have been added and a float is present.
  */
 
-#ifndef NETSURF_HTML_BOX_CONSTRUCT_H
-#define NETSURF_HTML_BOX_CONSTRUCT_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NETSURF_HTML_BOX_CONSTRUCT_H
+#ವ್ಯಾಖ್ಯಾನಿಸು NETSURF_HTML_BOX_CONSTRUCT_H
 
 /**
  * Construct a box tree from a dom and html content
@@ -81,13 +81,13 @@
  * \param box_conversion_context pointer that recives the conversion context
  * \return netsurf error code indicating status of call
  */
-nserror dom_to_box(struct dom_node *n, struct html_content *c, box_construct_complete_cb cb, void **box_conversion_context);
+nserror dom_ಗಮ್ಯ_box(ರಚನೆ dom_ಗಂಟು *n, ರಚನೆ html_content *c, box_construct_complete_cb cb, ಶೂನ್ಯ **box_conversion_context);
 
 
 /**
  * aborts any ongoing box construction
  */
-nserror cancel_dom_to_box(void *box_conversion_context);
+nserror cancel_dom_ಗಮ್ಯ_box(ಶೂನ್ಯ *box_conversion_context);
 
 
 /**
@@ -96,7 +96,7 @@ nserror cancel_dom_to_box(void *box_conversion_context);
  * \param node The DOM node
  * \return The box if there is one
  */
-struct box *box_for_node(struct dom_node *node);
+ರಚನೆ box *box_for_ಗಂಟು(ರಚನೆ dom_ಗಂಟು *ಗಂಟು);
 
 /**
  * Extract a URL from a relative link, handling junk like whitespace and
@@ -108,6 +108,6 @@ struct box *box_for_node(struct dom_node *node);
  * \param result updated to target URL on heap, unchanged if extract failed
  * \return true on success, false on memory exhaustion
  */
-bool box_extract_link(const struct html_content *content, const struct dom_string *dsrel, struct nsurl *base, struct nsurl **result);
+bool box_ಹೊರತೆಗೆ_link(ಸ್ಥಿರಾಂಕ ರಚನೆ html_content *content, ಸ್ಥಿರಾಂಕ ರಚನೆ dom_string *dsrel, ರಚನೆ nsurl *ತಳ, ರಚನೆ nsurl **ಫಲಿತಾಂಶ);
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

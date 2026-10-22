@@ -16,163 +16,163 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/plotters.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#ಅನ್ತರ್ಭಾವ "utils/utils.h"
+#ಅನ್ತರ್ಭಾವ "utils/log.h"
+#ಅನ್ತರ್ಭಾವ "utils/messages.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/plotters.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/bitmap.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/content.h"
+#ಅನ್ತರ್ಭಾವ "desktop/gui_internal.h"
+#ಅನ್ತರ್ಭಾವ "desktop/bitmap.h"
 
-#include "image/bmp.h"
-#include "image/gif.h"
-#include "image/ico.h"
-#include "image/jpeg.h"
-#include "image/jpegxl.h"
-#include "image/nssprite.h"
-#include "image/png.h"
-#include "image/rsvg.h"
-#include "image/svg.h"
-#include "image/webp.h"
-#include "image/image.h"
+#ಅನ್ತರ್ಭಾವ "image/bmp.h"
+#ಅನ್ತರ್ಭಾವ "image/gif.h"
+#ಅನ್ತರ್ಭಾವ "image/ico.h"
+#ಅನ್ತರ್ಭಾವ "image/jpeg.h"
+#ಅನ್ತರ್ಭಾವ "image/jpegxl.h"
+#ಅನ್ತರ್ಭಾವ "image/nssprite.h"
+#ಅನ್ತರ್ಭಾವ "image/png.h"
+#ಅನ್ತರ್ಭಾವ "image/rsvg.h"
+#ಅನ್ತರ್ಭಾವ "image/svg.h"
+#ಅನ್ತರ್ಭಾವ "image/webp.h"
+#ಅನ್ತರ್ಭಾವ "image/image.h"
 
 /**
  * Initialise image content handlers
  *
  * \return NSERROR_OK on success, appropriate error otherwise.
  */
-nserror image_init(void)
+nserror image_init(ಶೂನ್ಯ)
 {
 	nserror error = NSERROR_OK;
 
-#ifdef WITH_BMP
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_BMP
 	error = nsbmp_init();
-	if (error != NSERROR_OK)
-		return error;
-#endif
+	ಆದರೆ (error != NSERROR_OK)
+		ಹಿಂತಿರುಗಿ error;
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef WITH_GIF
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_GIF
 	error = nsgif_init();
-	if (error != NSERROR_OK)
-		return error;
-#endif
+	ಆದರೆ (error != NSERROR_OK)
+		ಹಿಂತಿರುಗಿ error;
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef WITH_BMP
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_BMP
 	error = nsico_init();
-	if (error != NSERROR_OK)
-		return error;
-#endif
+	ಆದರೆ (error != NSERROR_OK)
+		ಹಿಂತಿರುಗಿ error;
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef WITH_JPEG
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_JPEG
 	error = nsjpeg_init();
-	if (error != NSERROR_OK)
-		return error;
-#endif
+	ಆದರೆ (error != NSERROR_OK)
+		ಹಿಂತಿರುಗಿ error;
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef WITH_JPEGXL
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_JPEGXL
 	error = nsjpegxl_init();
-	if (error != NSERROR_OK)
-		return error;
-#endif
+	ಆದರೆ (error != NSERROR_OK)
+		ಹಿಂತಿರುಗಿ error;
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef WITH_PNG
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_PNG
 	error = nspng_init();
-	if (error != NSERROR_OK)
-		return error;
-#endif
+	ಆದರೆ (error != NSERROR_OK)
+		ಹಿಂತಿರುಗಿ error;
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef WITH_NSSPRITE
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_NSSPRITE
 	error = nssprite_init();
-	if (error != NSERROR_OK)
-		return error;
-#endif
+	ಆದರೆ (error != NSERROR_OK)
+		ಹಿಂತಿರುಗಿ error;
+#ಆದರೆ_ಅಂತ್ಯ
 
 	/* Prefer rsvg over libsvgtiny for svgs */
-#ifdef WITH_NS_SVG
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_NS_SVG
 	error = svg_init();
-	if (error != NSERROR_OK)
-		return error;
-#endif
-#ifdef WITH_RSVG
+	ಆದರೆ (error != NSERROR_OK)
+		ಹಿಂತಿರುಗಿ error;
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_RSVG
 	error = nsrsvg_init();
-	if (error != NSERROR_OK)
-		return error;
-#endif
+	ಆದರೆ (error != NSERROR_OK)
+		ಹಿಂತಿರುಗಿ error;
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef WITH_WEBP
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_WEBP
 	error = nswebp_init();
-	if (error != NSERROR_OK)
-		return error;
-#endif
+	ಆದರೆ (error != NSERROR_OK)
+		ಹಿಂತಿರುಗಿ error;
+#ಆದರೆ_ಅಂತ್ಯ
 
-	return error;
+	ಹಿಂತಿರುಗಿ error;
 }
 
 
-bool image_bitmap_plot(struct bitmap *bitmap,
-		       struct content_redraw_data *data,
-		       const struct rect *clip,
-		       const struct redraw_context *ctx)
+bool image_bitmap_plot(ರಚನೆ bitmap *bitmap,
+		       ರಚನೆ content_redraw_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ,
+		       ಸ್ಥಿರಾಂಕ ರಚನೆ rect *clip,
+		       ಸ್ಥಿರಾಂಕ ರಚನೆ redraw_context *ctx)
 {
 	bitmap_flags_t flags = BITMAPF_NONE;
 
-	int width;
-	int height;
-	unsigned char *pixel;
+	ಪೂರ್ಣಾಂಕ ಅಗಲ;
+	ಪೂರ್ಣಾಂಕ ಎತ್ತರ;
+	ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *pixel;
 	plot_style_t fill_style;
-	struct rect area;
+	ರಚನೆ rect area;
 
-	width = guit->bitmap->get_width(bitmap);
-	if (width == 1) {
-		height = guit->bitmap->get_height(bitmap);
-		if (height == 1) {
+	ಅಗಲ = guit->bitmap->get_ಅಗಲ(bitmap);
+	ಆದರೆ (ಅಗಲ == 1) {
+		ಎತ್ತರ = guit->bitmap->get_ಎತ್ತರ(bitmap);
+		ಆದರೆ (ಎತ್ತರ == 1) {
 			/* optimise 1x1 bitmap plot */
-			pixel = guit->bitmap->get_buffer(bitmap);
-			fill_style.fill_colour = bitmap_pixel_to_colour(pixel);
+			pixel = guit->bitmap->get_ಬಫರ್(bitmap);
+			fill_style.fill_ಬಣ್ಣ = bitmap_pixel_ಗಮ್ಯ_ಬಣ್ಣ(pixel);
 
-			if (guit->bitmap->get_opaque(bitmap) ||
-			    ((fill_style.fill_colour & 0xff000000) == 0xff000000)) {
+			ಆದರೆ (guit->bitmap->get_opaque(bitmap) ||
+			    ((fill_style.fill_ಬಣ್ಣ & 0xff000000) == 0xff000000)) {
 
 				area = *clip;
 
-				if (data->repeat_x != true) {
-					area.x0 = data->x;
-					area.x1 = data->x + data->width;
+				ಆದರೆ (ದತ್ತಾಂಶ->repeat_x != true) {
+					area.x0 = ದತ್ತಾಂಶ->x;
+					area.x1 = ದತ್ತಾಂಶ->x + ದತ್ತಾಂಶ->ಅಗಲ;
 				}
 
-				if (data->repeat_y != true) {
-					area.y0 = data->y;
-					area.y1 = data->y + data->height;
+				ಆದರೆ (ದತ್ತಾಂಶ->repeat_y != true) {
+					area.y0 = ದತ್ತಾಂಶ->y;
+					area.y1 = ದತ್ತಾಂಶ->y + ದತ್ತಾಂಶ->ಎತ್ತರ;
 				}
 
 				fill_style.stroke_type = PLOT_OP_TYPE_NONE;
 				fill_style.fill_type = PLOT_OP_TYPE_SOLID;
 
-				return (ctx->plot->rectangle(ctx,
+				ಹಿಂತಿರುಗಿ (ctx->plot->rectangle(ctx,
 							     &fill_style,
 							     &area) == NSERROR_OK);
 
-			} else if ((fill_style.fill_colour & 0xff000000) == 0) {
+			} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((fill_style.fill_ಬಣ್ಣ & 0xff000000) == 0) {
 				/* transparent pixel used as spacer, skip it */
-				return true;
+				ಹಿಂತಿರುಗಿ true;
 			}
 		}
 	}
 
 	/* do the plot */
-	if (data->repeat_x)
+	ಆದರೆ (ದತ್ತಾಂಶ->repeat_x)
 		flags |= BITMAPF_REPEAT_X;
-	if (data->repeat_y)
+	ಆದರೆ (ದತ್ತಾಂಶ->repeat_y)
 		flags |= BITMAPF_REPEAT_Y;
 
-	return (ctx->plot->bitmap(ctx,
+	ಹಿಂತಿರುಗಿ (ctx->plot->bitmap(ctx,
 				  bitmap,
-				  data->x, data->y,
-				  data->width, data->height,
-				  data->background_colour,
+				  ದತ್ತಾಂಶ->x, ದತ್ತಾಂಶ->y,
+				  ದತ್ತಾಂಶ->ಅಗಲ, ದತ್ತಾಂಶ->ಎತ್ತರ,
+				  ದತ್ತಾಂಶ->background_ಬಣ್ಣ,
 				  flags) == NSERROR_OK);
 }

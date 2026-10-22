@@ -22,30 +22,30 @@
  * implementation of content handler for BMP images.
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <libnsbmp.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <libnsbmp.h>
 
-#include "utils/utils.h"
-#include "utils/messages.h"
-#include "netsurf/plotters.h"
-#include "netsurf/bitmap.h"
-#include "netsurf/content.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#ಅನ್ತರ್ಭಾವ "utils/utils.h"
+#ಅನ್ತರ್ಭಾವ "utils/messages.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/plotters.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/bitmap.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/content.h"
+#ಅನ್ತರ್ಭಾವ "content/llcache.h"
+#ಅನ್ತರ್ಭಾವ "content/content_protected.h"
+#ಅನ್ತರ್ಭಾವ "content/content_factory.h"
+#ಅನ್ತರ್ಭಾವ "desktop/gui_internal.h"
+#ಅನ್ತರ್ಭಾವ "desktop/bitmap.h"
 
-#include "image/bmp.h"
+#ಅನ್ತರ್ಭಾವ "image/bmp.h"
 
 /** bmp context. */
-typedef struct nsbmp_content {
-	struct content base;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ nsbmp_content {
+	ರಚನೆ content ತಳ;
 
 	bmp_image *bmp;	/** BMP image data */
 
-	struct bitmap *bitmap;	/**< Created NetSurf bitmap */
+	ರಚನೆ bitmap *bitmap;	/**< Created NetSurf bitmap */
 } nsbmp_content;
 
 /**
@@ -56,240 +56,240 @@ typedef struct nsbmp_content {
  * \param bmp_state A flag word indicating the initial state
  * \return An opaque struct bitmap, or NULL on memory exhaustion
  */
-static void *nsbmp_bitmap_create(int width, int height, unsigned int bmp_state)
+ಸ್ಥಿರ ಶೂನ್ಯ *nsbmp_bitmap_create(ಪೂರ್ಣಾಂಕ ಅಗಲ, ಪೂರ್ಣಾಂಕ ಎತ್ತರ, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ bmp_state)
 {
-	unsigned int bitmap_state = BITMAP_NONE;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ bitmap_state = BITMAP_NONE;
 
 	/* set bitmap state based on bmp state */
 	bitmap_state |= (bmp_state & BMP_OPAQUE) ? BITMAP_OPAQUE : 0;
-	bitmap_state |= (bmp_state & BMP_CLEAR_MEMORY) ?
+	bitmap_state |= (bmp_state & BMP_CLEAR_ಸ್ಮರಣೆ) ?
 			BITMAP_CLEAR : 0;
 
 	/* return the created bitmap */
-	return guit->bitmap->create(width, height, bitmap_state);
+	ಹಿಂತಿರುಗಿ guit->bitmap->create(ಅಗಲ, ಎತ್ತರ, bitmap_state);
 }
 
-static nserror nsbmp_create_bmp_data(nsbmp_content *bmp)
+ಸ್ಥಿರ nserror nsbmp_create_bmp_ದತ್ತಾಂಶ(nsbmp_content *bmp)
 {
 	bmp_bitmap_callback_vt bmp_bitmap_callbacks = {
 		.bitmap_create = nsbmp_bitmap_create,
 		.bitmap_destroy = guit->bitmap->destroy,
-		.bitmap_get_buffer = guit->bitmap->get_buffer,
+		.bitmap_get_ಬಫರ್ = guit->bitmap->get_ಬಫರ್,
 	};
 
-	bmp->bmp = calloc(1, sizeof(struct bmp_image));
-	if (bmp->bmp == NULL) {
-		content_broadcast_error(&bmp->base, NSERROR_NOMEM, NULL);
-		return NSERROR_NOMEM;
+	bmp->bmp = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(ರಚನೆ bmp_image));
+	ಆದರೆ (bmp->bmp == ಖಾಲಿ) {
+		content_ಪ್ರಸಾರ_error(&bmp->ತಳ, NSERROR_NOMEM, ಖಾಲಿ);
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 	}
 
 	bmp_create(bmp->bmp, &bmp_bitmap_callbacks);
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
-static nserror
-nsbmp_create(const struct content_handler *handler,
+ಸ್ಥಿರ nserror
+nsbmp_create(ಸ್ಥಿರಾಂಕ ರಚನೆ content_handler *handler,
 	     lwc_string *imime_type,
-	     const struct http_parameter *params,
+	     ಸ್ಥಿರಾಂಕ ರಚನೆ http_parameter *params,
 	     llcache_handle *llcache,
-	     const char *fallback_charset,
+	     ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fallback_charset,
 	     bool quirks,
-	     struct content **c)
+	     ರಚನೆ content **c)
 {
 	nsbmp_content *bmp;
 	nserror error;
 
-	bmp = calloc(1, sizeof(nsbmp_content));
-	if (bmp == NULL)
-		return NSERROR_NOMEM;
+	bmp = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(nsbmp_content));
+	ಆದರೆ (bmp == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 
-	error = content__init(&bmp->base, handler, imime_type, params,
+	error = content__init(&bmp->ತಳ, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(bmp);
-		return error;
+	ಆದರೆ (error != NSERROR_OK) {
+		ಬಿಡುಗಡೆ(bmp);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
-	error = nsbmp_create_bmp_data(bmp);
-	if (error != NSERROR_OK) {
-		free(bmp);
-		return error;
+	error = nsbmp_create_bmp_ದತ್ತಾಂಶ(bmp);
+	ಆದರೆ (error != NSERROR_OK) {
+		ಬಿಡುಗಡೆ(bmp);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
-	*c = (struct content *) bmp;
+	*c = (ರಚನೆ content *) bmp;
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
-static bool nsbmp_convert(struct content *c)
+ಸ್ಥಿರ bool nsbmp_convert(ರಚನೆ content *c)
 {
 	nsbmp_content *bmp = (nsbmp_content *) c;
-	bmp_result res;
+	bmp_ಫಲಿತಾಂಶ res;
 	uint32_t swidth;
-	const uint8_t *data;
-	size_t size;
-	char *title;
+	ಸ್ಥಿರಾಂಕ uint8_t *ದತ್ತಾಂಶ;
+	size_t ಗಾತ್ರ_2;
+	ಅಕ್ಷರ *title;
 
 	/* set the bmp data */
-	data = content__get_source_data(c, &size);
+	ದತ್ತಾಂಶ = content_get_ಮೂಲ_ದತ್ತಾಂಶ_2(c, &ಗಾತ್ರ_2);
 
 	/* analyse the BMP */
-	res = bmp_analyse(bmp->bmp, size, (unsigned char *) data);
-	switch (res) {
-		case BMP_OK:
-			break;
-		case BMP_INSUFFICIENT_MEMORY:
-			content_broadcast_error(c, NSERROR_NOMEM, NULL);
-			return false;
-		case BMP_INSUFFICIENT_DATA:
-		case BMP_DATA_ERROR:
-			content_broadcast_error(c, NSERROR_BMP_ERROR, NULL);
-			return false;
+	res = bmp_analyse(bmp->bmp, ಗಾತ್ರ_2, (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *) ದತ್ತಾಂಶ);
+	ಆಯ್ಕೆ (res) {
+		ಸ್ಥಿತಿ BMP_OK:
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ BMP_INSUFFICIENT_ಸ್ಮರಣೆ:
+			content_ಪ್ರಸಾರ_error(c, NSERROR_NOMEM, ಖಾಲಿ);
+			ಹಿಂತಿರುಗಿ false;
+		ಸ್ಥಿತಿ BMP_INSUFFICIENT_ದತ್ತಾಂಶ:
+		ಸ್ಥಿತಿ BMP_ದತ್ತಾಂಶ_ERROR:
+			content_ಪ್ರಸಾರ_error(c, NSERROR_BMP_ERROR, ಖಾಲಿ);
+			ಹಿಂತಿರುಗಿ false;
 	}
 
 	/* Store our content width and description */
-	c->width = bmp->bmp->width;
-	c->height = bmp->bmp->height;
-	swidth = sizeof(uint32_t) * bmp->bmp->width;
-	c->size += (swidth * bmp->bmp->height) + 16 + 44;
+	c->ಅಗಲ = bmp->bmp->ಅಗಲ;
+	c->ಎತ್ತರ = bmp->bmp->ಎತ್ತರ;
+	swidth = ಗಾತ್ರ(uint32_t) * bmp->bmp->ಅಗಲ;
+	c->ಗಾತ್ರ_2 += (swidth * bmp->bmp->ಎತ್ತರ) + 16 + 44;
 
 	/* set title text */
 	title = messages_get_buff("BMPTitle",
-			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
-			c->width, c->height);
-	if (title != NULL) {
-		content__set_title(c, title);
-		free(title);
+			nsurl_access_ಎಲೆ(llcache_handle_get_url(c->llcache)),
+			c->ಅಗಲ, c->ಎತ್ತರ);
+	ಆದರೆ (title != ಖಾಲಿ) {
+		content_ಗಣ_title(c, title);
+		ಬಿಡುಗಡೆ(title);
 	}
 
 	/* exit as a success */
 	bmp->bitmap = bmp->bmp->bitmap;
 
-	content_set_ready(c);
-	content_set_done(c);
+	content_ಗಣ_ready(c);
+	content_ಗಣ_ಮುಗಿದ(c);
 
 	/* Done: update status bar */
-	content_set_status(c, "");
-	return true;
+	content_ಗಣ_ಸ್ಥಿತಿ(c, "");
+	ಹಿಂತಿರುಗಿ true;
 }
 
-static bool nsbmp_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx)
+ಸ್ಥಿರ bool nsbmp_redraw(ರಚನೆ content *c, ರಚನೆ content_redraw_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ,
+		ಸ್ಥಿರಾಂಕ ರಚನೆ rect *clip, ಸ್ಥಿರಾಂಕ ರಚನೆ redraw_context *ctx)
 {
 	nsbmp_content *bmp = (nsbmp_content *) c;
 	bitmap_flags_t flags = BITMAPF_NONE;
 
-	if (bmp->bmp->decoded == false) {
-		bmp_result res;
+	ಆದರೆ (bmp->bmp->decoded == false) {
+		bmp_ಫಲಿತಾಂಶ res;
 		res = bmp_decode(bmp->bmp);
 		/* allow short or incomplete image data giving a partial image*/
-		if ((res != BMP_OK) &&
-		    (res != BMP_INSUFFICIENT_DATA) &&
-		    (res != BMP_DATA_ERROR)) {
-			return false;
+		ಆದರೆ ((res != BMP_OK) &&
+		    (res != BMP_INSUFFICIENT_ದತ್ತಾಂಶ) &&
+		    (res != BMP_ದತ್ತಾಂಶ_ERROR)) {
+			ಹಿಂತಿರುಗಿ false;
 		}
 
-		bitmap_format_to_client(bmp->bitmap, &(bitmap_fmt_t) {
+		bitmap_format_ಗಮ್ಯ_client(bmp->bitmap, &(bitmap_fmt_t) {
 			.layout = BITMAP_LAYOUT_R8G8B8A8,
 		});
 		guit->bitmap->modified(bmp->bitmap);
 	}
 
-	if (data->repeat_x)
+	ಆದರೆ (ದತ್ತಾಂಶ->repeat_x)
 		flags |= BITMAPF_REPEAT_X;
-	if (data->repeat_y)
+	ಆದರೆ (ದತ್ತಾಂಶ->repeat_y)
 		flags |= BITMAPF_REPEAT_Y;
 
-	return (ctx->plot->bitmap(ctx,
+	ಹಿಂತಿರುಗಿ (ctx->plot->bitmap(ctx,
 				  bmp->bitmap,
-				  data->x, data->y,
-				  data->width, data->height,
-				  data->background_colour,
+				  ದತ್ತಾಂಶ->x, ದತ್ತಾಂಶ->y,
+				  ದತ್ತಾಂಶ->ಅಗಲ, ದತ್ತಾಂಶ->ಎತ್ತರ,
+				  ದತ್ತಾಂಶ->background_ಬಣ್ಣ,
 				  flags) == NSERROR_OK);
 }
 
 
-static void nsbmp_destroy(struct content *c)
+ಸ್ಥಿರ ಶೂನ್ಯ nsbmp_destroy(ರಚನೆ content *c)
 {
 	nsbmp_content *bmp = (nsbmp_content *) c;
 
 	bmp_finalise(bmp->bmp);
-	free(bmp->bmp);
+	ಬಿಡುಗಡೆ(bmp->bmp);
 }
 
 
-static nserror nsbmp_clone(const struct content *old, struct content **newc)
+ಸ್ಥಿರ nserror nsbmp_clone(ಸ್ಥಿರಾಂಕ ರಚನೆ content *old, ರಚನೆ content **newc)
 {
 	nsbmp_content *new_bmp;
 	nserror error;
 
-	new_bmp = calloc(1, sizeof(nsbmp_content));
-	if (new_bmp == NULL)
-		return NSERROR_NOMEM;
+	new_bmp = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(nsbmp_content));
+	ಆದರೆ (new_bmp == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 
-	error = content__clone(old, &new_bmp->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&new_bmp->base);
-		return error;
+	error = content__clone(old, &new_bmp->ತಳ);
+	ಆದರೆ (error != NSERROR_OK) {
+		content_destroy(&new_bmp->ತಳ);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
 	/* We "clone" the old content by replaying creation and conversion */
-	error = nsbmp_create_bmp_data(new_bmp);
-	if (error != NSERROR_OK) {
-		content_destroy(&new_bmp->base);
-		return error;
+	error = nsbmp_create_bmp_ದತ್ತಾಂಶ(new_bmp);
+	ಆದರೆ (error != NSERROR_OK) {
+		content_destroy(&new_bmp->ತಳ);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
-	if (old->status == CONTENT_STATUS_READY || 
-			old->status == CONTENT_STATUS_DONE) {
-		if (nsbmp_convert(&new_bmp->base) == false) {
-			content_destroy(&new_bmp->base);
-			return NSERROR_CLONE_FAILED;
+	ಆದರೆ (old->ಸ್ಥಿತಿ_2 == CONTENT_ಸ್ಥಿತಿ_READY || 
+			old->ಸ್ಥಿತಿ_2 == CONTENT_ಸ್ಥಿತಿ_ಮುಗಿದ) {
+		ಆದರೆ (nsbmp_convert(&new_bmp->ತಳ) == false) {
+			content_destroy(&new_bmp->ತಳ);
+			ಹಿಂತಿರುಗಿ NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) new_bmp;
+	*newc = (ರಚನೆ content *) new_bmp;
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
-static void *nsbmp_get_internal(const struct content *c, void *context)
+ಸ್ಥಿರ ಶೂನ್ಯ *nsbmp_get_ಆಂತರಿಕ(ಸ್ಥಿರಾಂಕ ರಚನೆ content *c, ಶೂನ್ಯ *context)
 {
 	nsbmp_content *bmp = (nsbmp_content *)c;
 
-	return bmp->bitmap;
+	ಹಿಂತಿರುಗಿ bmp->bitmap;
 }
 
-static content_type nsbmp_content_type(void)
+ಸ್ಥಿರ content_type nsbmp_content_type(ಶೂನ್ಯ)
 {
-	return CONTENT_IMAGE;
+	ಹಿಂತಿರುಗಿ CONTENT_IMAGE;
 }
 
-static bool nsbmp_content_is_opaque(struct content *c)
+ಸ್ಥಿರ bool nsbmp_content_is_opaque(ರಚನೆ content *c)
 {
 	nsbmp_content *bmp = (nsbmp_content *)c;
 
-	if (bmp->bitmap != NULL) {
-		return guit->bitmap->get_opaque(bmp->bitmap);
+	ಆದರೆ (bmp->bitmap != ಖಾಲಿ) {
+		ಹಿಂತಿರುಗಿ guit->bitmap->get_opaque(bmp->bitmap);
 	}
 
-	return false;
+	ಹಿಂತಿರುಗಿ false;
 }
 
-static const content_handler nsbmp_content_handler = {
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ content_handler nsbmp_content_handler = {
 	.create = nsbmp_create,
-	.data_complete = nsbmp_convert,
+	.ದತ್ತಾಂಶ_complete = nsbmp_convert,
 	.destroy = nsbmp_destroy,
 	.redraw = nsbmp_redraw,
 	.clone = nsbmp_clone,
-	.get_internal = nsbmp_get_internal,
+	.get_ಆಂತರಿಕ = nsbmp_get_ಆಂತರಿಕ,
 	.type = nsbmp_content_type,
 	.is_opaque = nsbmp_content_is_opaque,
 	.no_share = false,
 };
 
-static const char *nsbmp_types[] = {
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *nsbmp_types[] = {
 	"application/bmp",
 	"application/preview",
 	"application/x-bmp",
@@ -304,4 +304,4 @@ static const char *nsbmp_types[] = {
 	"image/x-xbitmap"
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(nsbmp, nsbmp_types, nsbmp_content_handler);
+CONTENT_FACTORY_ರಿಜಿಸ್ಟರ್_TYPES(nsbmp, nsbmp_types, nsbmp_content_handler);

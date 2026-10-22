@@ -21,15 +21,15 @@
  * Interface to HTML searching.
  */
 
-#ifndef NETSURF_CONTENT_SEARCH_H
-#define NETSURF_CONTENT_SEARCH_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NETSURF_CONTENT_ಹುಡುಕು_H
+#ವ್ಯಾಖ್ಯಾನಿಸು NETSURF_CONTENT_ಹುಡುಕು_H
 
-#include "desktop/search.h"
+#ಅನ್ತರ್ಭಾವ "desktop/search.h"
 
-struct textsearch_context;
-struct content;
-struct hlcache_handle;
-struct box;
+ರಚನೆ textsearch_context;
+ರಚನೆ content;
+ರಚನೆ hlcache_handle;
+ರಚನೆ box;
 
 /**
  * Free text search a content
@@ -40,20 +40,20 @@ struct box;
  * \param[in] The string being searched for.
  * \retun NSERROR_OK on success else error code on faliure
  */
-nserror content_textsearch(struct hlcache_handle *h, void *context, search_flags_t flags, const char *string);
+nserror content_textsearch(ರಚನೆ hlcache_handle *h, ಶೂನ್ಯ *context, ಹುಡುಕು_flags_t flags, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *string);
 
 /**
  * Clear a search
  *
  * \param[in] h Handle to content to clear search from.
  */
-nserror content_textsearch_clear(struct hlcache_handle *h);
+nserror content_textsearch_clear(ರಚನೆ hlcache_handle *h);
 
 /**
  * Ends the search process, invalidating all state freeing the list of
  * found boxes.
  */
-nserror content_textsearch_destroy(struct textsearch_context *textsearch);
+nserror content_textsearch_destroy(ರಚನೆ textsearch_context *textsearch);
 
 /**
  * Determines whether any portion of the given text box should be
@@ -67,11 +67,11 @@ nserror content_textsearch_destroy(struct textsearch_context *textsearch);
  * \param end_idx      byte offset of highlight end
  * \return true iff part of the box should be highlighted
  */
-bool content_textsearch_ishighlighted(struct textsearch_context *textsearch,
-				      unsigned start_offset,
-				      unsigned end_offset,
-				      unsigned *start_idx,
-				      unsigned *end_idx);
+bool content_textsearch_ishighlighted(ರಚನೆ textsearch_context *textsearch,
+				      ಚಿಹ್ನೆರಹಿತ ಆರಂಭ_ಸ್ಥಾನಾಂತರ,
+				      ಚಿಹ್ನೆರಹಿತ ಕೊನೆ_ಸ್ಥಾನಾಂತರ,
+				      ಚಿಹ್ನೆರಹಿತ *ಆರಂಭ_idx,
+				      ಚಿಹ್ನೆರಹಿತ *ಕೊನೆ_idx);
 
 /**
  * Find the first occurrence of 'match' in 'string' and return its index
@@ -84,7 +84,7 @@ bool content_textsearch_ishighlighted(struct textsearch_context *textsearch,
  * \param  m_len      accepts length of match in bytes
  * \return pointer to first match, NULL if none
  */
-const char *content_textsearch_find_pattern(const char *string, int s_len, const char *pattern, int p_len, bool case_sens, unsigned int *m_len);
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *content_textsearch_ಕಂಡುಹಿಡಿ_ನಮೂನೆ(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *string, ಪೂರ್ಣಾಂಕ s_len, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ನಮೂನೆ, ಪೂರ್ಣಾಂಕ p_len, bool case_sens, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ *m_len);
 
 /**
  * Add a new entry to the list of matches
@@ -96,6 +96,6 @@ const char *content_textsearch_find_pattern(const char *string, int s_len, const
  * \param end A pointer for the end
  * \return NSERROR_OK on sucess else error code on faliure
  */
-nserror content_textsearch_add_match(struct textsearch_context *context, unsigned start_idx, unsigned end_idx, struct box *start_ptr, struct box *end_ptr);
+nserror content_textsearch_ಕೂಡಿಸು_ಹೊಂದಿಕೆ(ರಚನೆ textsearch_context *context, ಚಿಹ್ನೆರಹಿತ ಆರಂಭ_idx, ಚಿಹ್ನೆರಹಿತ ಕೊನೆ_idx, ರಚನೆ box *ಆರಂಭ_ptr, ರಚನೆ box *end_ptr);
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

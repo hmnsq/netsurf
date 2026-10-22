@@ -16,124 +16,124 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gst/gst.h>
+#ಅನ್ತರ್ಭಾವ <gst/gst.h>
 
-#include "content/content_factory.h"
-#include "content/content_protected.h"
+#ಅನ್ತರ್ಭಾವ "content/content_factory.h"
+#ಅನ್ತರ್ಭಾವ "content/content_protected.h"
 
-#include "image/video.h"
+#ಅನ್ತರ್ಭಾವ "image/video.h"
 
-typedef struct nsvideo_content {
-	struct content base;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ nsvideo_content {
+	ರಚನೆ content ತಳ;
 
 	GstElement *playbin;
 	GstElement *appsrc;
 } nsvideo_content;
 
-static gboolean nsvideo_bus_call(GstBus *bus, GstMessage *msg, 
+ಸ್ಥಿರ gboolean nsvideo_bus_call(GstBus *bus, Gst_ಸಂದೇಶ *ಸಂದೇಶ, 
 		nsvideo_content *video)
 {
-	switch (GST_MESSAGE_TYPE(msg)) {
-	case GST_MESSAGE_ERROR:
-		break;
-	case GST_MESSAGE_EOS:
-		break;
-	default:
-		break;
+	ಆಯ್ಕೆ (GST_ಸಂದೇಶ_TYPE(ಸಂದೇಶ)) {
+	ಸ್ಥಿತಿ GST_ಸಂದೇಶ_ERROR:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ GST_ಸಂದೇಶ_EOS:
+		ನಿಲ್ಲಿಸು;
+	ಪೂರ್ವನಿಯೋಜಿತ:
+		ನಿಲ್ಲಿಸು;
 	}
 
-	return TRUE;
+	ಹಿಂತಿರುಗಿ TRUE;
 }
 
-static void nsvideo_need_data_event(GstElement *playbin, guint size,
+ಸ್ಥಿರ ಶೂನ್ಯ nsvideo_need_ದತ್ತಾಂಶ_event(GstElement *playbin, guint ಗಾತ್ರ_2,
 		nsvideo_content *video)
 {
 }
 
-static void nsvideo_enough_data_event(GstElement *playbin,
+ಸ್ಥಿರ ಶೂನ್ಯ nsvideo_enough_ದತ್ತಾಂಶ_event(GstElement *playbin,
 		nsvideo_content *video)
 {
 }
 
-static void nsvideo_source_event(GObject *object, GObject *orig, 
+ಸ್ಥಿರ ಶೂನ್ಯ nsvideo_ಮೂಲ_event(GObject *object, GObject *orig, 
 		GParamSpec *pspec, nsvideo_content *video)
 {
-	g_object_get(orig, pspec->name, &video->appsrc, NULL);
+	g_object_get(orig, pspec->name, &video->appsrc, ಖಾಲಿ);
 
 	g_signal_connect(video->appsrc, "need-data", 
-			G_CALLBACK(nsvideo_need_data_event), video);
+			G_CALLBACK(nsvideo_need_ದತ್ತಾಂಶ_event), video);
 	g_signal_connect(video->appsrc, "enough-data",
-			G_CALLBACK(nsvideo_enough_data_event), video);
+			G_CALLBACK(nsvideo_enough_ದತ್ತಾಂಶ_event), video);
 }
 
-static nserror nsvideo_create(const content_handler *handler,
-		lwc_string *imime_type, const http_parameter *params,
+ಸ್ಥಿರ nserror nsvideo_create(ಸ್ಥಿರಾಂಕ content_handler *handler,
+		lwc_string *imime_type, ಸ್ಥಿರಾಂಕ http_parameter *params,
 		llcache_handle *llcache,
-		const char *fallback_charset, bool quirks,
-		struct content **c)
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fallback_charset, bool quirks,
+		ರಚನೆ content **c)
 {
 	nsvideo_content *video;
 	nserror error;
 	GstBus *bus;
 
-	video = calloc(1, sizeof(nsvideo_content));
-	if (video == NULL)
-		return NSERROR_NOMEM;
+	video = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(nsvideo_content));
+	ಆದರೆ (video == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 
-	error = content__init(&video->base, handler, imime_type, params,
+	error = content__init(&video->ತಳ, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(video);
-		return error;
+	ಆದರೆ (error != NSERROR_OK) {
+		ಬಿಡುಗಡೆ(video);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
-	error = llcache_handle_force_stream(llcache);
-	if (error != NSERROR_OK) {
-		free(video);
-		return error;
+	error = llcache_handle_force_ಹರಿವು(llcache);
+	ಆದರೆ (error != NSERROR_OK) {
+		ಬಿಡುಗಡೆ(video);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
-	video->playbin = gst_element_factory_make("playbin2", NULL);
-	if (video->playbin == NULL) {
-		free(video);
-		return NSERROR_NOMEM;
+	video->playbin = gst_element_factory_make("playbin2", ಖಾಲಿ);
+	ಆದರೆ (video->playbin == ಖಾಲಿ) {
+		ಬಿಡುಗಡೆ(video);
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 	}
 
 	bus = gst_pipeline_get_bus(GST_PIPELINE(video->playbin));
-	gst_bus_add_watch(bus, (GstBusFunc) nsvideo_bus_call, video);
+	gst_bus_ಕೂಡಿಸು_watch(bus, (GstBusFunc) nsvideo_bus_call, video);
 	gst_object_unref(bus);
 
-	g_object_set(video->playbin, "uri", "appsrc://", NULL);
+	g_object_ಗಣ(video->playbin, "uri", "appsrc://", ಖಾಲಿ);
 	g_signal_connect(video->playbin, "deep-notify::source",
-			G_CALLBACK(nsvideo_source_event), video);
+			G_CALLBACK(nsvideo_ಮೂಲ_event), video);
 
 	/** \todo Create appsink & register with playbin */
 
-	gst_element_set_state(video->playbin, GST_STATE_PLAYING);
+	gst_element_ಗಣ_state(video->playbin, GST_STATE_PLAYING);
 	
-	*c = (struct content *) video;
+	*c = (ರಚನೆ content *) video;
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
-static bool nsvideo_process_data(struct content *c, const char *data, 
-		unsigned int size)
+ಸ್ಥಿರ bool nsvideo_process_ದತ್ತಾಂಶ(ರಚನೆ content *c, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ದತ್ತಾಂಶ, 
+		ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಗಾತ್ರ_2)
 {
 	nsvideo_content *video = (nsvideo_content *) c;
-	GstBuffer *buffer;
+	Gst_ಬಫರ್ *ಬಫರ್;
 	GstFlowReturn ret;
 
-	buffer = gst_buffer_new();
-	GST_BUFFER_DATA(buffer) = (guint8 *) data;
-	GST_BUFFER_SIZE(buffer) = (gsize) size;
+	ಬಫರ್ = gst_ಬಫರ್_new();
+	GST_ಬಫರ್_ದತ್ತಾಂಶ(ಬಫರ್) = (guint8 *) ದತ್ತಾಂಶ;
+	GST_ಬಫರ್_ಗಾತ್ರ(ಬಫರ್) = (gsize) ಗಾತ್ರ_2;
 
 	/* Send data to appsrc */
-	g_signal_emit_by_name(video->appsrc, "push-buffer", buffer, &ret);
+	g_signal_emit_by_name(video->appsrc, "push-buffer", ಬಫರ್, &ret);
 
-	return ret == GST_FLOW_OK;
+	ಹಿಂತಿರುಗಿ ret == GST_FLOW_OK;
 }
 
-static bool nsvideo_convert(struct content *c)
+ಸ್ಥಿರ bool nsvideo_convert(ರಚನೆ content *c)
 {
 	nsvideo_content *video = (nsvideo_content *) c;
 	GstFlowReturn ret;
@@ -143,60 +143,60 @@ static bool nsvideo_convert(struct content *c)
 
 	/* Appsink will flag DONE on receipt of first frame */
 
-	return ret == GST_FLOW_OK;
+	ಹಿಂತಿರುಗಿ ret == GST_FLOW_OK;
 }
 
-static void nsvideo_destroy(struct content *c)
+ಸ್ಥಿರ ಶೂನ್ಯ nsvideo_destroy(ರಚನೆ content *c)
 {
 	nsvideo_content *video = (nsvideo_content *) c;
 
-	gst_element_set_state(video->playbin, GST_STATE_NULL);
+	gst_element_ಗಣ_state(video->playbin, GST_STATE_NULL);
 	gst_object_unref(video->playbin);
 }
 
-static bool nsvideo_redraw(struct content *c, struct content_redraw_data *data,
-		const struct rect *clip, const struct redraw_context *ctx)
+ಸ್ಥಿರ bool nsvideo_redraw(ರಚನೆ content *c, ರಚನೆ content_redraw_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ,
+		ಸ್ಥಿರಾಂಕ ರಚನೆ rect *clip, ಸ್ಥಿರಾಂಕ ರಚನೆ redraw_context *ctx)
 {
 	/** \todo Implement */
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
-static nserror nsvideo_clone(const struct content *old, struct content **newc)
+ಸ್ಥಿರ nserror nsvideo_clone(ಸ್ಥಿರಾಂಕ ರಚನೆ content *old, ರಚನೆ content **newc)
 {
 	/** \todo Implement */
-	return NSERROR_CLONE_FAILED;
+	ಹಿಂತಿರುಗಿ NSERROR_CLONE_FAILED;
 }
 
-static content_type nsvideo_type(void)
+ಸ್ಥಿರ content_type nsvideo_type(ಶೂನ್ಯ)
 {
 	/** \todo Lies */
-	return CONTENT_IMAGE;
+	ಹಿಂತಿರುಗಿ CONTENT_IMAGE;
 }
 
-static void *nsvideo_get_internal(const struct content *c, void *context)
+ಸ್ಥಿರ ಶೂನ್ಯ *nsvideo_get_ಆಂತರಿಕ(ಸ್ಥಿರಾಂಕ ರಚನೆ content *c, ಶೂನ್ಯ *context)
 {
 	/** \todo Return pointer to bitmap containing current frame, if any? */
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
-static const content_handler nsvideo_content_handler = {
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ content_handler nsvideo_content_handler = {
 	.create = nsvideo_create,
-	.process_data = nsvideo_process_data,
-	.data_complete = nsvideo_convert,
+	.process_ದತ್ತಾಂಶ = nsvideo_process_ದತ್ತಾಂಶ,
+	.ದತ್ತಾಂಶ_complete = nsvideo_convert,
 	.destroy = nsvideo_destroy,
 	.redraw = nsvideo_redraw,
 	.clone = nsvideo_clone,
 	.type = nsvideo_type,
-	.get_internal = nsvideo_get_internal,
+	.get_ಆಂತರಿಕ = nsvideo_get_ಆಂತರಿಕ,
 	/* Can't share videos because we stream them */
 	.no_share = true
 };
 
-static const char *nsvideo_types[] = {
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *nsvideo_types[] = {
 	"video/mp4",
 	"video/webm"
 };
 
-CONTENT_FACTORY_REGISTER_TYPES(nsvideo, nsvideo_types, 
+CONTENT_FACTORY_ರಿಜಿಸ್ಟರ್_TYPES(nsvideo, nsvideo_types, 
 		nsvideo_content_handler);
 

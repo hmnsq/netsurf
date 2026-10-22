@@ -22,8 +22,8 @@
  * Box tree manipulation interface.
  */
 
-#ifndef NETSURF_HTML_BOX_MANIPULATE_H
-#define NETSURF_HTML_BOX_MANIPULATE_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NETSURF_HTML_BOX_MANIPULATE_H
+#ವ್ಯಾಖ್ಯಾನಿಸು NETSURF_HTML_BOX_MANIPULATE_H
 
 
 /**
@@ -42,7 +42,7 @@
  * styles is always owned by the box, if it is set.
  * style is only owned by the box in the case of implied boxes.
  */
-struct box * box_create(css_select_results *styles, css_computed_style *style, bool style_owned, struct nsurl *href, const char *target, const char *title, lwc_string *id, void *context);
+ರಚನೆ box * box_create(css_select_results *styles, css_computed_style *style, bool style_owned, ರಚನೆ nsurl *href, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಗುರಿ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *title, lwc_string *id, ಶೂನ್ಯ *context);
 
 
 /**
@@ -51,7 +51,7 @@ struct box * box_create(css_select_results *styles, css_computed_style *style, b
  * \param parent box giving birth
  * \param child box to link as last child of parent
  */
-void box_add_child(struct box *parent, struct box *child);
+ಶೂನ್ಯ box_ಕೂಡಿಸು_ಮಗು(ರಚನೆ box *ಪೋಷಕ, ರಚನೆ box *ಮಗು);
 
 
 /**
@@ -60,7 +60,7 @@ void box_add_child(struct box *parent, struct box *child);
  * \param box box already in tree
  * \param new_box box to link into tree as next sibling
  */
-void box_insert_sibling(struct box *box, struct box *new_box);
+ಶೂನ್ಯ box_ಸೇರಿಸು_sibling(ರಚನೆ box *box, ರಚನೆ box *new_box);
 
 
 /**
@@ -68,7 +68,7 @@ void box_insert_sibling(struct box *box, struct box *new_box);
  *
  * \param box box to unlink and free recursively.
  */
-void box_unlink_and_free(struct box *box);
+ಶೂನ್ಯ box_unlink_and_free(ರಚನೆ box *box);
 
 
 /**
@@ -78,7 +78,7 @@ void box_unlink_and_free(struct box *box);
  *
  * The box and all its children is freed.
  */
-void box_free(struct box *box);
+ಶೂನ್ಯ box_free(ರಚನೆ box *box);
 
 
 /**
@@ -86,7 +86,7 @@ void box_free(struct box *box);
  *
  * \param box box to free
  */
-void box_free_box(struct box *box);
+ಶೂನ್ಯ box_free_box(ರಚನೆ box *box);
 
 
 /**
@@ -99,8 +99,8 @@ void box_free_box(struct box *box);
  * \param right		whether the vertical scrollbar should be present
  * \return		true on success false otherwise
  */
-nserror box_handle_scrollbars(struct content *c, struct box *box,
-		bool bottom, bool right);
+nserror box_handle_scrollbars(ರಚನೆ content *c, ರಚನೆ box *box,
+		bool bottom, bool ಬಲ);
 
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

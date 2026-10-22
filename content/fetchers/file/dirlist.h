@@ -23,28 +23,28 @@
  * These functions should in general be called via the content interface.
  */
 
-#ifndef NETSURF_CONTENT_DIRLIST_H_
-#define NETSURF_CONTENT_DIRLIST_H_
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NETSURF_CONTENT_DIRLIST_H_
+#ವ್ಯಾಖ್ಯಾನಿಸು NETSURF_CONTENT_DIRLIST_H_
 
-#include <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
 
-#define DIRLIST_NO_NAME_COLUMN 1
-#define DIRLIST_NO_TYPE_COLUMN 1 << 1
-#define DIRLIST_NO_SIZE_COLUMN 1 << 2
-#define DIRLIST_NO_DATE_COLUMN 1 << 3
-#define DIRLIST_NO_TIME_COLUMN 1 << 4
+#ವ್ಯಾಖ್ಯಾನಿಸು DIRLIST_NO_NAME_ಸ್ತಂಭ 1
+#ವ್ಯಾಖ್ಯಾನಿಸು DIRLIST_NO_TYPE_ಸ್ತಂಭ 1 << 1
+#ವ್ಯಾಖ್ಯಾನಿಸು DIRLIST_NO_ಗಾತ್ರ_ಸ್ತಂಭ 1 << 2
+#ವ್ಯಾಖ್ಯಾನಿಸು DIRLIST_NO_DATE_ಸ್ತಂಭ 1 << 3
+#ವ್ಯಾಖ್ಯಾನಿಸು DIRLIST_NO_ಸಮಯ_ಸ್ತಂಭ 1 << 4
 
-struct nsurl;
+ರಚನೆ nsurl;
 
-bool dirlist_generate_top(char *buffer, int buffer_length);
-bool dirlist_generate_hide_columns(int flags, char *buffer, int buffer_length);
-bool dirlist_generate_title(const char *title, char *buffer, int buffer_length);
-bool dirlist_generate_parent_link(const char *parent, char *buffer,
-		int buffer_length);
-bool dirlist_generate_headings(char *buffer, int buffer_length);
-bool dirlist_generate_row(bool even, bool directory, struct nsurl *url,
-		char *name, const char *mimetype, long long size, char *date,
-		char *time, char *buffer, int buffer_length);
-bool dirlist_generate_bottom(char *buffer, int buffer_length);
+bool dirlist_generate_ತುದಿ(ಅಕ್ಷರ *ಬಫರ್, ಪೂರ್ಣಾಂಕ ಬಫರ್_ಉದ್ದಳತೆ);
+bool dirlist_generate_hide_columns(ಪೂರ್ಣಾಂಕ flags, ಅಕ್ಷರ *ಬಫರ್, ಪೂರ್ಣಾಂಕ ಬಫರ್_ಉದ್ದಳತೆ);
+bool dirlist_generate_title(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *title, ಅಕ್ಷರ *ಬಫರ್, ಪೂರ್ಣಾಂಕ ಬಫರ್_ಉದ್ದಳತೆ);
+bool dirlist_generate_ಪೋಷಕ_link(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಪೋಷಕ, ಅಕ್ಷರ *ಬಫರ್,
+		ಪೂರ್ಣಾಂಕ ಬಫರ್_ಉದ್ದಳತೆ);
+bool dirlist_generate_headings(ಅಕ್ಷರ *ಬಫರ್, ಪೂರ್ಣಾಂಕ ಬಫರ್_ಉದ್ದಳತೆ);
+bool dirlist_generate_ಅಡ್ಡಸಾಲು(bool even, bool directory, ರಚನೆ nsurl *url,
+		ಅಕ್ಷರ *name, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *mimetype, ದೀರ್ಘ ದೀರ್ಘ ಗಾತ್ರ_2, ಅಕ್ಷರ *date,
+		ಅಕ್ಷರ *time, ಅಕ್ಷರ *ಬಫರ್, ಪೂರ್ಣಾಂಕ ಬಫರ್_ಉದ್ದಳತೆ);
+bool dirlist_generate_bottom(ಅಕ್ಷರ *ಬಫರ್, ಪೂರ್ಣಾಂಕ ಬಫರ್_ಉದ್ದಳತೆ);
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

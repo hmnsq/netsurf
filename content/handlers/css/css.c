@@ -16,34 +16,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
-#include <assert.h>
-#include <libwapcaplet/libwapcaplet.h>
-#include <dom/dom.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ಅನ್ತರ್ಭಾವ <libwapcaplet/libwapcaplet.h>
+#ಅನ್ತರ್ಭಾವ <dom/dom.h>
 
-#include "utils/errors.h"
-#include "utils/corestrings.h"
-#include "utils/utils.h"
-#include "utils/http.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "content/fetch.h"
-#include "content/hlcache.h"
-#include "desktop/system_colour.h"
+#ಅನ್ತರ್ಭಾವ "utils/errors.h"
+#ಅನ್ತರ್ಭಾವ "utils/corestrings.h"
+#ಅನ್ತರ್ಭಾವ "utils/utils.h"
+#ಅನ್ತರ್ಭಾವ "utils/http.h"
+#ಅನ್ತರ್ಭಾವ "utils/log.h"
+#ಅನ್ತರ್ಭಾವ "utils/messages.h"
+#ಅನ್ತರ್ಭಾವ "content/content_protected.h"
+#ಅನ್ತರ್ಭಾವ "content/content_factory.h"
+#ಅನ್ತರ್ಭಾವ "content/fetch.h"
+#ಅನ್ತರ್ಭಾವ "content/hlcache.h"
+#ಅನ್ತರ್ಭಾವ "desktop/system_colour.h"
 
-#include "css/css.h"
-#include "css/hints.h"
-#include "css/internal.h"
+#ಅನ್ತರ್ಭಾವ "css/css.h"
+#ಅನ್ತರ್ಭಾವ "css/hints.h"
+#ಅನ್ತರ್ಭಾವ "css/internal.h"
 
 /* Define to trace import fetches */
-#undef NSCSS_IMPORT_TRACE
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು NSCSS_IMPORT_TRACE
 
 /** Screen DPI in fixed point units: defaults to 90, which RISC OS uses */
 css_fixed nscss_screen_dpi = F_90;
 
-struct content_css_data;
+ರಚನೆ content_css_ದತ್ತಾಂಶ;
 
 /**
  * Type of callback called when a CSS object has finished
@@ -51,68 +51,68 @@ struct content_css_data;
  * \param css  CSS object that has completed
  * \param pw   Client-specific data
  */
-typedef void (*nscss_done_callback)(struct content_css_data *css, void *pw);
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಶೂನ್ಯ (*nscss_ಮುಗಿದ_callback)(ರಚನೆ content_css_ದತ್ತಾಂಶ *css, ಶೂನ್ಯ *pw);
 
 /**
  * CSS content data
  */
-struct content_css_data
+ರಚನೆ content_css_ದತ್ತಾಂಶ
 {
 	css_stylesheet *sheet;		/**< Stylesheet object */
-	char *charset;			/**< Character set of stylesheet */
-	struct nscss_import *imports;	/**< Array of imported sheets */
-	uint32_t import_count;		/**< Number of sheets imported */
-	uint32_t next_to_register;	/**< Index of next import to register */
-	nscss_done_callback done;	/**< Completion callback */
-	void *pw;			/**< Client data */
+	ಅಕ್ಷರ *charset;			/**< Character set of stylesheet */
+	ರಚನೆ nscss_import *imports;	/**< Array of imported sheets */
+	uint32_t import_ಎಣಿಕೆ;		/**< Number of sheets imported */
+	uint32_t ಮುಂದಿನ_ಗಮ್ಯ_ರಿಜಿಸ್ಟರ್;	/**< Index of next import to register */
+	nscss_ಮುಗಿದ_callback ಮುಗಿದ;	/**< Completion callback */
+	ಶೂನ್ಯ *pw;			/**< Client data */
 };
 
 /**
  * CSS content data
  */
-typedef struct nscss_content
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ nscss_content
 {
-	struct content base;		/**< Underlying content object */
+	ರಚನೆ content ತಳ;		/**< Underlying content object */
 
-	struct content_css_data data;	/**< CSS data */
+	ರಚನೆ content_css_ದತ್ತಾಂಶ ದತ್ತಾಂಶ;	/**< CSS data */
 } nscss_content;
 
 /**
  * Context for import fetches
  */
-typedef struct {
-	struct content_css_data *css;		/**< Object containing import */
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+	ರಚನೆ content_css_ದತ್ತಾಂಶ *css;		/**< Object containing import */
 	uint32_t index;				/**< Index into parent sheet's
 						 *   imports array */
 } nscss_import_ctx;
 
-static bool nscss_convert(struct content *c);
-static void nscss_destroy(struct content *c);
-static nserror nscss_clone(const struct content *old, struct content **newc);
-static bool nscss_matches_quirks(const struct content *c, bool quirks);
-static content_type nscss_content_type(void);
+ಸ್ಥಿರ bool nscss_convert(ರಚನೆ content *c);
+ಸ್ಥಿರ ಶೂನ್ಯ nscss_destroy(ರಚನೆ content *c);
+ಸ್ಥಿರ nserror nscss_clone(ಸ್ಥಿರಾಂಕ ರಚನೆ content *old, ರಚನೆ content **newc);
+ಸ್ಥಿರ bool nscss_matches_quirks(ಸ್ಥಿರಾಂಕ ರಚನೆ content *c, bool quirks);
+ಸ್ಥಿರ content_type nscss_content_type(ಶೂನ್ಯ);
 
-static nserror nscss_create_css_data(struct content_css_data *c,
-		const char *url, const char *charset, bool quirks,
-		nscss_done_callback done, void *pw);
-static css_error nscss_process_css_data(struct content_css_data *c, const char *data,
-		unsigned int size);
-static css_error nscss_convert_css_data(struct content_css_data *c);
-static void nscss_destroy_css_data(struct content_css_data *c);
+ಸ್ಥಿರ nserror nscss_create_css_ದತ್ತಾಂಶ(ರಚನೆ content_css_ದತ್ತಾಂಶ *c,
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *url, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *charset, bool quirks,
+		nscss_ಮುಗಿದ_callback ಮುಗಿದ, ಶೂನ್ಯ *pw);
+ಸ್ಥಿರ css_error nscss_process_css_ದತ್ತಾಂಶ(ರಚನೆ content_css_ದತ್ತಾಂಶ *c, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ದತ್ತಾಂಶ,
+		ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಗಾತ್ರ_2);
+ಸ್ಥಿರ css_error nscss_convert_css_ದತ್ತಾಂಶ(ರಚನೆ content_css_ದತ್ತಾಂಶ *c);
+ಸ್ಥಿರ ಶೂನ್ಯ nscss_destroy_css_ದತ್ತಾಂಶ(ರಚನೆ content_css_ದತ್ತಾಂಶ *c);
 
-static void nscss_content_done(struct content_css_data *css, void *pw);
-static css_error nscss_handle_import(void *pw, css_stylesheet *parent,
+ಸ್ಥಿರ ಶೂನ್ಯ nscss_content_ಮುಗಿದ(ರಚನೆ content_css_ದತ್ತಾಂಶ *css, ಶೂನ್ಯ *pw);
+ಸ್ಥಿರ css_error nscss_handle_import(ಶೂನ್ಯ *pw, css_stylesheet *ಪೋಷಕ,
 		lwc_string *url);
-static nserror nscss_import(hlcache_handle *handle,
-		const hlcache_event *event, void *pw);
-static css_error nscss_import_complete(nscss_import_ctx *ctx);
+ಸ್ಥಿರ nserror nscss_import(hlcache_handle *handle,
+		ಸ್ಥಿರಾಂಕ hlcache_event *event, ಶೂನ್ಯ *pw);
+ಸ್ಥಿರ css_error nscss_import_complete(nscss_import_ctx *ctx);
 
-static css_error nscss_register_imports(struct content_css_data *c);
-static css_error nscss_register_import(struct content_css_data *c,
-		const hlcache_handle *import);
+ಸ್ಥಿರ css_error nscss_ರಿಜಿಸ್ಟರ್_imports(ರಚನೆ content_css_ದತ್ತಾಂಶ *c);
+ಸ್ಥಿರ css_error nscss_ರಿಜಿಸ್ಟರ್_import(ರಚನೆ content_css_ದತ್ತಾಂಶ *c,
+		ಸ್ಥಿರಾಂಕ hlcache_handle *import);
 
 
-static css_stylesheet *blank_import;
+ಸ್ಥಿರ css_stylesheet *blank_import;
 
 
 /**
@@ -127,64 +127,64 @@ static css_stylesheet *blank_import;
  * \param c Content to initialise
  * \return NSERROR_OK or error cod eon faliure
  */
-static nserror
-nscss_create(const content_handler *handler,
+ಸ್ಥಿರ nserror
+nscss_create(ಸ್ಥಿರಾಂಕ content_handler *handler,
 	     lwc_string *imime_type,
-	     const http_parameter *params,
+	     ಸ್ಥಿರಾಂಕ http_parameter *params,
 	     llcache_handle *llcache,
-	     const char *fallback_charset,
+	     ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fallback_charset,
 	     bool quirks,
-	     struct content **c)
+	     ರಚನೆ content **c)
 {
-	nscss_content *result;
-	const char *charset = NULL;
-	const char *xnsbase = NULL;
-	lwc_string *charset_value = NULL;
+	nscss_content *ಫಲಿತಾಂಶ;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *charset = ಖಾಲಿ;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *xnsbase = ಖಾಲಿ;
+	lwc_string *charset_ಮೌಲ್ಯ = ಖಾಲಿ;
 	nserror error;
 
-	result = calloc(1, sizeof(nscss_content));
-	if (result == NULL)
-		return NSERROR_NOMEM;
+	ಫಲಿತಾಂಶ = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(nscss_content));
+	ಆದರೆ (ಫಲಿತಾಂಶ == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 
-	error = content__init(&result->base, handler, imime_type,
+	error = content__init(&ಫಲಿತಾಂಶ->ತಳ, handler, imime_type,
 			params, llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(result);
-		return error;
+	ಆದರೆ (error != NSERROR_OK) {
+		ಬಿಡುಗಡೆ(ಫಲಿತಾಂಶ);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
 	/* Find charset specified on HTTP layer, if any */
-	error = http_parameter_list_find_item(params, corestring_lwc_charset,
-			&charset_value);
-	if (error != NSERROR_OK || lwc_string_length(charset_value) == 0) {
+	error = http_parameter_list_ಕಂಡುಹಿಡಿ_ಅಂಶ(params, corestring_lwc_charset,
+			&charset_ಮೌಲ್ಯ);
+	ಆದರೆ (error != NSERROR_OK || lwc_string_ಉದ್ದಳತೆ(charset_ಮೌಲ್ಯ) == 0) {
 		/* No charset specified, use fallback, if any */
 		/** \todo libcss will take this as gospel, which is wrong */
 		charset = fallback_charset;
-	} else {
-		charset = lwc_string_data(charset_value);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		charset = lwc_string_ದತ್ತಾಂಶ(charset_ಮೌಲ್ಯ);
 	}
 
 	/* Compute base URL for stylesheet */
-	xnsbase = llcache_handle_get_header(llcache, "X-NS-Base");
-	if (xnsbase == NULL) {
-		xnsbase = nsurl_access(content_get_url(&result->base));
+	xnsbase = llcache_handle_get_ಶೀರ್ಷಿಕೆ(llcache, "X-NS-Base");
+	ಆದರೆ (xnsbase == ಖಾಲಿ) {
+		xnsbase = nsurl_access(content_get_url(&ಫಲಿತಾಂಶ->ತಳ));
 	}
 
-	error = nscss_create_css_data(&result->data,
-			xnsbase, charset, result->base.quirks,
-			nscss_content_done, result);
-	if (error != NSERROR_OK) {
-		content_broadcast_error(&result->base, NSERROR_NOMEM, NULL);
-		lwc_string_unref(charset_value);
-		free(result);
-		return error;
+	error = nscss_create_css_ದತ್ತಾಂಶ(&ಫಲಿತಾಂಶ->ದತ್ತಾಂಶ,
+			xnsbase, charset, ಫಲಿತಾಂಶ->ತಳ.quirks,
+			nscss_content_ಮುಗಿದ, ಫಲಿತಾಂಶ);
+	ಆದರೆ (error != NSERROR_OK) {
+		content_ಪ್ರಸಾರ_error(&ಫಲಿತಾಂಶ->ತಳ, NSERROR_NOMEM, ಖಾಲಿ);
+		lwc_string_unref(charset_ಮೌಲ್ಯ);
+		ಬಿಡುಗಡೆ(ಫಲಿತಾಂಶ);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
-	lwc_string_unref(charset_value);
+	lwc_string_unref(charset_ಮೌಲ್ಯ);
 
-	*c = (struct content *) result;
+	*c = (ರಚನೆ content *) ಫಲಿತಾಂಶ;
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
 /**
@@ -198,45 +198,45 @@ nscss_create(const content_handler *handler,
  * \param pw       Client data for \a done
  * \return NSERROR_OK on success, NSERROR_NOMEM on memory exhaustion
  */
-static nserror nscss_create_css_data(struct content_css_data *c,
-		const char *url, const char *charset, bool quirks,
-		nscss_done_callback done, void *pw)
+ಸ್ಥಿರ nserror nscss_create_css_ದತ್ತಾಂಶ(ರಚನೆ content_css_ದತ್ತಾಂಶ *c,
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *url, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *charset, bool quirks,
+		nscss_ಮುಗಿದ_callback ಮುಗಿದ, ಶೂನ್ಯ *pw)
 {
 	css_error error;
 	css_stylesheet_params params;
 
 	c->pw = pw;
-	c->done = done;
-	c->next_to_register = (uint32_t) -1;
-	c->import_count = 0;
-	c->imports = NULL;
-	if (charset != NULL)
+	c->ಮುಗಿದ = ಮುಗಿದ;
+	c->ಮುಂದಿನ_ಗಮ್ಯ_ರಿಜಿಸ್ಟರ್ = (uint32_t) -1;
+	c->import_ಎಣಿಕೆ = 0;
+	c->imports = ಖಾಲಿ;
+	ಆದರೆ (charset != ಖಾಲಿ)
 		c->charset = strdup(charset);
-	else
-		c->charset = NULL;
+	ಇಲ್ಲದಿದ್ದರೆ
+		c->charset = ಖಾಲಿ;
 
-	params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
+	params.params_ಆವೃತ್ತಿ = CSS_STYLESHEET_PARAMS_ಆವೃತ್ತಿ_1;
 	params.level = CSS_LEVEL_DEFAULT;
 	params.charset = charset;
 	params.url = url;
-	params.title = NULL;
+	params.title = ಖಾಲಿ;
 	params.allow_quirks = quirks;
 	params.inline_style = false;
 	params.resolve = nscss_resolve_url;
-	params.resolve_pw = NULL;
+	params.resolve_pw = ಖಾಲಿ;
 	params.import = nscss_handle_import;
 	params.import_pw = c;
-	params.color = ns_system_colour;
-	params.color_pw = NULL;
-	params.font = NULL;
-	params.font_pw = NULL;
+	params.color = ns_system_ಬಣ್ಣ;
+	params.color_pw = ಖಾಲಿ;
+	params.font = ಖಾಲಿ;
+	params.font_pw = ಖಾಲಿ;
 
 	error = css_stylesheet_create(&params, &c->sheet);
-	if (error != CSS_OK) {
-		return NSERROR_NOMEM;
+	ಆದರೆ (error != CSS_OK) {
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 	}
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
 /**
@@ -247,18 +247,18 @@ static nserror nscss_create_css_data(struct content_css_data *c,
  * \param size  Number of bytes to process
  * \return true on success, false on failure
  */
-static bool
-nscss_process_data(struct content *c, const char *data, unsigned int size)
+ಸ್ಥಿರ bool
+nscss_process_ದತ್ತಾಂಶ(ರಚನೆ content *c, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ದತ್ತಾಂಶ, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಗಾತ್ರ_2)
 {
 	nscss_content *css = (nscss_content *) c;
 	css_error error;
 
-	error = nscss_process_css_data(&css->data, data, size);
-	if (error != CSS_OK && error != CSS_NEEDDATA) {
-		content_broadcast_error(c, NSERROR_CSS, NULL);
+	error = nscss_process_css_ದತ್ತಾಂಶ(&css->ದತ್ತಾಂಶ, ದತ್ತಾಂಶ, ಗಾತ್ರ_2);
+	ಆದರೆ (error != CSS_OK && error != CSS_NEEDDATA) {
+		content_ಪ್ರಸಾರ_error(c, NSERROR_CSS, ಖಾಲಿ);
 	}
 
-	return (error == CSS_OK || error == CSS_NEEDDATA);
+	ಹಿಂತಿರುಗಿ (error == CSS_OK || error == CSS_NEEDDATA);
 }
 
 /**
@@ -269,11 +269,11 @@ nscss_process_data(struct content *c, const char *data, unsigned int size)
  * \param size  Number of bytes to process
  * \return CSS_OK on success, appropriate error otherwise
  */
-static css_error nscss_process_css_data(struct content_css_data *c,
-		const char *data, unsigned int size)
+ಸ್ಥಿರ css_error nscss_process_css_ದತ್ತಾಂಶ(ರಚನೆ content_css_ದತ್ತಾಂಶ *c,
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ದತ್ತಾಂಶ, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಗಾತ್ರ_2)
 {
-	return css_stylesheet_append_data(c->sheet,
-			(const uint8_t *) data, size);
+	ಹಿಂತಿರುಗಿ css_stylesheet_append_ದತ್ತಾಂಶ(c->sheet,
+			(ಸ್ಥಿರಾಂಕ uint8_t *) ದತ್ತಾಂಶ, ಗಾತ್ರ_2);
 }
 
 /**
@@ -282,18 +282,18 @@ static css_error nscss_process_css_data(struct content_css_data *c,
  * \param c  Content to convert
  * \return true on success, false on failure
  */
-bool nscss_convert(struct content *c)
+bool nscss_convert(ರಚನೆ content *c)
 {
 	nscss_content *css = (nscss_content *) c;
 	css_error error;
 
-	error = nscss_convert_css_data(&css->data);
-	if (error != CSS_OK) {
-		content_broadcast_error(c, NSERROR_CSS, NULL);
-		return false;
+	error = nscss_convert_css_ದತ್ತಾಂಶ(&css->ದತ್ತಾಂಶ);
+	ಆದರೆ (error != CSS_OK) {
+		content_ಪ್ರಸಾರ_error(c, NSERROR_CSS, ಖಾಲಿ);
+		ಹಿಂತಿರುಗಿ false;
 	}
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
 /**
@@ -302,37 +302,37 @@ bool nscss_convert(struct content *c)
  * \param c  CSS data to convert
  * \return CSS error
  */
-static css_error nscss_convert_css_data(struct content_css_data *c)
+ಸ್ಥಿರ css_error nscss_convert_css_ದತ್ತಾಂಶ(ರಚನೆ content_css_ದತ್ತಾಂಶ *c)
 {
 	css_error error;
 
-	error = css_stylesheet_data_done(c->sheet);
+	error = css_stylesheet_ದತ್ತಾಂಶ_ಮುಗಿದ(c->sheet);
 
 	/* Process pending imports */
-	if (error == CSS_IMPORTS_PENDING) {
+	ಆದರೆ (error == CSS_IMPORTS_PENDING) {
 		/* We must not have registered any imports yet */
-		assert(c->next_to_register == (uint32_t) -1);
+		ಪ್ರತಿಜ್ಞಾ(c->ಮುಂದಿನ_ಗಮ್ಯ_ರಿಜಿಸ್ಟರ್ == (uint32_t) -1);
 
 		/* Start registering, until we find one that
 		 * hasn't finished fetching */
-		c->next_to_register = 0;
-		error = nscss_register_imports(c);
-	} else if (error == CSS_OK) {
+		c->ಮುಂದಿನ_ಗಮ್ಯ_ರಿಜಿಸ್ಟರ್ = 0;
+		error = nscss_ರಿಜಿಸ್ಟರ್_imports(c);
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (error == CSS_OK) {
 		/* No imports, and no errors, so complete conversion */
-		c->done(c, c->pw);
-	} else {
-		const char *url;
+		c->ಮುಗಿದ(c, c->pw);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *url;
 
-		if (css_stylesheet_get_url(c->sheet, &url) == CSS_OK) {
+		ಆದರೆ (css_stylesheet_get_url(c->sheet, &url) == CSS_OK) {
 			NSLOG(netsurf, INFO, "Failed converting %p %s (%d)",
 			      c, url, error);
-		} else {
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			NSLOG(netsurf, INFO, "Failed converting %p (%d)", c,
 			      error);
 		}
 	}
 
-	return error;
+	ಹಿಂತಿರುಗಿ error;
 }
 
 /**
@@ -340,11 +340,11 @@ static css_error nscss_convert_css_data(struct content_css_data *c)
  *
  * \param c  Content to clean up
  */
-void nscss_destroy(struct content *c)
+ಶೂನ್ಯ nscss_destroy(ರಚನೆ content *c)
 {
 	nscss_content *css = (nscss_content *) c;
 
-	nscss_destroy_css_data(&css->data);
+	nscss_destroy_css_ದತ್ತಾಂಶ(&css->ದತ್ತಾಂಶ);
 }
 
 /**
@@ -352,106 +352,106 @@ void nscss_destroy(struct content *c)
  *
  * \param c  CSS data to clean up
  */
-static void nscss_destroy_css_data(struct content_css_data *c)
+ಸ್ಥಿರ ಶೂನ್ಯ nscss_destroy_css_ದತ್ತಾಂಶ(ರಚನೆ content_css_ದತ್ತಾಂಶ *c)
 {
 	uint32_t i;
 
-	for (i = 0; i < c->import_count; i++) {
-		if (c->imports[i].c != NULL) {
+	ಗಾಗಿ (i = 0; i < c->import_ಎಣಿಕೆ; i++) {
+		ಆದರೆ (c->imports[i].c != ಖಾಲಿ) {
 			hlcache_handle_release(c->imports[i].c);
 		}
-		c->imports[i].c = NULL;
+		c->imports[i].c = ಖಾಲಿ;
 	}
 
-	free(c->imports);
+	ಬಿಡುಗಡೆ(c->imports);
 
-	if (c->sheet != NULL) {
+	ಆದರೆ (c->sheet != ಖಾಲಿ) {
 		css_stylesheet_destroy(c->sheet);
-		c->sheet = NULL;
+		c->sheet = ಖಾಲಿ;
 	}
 
-	free(c->charset);
+	ಬಿಡುಗಡೆ(c->charset);
 }
 
-nserror nscss_clone(const struct content *old, struct content **newc)
+nserror nscss_clone(ಸ್ಥಿರಾಂಕ ರಚನೆ content *old, ರಚನೆ content **newc)
 {
-	const nscss_content *old_css = (const nscss_content *) old;
+	ಸ್ಥಿರಾಂಕ nscss_content *old_css = (ಸ್ಥಿರಾಂಕ nscss_content *) old;
 	nscss_content *new_css;
-	const uint8_t *data;
-	size_t size;
+	ಸ್ಥಿರಾಂಕ uint8_t *ದತ್ತಾಂಶ;
+	size_t ಗಾತ್ರ_2;
 	nserror error;
 
-	new_css = calloc(1, sizeof(nscss_content));
-	if (new_css == NULL)
-		return NSERROR_NOMEM;
+	new_css = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(nscss_content));
+	ಆದರೆ (new_css == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 
 	/* Clone content */
-	error = content__clone(old, &new_css->base);
-	if (error != NSERROR_OK) {
-		content_destroy(&new_css->base);
-		return error;
+	error = content__clone(old, &new_css->ತಳ);
+	ಆದರೆ (error != NSERROR_OK) {
+		content_destroy(&new_css->ತಳ);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
 	/* Simply replay create/process/convert */
-	error = nscss_create_css_data(&new_css->data,
-			nsurl_access(content_get_url(&new_css->base)),
-			old_css->data.charset,
-			new_css->base.quirks,
-			nscss_content_done, new_css);
-	if (error != NSERROR_OK) {
-		content_destroy(&new_css->base);
-		return error;
+	error = nscss_create_css_ದತ್ತಾಂಶ(&new_css->ದತ್ತಾಂಶ,
+			nsurl_access(content_get_url(&new_css->ತಳ)),
+			old_css->ದತ್ತಾಂಶ.charset,
+			new_css->ತಳ.quirks,
+			nscss_content_ಮುಗಿದ, new_css);
+	ಆದರೆ (error != NSERROR_OK) {
+		content_destroy(&new_css->ತಳ);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
-	data = content__get_source_data(&new_css->base, &size);
-	if (size > 0) {
-		if (nscss_process_data(&new_css->base,
-				       (char *)data,
-				       (unsigned int)size) == false) {
-			content_destroy(&new_css->base);
-			return NSERROR_CLONE_FAILED;
+	ದತ್ತಾಂಶ = content_get_ಮೂಲ_ದತ್ತಾಂಶ_2(&new_css->ತಳ, &ಗಾತ್ರ_2);
+	ಆದರೆ (ಗಾತ್ರ_2 > 0) {
+		ಆದರೆ (nscss_process_ದತ್ತಾಂಶ(&new_css->ತಳ,
+				       (ಅಕ್ಷರ *)ದತ್ತಾಂಶ,
+				       (ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ)ಗಾತ್ರ_2) == false) {
+			content_destroy(&new_css->ತಳ);
+			ಹಿಂತಿರುಗಿ NSERROR_CLONE_FAILED;
 		}
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
-			old->status == CONTENT_STATUS_DONE) {
-		if (nscss_convert(&new_css->base) == false) {
-			content_destroy(&new_css->base);
-			return NSERROR_CLONE_FAILED;
+	ಆದರೆ (old->ಸ್ಥಿತಿ_2 == CONTENT_ಸ್ಥಿತಿ_READY ||
+			old->ಸ್ಥಿತಿ_2 == CONTENT_ಸ್ಥಿತಿ_ಮುಗಿದ) {
+		ಆದರೆ (nscss_convert(&new_css->ತಳ) == false) {
+			content_destroy(&new_css->ತಳ);
+			ಹಿಂತಿರುಗಿ NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) new_css;
+	*newc = (ರಚನೆ content *) new_css;
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
-bool nscss_matches_quirks(const struct content *c, bool quirks)
+bool nscss_matches_quirks(ಸ್ಥಿರಾಂಕ ರಚನೆ content *c, bool quirks)
 {
-	return c->quirks == quirks;
-}
-
-/* exported interface documented in netsurf/css.h */
-css_stylesheet *nscss_get_stylesheet(struct hlcache_handle *h)
-{
-	nscss_content *c = (nscss_content *) hlcache_handle_get_content(h);
-
-	assert(c != NULL);
-
-	return c->data.sheet;
+	ಹಿಂತಿರುಗಿ c->quirks == quirks;
 }
 
 /* exported interface documented in netsurf/css.h */
-struct nscss_import *nscss_get_imports(hlcache_handle *h, uint32_t *n)
+css_stylesheet *nscss_get_stylesheet(ರಚನೆ hlcache_handle *h)
 {
 	nscss_content *c = (nscss_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
-	assert(n != NULL);
+	ಪ್ರತಿಜ್ಞಾ(c != ಖಾಲಿ);
 
-	*n = c->data.import_count;
+	ಹಿಂತಿರುಗಿ c->ದತ್ತಾಂಶ.sheet;
+}
 
-	return c->data.imports;
+/* exported interface documented in netsurf/css.h */
+ರಚನೆ nscss_import *nscss_get_imports(hlcache_handle *h, uint32_t *n)
+{
+	nscss_content *c = (nscss_content *) hlcache_handle_get_content(h);
+
+	ಪ್ರತಿಜ್ಞಾ(c != ಖಾಲಿ);
+	ಪ್ರತಿಜ್ಞಾ(n != ಖಾಲಿ);
+
+	*n = c->ದತ್ತಾಂಶ.import_ಎಣಿಕೆ;
+
+	ಹಿಂತಿರುಗಿ c->ದತ್ತಾಂಶ.imports;
 }
 
 /**
@@ -459,9 +459,9 @@ struct nscss_import *nscss_get_imports(hlcache_handle *h, uint32_t *n)
  *
  * \return CONTENT_CSS
  */
-content_type nscss_content_type(void)
+content_type nscss_content_type(ಶೂನ್ಯ)
 {
-	return CONTENT_CSS;
+	ಹಿಂತಿರುಗಿ CONTENT_CSS;
 }
 
 /*****************************************************************************
@@ -474,37 +474,37 @@ content_type nscss_content_type(void)
  * \param css  CSS object
  * \param pw   Private data
  */
-void nscss_content_done(struct content_css_data *css, void *pw)
+ಶೂನ್ಯ nscss_content_ಮುಗಿದ(ರಚನೆ content_css_ದತ್ತಾಂಶ *css, ಶೂನ್ಯ *pw)
 {
-	struct content *c = pw;
+	ರಚನೆ content *c = pw;
 	uint32_t i;
-	size_t size;
+	size_t ಗಾತ್ರ_2;
 	css_error error;
 
 	/* Retrieve the size of this sheet */
-	error = css_stylesheet_size(css->sheet, &size);
-	if (error != CSS_OK) {
-		content_broadcast_error(c, NSERROR_CSS, NULL);
-		content_set_error(c);
-		return;
+	error = css_stylesheet_ಗಾತ್ರ(css->sheet, &ಗಾತ್ರ_2);
+	ಆದರೆ (error != CSS_OK) {
+		content_ಪ್ರಸಾರ_error(c, NSERROR_CSS, ಖಾಲಿ);
+		content_ಗಣ_error(c);
+		ಹಿಂತಿರುಗಿ;
 	}
-	c->size += size;
+	c->ಗಾತ್ರ_2 += ಗಾತ್ರ_2;
 
 	/* Add on the size of the imported sheets */
-	for (i = 0; i < css->import_count; i++) {
-		if (css->imports[i].c != NULL) {
-			struct content *import = hlcache_handle_get_content(
+	ಗಾಗಿ (i = 0; i < css->import_ಎಣಿಕೆ; i++) {
+		ಆದರೆ (css->imports[i].c != ಖಾಲಿ) {
+			ರಚನೆ content *import = hlcache_handle_get_content(
 					css->imports[i].c);
 
-			if (import != NULL) {
-				c->size += import->size;
+			ಆದರೆ (import != ಖಾಲಿ) {
+				c->ಗಾತ್ರ_2 += import->ಗಾತ್ರ_2;
 			}
 		}
 	}
 
 	/* Finally, catch the content's users up with reality */
-	content_set_ready(c);
-	content_set_done(c);
+	content_ಗಣ_ready(c);
+	content_ಗಣ_ಮುಗಿದ(c);
 }
 
 /*****************************************************************************
@@ -519,98 +519,98 @@ void nscss_content_done(struct content_css_data *css, void *pw)
  * \param url     URL of the imported sheet
  * \return CSS_OK on success, appropriate error otherwise
  */
-css_error nscss_handle_import(void *pw, css_stylesheet *parent,
+css_error nscss_handle_import(ಶೂನ್ಯ *pw, css_stylesheet *ಪೋಷಕ,
 		lwc_string *url)
 {
 	content_type accept = CONTENT_CSS;
-	struct content_css_data *c = pw;
+	ರಚನೆ content_css_ದತ್ತಾಂಶ *c = pw;
 	nscss_import_ctx *ctx;
-	hlcache_child_context child;
-	struct nscss_import *imports;
-	const char *referer;
+	hlcache_ಮಗು_context ಮಗು;
+	ರಚನೆ nscss_import *imports;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *referer;
 	css_error error;
 	nserror nerror;
 
 	nsurl *ns_url;
 	nsurl *ns_ref;
 
-	assert(parent == c->sheet);
+	ಪ್ರತಿಜ್ಞಾ(ಪೋಷಕ == c->sheet);
 
 	error = css_stylesheet_get_url(c->sheet, &referer);
-	if (error != CSS_OK) {
-		return error;
+	ಆದರೆ (error != CSS_OK) {
+		ಹಿಂತಿರುಗಿ error;
 	}
 
-	ctx = malloc(sizeof(*ctx));
-	if (ctx == NULL)
-		return CSS_NOMEM;
+	ctx = ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ(*ctx));
+	ಆದರೆ (ctx == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ CSS_NOMEM;
 
 	ctx->css = c;
-	ctx->index = c->import_count;
+	ctx->index = c->import_ಎಣಿಕೆ;
 
 	/* Increase space in table */
-	imports = realloc(c->imports, (c->import_count + 1) *
-			sizeof(struct nscss_import));
-	if (imports == NULL) {
-		free(ctx);
-		return CSS_NOMEM;
+	imports = realloc(c->imports, (c->import_ಎಣಿಕೆ + 1) *
+			ಗಾತ್ರ(ರಚನೆ nscss_import));
+	ಆದರೆ (imports == ಖಾಲಿ) {
+		ಬಿಡುಗಡೆ(ctx);
+		ಹಿಂತಿರುಗಿ CSS_NOMEM;
 	}
 	c->imports = imports;
 
 	/** \todo fallback charset */
-	child.charset = NULL;
-	error = css_stylesheet_quirks_allowed(c->sheet, &child.quirks);
-	if (error != CSS_OK) {
-		free(ctx);
-		return error;
+	ಮಗು.charset = ಖಾಲಿ;
+	error = css_stylesheet_quirks_allowed(c->sheet, &ಮಗು.quirks);
+	ಆದರೆ (error != CSS_OK) {
+		ಬಿಡುಗಡೆ(ctx);
+		ಹಿಂತಿರುಗಿ error;
 	}
 
 	/* Create content */
 
 	/** \todo Why aren't we getting a relative url part, to join? */
-	nerror = nsurl_create(lwc_string_data(url), &ns_url);
-	if (nerror != NSERROR_OK) {
-		free(ctx);
-		return CSS_NOMEM;
+	nerror = nsurl_create(lwc_string_ದತ್ತಾಂಶ(url), &ns_url);
+	ಆದರೆ (nerror != NSERROR_OK) {
+		ಬಿಡುಗಡೆ(ctx);
+		ಹಿಂತಿರುಗಿ CSS_NOMEM;
 	}
 
 	/** \todo Constructing nsurl for referer here is silly, avoid */
 	nerror = nsurl_create(referer, &ns_ref);
-	if (nerror != NSERROR_OK) {
+	ಆದರೆ (nerror != NSERROR_OK) {
 		nsurl_unref(ns_url);
-		free(ctx);
-		return CSS_NOMEM;
+		ಬಿಡುಗಡೆ(ctx);
+		ಹಿಂತಿರುಗಿ CSS_NOMEM;
 	}
 
 	/* Avoid importing ourself */
-	if (nsurl_compare(ns_url, ns_ref, NSURL_COMPLETE)) {
-		c->imports[c->import_count].c = NULL;
+	ಆದರೆ (nsurl_compare(ns_url, ns_ref, NSURL_COMPLETE)) {
+		c->imports[c->import_ಎಣಿಕೆ].c = ಖಾಲಿ;
 		/* No longer require context as we're not fetching anything */
-		free(ctx);
-		ctx = NULL;
-	} else {
+		ಬಿಡುಗಡೆ(ctx);
+		ctx = ಖಾಲಿ;
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		nerror = hlcache_handle_retrieve(ns_url,
-				0, ns_ref, NULL, nscss_import, ctx,
-				&child, accept,
-				&c->imports[c->import_count].c);
-		if (nerror != NSERROR_OK) {
-			free(ctx);
-			return CSS_NOMEM;
+				0, ns_ref, ಖಾಲಿ, nscss_import, ctx,
+				&ಮಗು, accept,
+				&c->imports[c->import_ಎಣಿಕೆ].c);
+		ಆದರೆ (nerror != NSERROR_OK) {
+			ಬಿಡುಗಡೆ(ctx);
+			ಹಿಂತಿರುಗಿ CSS_NOMEM;
 		}
 	}
 
 	nsurl_unref(ns_url);
 	nsurl_unref(ns_ref);
 
-#ifdef NSCSS_IMPORT_TRACE
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ NSCSS_IMPORT_TRACE
 	NSLOG(netsurf, INFO, "Import %d '%s' -> (handle: %p ctx: %p)",
-	      c->import_count, lwc_string_data(url),
-	      c->imports[c->import_count].c, ctx);
-#endif
+	      c->import_ಎಣಿಕೆ, lwc_string_ದತ್ತಾಂಶ(url),
+	      c->imports[c->import_ಎಣಿಕೆ].c, ctx);
+#ಆದರೆ_ಅಂತ್ಯ
 
-	c->import_count++;
+	c->import_ಎಣಿಕೆ++;
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 /**
@@ -622,35 +622,35 @@ css_error nscss_handle_import(void *pw, css_stylesheet *parent,
  * \return NSERROR_OK on success, appropriate error otherwise
  */
 nserror nscss_import(hlcache_handle *handle,
-		const hlcache_event *event, void *pw)
+		ಸ್ಥಿರಾಂಕ hlcache_event *event, ಶೂನ್ಯ *pw)
 {
 	nscss_import_ctx *ctx = pw;
 	css_error error = CSS_OK;
 
-#ifdef NSCSS_IMPORT_TRACE
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ NSCSS_IMPORT_TRACE
 	NSLOG(netsurf, INFO, "Event %d for %p (%p)", event->type, handle, ctx);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-	assert(ctx->css->imports[ctx->index].c == handle);
+	ಪ್ರತಿಜ್ಞಾ(ctx->css->imports[ctx->index].c == handle);
 
-	switch (event->type) {
-	case CONTENT_MSG_DONE:
+	ಆಯ್ಕೆ (event->type) {
+	ಸ್ಥಿತಿ CONTENT_ಸಂದೇಶ_ಮುಗಿದ:
 		error = nscss_import_complete(ctx);
-		break;
+		ನಿಲ್ಲಿಸು;
 
-	case CONTENT_MSG_ERROR:
+	ಸ್ಥಿತಿ CONTENT_ಸಂದೇಶ_ERROR:
 		hlcache_handle_release(handle);
-		ctx->css->imports[ctx->index].c = NULL;
+		ctx->css->imports[ctx->index].c = ಖಾಲಿ;
 
 		error = nscss_import_complete(ctx);
 		/* Already released handle */
-		break;
-	default:
-		break;
+		ನಿಲ್ಲಿಸು;
+	ಪೂರ್ವನಿಯೋಜಿತ:
+		ನಿಲ್ಲಿಸು;
 	}
 
 	/* Preserve out-of-memory. Anything else is OK */
-	return error == CSS_NOMEM ? NSERROR_NOMEM : NSERROR_OK;
+	ಹಿಂತಿರುಗಿ error == CSS_NOMEM ? NSERROR_NOMEM : NSERROR_OK;
 }
 
 /**
@@ -664,18 +664,18 @@ css_error nscss_import_complete(nscss_import_ctx *ctx)
 	css_error error = CSS_OK;
 
 	/* If this import is the next to be registered, do so */
-	if (ctx->css->next_to_register == ctx->index)
-		error = nscss_register_imports(ctx->css);
+	ಆದರೆ (ctx->css->ಮುಂದಿನ_ಗಮ್ಯ_ರಿಜಿಸ್ಟರ್ == ctx->index)
+		error = nscss_ರಿಜಿಸ್ಟರ್_imports(ctx->css);
 
-#ifdef NSCSS_IMPORT_TRACE
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ NSCSS_IMPORT_TRACE
 	NSLOG(netsurf, INFO, "Destroying import context %p for %d", ctx,
 	      ctx->index);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 	/* No longer need import context */
-	free(ctx);
+	ಬಿಡುಗಡೆ(ctx);
 
-	return error;
+	ಹಿಂತಿರುಗಿ error;
 }
 
 /*****************************************************************************
@@ -688,40 +688,40 @@ css_error nscss_import_complete(nscss_import_ctx *ctx)
  * \param c  CSS object containing the imports
  * \return CSS_OK on success, appropriate error otherwise
  */
-css_error nscss_register_imports(struct content_css_data *c)
+css_error nscss_ರಿಜಿಸ್ಟರ್_imports(ರಚನೆ content_css_ದತ್ತಾಂಶ *c)
 {
 	uint32_t index;
 	css_error error;
 
-	assert(c->next_to_register != (uint32_t) -1);
-	assert(c->next_to_register < c->import_count);
+	ಪ್ರತಿಜ್ಞಾ(c->ಮುಂದಿನ_ಗಮ್ಯ_ರಿಜಿಸ್ಟರ್ != (uint32_t) -1);
+	ಪ್ರತಿಜ್ಞಾ(c->ಮುಂದಿನ_ಗಮ್ಯ_ರಿಜಿಸ್ಟರ್ < c->import_ಎಣಿಕೆ);
 
 	/* Register imported sheets */
-	for (index = c->next_to_register; index < c->import_count; index++) {
+	ಗಾಗಿ (index = c->ಮುಂದಿನ_ಗಮ್ಯ_ರಿಜಿಸ್ಟರ್; index < c->import_ಎಣಿಕೆ; index++) {
 		/* Stop registering if we encounter one whose fetch hasn't
 		 * completed yet. We'll resume at this point when it has
 		 * completed.
 		 */
-		if (c->imports[index].c != NULL &&
-			content_get_status(c->imports[index].c) !=
-				CONTENT_STATUS_DONE) {
-			break;
+		ಆದರೆ (c->imports[index].c != ಖಾಲಿ &&
+			content_get_ಸ್ಥಿತಿ(c->imports[index].c) !=
+				CONTENT_ಸ್ಥಿತಿ_ಮುಗಿದ) {
+			ನಿಲ್ಲಿಸು;
 		}
 
-		error = nscss_register_import(c, c->imports[index].c);
-		if (error != CSS_OK)
-			return error;
+		error = nscss_ರಿಜಿಸ್ಟರ್_import(c, c->imports[index].c);
+		ಆದರೆ (error != CSS_OK)
+			ಹಿಂತಿರುಗಿ error;
 	}
 
 	/* Record identity of the next import to register */
-	c->next_to_register = (uint32_t) index;
+	c->ಮುಂದಿನ_ಗಮ್ಯ_ರಿಜಿಸ್ಟರ್ = (uint32_t) index;
 
-	if (c->next_to_register == c->import_count) {
+	ಆದರೆ (c->ಮುಂದಿನ_ಗಮ್ಯ_ರಿಜಿಸ್ಟರ್ == c->import_ಎಣಿಕೆ) {
 		/* No more imports: notify parent that we're DONE */
-		c->done(c, c->pw);
+		c->ಮುಗಿದ(c, c->pw);
 	}
 
-	return CSS_OK;
+	ಹಿಂತಿರುಗಿ CSS_OK;
 }
 
 
@@ -732,77 +732,77 @@ css_error nscss_register_imports(struct content_css_data *c)
  * \param import  Cache handle of import, or NULL for blank
  * \return CSS_OK on success, appropriate error otherwise
  */
-css_error nscss_register_import(struct content_css_data *c,
-		const hlcache_handle *import)
+css_error nscss_ರಿಜಿಸ್ಟರ್_import(ರಚನೆ content_css_ದತ್ತಾಂಶ *c,
+		ಸ್ಥಿರಾಂಕ hlcache_handle *import)
 {
 	css_stylesheet *sheet;
 	css_error error;
 
-	if (import != NULL) {
+	ಆದರೆ (import != ಖಾಲಿ) {
 		nscss_content *s =
 			(nscss_content *) hlcache_handle_get_content(import);
-		sheet = s->data.sheet;
-	} else {
+		sheet = s->ದತ್ತಾಂಶ.sheet;
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		/* Create a blank sheet if needed. */
-		if (blank_import == NULL) {
+		ಆದರೆ (blank_import == ಖಾಲಿ) {
 			css_stylesheet_params params;
 
-			params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
+			params.params_ಆವೃತ್ತಿ = CSS_STYLESHEET_PARAMS_ಆವೃತ್ತಿ_1;
 			params.level = CSS_LEVEL_DEFAULT;
-			params.charset = NULL;
+			params.charset = ಖಾಲಿ;
 			params.url = "";
-			params.title = NULL;
+			params.title = ಖಾಲಿ;
 			params.allow_quirks = false;
 			params.inline_style = false;
 			params.resolve = nscss_resolve_url;
-			params.resolve_pw = NULL;
-			params.import = NULL;
-			params.import_pw = NULL;
-			params.color = ns_system_colour;
-			params.color_pw = NULL;
-			params.font = NULL;
-			params.font_pw = NULL;
+			params.resolve_pw = ಖಾಲಿ;
+			params.import = ಖಾಲಿ;
+			params.import_pw = ಖಾಲಿ;
+			params.color = ns_system_ಬಣ್ಣ;
+			params.color_pw = ಖಾಲಿ;
+			params.font = ಖಾಲಿ;
+			params.font_pw = ಖಾಲಿ;
 
 			error = css_stylesheet_create(&params, &blank_import);
-			if (error != CSS_OK) {
-				return error;
+			ಆದರೆ (error != CSS_OK) {
+				ಹಿಂತಿರುಗಿ error;
 			}
 
-			error = css_stylesheet_data_done(blank_import);
-			if (error != CSS_OK) {
+			error = css_stylesheet_ದತ್ತಾಂಶ_ಮುಗಿದ(blank_import);
+			ಆದರೆ (error != CSS_OK) {
 				css_stylesheet_destroy(blank_import);
-				return error;
+				ಹಿಂತಿರುಗಿ error;
 			}
 		}
 
 		sheet = blank_import;
 	}
 
-	error = css_stylesheet_register_import(c->sheet, sheet);
-	if (error != CSS_OK) {
-		return error;
+	error = css_stylesheet_ರಿಜಿಸ್ಟರ್_import(c->sheet, sheet);
+	ಆದರೆ (error != CSS_OK) {
+		ಹಿಂತಿರುಗಿ error;
 	}
 
-	return error;
+	ಹಿಂತಿರುಗಿ error;
 }
 
 /**
  * Clean up after the CSS content handler
  */
-static void nscss_fini(void)
+ಸ್ಥಿರ ಶೂನ್ಯ nscss_fini(ಶೂನ್ಯ)
 {
-	if (blank_import != NULL) {
+	ಆದರೆ (blank_import != ಖಾಲಿ) {
 		css_stylesheet_destroy(blank_import);
-		blank_import = NULL;
+		blank_import = ಖಾಲಿ;
 	}
 	css_hint_fini();
 }
 
-static const content_handler css_content_handler = {
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ content_handler css_content_handler = {
 	.fini = nscss_fini,
 	.create = nscss_create,
-	.process_data = nscss_process_data,
-	.data_complete = nscss_convert,
+	.process_ದತ್ತಾಂಶ = nscss_process_ದತ್ತಾಂಶ,
+	.ದತ್ತಾಂಶ_complete = nscss_convert,
 	.destroy = nscss_destroy,
 	.clone = nscss_clone,
 	.matches_quirks = nscss_matches_quirks,
@@ -811,23 +811,23 @@ static const content_handler css_content_handler = {
 };
 
 /* exported interface documented in netsurf/css.h */
-nserror nscss_init(void)
+nserror nscss_init(ಶೂನ್ಯ)
 {
 	nserror error;
 
-	error = content_factory_register_handler("text/css",
+	error = content_factory_ರಿಜಿಸ್ಟರ್_handler("text/css",
 			&css_content_handler);
-	if (error != NSERROR_OK)
-		goto error;
+	ಆದರೆ (error != NSERROR_OK)
+		ಹೋಗು error;
 
 	error = css_hint_init();
-	if (error != NSERROR_OK)
-		goto error;
+	ಆದರೆ (error != NSERROR_OK)
+		ಹೋಗು error;
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 
 error:
 	nscss_fini();
 
-	return error;
+	ಹಿಂತಿರುಗಿ error;
 }

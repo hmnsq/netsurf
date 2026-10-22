@@ -20,9 +20,9 @@
  * Content for image/jpeg (interface).
  */
 
-#ifndef _NETSURF_IMAGE_JPEG_H_
-#define _NETSURF_IMAGE_JPEG_H_
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _NETSURF_IMAGE_JPEG_H_
+#ವ್ಯಾಖ್ಯಾನಿಸು _NETSURF_IMAGE_JPEG_H_
 
-nserror nsjpeg_init(void);
+nserror nsjpeg_init(ಶೂನ್ಯ);
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

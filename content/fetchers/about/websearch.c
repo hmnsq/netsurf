@@ -21,86 +21,86 @@
  * content generator for the about scheme web search
  */
 
-#include <stdbool.h>
-#include <stdint.h>
-#include <sys/types.h>
-#include <stdlib.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include "utils/errors.h"
-#include "utils/nsurl.h"
-#include "utils/url.h"
+#ಅನ್ತರ್ಭಾವ "utils/errors.h"
+#ಅನ್ತರ್ಭಾವ "utils/nsurl.h"
+#ಅನ್ತರ್ಭಾವ "utils/url.h"
 
-#include "content/fetch.h"
-#include "desktop/searchweb.h"
+#ಅನ್ತರ್ಭಾವ "content/fetch.h"
+#ಅನ್ತರ್ಭಾವ "desktop/searchweb.h"
 
-#include "private.h"
-#include "websearch.h"
+#ಅನ್ತರ್ಭಾವ "private.h"
+#ಅನ್ತರ್ಭಾವ "websearch.h"
 
-static nserror
-process_query_section(const char *str, size_t len, char **term)
+ಸ್ಥಿರ nserror
+process_query_section(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *str, size_t len, ಅಕ್ಷರ **ಪದ)
 {
-	if (len < 3) {
-		return NSERROR_BAD_PARAMETER;
+	ಆದರೆ (len < 3) {
+		ಹಿಂತಿರುಗಿ NSERROR_BAD_PARAMETER;
 	}
-	if (str[0] != 'q' || str[1] != '=') {
-		return NSERROR_BAD_PARAMETER;
+	ಆದರೆ (str[0] != 'q' || str[1] != '=') {
+		ಹಿಂತಿರುಗಿ NSERROR_BAD_PARAMETER;
 	}
-	return url_unescape(str + 2, len - 2, NULL, term);
+	ಹಿಂತಿರುಗಿ url_unescape(str + 2, len - 2, ಖಾಲಿ, ಪದ);
 }
 
-static nserror
-searchterm_from_query(struct nsurl *url, char **term)
+ಸ್ಥಿರ nserror
+searchterm_from_query(ರಚನೆ nsurl *url, ಅಕ್ಷರ **ಪದ)
 {
 	nserror res;
-	char *querystr;
+	ಅಕ್ಷರ *querystr;
 	size_t querylen;
 	size_t kvstart;/* key value start */
 	size_t kvlen; /* key value end */
 
 	res = nsurl_get(url, NSURL_QUERY, &querystr, &querylen);
-	if (res != NSERROR_OK) {
-		return res;
+	ಆದರೆ (res != NSERROR_OK) {
+		ಹಿಂತಿರುಗಿ res;
 	}
 
-	for (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
+	ಗಾಗಿ (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
 		/* get query section length */
 		kvlen = 0;
-		while (((kvstart + kvlen) < querylen) &&
+		ಆಗ (((kvstart + kvlen) < querylen) &&
 		       (querystr[kvstart + kvlen] != '&')) {
 			kvlen++;
 		}
 
-		res = process_query_section(querystr + kvstart, kvlen, term);
-		if (res == NSERROR_OK) {
-			break;
+		res = process_query_section(querystr + kvstart, kvlen, ಪದ);
+		ಆದರೆ (res == NSERROR_OK) {
+			ನಿಲ್ಲಿಸು;
 		}
 		kvlen++; /* account for & separator */
 	}
-	free(querystr);
+	ಬಿಡುಗಡೆ(querystr);
 
-	return res;
+	ಹಿಂತಿರುಗಿ res;
 }
 
-bool fetch_about_websearch_handler(struct fetch_about_context *ctx)
+bool fetch_about_websearch_handler(ರಚನೆ fetch_about_context *ctx)
 {
 	nserror res;
 	nsurl *url;
-	char *term;
+	ಅಕ್ಷರ *ಪದ;
 
-	res = searchterm_from_query(fetch_about_get_url(ctx), &term);
-	if (res != NSERROR_OK) {
-		return false;
+	res = searchterm_from_query(fetch_about_get_url(ctx), &ಪದ);
+	ಆದರೆ (res != NSERROR_OK) {
+		ಹಿಂತಿರುಗಿ false;
 	}
 
-	res = search_web_omni(term, SEARCH_WEB_OMNI_SEARCHONLY, &url);
-	free(term);
-	if (res != NSERROR_OK) {
-		return false;
+	res = ಹುಡುಕು_web_omni(ಪದ, ಹುಡುಕು_WEB_OMNI_SEARCHONLY, &url);
+	ಬಿಡುಗಡೆ(ಪದ);
+	ಆದರೆ (res != NSERROR_OK) {
+		ಹಿಂತಿರುಗಿ false;
 	}
 
 	fetch_about_redirect(ctx, nsurl_access(url));
 	nsurl_unref(url);
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }

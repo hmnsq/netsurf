@@ -21,17 +21,17 @@
  * HTML content user interaction handling
  */
 
-#ifndef NETSURF_HTML_INTERACTION_H
-#define NETSURF_HTML_INTERACTION_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NETSURF_HTML_INTERACTION_H
+#ವ್ಯಾಖ್ಯಾನಿಸು NETSURF_HTML_INTERACTION_H
 
-#include "desktop/search.h" /* search flags enum */
+#ಅನ್ತರ್ಭಾವ "desktop/search.h" /* search flags enum */
 
 /**
  * Context for scrollbar
  */
-struct html_scrollbar_data {
-	struct content *c;
-	struct box *box;
+ರಚನೆ html_scrollbar_ದತ್ತಾಂಶ {
+	ರಚನೆ content *c;
+	ರಚನೆ box *box;
 };
 
 /**
@@ -43,8 +43,8 @@ struct html_scrollbar_data {
  * \param  x	  coordinate of mouse
  * \param  y	  coordinate of mouse
  */
-nserror html_mouse_track(struct content *c, struct browser_window *bw,
-			browser_mouse_state mouse, int x, int y);
+nserror html_mouse_track(ರಚನೆ content *c, ರಚನೆ browser_ಕಿಟಕಿ *bw,
+			browser_mouse_state mouse, ಪೂರ್ಣಾಂಕ x, ಪೂರ್ಣಾಂಕ y);
 
 
 /**
@@ -63,22 +63,22 @@ nserror html_mouse_track(struct content *c, struct browser_window *bw,
  * \param y y coordinate of mouse
  * \return NSERROR_OK or appropriate error code.
  */
-nserror html_mouse_action(struct content *c, struct browser_window *bw,
-			browser_mouse_state mouse, int x, int y);
+nserror html_mouse_action(ರಚನೆ content *c, ರಚನೆ browser_ಕಿಟಕಿ *bw,
+			browser_mouse_state mouse, ಪೂರ್ಣಾಂಕ x, ಪೂರ್ಣಾಂಕ y);
 
 
-bool html_keypress(struct content *c, uint32_t key);
+bool html_keypress(ರಚನೆ content *c, uint32_t ಕೀಲಿ);
 
 
-void html_overflow_scroll_callback(void *client_data,
-		struct scrollbar_msg_data *scrollbar_data);
+ಶೂನ್ಯ html_ಅತಿಪ್ರವಾಹ_scroll_callback(ಶೂನ್ಯ *client_ದತ್ತಾಂಶ,
+		ರಚನೆ scrollbar_ಸಂದೇಶ_ದತ್ತಾಂಶ *scrollbar_ದತ್ತಾಂಶ);
 
 
-void html_search(struct content *c, void *context,
-		search_flags_t flags, const char *string);
+ಶೂನ್ಯ html_ಹುಡುಕು(ರಚನೆ content *c, ಶೂನ್ಯ *context,
+		ಹುಡುಕು_flags_t flags, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *string);
 
 
-void html_search_clear(struct content *c);
+ಶೂನ್ಯ html_ಹುಡುಕು_clear(ರಚನೆ content *c);
 
 
 /**
@@ -89,8 +89,8 @@ void html_search_clear(struct content *c);
  * \param drag_owner	What owns the drag
  * \param rect		Pointer movement bounds
  */
-void html_set_drag_type(html_content *html, html_drag_type drag_type,
-		union html_drag_owner drag_owner, const struct rect *rect);
+ಶೂನ್ಯ html_ಗಣ_drag_type(html_content *html, html_drag_type drag_type,
+		ಒಕ್ಕೂಟ html_drag_owner drag_owner, ಸ್ಥಿರಾಂಕ ರಚನೆ rect *rect);
 
 
 /**
@@ -101,8 +101,8 @@ void html_set_drag_type(html_content *html, html_drag_type drag_type,
  * \param selection_owner	What owns the selection
  * \param read_only		True iff selection is read only
  */
-void html_set_selection(html_content *html, html_selection_type selection_type,
-		union html_selection_owner selection_owner, bool read_only);
+ಶೂನ್ಯ html_ಗಣ_selection(html_content *html, html_selection_type selection_type,
+		ಒಕ್ಕೂಟ html_selection_owner selection_owner, bool read_only);
 
 
 /**
@@ -117,9 +117,9 @@ void html_set_selection(html_content *html, html_selection_type selection_type,
  * \param height		Carret height
  * \param clip			Carret clip rect
  */
-void html_set_focus(html_content *html, html_focus_type focus_type,
-		union html_focus_owner focus_owner, bool hide_caret,
-		int x, int y, int height, const struct rect *clip);
+ಶೂನ್ಯ html_ಗಣ_focus(html_content *html, html_focus_type focus_type,
+		ಒಕ್ಕೂಟ html_focus_owner focus_owner, bool hide_caret,
+		ಪೂರ್ಣಾಂಕ x, ಪೂರ್ಣಾಂಕ y, ಪೂರ್ಣಾಂಕ ಎತ್ತರ, ಸ್ಥಿರಾಂಕ ರಚನೆ rect *clip);
 
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

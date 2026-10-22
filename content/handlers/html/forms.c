@@ -21,335 +21,335 @@
  * HTML form handling implementation
  */
 
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include "utils/config.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
+#ಅನ್ತರ್ಭಾವ "utils/config.h"
+#ಅನ್ತರ್ಭಾವ "utils/corestrings.h"
+#ಅನ್ತರ್ಭಾವ "utils/log.h"
 
-#include "html/form_internal.h"
-#include "html/private.h"
+#ಅನ್ತರ್ಭಾವ "html/form_internal.h"
+#ಅನ್ತರ್ಭಾವ "html/private.h"
 
 /**
  * process form element from dom
  */
-static struct form *
-parse_form_element(const char *docenc, dom_node *node)
+ಸ್ಥಿರ ರಚನೆ form *
+parse_form_element(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *docenc, dom_ಗಂಟು *ಗಂಟು)
 {
-	dom_string *ds_action = NULL;
-	dom_string *ds_charset = NULL;
-	dom_string *ds_target = NULL;
-	dom_string *ds_method = NULL;
-	dom_string *ds_enctype = NULL;
-	char *action = NULL, *charset = NULL, *target = NULL;
-	form_method method;
-	dom_html_form_element *formele = (dom_html_form_element *)(node);
-	struct form * ret = NULL;
+	dom_string *ds_action = ಖಾಲಿ;
+	dom_string *ds_charset = ಖಾಲಿ;
+	dom_string *ds_ಗುರಿ = ಖಾಲಿ;
+	dom_string *ds_ವಿಧಾನ = ಖಾಲಿ;
+	dom_string *ds_enctype = ಖಾಲಿ;
+	ಅಕ್ಷರ *action = ಖಾಲಿ, *charset = ಖಾಲಿ, *ಗುರಿ = ಖಾಲಿ;
+	form_ವಿಧಾನ ವಿಧಾನ;
+	dom_html_form_element *formele = (dom_html_form_element *)(ಗಂಟು);
+	ರಚನೆ form * ret = ಖಾಲಿ;
 
 	/* Retrieve the attributes from the node */
-	if (dom_html_form_element_get_action(formele,
+	ಆದರೆ (dom_html_form_element_get_action(formele,
 			&ds_action) != DOM_NO_ERR)
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	if (dom_html_form_element_get_accept_charset(formele,
+	ಆದರೆ (dom_html_form_element_get_accept_charset(formele,
 			&ds_charset) != DOM_NO_ERR)
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	if (dom_html_form_element_get_target(formele,
-			&ds_target) != DOM_NO_ERR)
-		goto out;
+	ಆದರೆ (dom_html_form_element_get_ಗುರಿ(formele,
+			&ds_ಗುರಿ) != DOM_NO_ERR)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	if (dom_html_form_element_get_method(formele,
-			&ds_method) != DOM_NO_ERR)
-		goto out;
+	ಆದರೆ (dom_html_form_element_get_ವಿಧಾನ(formele,
+			&ds_ವಿಧಾನ) != DOM_NO_ERR)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	if (dom_html_form_element_get_enctype(formele,
+	ಆದರೆ (dom_html_form_element_get_enctype(formele,
 			&ds_enctype) != DOM_NO_ERR)
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 
 	/* Extract the plain attributes ready for use.  We have to do this
 	 * because we cannot guarantee that the dom_strings are NULL terminated
 	 * and thus we copy them.
 	 */
-	if (ds_action != NULL)
-		action = strndup(dom_string_data(ds_action),
-				 dom_string_byte_length(ds_action));
+	ಆದರೆ (ds_action != ಖಾಲಿ)
+		action = strndup(dom_string_ದತ್ತಾಂಶ(ds_action),
+				 dom_string_byte_ಉದ್ದಳತೆ(ds_action));
 
-	if (ds_charset != NULL)
-		charset = strndup(dom_string_data(ds_charset),
-				  dom_string_byte_length(ds_charset));
+	ಆದರೆ (ds_charset != ಖಾಲಿ)
+		charset = strndup(dom_string_ದತ್ತಾಂಶ(ds_charset),
+				  dom_string_byte_ಉದ್ದಳತೆ(ds_charset));
 
-	if (ds_target != NULL)
-		target = strndup(dom_string_data(ds_target),
-				 dom_string_byte_length(ds_target));
+	ಆದರೆ (ds_ಗುರಿ != ಖಾಲಿ)
+		ಗುರಿ = strndup(dom_string_ದತ್ತಾಂಶ(ds_ಗುರಿ),
+				 dom_string_byte_ಉದ್ದಳತೆ(ds_ಗುರಿ));
 
 	/* Determine the method */
-	method = method_GET;
-	if (ds_method != NULL) {
-		if (dom_string_caseless_lwc_isequal(ds_method,
+	ವಿಧಾನ = ವಿಧಾನ_GET;
+	ಆದರೆ (ds_ವಿಧಾನ != ಖಾಲಿ) {
+		ಆದರೆ (dom_string_caseless_lwc_isequal(ds_ವಿಧಾನ,
 				corestring_lwc_post)) {
-			method = method_POST_URLENC;
-			if (ds_enctype != NULL) {
-				if (dom_string_caseless_lwc_isequal(ds_enctype,
-					corestring_lwc_multipart_form_data)) {
+			ವಿಧಾನ = ವಿಧಾನ_POST_URLENC;
+			ಆದರೆ (ds_enctype != ಖಾಲಿ) {
+				ಆದರೆ (dom_string_caseless_lwc_isequal(ds_enctype,
+					corestring_lwc_multipart_form_ದತ್ತಾಂಶ)) {
 
-					method = method_POST_MULTIPART;
+					ವಿಧಾನ = ವಿಧಾನ_POST_MULTIPART;
 				}
 			}
 		}
 	}
 
 	/* Construct the form object */
-	ret = form_new(node, action, target, method, charset, docenc);
+	ret = form_new(ಗಂಟು, action, ಗುರಿ, ವಿಧಾನ, charset, docenc);
 
-out:
-	if (ds_action != NULL)
+ಹೊರಹೋಗು:
+	ಆದರೆ (ds_action != ಖಾಲಿ)
 		dom_string_unref(ds_action);
-	if (ds_charset != NULL)
+	ಆದರೆ (ds_charset != ಖಾಲಿ)
 		dom_string_unref(ds_charset);
-	if (ds_target != NULL)
-		dom_string_unref(ds_target);
-	if (ds_method != NULL)
-		dom_string_unref(ds_method);
-	if (ds_enctype != NULL)
+	ಆದರೆ (ds_ಗುರಿ != ಖಾಲಿ)
+		dom_string_unref(ds_ಗುರಿ);
+	ಆದರೆ (ds_ವಿಧಾನ != ಖಾಲಿ)
+		dom_string_unref(ds_ವಿಧಾನ);
+	ಆದರೆ (ds_enctype != ಖಾಲಿ)
 		dom_string_unref(ds_enctype);
-	if (action != NULL)
-		free(action);
-	if (charset != NULL)
-		free(charset);
-	if (target != NULL)
-		free(target);
-	return ret;
+	ಆದರೆ (action != ಖಾಲಿ)
+		ಬಿಡುಗಡೆ(action);
+	ಆದರೆ (charset != ಖಾಲಿ)
+		ಬಿಡುಗಡೆ(charset);
+	ಆದರೆ (ಗುರಿ != ಖಾಲಿ)
+		ಬಿಡುಗಡೆ(ಗುರಿ);
+	ಹಿಂತಿರುಗಿ ret;
 }
 
 /* documented in html_internal.h */
-struct form *html_forms_get_forms(const char *docenc, dom_html_document *doc)
+ರಚನೆ form *html_forms_get_forms(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *docenc, dom_html_document *doc)
 {
 	dom_html_collection *forms;
-	struct form *ret = NULL, *newf;
-	dom_node *node;
-	unsigned long n;
+	ರಚನೆ form *ret = ಖಾಲಿ, *newf;
+	dom_ಗಂಟು *ಗಂಟು;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ n;
 	uint32_t nforms;
 
-	if (doc == NULL)
-		return NULL;
+	ಆದರೆ (doc == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
 	/* Attempt to build a set of all the forms */
-	if (dom_html_document_get_forms(doc, &forms) != DOM_NO_ERR)
-		return NULL;
+	ಆದರೆ (dom_html_document_get_forms(doc, &forms) != DOM_NO_ERR)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
 	/* Count the number of forms so we can iterate */
-	if (dom_html_collection_get_length(forms, &nforms) != DOM_NO_ERR)
-		goto out;
+	ಆದರೆ (dom_html_collection_get_ಉದ್ದಳತೆ(forms, &nforms) != DOM_NO_ERR)
+		ಹೋಗು ಹೊರಹೋಗು;
 
 	/* Iterate the forms collection, making form structs for returning */
-	for (n = 0; n < nforms; ++n) {
-		if (dom_html_collection_item(forms, n, &node) != DOM_NO_ERR) {
-			goto out;
+	ಗಾಗಿ (n = 0; n < nforms; ++n) {
+		ಆದರೆ (dom_html_collection_ಅಂಶ(forms, n, &ಗಂಟು) != DOM_NO_ERR) {
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
-		newf = parse_form_element(docenc, node);
-		dom_node_unref(node);
-		if (newf == NULL) {
-			goto err;
+		newf = parse_form_element(docenc, ಗಂಟು);
+		dom_ಗಂಟು_unref(ಗಂಟು);
+		ಆದರೆ (newf == ಖಾಲಿ) {
+			ಹೋಗು err;
 		}
 		newf->prev = ret;
 		ret = newf;
 	}
 
 	/* All went well */
-	goto out;
+	ಹೋಗು ಹೊರಹೋಗು;
 err:
-	while (ret != NULL) {
-		struct form *prev = ret->prev;
+	ಆಗ (ret != ಖಾಲಿ) {
+		ರಚನೆ form *prev = ret->prev;
 		/* Destroy ret */
-		free(ret);
+		ಬಿಡುಗಡೆ(ret);
 		ret = prev;
 	}
-out:
+ಹೊರಹೋಗು:
 	/* Finished with the collection, return it */
 	dom_html_collection_unref(forms);
 
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-static struct form *
-find_form(struct form *forms, dom_html_form_element *form)
+ಸ್ಥಿರ ರಚನೆ form *
+ಕಂಡುಹಿಡಿ_form(ರಚನೆ form *forms, dom_html_form_element *form)
 {
-	while (forms != NULL) {
-		if (forms->node == form)
-			break;
+	ಆಗ (forms != ಖಾಲಿ) {
+		ಆದರೆ (forms->ಗಂಟು == form)
+			ನಿಲ್ಲಿಸು;
 		forms = forms->prev;
 	}
 
-	return forms;
+	ಹಿಂತಿರುಗಿ forms;
 }
 
-static struct form_control *
-parse_button_element(struct form *forms, dom_html_button_element *button)
+ಸ್ಥಿರ ರಚನೆ form_control *
+parse_button_element(ರಚನೆ form *forms, dom_html_button_element *button)
 {
-	struct form_control *control = NULL;
+	ರಚನೆ form_control *control = ಖಾಲಿ;
 	dom_exception err;
-	dom_html_form_element *form = NULL;
-	dom_string *ds_type = NULL;
-	dom_string *ds_value = NULL;
-	dom_string *ds_name = NULL;
+	dom_html_form_element *form = ಖಾಲಿ;
+	dom_string *ds_type = ಖಾಲಿ;
+	dom_string *ds_ಮೌಲ್ಯ = ಖಾಲಿ;
+	dom_string *ds_name = ಖಾಲಿ;
 
 	err = dom_html_button_element_get_form(button, &form);
-	if (err != DOM_NO_ERR)
-		goto out;
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹೋಗು ಹೊರಹೋಗು;
 
 	err = dom_html_button_element_get_type(button, &ds_type);
-	if (err != DOM_NO_ERR)
-		goto out;
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	if (ds_type == NULL) {
+	ಆದರೆ (ds_type == ಖಾಲಿ) {
 		control = form_new_control(button, GADGET_SUBMIT);
-	} else {
-		if (dom_string_caseless_lwc_isequal(ds_type,
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಆದರೆ (dom_string_caseless_lwc_isequal(ds_type,
 				corestring_lwc_submit)) {
 			control = form_new_control(button, GADGET_SUBMIT);
-		} else if (dom_string_caseless_lwc_isequal(ds_type,
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (dom_string_caseless_lwc_isequal(ds_type,
 				corestring_lwc_reset)) {
 			control = form_new_control(button, GADGET_RESET);
-		} else {
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			control = form_new_control(button, GADGET_BUTTON);
 		}
 	}
 
-	if (control == NULL)
-		goto out;
+	ಆದರೆ (control == ಖಾಲಿ)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	err = dom_html_button_element_get_value(button, &ds_value);
-	if (err != DOM_NO_ERR)
-		goto out;
+	err = dom_html_button_element_get_ಮೌಲ್ಯ(button, &ds_ಮೌಲ್ಯ);
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹೋಗು ಹೊರಹೋಗು;
 	err = dom_html_button_element_get_name(button, &ds_name);
-	if (err != DOM_NO_ERR)
-		goto out;
+	ಆದರೆ (err != DOM_NO_ERR)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	if (ds_value != NULL) {
-		control->value = strndup(
-			dom_string_data(ds_value),
-			dom_string_byte_length(ds_value));
+	ಆದರೆ (ds_ಮೌಲ್ಯ != ಖಾಲಿ) {
+		control->ಮೌಲ್ಯ = strndup(
+			dom_string_ದತ್ತಾಂಶ(ds_ಮೌಲ್ಯ),
+			dom_string_byte_ಉದ್ದಳತೆ(ds_ಮೌಲ್ಯ));
 
-		if (control->value == NULL) {
+		ಆದರೆ (control->ಮೌಲ್ಯ == ಖಾಲಿ) {
 			form_free_control(control);
-			control = NULL;
-			goto out;
+			control = ಖಾಲಿ;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
 	}
 
-	if (ds_name != NULL) {
+	ಆದರೆ (ds_name != ಖಾಲಿ) {
 		control->name = strndup(
-			dom_string_data(ds_name),
-			dom_string_byte_length(ds_name));
+			dom_string_ದತ್ತಾಂಶ(ds_name),
+			dom_string_byte_ಉದ್ದಳತೆ(ds_name));
 
-		if (control->name == NULL) {
+		ಆದರೆ (control->name == ಖಾಲಿ) {
 			form_free_control(control);
-			control = NULL;
-			goto out;
+			control = ಖಾಲಿ;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
 	}
 
-	if (form != NULL && control != NULL)
-		form_add_control(find_form(forms, form), control);
+	ಆದರೆ (form != ಖಾಲಿ && control != ಖಾಲಿ)
+		form_ಕೂಡಿಸು_control(ಕಂಡುಹಿಡಿ_form(forms, form), control);
 
-out:
-	if (form != NULL)
-		dom_node_unref(form);
-	if (ds_type != NULL)
+ಹೊರಹೋಗು:
+	ಆದರೆ (form != ಖಾಲಿ)
+		dom_ಗಂಟು_unref(form);
+	ಆದರೆ (ds_type != ಖಾಲಿ)
 		dom_string_unref(ds_type);
-	if (ds_value != NULL)
-		dom_string_unref(ds_value);
-	if (ds_name != NULL)
+	ಆದರೆ (ds_ಮೌಲ್ಯ != ಖಾಲಿ)
+		dom_string_unref(ds_ಮೌಲ್ಯ);
+	ಆದರೆ (ds_name != ಖಾಲಿ)
 		dom_string_unref(ds_name);
 
-	return control;
+	ಹಿಂತಿರುಗಿ control;
 }
 
-static struct form_control *
-parse_input_element(struct form *forms, dom_html_input_element *input)
+ಸ್ಥಿರ ರಚನೆ form_control *
+parse_ಒಳಹರಿವು_element(ರಚನೆ form *forms, dom_html_ಒಳಹರಿವು_element *ಒಳಹರಿವು)
 {
-	struct form_control *control = NULL;
-	dom_html_form_element *form = NULL;
-	dom_string *ds_type = NULL;
-	dom_string *ds_name = NULL;
-	dom_string *ds_value = NULL;
+	ರಚನೆ form_control *control = ಖಾಲಿ;
+	dom_html_form_element *form = ಖಾಲಿ;
+	dom_string *ds_type = ಖಾಲಿ;
+	dom_string *ds_name = ಖಾಲಿ;
+	dom_string *ds_ಮೌಲ್ಯ = ಖಾಲಿ;
 
-	char *name = NULL;
+	ಅಕ್ಷರ *name = ಖಾಲಿ;
 
-	if (dom_html_input_element_get_form(input, &form) != DOM_NO_ERR)
-		goto out;
+	ಆದರೆ (dom_html_ಒಳಹರಿವು_element_get_form(ಒಳಹರಿವು, &form) != DOM_NO_ERR)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	if (dom_html_input_element_get_type(input, &ds_type) != DOM_NO_ERR)
-		goto out;
+	ಆದರೆ (dom_html_ಒಳಹರಿವು_element_get_type(ಒಳಹರಿವು, &ds_type) != DOM_NO_ERR)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	if (dom_html_input_element_get_name(input, &ds_name) != DOM_NO_ERR)
-		goto out;
+	ಆದರೆ (dom_html_ಒಳಹರಿವು_element_get_name(ಒಳಹರಿವು, &ds_name) != DOM_NO_ERR)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	if (ds_name != NULL)
-		name = strndup(dom_string_data(ds_name),
-			       dom_string_byte_length(ds_name));
+	ಆದರೆ (ds_name != ಖಾಲಿ)
+		name = strndup(dom_string_ದತ್ತಾಂಶ(ds_name),
+			       dom_string_byte_ಉದ್ದಳತೆ(ds_name));
 
-	if (ds_type != NULL && dom_string_caseless_lwc_isequal(ds_type,
+	ಆದರೆ (ds_type != ಖಾಲಿ && dom_string_caseless_lwc_isequal(ds_type,
 			corestring_lwc_password)) {
-		control = form_new_control(input, GADGET_PASSWORD);
-	} else if (ds_type != NULL && dom_string_caseless_lwc_isequal(ds_type,
+		control = form_new_control(ಒಳಹರಿವು, GADGET_PASSWORD);
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ds_type != ಖಾಲಿ && dom_string_caseless_lwc_isequal(ds_type,
 			corestring_lwc_file)) {
-		control = form_new_control(input, GADGET_FILE);
-	} else if (ds_type != NULL && dom_string_caseless_lwc_isequal(ds_type,
+		control = form_new_control(ಒಳಹರಿವು, GADGET_FILE);
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ds_type != ಖಾಲಿ && dom_string_caseless_lwc_isequal(ds_type,
 			corestring_lwc_hidden)) {
-		control = form_new_control(input, GADGET_HIDDEN);
-	} else if (ds_type != NULL && dom_string_caseless_lwc_isequal(ds_type,
+		control = form_new_control(ಒಳಹರಿವು, GADGET_HIDDEN);
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ds_type != ಖಾಲಿ && dom_string_caseless_lwc_isequal(ds_type,
 			corestring_lwc_checkbox)) {
-		control = form_new_control(input, GADGET_CHECKBOX);
-	} else if (ds_type != NULL && dom_string_caseless_lwc_isequal(ds_type,
+		control = form_new_control(ಒಳಹರಿವು, GADGET_CHECKBOX);
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ds_type != ಖಾಲಿ && dom_string_caseless_lwc_isequal(ds_type,
 			corestring_lwc_radio)) {
-		control = form_new_control(input, GADGET_RADIO);
-	} else if (ds_type != NULL && dom_string_caseless_lwc_isequal(ds_type,
+		control = form_new_control(ಒಳಹರಿವು, GADGET_RADIO);
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ds_type != ಖಾಲಿ && dom_string_caseless_lwc_isequal(ds_type,
 			corestring_lwc_submit)) {
-		control = form_new_control(input, GADGET_SUBMIT);
-	} else if (ds_type != NULL && dom_string_caseless_lwc_isequal(ds_type,
+		control = form_new_control(ಒಳಹರಿವು, GADGET_SUBMIT);
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ds_type != ಖಾಲಿ && dom_string_caseless_lwc_isequal(ds_type,
 			corestring_lwc_reset)) {
-		control = form_new_control(input, GADGET_RESET);
-	} else if (ds_type != NULL && dom_string_caseless_lwc_isequal(ds_type,
+		control = form_new_control(ಒಳಹರಿವು, GADGET_RESET);
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ds_type != ಖಾಲಿ && dom_string_caseless_lwc_isequal(ds_type,
 			corestring_lwc_button)) {
-		control = form_new_control(input, GADGET_BUTTON);
-	} else if (ds_type != NULL && dom_string_caseless_lwc_isequal(ds_type,
+		control = form_new_control(ಒಳಹರಿವು, GADGET_BUTTON);
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ds_type != ಖಾಲಿ && dom_string_caseless_lwc_isequal(ds_type,
 			corestring_lwc_image)) {
-		control = form_new_control(input, GADGET_IMAGE);
-	} else {
-		control = form_new_control(input, GADGET_TEXTBOX);
+		control = form_new_control(ಒಳಹರಿವು, GADGET_IMAGE);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		control = form_new_control(ಒಳಹರಿವು, GADGET_TEXTBOX);
 	}
 
-	if (control == NULL)
-		goto out;
+	ಆದರೆ (control == ಖಾಲಿ)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	if (name != NULL) {
+	ಆದರೆ (name != ಖಾಲಿ) {
 		/* Hand the name string over */
 		control->name = name;
-		name = NULL;
+		name = ಖಾಲಿ;
 	}
 
-	if (control->type == GADGET_CHECKBOX || control->type == GADGET_RADIO) {
+	ಆದರೆ (control->type == GADGET_CHECKBOX || control->type == GADGET_RADIO) {
 		bool selected;
-		if (dom_html_input_element_get_checked(
-			    input, &selected) == DOM_NO_ERR) {
+		ಆದರೆ (dom_html_ಒಳಹರಿವು_element_get_checked(
+			    ಒಳಹರಿವು, &selected) == DOM_NO_ERR) {
 			control->selected = selected;
 		}
 	}
 
-	if (control->type == GADGET_PASSWORD ||
+	ಆದರೆ (control->type == GADGET_PASSWORD ||
 	    control->type == GADGET_TEXTBOX) {
 		int32_t maxlength;
-		if (dom_html_input_element_get_max_length(
-			    input, &maxlength) != DOM_NO_ERR) {
+		ಆದರೆ (dom_html_ಒಳಹರಿವು_element_get_max_ಉದ್ದಳತೆ(
+			    ಒಳಹರಿವು, &maxlength) != DOM_NO_ERR) {
 			maxlength = -1;
 		}
 
-		if (maxlength >= 0) {
+		ಆದರೆ (maxlength >= 0) {
 			/* Got valid maxlength */
 			control->maxlength = maxlength;
-		} else {
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			/* Input has no maxlength attr, or
 			 * dom_html_input_element_get_max_length failed.
 			 *
@@ -358,235 +358,235 @@ parse_input_element(struct form *forms, dom_html_input_element *input)
 		}
 	}
 
-	if (control->type != GADGET_FILE && control->type != GADGET_IMAGE) {
-		if (dom_html_input_element_get_value(
-			    input, &ds_value) == DOM_NO_ERR) {
-			if (ds_value != NULL) {
-				control->value = strndup(
-					dom_string_data(ds_value),
-					dom_string_byte_length(ds_value));
-				if (control->value == NULL) {
+	ಆದರೆ (control->type != GADGET_FILE && control->type != GADGET_IMAGE) {
+		ಆದರೆ (dom_html_ಒಳಹರಿವು_element_get_ಮೌಲ್ಯ(
+			    ಒಳಹರಿವು, &ds_ಮೌಲ್ಯ) == DOM_NO_ERR) {
+			ಆದರೆ (ds_ಮೌಲ್ಯ != ಖಾಲಿ) {
+				control->ಮೌಲ್ಯ = strndup(
+					dom_string_ದತ್ತಾಂಶ(ds_ಮೌಲ್ಯ),
+					dom_string_byte_ಉದ್ದಳತೆ(ds_ಮೌಲ್ಯ));
+				ಆದರೆ (control->ಮೌಲ್ಯ == ಖಾಲಿ) {
 					form_free_control(control);
-					control = NULL;
-					goto out;
+					control = ಖಾಲಿ;
+					ಹೋಗು ಹೊರಹೋಗು;
 				}
-				control->length = strlen(control->value);
+				control->ಉದ್ದಳತೆ = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(control->ಮೌಲ್ಯ);
 			}
 		}
 
-		if (control->type == GADGET_TEXTBOX ||
+		ಆದರೆ (control->type == GADGET_TEXTBOX ||
 				control->type == GADGET_PASSWORD) {
-			if (control->value == NULL) {
-				control->value = strdup("");
-				if (control->value == NULL) {
+			ಆದರೆ (control->ಮೌಲ್ಯ == ಖಾಲಿ) {
+				control->ಮೌಲ್ಯ = strdup("");
+				ಆದರೆ (control->ಮೌಲ್ಯ == ಖಾಲಿ) {
 					form_free_control(control);
-					control = NULL;
-					goto out;
+					control = ಖಾಲಿ;
+					ಹೋಗು ಹೊರಹೋಗು;
 				}
 
-				control->length = 0;
+				control->ಉದ್ದಳತೆ = 0;
 			}
 
-			control->initial_value = strdup(control->value);
-			if (control->initial_value == NULL) {
+			control->initial_ಮೌಲ್ಯ = strdup(control->ಮೌಲ್ಯ);
+			ಆದರೆ (control->initial_ಮೌಲ್ಯ == ಖಾಲಿ) {
 				form_free_control(control);
-				control = NULL;
-				goto out;
+				control = ಖಾಲಿ;
+				ಹೋಗು ಹೊರಹೋಗು;
 			}
 
-			control->last_synced_value = strdup(control->value);
-			if (control->last_synced_value == NULL) {
+			control->ಕೊನೆಯ_synced_ಮೌಲ್ಯ = strdup(control->ಮೌಲ್ಯ);
+			ಆದರೆ (control->ಕೊನೆಯ_synced_ಮೌಲ್ಯ == ಖಾಲಿ) {
 				form_free_control(control);
-				control = NULL;
-				goto out;
+				control = ಖಾಲಿ;
+				ಹೋಗು ಹೊರಹೋಗು;
 			}
 
-			control->node_value = dom_string_ref(ds_value);
+			control->ಗಂಟು_ಮೌಲ್ಯ = dom_string_ref(ds_ಮೌಲ್ಯ);
 		}
 		/* Force the gadget and DOM to be in sync */
 		form_gadget_sync_with_dom(control);
 	}
 
-	if (form != NULL && control != NULL)
-		form_add_control(find_form(forms, form), control);
+	ಆದರೆ (form != ಖಾಲಿ && control != ಖಾಲಿ)
+		form_ಕೂಡಿಸು_control(ಕಂಡುಹಿಡಿ_form(forms, form), control);
 
-out:
-	if (form != NULL)
-		dom_node_unref(form);
-	if (ds_type != NULL)
+ಹೊರಹೋಗು:
+	ಆದರೆ (form != ಖಾಲಿ)
+		dom_ಗಂಟು_unref(form);
+	ಆದರೆ (ds_type != ಖಾಲಿ)
 		dom_string_unref(ds_type);
-	if (ds_name != NULL)
+	ಆದರೆ (ds_name != ಖಾಲಿ)
 		dom_string_unref(ds_name);
-	if (ds_value != NULL)
-		dom_string_unref(ds_value);
+	ಆದರೆ (ds_ಮೌಲ್ಯ != ಖಾಲಿ)
+		dom_string_unref(ds_ಮೌಲ್ಯ);
 
-	if (name != NULL)
-		free(name);
+	ಆದರೆ (name != ಖಾಲಿ)
+		ಬಿಡುಗಡೆ(name);
 
-	return control;
+	ಹಿಂತಿರುಗಿ control;
 }
 
-static struct form_control *
-parse_textarea_element(struct form *forms, dom_html_text_area_element *ta)
+ಸ್ಥಿರ ರಚನೆ form_control *
+parse_textarea_element(ರಚನೆ form *forms, dom_html_ಪಠ್ಯ_area_element *ta)
 {
-	struct form_control *control = NULL;
-	dom_html_form_element *form = NULL;
-	dom_string *ds_name = NULL;
+	ರಚನೆ form_control *control = ಖಾಲಿ;
+	dom_html_form_element *form = ಖಾಲಿ;
+	dom_string *ds_name = ಖಾಲಿ;
 
-	char *name = NULL;
+	ಅಕ್ಷರ *name = ಖಾಲಿ;
 
-	if (dom_html_text_area_element_get_form(ta, &form) != DOM_NO_ERR)
-		goto out;
+	ಆದರೆ (dom_html_ಪಠ್ಯ_area_element_get_form(ta, &form) != DOM_NO_ERR)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	if (dom_html_text_area_element_get_name(ta, &ds_name) != DOM_NO_ERR)
-		goto out;
+	ಆದರೆ (dom_html_ಪಠ್ಯ_area_element_get_name(ta, &ds_name) != DOM_NO_ERR)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	if (ds_name != NULL)
-		name = strndup(dom_string_data(ds_name),
-			       dom_string_byte_length(ds_name));
+	ಆದರೆ (ds_name != ಖಾಲಿ)
+		name = strndup(dom_string_ದತ್ತಾಂಶ(ds_name),
+			       dom_string_byte_ಉದ್ದಳತೆ(ds_name));
 
 	control = form_new_control(ta, GADGET_TEXTAREA);
 
-	if (control == NULL)
-		goto out;
+	ಆದರೆ (control == ಖಾಲಿ)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	if (name != NULL) {
+	ಆದರೆ (name != ಖಾಲಿ) {
 		/* Hand the name string over */
 		control->name = name;
-		name = NULL;
+		name = ಖಾಲಿ;
 	}
 
-	if (form != NULL && control != NULL)
-		form_add_control(find_form(forms, form), control);
+	ಆದರೆ (form != ಖಾಲಿ && control != ಖಾಲಿ)
+		form_ಕೂಡಿಸು_control(ಕಂಡುಹಿಡಿ_form(forms, form), control);
 
-out:
-	if (form != NULL)
-		dom_node_unref(form);
-	if (ds_name != NULL)
+ಹೊರಹೋಗು:
+	ಆದರೆ (form != ಖಾಲಿ)
+		dom_ಗಂಟು_unref(form);
+	ಆದರೆ (ds_name != ಖಾಲಿ)
 		dom_string_unref(ds_name);
 
-	if (name != NULL)
-		free(name);
+	ಆದರೆ (name != ಖಾಲಿ)
+		ಬಿಡುಗಡೆ(name);
 
 
-	return control;
+	ಹಿಂತಿರುಗಿ control;
 }
 
-static struct form_control *
-parse_select_element(struct form *forms, dom_html_select_element *select)
+ಸ್ಥಿರ ರಚನೆ form_control *
+parse_select_element(ರಚನೆ form *forms, dom_html_select_element *select)
 {
-	struct form_control *control = NULL;
-	dom_html_form_element *form = NULL;
-	dom_string *ds_name = NULL;
+	ರಚನೆ form_control *control = ಖಾಲಿ;
+	dom_html_form_element *form = ಖಾಲಿ;
+	dom_string *ds_name = ಖಾಲಿ;
 
-	char *name = NULL;
+	ಅಕ್ಷರ *name = ಖಾಲಿ;
 
-	if (dom_html_select_element_get_form(select, &form) != DOM_NO_ERR)
-		goto out;
+	ಆದರೆ (dom_html_select_element_get_form(select, &form) != DOM_NO_ERR)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	if (dom_html_select_element_get_name(select, &ds_name) != DOM_NO_ERR)
-		goto out;
+	ಆದರೆ (dom_html_select_element_get_name(select, &ds_name) != DOM_NO_ERR)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	if (ds_name != NULL)
-		name = strndup(dom_string_data(ds_name),
-			       dom_string_byte_length(ds_name));
+	ಆದರೆ (ds_name != ಖಾಲಿ)
+		name = strndup(dom_string_ದತ್ತಾಂಶ(ds_name),
+			       dom_string_byte_ಉದ್ದಳತೆ(ds_name));
 
 	control = form_new_control(select, GADGET_SELECT);
 
-	if (control == NULL)
-		goto out;
+	ಆದರೆ (control == ಖಾಲಿ)
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	if (name != NULL) {
+	ಆದರೆ (name != ಖಾಲಿ) {
 		/* Hand the name string over */
 		control->name = name;
-		name = NULL;
+		name = ಖಾಲಿ;
 	}
 
-	dom_html_select_element_get_multiple(select,
-			&(control->data.select.multiple));
+	dom_html_select_element_get_ಅಪವರ್ತ್ಯ(select,
+			&(control->ದತ್ತಾಂಶ.select.ಅಪವರ್ತ್ಯ));
 
-	if (form != NULL && control != NULL)
-		form_add_control(find_form(forms, form), control);
+	ಆದರೆ (form != ಖಾಲಿ && control != ಖಾಲಿ)
+		form_ಕೂಡಿಸು_control(ಕಂಡುಹಿಡಿ_form(forms, form), control);
 
-out:
-	if (form != NULL)
-		dom_node_unref(form);
-	if (ds_name != NULL)
+ಹೊರಹೋಗು:
+	ಆದರೆ (form != ಖಾಲಿ)
+		dom_ಗಂಟು_unref(form);
+	ಆದರೆ (ds_name != ಖಾಲಿ)
 		dom_string_unref(ds_name);
 
-	if (name != NULL)
-		free(name);
+	ಆದರೆ (name != ಖಾಲಿ)
+		ಬಿಡುಗಡೆ(name);
 
 
-	return control;
+	ಹಿಂತಿರುಗಿ control;
 }
 
 
-static struct form_control *
-invent_fake_gadget(dom_node *node)
+ಸ್ಥಿರ ರಚನೆ form_control *
+invent_fake_gadget(dom_ಗಂಟು *ಗಂಟು)
 {
-	struct form_control *ctl = form_new_control(node, GADGET_HIDDEN);
-	if (ctl != NULL) {
-		ctl->value = strdup("");
-		ctl->initial_value = strdup("");
+	ರಚನೆ form_control *ctl = form_new_control(ಗಂಟು, GADGET_HIDDEN);
+	ಆದರೆ (ctl != ಖಾಲಿ) {
+		ctl->ಮೌಲ್ಯ = strdup("");
+		ctl->initial_ಮೌಲ್ಯ = strdup("");
 		ctl->name = strdup("foo");
 
-		if (ctl->value == NULL || ctl->initial_value == NULL ||
-				ctl->name == NULL) {
+		ಆದರೆ (ctl->ಮೌಲ್ಯ == ಖಾಲಿ || ctl->initial_ಮೌಲ್ಯ == ಖಾಲಿ ||
+				ctl->name == ಖಾಲಿ) {
 			form_free_control(ctl);
-			ctl = NULL;
+			ctl = ಖಾಲಿ;
 		}
 	}
-	return ctl;
+	ಹಿಂತಿರುಗಿ ctl;
 }
 
 /* documented in html_internal.h */
-struct form_control *
-html_forms_get_control_for_node(struct form *forms, dom_node *node)
+ರಚನೆ form_control *
+html_forms_get_control_for_ಗಂಟು(ರಚನೆ form *forms, dom_ಗಂಟು *ಗಂಟು)
 {
-	struct form *f;
-	struct form_control *ctl = NULL;
+	ರಚನೆ form *f;
+	ರಚನೆ form_control *ctl = ಖಾಲಿ;
 	dom_exception err;
-	dom_string *ds_name = NULL;
+	dom_string *ds_name = ಖಾಲಿ;
 
 	/* Step one, see if we already have a control */
-	for (f = forms; f != NULL; f = f->prev) {
-		for (ctl = f->controls; ctl != NULL; ctl = ctl->next) {
-			if (ctl->node == node)
-				return ctl;
+	ಗಾಗಿ (f = forms; f != ಖಾಲಿ; f = f->prev) {
+		ಗಾಗಿ (ctl = f->controls; ctl != ಖಾಲಿ; ctl = ctl->ಮುಂದಿನ) {
+			ಆದರೆ (ctl->ಗಂಟು == ಗಂಟು)
+				ಹಿಂತಿರುಗಿ ctl;
 		}
 	}
 
 	/* Step two, extract the node's name so we can construct a gadget. */
-	err = dom_element_get_tag_name(node, &ds_name);
-	if (err == DOM_NO_ERR && ds_name != NULL) {
+	err = dom_element_get_ಟ್ಯಾಗ್_name(ಗಂಟು, &ds_name);
+	ಆದರೆ (err == DOM_NO_ERR && ds_name != ಖಾಲಿ) {
 
 		/* Step three, attempt to work out what gadget to make */
-		if (dom_string_caseless_lwc_isequal(ds_name,
+		ಆದರೆ (dom_string_caseless_lwc_isequal(ds_name,
 				corestring_lwc_button)) {
 			ctl = parse_button_element(forms,
-					(dom_html_button_element *) node);
-		} else if (dom_string_caseless_lwc_isequal(ds_name,
-				corestring_lwc_input)) {
-			ctl = parse_input_element(forms,
-					(dom_html_input_element *) node);
-		} else if (dom_string_caseless_lwc_isequal(ds_name,
+					(dom_html_button_element *) ಗಂಟು);
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (dom_string_caseless_lwc_isequal(ds_name,
+				corestring_lwc_ಒಳಹರಿವು)) {
+			ctl = parse_ಒಳಹರಿವು_element(forms,
+					(dom_html_ಒಳಹರಿವು_element *) ಗಂಟು);
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (dom_string_caseless_lwc_isequal(ds_name,
 				corestring_lwc_textarea)) {
 			ctl = parse_textarea_element(forms,
-					(dom_html_text_area_element *) node);
-		} else if (dom_string_caseless_lwc_isequal(ds_name,
+					(dom_html_ಪಠ್ಯ_area_element *) ಗಂಟು);
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (dom_string_caseless_lwc_isequal(ds_name,
 				corestring_lwc_select)) {
 			ctl = parse_select_element(forms,
-					(dom_html_select_element *) node);
+					(dom_html_select_element *) ಗಂಟು);
 		}
 	}
 
 	/* If all else fails, fake gadget time */
-	if (ctl == NULL)
-		ctl = invent_fake_gadget(node);
+	ಆದರೆ (ctl == ಖಾಲಿ)
+		ctl = invent_fake_gadget(ಗಂಟು);
 
-	if (ds_name != NULL)
+	ಆದರೆ (ds_name != ಖಾಲಿ)
 		dom_string_unref(ds_name);
 
-	return ctl;
+	ಹಿಂತಿರುಗಿ ctl;
 }

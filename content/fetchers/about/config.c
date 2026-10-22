@@ -21,16 +21,16 @@
  * content generator for the about scheme blank page
  */
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include "netsurf/types.h"
-#include "utils/errors.h"
-#include "utils/nsoption.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/types.h"
+#ಅನ್ತರ್ಭಾವ "utils/errors.h"
+#ಅನ್ತರ್ಭಾವ "utils/nsoption.h"
 
-#include "private.h"
-#include "config.h"
+#ಅನ್ತರ್ಭಾವ "private.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
 
 /**
  * Handler to generate about scheme config page
@@ -38,21 +38,21 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_config_handler(struct fetch_about_context *ctx)
+bool fetch_about_config_handler(ರಚನೆ fetch_about_context *ctx)
 {
-	char buffer[1024];
-	int slen = 0;
-	unsigned int opt_loop = 0;
-	int elen = 0; /* entry length */
+	ಅಕ್ಷರ ಬಫರ್[1024];
+	ಪೂರ್ಣಾಂಕ slen = 0;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ opt_loop = 0;
+	ಪೂರ್ಣಾಂಕ elen = 0; /* entry length */
 	nserror res;
 	bool even = false;
 
 	/* content is going to return ok */
-	fetch_about_set_http_code(ctx, 200);
+	fetch_about_ಗಣ_http_ಸಂಕೇತ(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html")) {
-		goto fetch_about_config_handler_aborted;
+	ಆದರೆ (fetch_about_send_ಶೀರ್ಷಿಕೆ(ctx, "Content-Type: text/html")) {
+		ಹೋಗು fetch_about_config_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
@@ -71,15 +71,15 @@ bool fetch_about_config_handler(struct fetch_about_context *ctx)
 			"<th>Type</th>"
 			"<th>Provenance</th>"
 			"<th>Setting</th></tr>\n");
-	if (res != NSERROR_OK) {
-		goto fetch_about_config_handler_aborted;
+	ಆದರೆ (res != NSERROR_OK) {
+		ಹೋಗು fetch_about_config_handler_aborted;
 	}
 
 
-	do {
-		if (even) {
-			elen = nsoption_snoptionf(buffer + slen,
-					sizeof buffer - slen,
+	ಮಾಡು {
+		ಆದರೆ (even) {
+			elen = nsoption_snoptionf(ಬಫರ್ + slen,
+					ಗಾತ್ರ ಬಫರ್ - slen,
 					opt_loop,
 					"<tr class=\"ns-even-bg\">"
 						"<th class=\"ns-border\">%k</th>"
@@ -87,9 +87,9 @@ bool fetch_about_config_handler(struct fetch_about_context *ctx)
 						"<td class=\"ns-border\">%p</td>"
 						"<td class=\"ns-border\">%V</td>"
 					"</tr>\n");
-		} else {
-			elen = nsoption_snoptionf(buffer + slen,
-					sizeof buffer - slen,
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			elen = nsoption_snoptionf(ಬಫರ್ + slen,
+					ಗಾತ್ರ ಬಫರ್ - slen,
 					opt_loop,
 					"<tr class=\"ns-odd-bg\">"
 						"<th class=\"ns-border\">%k</th>"
@@ -98,36 +98,36 @@ bool fetch_about_config_handler(struct fetch_about_context *ctx)
 						"<td class=\"ns-border\">%V</td>"
 					"</tr>\n");
 		}
-		if (elen <= 0)
-			break; /* last option */
+		ಆದರೆ (elen <= 0)
+			ನಿಲ್ಲಿಸು; /* last option */
 
-		if (elen >= (int) (sizeof buffer - slen)) {
+		ಆದರೆ (elen >= (ಪೂರ್ಣಾಂಕ) (ಗಾತ್ರ ಬಫರ್ - slen)) {
 			/* last entry would not fit in buffer, submit buffer */
-			res = fetch_about_senddata(ctx, (const uint8_t *)buffer, slen);
-			if (res != NSERROR_OK) {
-				goto fetch_about_config_handler_aborted;
+			res = fetch_about_senddata(ctx, (ಸ್ಥಿರಾಂಕ uint8_t *)ಬಫರ್, slen);
+			ಆದರೆ (res != NSERROR_OK) {
+				ಹೋಗು fetch_about_config_handler_aborted;
 			}
 			slen = 0;
-		} else {
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			/* normal addition */
 			slen += elen;
 			opt_loop++;
 			even = !even;
 		}
-	} while (elen > 0);
+	} ಆಗ (elen > 0);
 
-	slen += snprintf(buffer + slen, sizeof buffer - slen,
+	slen += snprintf(ಬಫರ್ + slen, ಗಾತ್ರ ಬಫರ್ - slen,
 			 "</table>\n</body>\n</html>\n");
 
-	res = fetch_about_senddata(ctx, (const uint8_t *)buffer, slen);
-	if (res != NSERROR_OK) {
-		goto fetch_about_config_handler_aborted;
+	res = fetch_about_senddata(ctx, (ಸ್ಥಿರಾಂಕ uint8_t *)ಬಫರ್, slen);
+	ಆದರೆ (res != NSERROR_OK) {
+		ಹೋಗು fetch_about_config_handler_aborted;
 	}
 
-	fetch_about_send_finished(ctx);
+	fetch_about_send_ಪೂರ್ಣಗೊಂಡ(ctx);
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 
 fetch_about_config_handler_aborted:
-	return false;
+	ಹಿಂತಿರುಗಿ false;
 }

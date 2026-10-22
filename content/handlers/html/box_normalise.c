@@ -24,47 +24,47 @@
  * Box tree normalisation implementation.
  */
 
-#include <assert.h>
-#include <stdbool.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include "utils/log.h"
-#include "utils/errors.h"
-#include "css/select.h"
+#ಅನ್ತರ್ಭಾವ "utils/log.h"
+#ಅನ್ತರ್ಭಾವ "utils/errors.h"
+#ಅನ್ತರ್ಭಾವ "css/select.h"
 
-#include "html/private.h"
-#include "html/table.h"
-#include "html/box.h"
-#include "html/box_manipulate.h"
-#include "html/box_normalise.h"
+#ಅನ್ತರ್ಭಾವ "html/private.h"
+#ಅನ್ತರ್ಭಾವ "html/table.h"
+#ಅನ್ತರ್ಭಾವ "html/box.h"
+#ಅನ್ತರ್ಭಾವ "html/box_manipulate.h"
+#ಅನ್ತರ್ಭಾವ "html/box_normalise.h"
 
 /* Define to enable box normalise debug */
-#undef BOX_NORMALISE_DEBUG
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು BOX_NORMALISE_DEBUG
 
 /**
  * Row spanning information for a cell
  */
-struct span_info {
+ರಚನೆ ಹರವು_info {
 	/** Number of rows this cell spans */
-	unsigned int row_span;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಅಡ್ಡಸಾಲು_ಹರವು;
 	/** Row group of cell */
-	struct box *rg;
+	ರಚನೆ box *rg;
 	/** The cell in this column spans all rows until the end of the table */
-	bool auto_row;
+	bool auto_ಅಡ್ಡಸಾಲು;
 };
 
 /**
  * Column record for a table
  */
-struct columns {
+ರಚನೆ columns {
 	/** Current column index */
-	unsigned int current_column;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ current_ಸ್ತಂಭ;
 	/** Number of columns in main part of table 1..max columns */
-	unsigned int num_columns;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಅಂಕೆ_columns;
 	/** Information about columns in main table, array [0, num_columns) */
-	struct span_info *spans;
+	ರಚನೆ ಹರವು_info *spans;
 	/** Number of rows in table */
-	unsigned int num_rows;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಅಂಕೆ_ಅಡ್ಡಸಾಲುಗಳು;
 };
 
 
@@ -79,367 +79,367 @@ struct columns {
  * \param cell		Box for current table cell
  * \return  true on success, false on memory exhaustion
  */
-static bool
-calculate_table_row(struct columns *col_info,
-		    unsigned int col_span,
-		    unsigned int row_span,
-		    unsigned int *start_column,
-		    struct box *cell)
+ಸ್ಥಿರ bool
+calculate_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು(ರಚನೆ columns *ಲಂಬಸಾಲು_info,
+		    ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಲಂಬಸಾಲು_ಹರವು,
+		    ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಅಡ್ಡಸಾಲು_ಹರವು,
+		    ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ *ಆರಂಭ_ಸ್ತಂಭ,
+		    ರಚನೆ box *cell)
 {
-	unsigned int cell_start_col = col_info->current_column;
-	unsigned int cell_end_col;
-	unsigned int i;
-	struct span_info *spans;
-	struct box *rg = cell->parent->parent; /* Cell's row group */
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ cell_ಆರಂಭ_ಲಂಬಸಾಲು = ಲಂಬಸಾಲು_info->current_ಸ್ತಂಭ;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ cell_ಕೊನೆ_ಲಂಬಸಾಲು;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ i;
+	ರಚನೆ ಹರವು_info *spans;
+	ರಚನೆ box *rg = cell->ಪೋಷಕ->ಪೋಷಕ; /* Cell's row group */
 
 	/* Skip columns with cells spanning from above */
 	/* TODO: Need to ignore cells spanning from above that belong to
 	 *       different row group.  We don't have that info here. */
-	while (col_info->spans[cell_start_col].row_span != 0 &&
-			col_info->spans[cell_start_col].rg == rg) {
-		cell_start_col++;
+	ಆಗ (ಲಂಬಸಾಲು_info->spans[cell_ಆರಂಭ_ಲಂಬಸಾಲು].ಅಡ್ಡಸಾಲು_ಹರವು != 0 &&
+			ಲಂಬಸಾಲು_info->spans[cell_ಆರಂಭ_ಲಂಬಸಾಲು].rg == rg) {
+		cell_ಆರಂಭ_ಲಂಬಸಾಲು++;
 	}
 
 	/* Update current column with calculated start */
-	col_info->current_column = cell_start_col;
+	ಲಂಬಸಾಲು_info->current_ಸ್ತಂಭ = cell_ಆರಂಭ_ಲಂಬಸಾಲು;
 
 	/* If this cell has a colspan of 0, then assume 1.
 	 * No other browser supports colspan=0, anyway. */
-	if (col_span == 0)
-		col_span = 1;
+	ಆದರೆ (ಲಂಬಸಾಲು_ಹರವು == 0)
+		ಲಂಬಸಾಲು_ಹರವು = 1;
 
-	cell_end_col = cell_start_col + col_span;
+	cell_ಕೊನೆ_ಲಂಬಸಾಲು = cell_ಆರಂಭ_ಲಂಬಸಾಲು + ಲಂಬಸಾಲು_ಹರವು;
 
-	if (col_info->num_columns < cell_end_col) {
+	ಆದರೆ (ಲಂಬಸಾಲು_info->ಅಂಕೆ_columns < cell_ಕೊನೆ_ಲಂಬಸಾಲು) {
 		/* It appears that this row has more columns than
 		 * the maximum recorded for the table so far.
 		 * Allocate more span records. */
-		spans = realloc(col_info->spans,
-				sizeof *spans * (cell_end_col + 1));
-		if (spans == NULL)
-			return false;
+		spans = realloc(ಲಂಬಸಾಲು_info->spans,
+				ಗಾತ್ರ *spans * (cell_ಕೊನೆ_ಲಂಬಸಾಲು + 1));
+		ಆದರೆ (spans == ಖಾಲಿ)
+			ಹಿಂತಿರುಗಿ false;
 
-		col_info->spans = spans;
-		col_info->num_columns = cell_end_col;
+		ಲಂಬಸಾಲು_info->spans = spans;
+		ಲಂಬಸಾಲು_info->ಅಂಕೆ_columns = cell_ಕೊನೆ_ಲಂಬಸಾಲು;
 
 		/* Mark new final column as sentinel */
-		col_info->spans[cell_end_col].row_span = 0;
-		col_info->spans[cell_end_col].auto_row = false;
+		ಲಂಬಸಾಲು_info->spans[cell_ಕೊನೆ_ಲಂಬಸಾಲು].ಅಡ್ಡಸಾಲು_ಹರವು = 0;
+		ಲಂಬಸಾಲು_info->spans[cell_ಕೊನೆ_ಲಂಬಸಾಲು].auto_ಅಡ್ಡಸಾಲು = false;
 	}
 
 	/* This cell may span multiple columns. If it also wants to span
 	 * multiple rows, temporarily assume it spans 1 row only. This will
 	 * be fixed up in box_normalise_table_spans() */
-	for (i = cell_start_col; i < cell_end_col; i++) {
-		col_info->spans[i].row_span = (row_span == 0) ? 1 : row_span;
-		col_info->spans[i].auto_row = (row_span == 0);
-		col_info->spans[i].rg = rg;
+	ಗಾಗಿ (i = cell_ಆರಂಭ_ಲಂಬಸಾಲು; i < cell_ಕೊನೆ_ಲಂಬಸಾಲು; i++) {
+		ಲಂಬಸಾಲು_info->spans[i].ಅಡ್ಡಸಾಲು_ಹರವು = (ಅಡ್ಡಸಾಲು_ಹರವು == 0) ? 1 : ಅಡ್ಡಸಾಲು_ಹರವು;
+		ಲಂಬಸಾಲು_info->spans[i].auto_ಅಡ್ಡಸಾಲು = (ಅಡ್ಡಸಾಲು_ಹರವು == 0);
+		ಲಂಬಸಾಲು_info->spans[i].rg = rg;
 	}
 
 	/* Update current column with calculated end. */
-	col_info->current_column = cell_end_col;
+	ಲಂಬಸಾಲು_info->current_ಸ್ತಂಭ = cell_ಕೊನೆ_ಲಂಬಸಾಲು;
 
-	*start_column = cell_start_col;
+	*ಆರಂಭ_ಸ್ತಂಭ = cell_ಆರಂಭ_ಲಂಬಸಾಲು;
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
 
-static bool
-box_normalise_table_row(struct box *row,
-			const struct box *root,
-			struct columns *col_info,
+ಸ್ಥಿರ bool
+box_normalise_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು(ರಚನೆ box *ಅಡ್ಡಸಾಲು,
+			ಸ್ಥಿರಾಂಕ ರಚನೆ box *ಬೇರು,
+			ರಚನೆ columns *ಲಂಬಸಾಲು_info,
 			html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *cell = NULL;
+	ರಚನೆ box *ಮಗು;
+	ರಚನೆ box *ಮುಂದಿನ_ಮಗು;
+	ರಚನೆ box *cell = ಖಾಲಿ;
 	css_computed_style *style;
-	unsigned int i;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ i;
 	nscss_select_ctx ctx;
 
-	assert(row != NULL);
-	assert(row->type == BOX_TABLE_ROW);
+	ಪ್ರತಿಜ್ಞಾ(ಅಡ್ಡಸಾಲು != ಖಾಲಿ);
+	ಪ್ರತಿಜ್ಞಾ(ಅಡ್ಡಸಾಲು->type == BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು);
 
-	ctx.root_style = root->style;
+	ctx.ಬೇರು_style = ಬೇರು->style;
 
-#ifdef BOX_NORMALISE_DEBUG
-	NSLOG(netsurf, INFO, "row %p", row);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BOX_NORMALISE_DEBUG
+	NSLOG(netsurf, INFO, "row %p", ಅಡ್ಡಸಾಲು);
+#ಆದರೆ_ಅಂತ್ಯ
 
-	for (child = row->children; child != NULL; child = next_child) {
-		next_child = child->next;
+	ಗಾಗಿ (ಮಗು = ಅಡ್ಡಸಾಲು->children; ಮಗು != ಖಾಲಿ; ಮಗು = ಮುಂದಿನ_ಮಗು) {
+		ಮುಂದಿನ_ಮಗು = ಮಗು->ಮುಂದಿನ;
 
-		switch (child->type) {
-		case BOX_TABLE_CELL:
+		ಆಯ್ಕೆ (ಮಗು->type) {
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ_CELL:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
-			cell = child;
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
+			ಆದರೆ (box_normalise_ಖಂಡ(ಮಗು, ಬೇರು, c) == false)
+				ಹಿಂತಿರುಗಿ false;
+			cell = ಮಗು;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ BOX_FLEX:
+		ಸ್ಥಿತಿ BOX_ಖಂಡ:
+		ಸ್ಥಿತಿ BOX_INLINE_CONTAINER:
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ:
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು:
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು:
 			/* insert implied table cell */
-			assert(row->style != NULL);
+			ಪ್ರತಿಜ್ಞಾ(ಅಡ್ಡಸಾಲು->style != ಖಾಲಿ);
 
 			ctx.ctx = c->select_ctx;
-			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-			ctx.base_url = c->base_url;
+			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_ಬಹುಲಕ_ತುಂಬಿದ);
+			ctx.ತಳ_url = c->ತಳ_url;
 			ctx.universal = c->universal;
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
-					row->style);
-			if (style == NULL)
-				return false;
+					ಅಡ್ಡಸಾಲು->style);
+			ಆದರೆ (style == ಖಾಲಿ)
+				ಹಿಂತಿರುಗಿ false;
 
-			cell = box_create(NULL, style, true, row->href,
-					row->target, NULL, NULL, c->bctx);
-			if (cell == NULL) {
+			cell = box_create(ಖಾಲಿ, style, true, ಅಡ್ಡಸಾಲು->href,
+					ಅಡ್ಡಸಾಲು->ಗುರಿ, ಖಾಲಿ, ಖಾಲಿ, c->bctx);
+			ಆದರೆ (cell == ಖಾಲಿ) {
 				css_computed_style_destroy(style);
-				return false;
+				ಹಿಂತಿರುಗಿ false;
 			}
-			cell->type = BOX_TABLE_CELL;
+			cell->type = BOX_ಕೋಷ್ಟಕ_CELL;
 
-			if (child->prev == NULL)
-				row->children = cell;
-			else
-				child->prev->next = cell;
+			ಆದರೆ (ಮಗು->prev == ಖಾಲಿ)
+				ಅಡ್ಡಸಾಲು->children = cell;
+			ಇಲ್ಲದಿದ್ದರೆ
+				ಮಗು->prev->ಮುಂದಿನ = cell;
 
-			cell->prev = child->prev;
+			cell->prev = ಮಗು->prev;
 
-			while (child != NULL && (
-					child->type == BOX_FLEX ||
-					child->type == BOX_BLOCK ||
-					child->type == BOX_INLINE_CONTAINER ||
-					child->type == BOX_TABLE ||
-					child->type == BOX_TABLE_ROW_GROUP ||
-					child->type == BOX_TABLE_ROW)) {
-				box_add_child(cell, child);
+			ಆಗ (ಮಗು != ಖಾಲಿ && (
+					ಮಗು->type == BOX_FLEX ||
+					ಮಗು->type == BOX_ಖಂಡ ||
+					ಮಗು->type == BOX_INLINE_CONTAINER ||
+					ಮಗು->type == BOX_ಕೋಷ್ಟಕ ||
+					ಮಗು->type == BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು ||
+					ಮಗು->type == BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು)) {
+				box_ಕೂಡಿಸು_ಮಗು(cell, ಮಗು);
 
-				next_child = child->next;
-				child->next = NULL;
-				child = next_child;
+				ಮುಂದಿನ_ಮಗು = ಮಗು->ಮುಂದಿನ;
+				ಮಗು->ಮುಂದಿನ = ಖಾಲಿ;
+				ಮಗು = ಮುಂದಿನ_ಮಗು;
 			}
 
-			assert(cell->last != NULL);
+			ಪ್ರತಿಜ್ಞಾ(cell->ಕೊನೆಯ != ಖಾಲಿ);
 
-			cell->last->next = NULL;
-			cell->next = next_child = child;
-			if (cell->next != NULL)
-				cell->next->prev = cell;
-			else
-				row->last = cell;
-			cell->parent = row;
+			cell->ಕೊನೆಯ->ಮುಂದಿನ = ಖಾಲಿ;
+			cell->ಮುಂದಿನ = ಮುಂದಿನ_ಮಗು = ಮಗು;
+			ಆದರೆ (cell->ಮುಂದಿನ != ಖಾಲಿ)
+				cell->ಮುಂದಿನ->prev = cell;
+			ಇಲ್ಲದಿದ್ದರೆ
+				ಅಡ್ಡಸಾಲು->ಕೊನೆಯ = cell;
+			cell->ಪೋಷಕ = ಅಡ್ಡಸಾಲು;
 
-			if (box_normalise_block(cell, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+			ಆದರೆ (box_normalise_ಖಂಡ(cell, ಬೇರು, c) == false)
+				ಹಿಂತಿರುಗಿ false;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ BOX_INLINE:
+		ಸ್ಥಿತಿ BOX_INLINE_ಕೊನೆ:
+		ಸ್ಥಿತಿ BOX_INLINE_FLEX:
+		ಸ್ಥಿತಿ BOX_INLINE_ಖಂಡ:
+		ಸ್ಥಿತಿ BOX_FLOAT_ಎಡ:
+		ಸ್ಥಿತಿ BOX_FLOAT_ಬಲ:
+		ಸ್ಥಿತಿ BOX_BR:
+		ಸ್ಥಿತಿ BOX_ಪಠ್ಯ:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		default:
-			assert(0);
+			ಪ್ರತಿಜ್ಞಾ(0);
+			ನಿಲ್ಲಿಸು;
+		ಪೂರ್ವನಿಯೋಜಿತ:
+			ಪ್ರತಿಜ್ಞಾ(0);
 		}
 
-		if (calculate_table_row(col_info, cell->columns, cell->rows,
-				&cell->start_column, cell) == false)
-			return false;
+		ಆದರೆ (calculate_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು(ಲಂಬಸಾಲು_info, cell->columns, cell->ಅಡ್ಡಸಾಲುಗಳು,
+				&cell->ಆರಂಭ_ಸ್ತಂಭ, cell) == false)
+			ಹಿಂತಿರುಗಿ false;
 	}
 
 
 	/* Update row spanning details for all columns */
-	for (i = 0; i < col_info->num_columns; i++) {
-		if (col_info->spans[i].row_span != 0 &&
-				col_info->spans[i].auto_row == false) {
+	ಗಾಗಿ (i = 0; i < ಲಂಬಸಾಲು_info->ಅಂಕೆ_columns; i++) {
+		ಆದರೆ (ಲಂಬಸಾಲು_info->spans[i].ಅಡ್ಡಸಾಲು_ಹರವು != 0 &&
+				ಲಂಬಸಾಲು_info->spans[i].auto_ಅಡ್ಡಸಾಲು == false) {
 			/* This cell spans rows, and is not an auto row.
 			 * Reduce number of rows left to span */
-			col_info->spans[i].row_span--;
+			ಲಂಬಸಾಲು_info->spans[i].ಅಡ್ಡಸಾಲು_ಹರವು--;
 		}
 	}
 
 	/* Reset current column for next row */
-	col_info->current_column = 0;
+	ಲಂಬಸಾಲು_info->current_ಸ್ತಂಭ = 0;
 
 	/* Increment row counter */
-	col_info->num_rows++;
+	ಲಂಬಸಾಲು_info->ಅಂಕೆ_ಅಡ್ಡಸಾಲುಗಳು++;
 
-#ifdef BOX_NORMALISE_DEBUG
-	NSLOG(netsurf, INFO, "row %p done", row);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BOX_NORMALISE_DEBUG
+	NSLOG(netsurf, INFO, "row %p done", ಅಡ್ಡಸಾಲು);
+#ಆದರೆ_ಅಂತ್ಯ
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
 
-static bool
-box_normalise_table_row_group(struct box *row_group,
-			      const struct box *root,
-			      struct columns *col_info,
+ಸ್ಥಿರ bool
+box_normalise_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು(ರಚನೆ box *ಅಡ್ಡಸಾಲು_ಗುಂಪು,
+			      ಸ್ಥಿರಾಂಕ ರಚನೆ box *ಬೇರು,
+			      ರಚನೆ columns *ಲಂಬಸಾಲು_info,
 			      html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *row;
+	ರಚನೆ box *ಮಗು;
+	ರಚನೆ box *ಮುಂದಿನ_ಮಗು;
+	ರಚನೆ box *ಅಡ್ಡಸಾಲು;
 	css_computed_style *style;
 	nscss_select_ctx ctx;
-	unsigned int group_row_count = 0;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಗುಂಪು_ಅಡ್ಡಸಾಲು_ಎಣಿಕೆ = 0;
 
-	assert(row_group != 0);
-	assert(row_group->type == BOX_TABLE_ROW_GROUP);
+	ಪ್ರತಿಜ್ಞಾ(ಅಡ್ಡಸಾಲು_ಗುಂಪು != 0);
+	ಪ್ರತಿಜ್ಞಾ(ಅಡ್ಡಸಾಲು_ಗುಂಪು->type == BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು);
 
-	ctx.root_style = root->style;
+	ctx.ಬೇರು_style = ಬೇರು->style;
 
-#ifdef BOX_NORMALISE_DEBUG
-	NSLOG(netsurf, INFO, "row_group %p", row_group);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BOX_NORMALISE_DEBUG
+	NSLOG(netsurf, INFO, "row_group %p", ಅಡ್ಡಸಾಲು_ಗುಂಪು);
+#ಆದರೆ_ಅಂತ್ಯ
 
-	for (child = row_group->children; child != NULL; child = next_child) {
-		next_child = child->next;
+	ಗಾಗಿ (ಮಗು = ಅಡ್ಡಸಾಲು_ಗುಂಪು->children; ಮಗು != ಖಾಲಿ; ಮಗು = ಮುಂದಿನ_ಮಗು) {
+		ಮುಂದಿನ_ಮಗು = ಮಗು->ಮುಂದಿನ;
 
-		switch (child->type) {
-		case BOX_TABLE_ROW:
+		ಆಯ್ಕೆ (ಮಗು->type) {
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು:
 			/* ok */
-			group_row_count++;
-			if (box_normalise_table_row(child, root, col_info,
+			ಗುಂಪು_ಅಡ್ಡಸಾಲು_ಎಣಿಕೆ++;
+			ಆದರೆ (box_normalise_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು(ಮಗು, ಬೇರು, ಲಂಬಸಾಲು_info,
 					c) == false)
-				return false;
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_CELL:
+				ಹಿಂತಿರುಗಿ false;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ BOX_FLEX:
+		ಸ್ಥಿತಿ BOX_ಖಂಡ:
+		ಸ್ಥಿತಿ BOX_INLINE_CONTAINER:
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ:
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು:
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ_CELL:
 			/* insert implied table row */
-			assert(row_group->style != NULL);
+			ಪ್ರತಿಜ್ಞಾ(ಅಡ್ಡಸಾಲು_ಗುಂಪು->style != ಖಾಲಿ);
 
 			ctx.ctx = c->select_ctx;
-			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-			ctx.base_url = c->base_url;
+			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_ಬಹುಲಕ_ತುಂಬಿದ);
+			ctx.ತಳ_url = c->ತಳ_url;
 			ctx.universal = c->universal;
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
-					row_group->style);
-			if (style == NULL)
-				return false;
+					ಅಡ್ಡಸಾಲು_ಗುಂಪು->style);
+			ಆದರೆ (style == ಖಾಲಿ)
+				ಹಿಂತಿರುಗಿ false;
 
-			row = box_create(NULL, style, true, row_group->href,
-					row_group->target, NULL, NULL, c->bctx);
-			if (row == NULL) {
+			ಅಡ್ಡಸಾಲು = box_create(ಖಾಲಿ, style, true, ಅಡ್ಡಸಾಲು_ಗುಂಪು->href,
+					ಅಡ್ಡಸಾಲು_ಗುಂಪು->ಗುರಿ, ಖಾಲಿ, ಖಾಲಿ, c->bctx);
+			ಆದರೆ (ಅಡ್ಡಸಾಲು == ಖಾಲಿ) {
 				css_computed_style_destroy(style);
-				return false;
+				ಹಿಂತಿರುಗಿ false;
 			}
-			row->type = BOX_TABLE_ROW;
+			ಅಡ್ಡಸಾಲು->type = BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು;
 
-			if (child->prev == NULL)
-				row_group->children = row;
-			else
-				child->prev->next = row;
+			ಆದರೆ (ಮಗು->prev == ಖಾಲಿ)
+				ಅಡ್ಡಸಾಲು_ಗುಂಪು->children = ಅಡ್ಡಸಾಲು;
+			ಇಲ್ಲದಿದ್ದರೆ
+				ಮಗು->prev->ಮುಂದಿನ = ಅಡ್ಡಸಾಲು;
 
-			row->prev = child->prev;
+			ಅಡ್ಡಸಾಲು->prev = ಮಗು->prev;
 
-			while (child != NULL && (
-					child->type == BOX_FLEX ||
-					child->type == BOX_BLOCK ||
-					child->type == BOX_INLINE_CONTAINER ||
-					child->type == BOX_TABLE ||
-					child->type == BOX_TABLE_ROW_GROUP ||
-					child->type == BOX_TABLE_CELL)) {
-				box_add_child(row, child);
+			ಆಗ (ಮಗು != ಖಾಲಿ && (
+					ಮಗು->type == BOX_FLEX ||
+					ಮಗು->type == BOX_ಖಂಡ ||
+					ಮಗು->type == BOX_INLINE_CONTAINER ||
+					ಮಗು->type == BOX_ಕೋಷ್ಟಕ ||
+					ಮಗು->type == BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು ||
+					ಮಗು->type == BOX_ಕೋಷ್ಟಕ_CELL)) {
+				box_ಕೂಡಿಸು_ಮಗು(ಅಡ್ಡಸಾಲು, ಮಗು);
 
-				next_child = child->next;
-				child->next = NULL;
-				child = next_child;
+				ಮುಂದಿನ_ಮಗು = ಮಗು->ಮುಂದಿನ;
+				ಮಗು->ಮುಂದಿನ = ಖಾಲಿ;
+				ಮಗು = ಮುಂದಿನ_ಮಗು;
 			}
 
-			assert(row->last != NULL);
+			ಪ್ರತಿಜ್ಞಾ(ಅಡ್ಡಸಾಲು->ಕೊನೆಯ != ಖಾಲಿ);
 
-			row->last->next = NULL;
-			row->next = next_child = child;
-			if (row->next != NULL)
-				row->next->prev = row;
-			else
-				row_group->last = row;
-			row->parent = row_group;
+			ಅಡ್ಡಸಾಲು->ಕೊನೆಯ->ಮುಂದಿನ = ಖಾಲಿ;
+			ಅಡ್ಡಸಾಲು->ಮುಂದಿನ = ಮುಂದಿನ_ಮಗು = ಮಗು;
+			ಆದರೆ (ಅಡ್ಡಸಾಲು->ಮುಂದಿನ != ಖಾಲಿ)
+				ಅಡ್ಡಸಾಲು->ಮುಂದಿನ->prev = ಅಡ್ಡಸಾಲು;
+			ಇಲ್ಲದಿದ್ದರೆ
+				ಅಡ್ಡಸಾಲು_ಗುಂಪು->ಕೊನೆಯ = ಅಡ್ಡಸಾಲು;
+			ಅಡ್ಡಸಾಲು->ಪೋಷಕ = ಅಡ್ಡಸಾಲು_ಗುಂಪು;
 
-			group_row_count++;
-			if (box_normalise_table_row(row, root, col_info,
+			ಗುಂಪು_ಅಡ್ಡಸಾಲು_ಎಣಿಕೆ++;
+			ಆದರೆ (box_normalise_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು(ಅಡ್ಡಸಾಲು, ಬೇರು, ಲಂಬಸಾಲು_info,
 					c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+				ಹಿಂತಿರುಗಿ false;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ BOX_INLINE:
+		ಸ್ಥಿತಿ BOX_INLINE_ಕೊನೆ:
+		ಸ್ಥಿತಿ BOX_INLINE_FLEX:
+		ಸ್ಥಿತಿ BOX_INLINE_ಖಂಡ:
+		ಸ್ಥಿತಿ BOX_FLOAT_ಎಡ:
+		ಸ್ಥಿತಿ BOX_FLOAT_ಬಲ:
+		ಸ್ಥಿತಿ BOX_BR:
+		ಸ್ಥಿತಿ BOX_ಪಠ್ಯ:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		default:
-			assert(0);
+			ಪ್ರತಿಜ್ಞಾ(0);
+			ನಿಲ್ಲಿಸು;
+		ಪೂರ್ವನಿಯೋಜಿತ:
+			ಪ್ರತಿಜ್ಞಾ(0);
 		}
 	}
 
-	if (row_group->children == NULL) {
-#ifdef BOX_NORMALISE_DEBUG
+	ಆದರೆ (ಅಡ್ಡಸಾಲು_ಗುಂಪು->children == ಖಾಲಿ) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO,
 		      "row_group->children == 0, inserting implied row");
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-		assert(row_group->style != NULL);
+		ಪ್ರತಿಜ್ಞಾ(ಅಡ್ಡಸಾಲು_ಗುಂಪು->style != ಖಾಲಿ);
 
 		ctx.ctx = c->select_ctx;
-		ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-		ctx.base_url = c->base_url;
+		ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_ಬಹುಲಕ_ತುಂಬಿದ);
+		ctx.ತಳ_url = c->ತಳ_url;
 		ctx.universal = c->universal;
 
 		style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
-				row_group->style);
-		if (style == NULL) {
-			return false;
+				ಅಡ್ಡಸಾಲು_ಗುಂಪು->style);
+		ಆದರೆ (style == ಖಾಲಿ) {
+			ಹಿಂತಿರುಗಿ false;
 		}
 
-		row = box_create(NULL, style, true, row_group->href,
-				row_group->target, NULL, NULL, c->bctx);
-		if (row == NULL) {
+		ಅಡ್ಡಸಾಲು = box_create(ಖಾಲಿ, style, true, ಅಡ್ಡಸಾಲು_ಗುಂಪು->href,
+				ಅಡ್ಡಸಾಲು_ಗುಂಪು->ಗುರಿ, ಖಾಲಿ, ಖಾಲಿ, c->bctx);
+		ಆದರೆ (ಅಡ್ಡಸಾಲು == ಖಾಲಿ) {
 			css_computed_style_destroy(style);
-			return false;
+			ಹಿಂತಿರುಗಿ false;
 		}
-		row->type = BOX_TABLE_ROW;
+		ಅಡ್ಡಸಾಲು->type = BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು;
 
-		row->parent = row_group;
-		row_group->children = row_group->last = row;
+		ಅಡ್ಡಸಾಲು->ಪೋಷಕ = ಅಡ್ಡಸಾಲು_ಗುಂಪು;
+		ಅಡ್ಡಸಾಲು_ಗುಂಪು->children = ಅಡ್ಡಸಾಲು_ಗುಂಪು->ಕೊನೆಯ = ಅಡ್ಡಸಾಲು;
 
-		group_row_count = 1;
+		ಗುಂಪು_ಅಡ್ಡಸಾಲು_ಎಣಿಕೆ = 1;
 
 		/* Keep table's row count in sync */
-		col_info->num_rows++;
+		ಲಂಬಸಾಲು_info->ಅಂಕೆ_ಅಡ್ಡಸಾಲುಗಳು++;
 	}
 
-	row_group->rows = group_row_count;
+	ಅಡ್ಡಸಾಲು_ಗುಂಪು->ಅಡ್ಡಸಾಲುಗಳು = ಗುಂಪು_ಅಡ್ಡಸಾಲು_ಎಣಿಕೆ;
 
-#ifdef BOX_NORMALISE_DEBUG
-	NSLOG(netsurf, INFO, "row_group %p done", row_group);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BOX_NORMALISE_DEBUG
+	NSLOG(netsurf, INFO, "row_group %p done", ಅಡ್ಡಸಾಲು_ಗುಂಪು);
+#ಆದರೆ_ಅಂತ್ಯ
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
 
@@ -453,754 +453,754 @@ box_normalise_table_row_group(struct box *row_group,
  * \param c      Content containing table
  * \return True on success, false on memory exhaustion.
  */
-static bool
-box_normalise_table_spans(struct box *table,
-			  const struct box *root,
-			  struct span_info *spans,
+ಸ್ಥಿರ bool
+box_normalise_ಕೋಷ್ಟಕ_spans(ರಚನೆ box *ಕೋಷ್ಟಕ,
+			  ಸ್ಥಿರಾಂಕ ರಚನೆ box *ಬೇರು,
+			  ರಚನೆ ಹರವು_info *spans,
 			  html_content *c)
 {
-	struct box *table_row_group;
-	struct box *table_row;
-	struct box *table_cell;
-	unsigned int rows_left = table->rows;
-	unsigned int group_rows_left;
-	unsigned int col;
+	ರಚನೆ box *ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು;
+	ರಚನೆ box *ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು;
+	ರಚನೆ box *ಕೋಷ್ಟಕ_cell;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಅಡ್ಡಸಾಲುಗಳು_ಎಡ = ಕೋಷ್ಟಕ->ಅಡ್ಡಸಾಲುಗಳು;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಗುಂಪು_ಅಡ್ಡಸಾಲುಗಳು_ಎಡ;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಲಂಬಸಾಲು;
 	nscss_select_ctx ctx;
 
-	ctx.root_style = root->style;
+	ctx.ಬೇರು_style = ಬೇರು->style;
 
 	/* Clear span data */
-	memset(spans, 0, table->columns * sizeof(struct span_info));
+	memset(spans, 0, ಕೋಷ್ಟಕ->columns * ಗಾತ್ರ(ರಚನೆ ಹರವು_info));
 
 	/* Scan table, filling in width and height of table cells with
 	 * colspan = 0 and rowspan = 0. Also generate empty cells */
-	for (table_row_group = table->children;
-	     table_row_group != NULL;
-	     table_row_group = table_row_group->next) {
+	ಗಾಗಿ (ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು = ಕೋಷ್ಟಕ->children;
+	     ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು != ಖಾಲಿ;
+	     ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು = ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು->ಮುಂದಿನ) {
 
-		group_rows_left = table_row_group->rows;
+		ಗುಂಪು_ಅಡ್ಡಸಾಲುಗಳು_ಎಡ = ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು->ಅಡ್ಡಸಾಲುಗಳು;
 
-		for (table_row = table_row_group->children;
-		     table_row != NULL;
-		     table_row = table_row->next) {
+		ಗಾಗಿ (ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು = ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು->children;
+		     ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು != ಖಾಲಿ;
+		     ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು = ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು->ಮುಂದಿನ) {
 
-			for (table_cell = table_row->children;
-			     table_cell != NULL;
-			     table_cell = table_cell->next) {
+			ಗಾಗಿ (ಕೋಷ್ಟಕ_cell = ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು->children;
+			     ಕೋಷ್ಟಕ_cell != ಖಾಲಿ;
+			     ಕೋಷ್ಟಕ_cell = ಕೋಷ್ಟಕ_cell->ಮುಂದಿನ) {
 
 				/* colspan = 0 -> colspan = 1 */
-				if (table_cell->columns == 0) {
-					table_cell->columns = 1;
+				ಆದರೆ (ಕೋಷ್ಟಕ_cell->columns == 0) {
+					ಕೋಷ್ಟಕ_cell->columns = 1;
 				}
 
 				/* if rowspan is 0 it is expanded to
 				 * the number of rows left in the row
 				 * group
 				 */
-				if (table_cell->rows == 0) {
-					table_cell->rows = group_rows_left;
+				ಆದರೆ (ಕೋಷ್ಟಕ_cell->ಅಡ್ಡಸಾಲುಗಳು == 0) {
+					ಕೋಷ್ಟಕ_cell->ಅಡ್ಡಸಾಲುಗಳು = ಗುಂಪು_ಅಡ್ಡಸಾಲುಗಳು_ಎಡ;
 				}
 
 				/* limit rowspans within group */
-				if (table_cell->rows > group_rows_left) {
-					table_cell->rows = group_rows_left;
+				ಆದರೆ (ಕೋಷ್ಟಕ_cell->ಅಡ್ಡಸಾಲುಗಳು > ಗುಂಪು_ಅಡ್ಡಸಾಲುಗಳು_ಎಡ) {
+					ಕೋಷ್ಟಕ_cell->ಅಡ್ಡಸಾಲುಗಳು = ಗುಂಪು_ಅಡ್ಡಸಾಲುಗಳು_ಎಡ;
 				}
 
 				/* Record span information */
-				for (col = table_cell->start_column;
-						col < table_cell->start_column +
-						table_cell->columns; col++) {
-					spans[col].row_span = table_cell->rows;
+				ಗಾಗಿ (ಲಂಬಸಾಲು = ಕೋಷ್ಟಕ_cell->ಆರಂಭ_ಸ್ತಂಭ;
+						ಲಂಬಸಾಲು < ಕೋಷ್ಟಕ_cell->ಆರಂಭ_ಸ್ತಂಭ +
+						ಕೋಷ್ಟಕ_cell->columns; ಲಂಬಸಾಲು++) {
+					spans[ಲಂಬಸಾಲು].ಅಡ್ಡಸಾಲು_ಹರವು = ಕೋಷ್ಟಕ_cell->ಅಡ್ಡಸಾಲುಗಳು;
 				}
 			}
 
 			/* Reduce span count of each column */
-			for (col = 0; col < table->columns; col++) {
-				if (spans[col].row_span == 0) {
-					unsigned int start = col;
+			ಗಾಗಿ (ಲಂಬಸಾಲು = 0; ಲಂಬಸಾಲು < ಕೋಷ್ಟಕ->columns; ಲಂಬಸಾಲು++) {
+				ಆದರೆ (spans[ಲಂಬಸಾಲು].ಅಡ್ಡಸಾಲು_ಹರವು == 0) {
+					ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಆರಂಭ = ಲಂಬಸಾಲು;
 					css_computed_style *style;
-					struct box *cell, *prev;
+					ರಚನೆ box *cell, *prev;
 
 					/* If it's already zero, then we need
 					 * to generate an empty cell for the
 					 * gap in the row that spans as many
 					 * columns as remain blank.
 					 */
-					assert(table_row->style != NULL);
+					ಪ್ರತಿಜ್ಞಾ(ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು->style != ಖಾಲಿ);
 
 					/* Find width of gap */
-					while (col < table->columns &&
-							spans[col].row_span ==
+					ಆಗ (ಲಂಬಸಾಲು < ಕೋಷ್ಟಕ->columns &&
+							spans[ಲಂಬಸಾಲು].ಅಡ್ಡಸಾಲು_ಹರವು ==
 							0) {
-						col++;
+						ಲಂಬಸಾಲು++;
 					}
 
 					ctx.ctx = c->select_ctx;
 					ctx.quirks = (c->quirks ==
-						DOM_DOCUMENT_QUIRKS_MODE_FULL);
-					ctx.base_url = c->base_url;
+						DOM_DOCUMENT_QUIRKS_ಬಹುಲಕ_ತುಂಬಿದ);
+					ctx.ತಳ_url = c->ತಳ_url;
 					ctx.universal = c->universal;
 
 					style = nscss_get_blank_style(&ctx,
 							&c->unit_len_ctx,
-							table_row->style);
-					if (style == NULL)
-						return false;
+							ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು->style);
+					ಆದರೆ (style == ಖಾಲಿ)
+						ಹಿಂತಿರುಗಿ false;
 
-					cell = box_create(NULL, style, true,
-							table_row->href,
-							table_row->target,
-							NULL, NULL, c->bctx);
-					if (cell == NULL) {
+					cell = box_create(ಖಾಲಿ, style, true,
+							ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು->href,
+							ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು->ಗುರಿ,
+							ಖಾಲಿ, ಖಾಲಿ, c->bctx);
+					ಆದರೆ (cell == ಖಾಲಿ) {
 						css_computed_style_destroy(
 								style);
-						return false;
+						ಹಿಂತಿರುಗಿ false;
 					}
-					cell->type = BOX_TABLE_CELL;
+					cell->type = BOX_ಕೋಷ್ಟಕ_CELL;
 
-					cell->rows = 1;
-					cell->columns = col - start;
-					cell->start_column = start;
+					cell->ಅಡ್ಡಸಾಲುಗಳು = 1;
+					cell->columns = ಲಂಬಸಾಲು - ಆರಂಭ;
+					cell->ಆರಂಭ_ಸ್ತಂಭ = ಆರಂಭ;
 
 					/* Find place to insert cell */
-					for (prev = table_row->children;
-							prev != NULL;
-							prev = prev->next) {
-						if (prev->start_column +
+					ಗಾಗಿ (prev = ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು->children;
+							prev != ಖಾಲಿ;
+							prev = prev->ಮುಂದಿನ) {
+						ಆದರೆ (prev->ಆರಂಭ_ಸ್ತಂಭ +
 							prev->columns ==
-								start)
-							break;
-						if (prev->next == NULL)
-							break;
+								ಆರಂಭ)
+							ನಿಲ್ಲಿಸು;
+						ಆದರೆ (prev->ಮುಂದಿನ == ಖಾಲಿ)
+							ನಿಲ್ಲಿಸು;
 					}
 
 					/* Insert it */
-					if (prev == NULL) {
-						if (table_row->children != NULL)
-							table_row->children->
+					ಆದರೆ (prev == ಖಾಲಿ) {
+						ಆದರೆ (ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು->children != ಖಾಲಿ)
+							ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು->children->
 								prev = cell;
-						else
-							table_row->last = cell;
+						ಇಲ್ಲದಿದ್ದರೆ
+							ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು->ಕೊನೆಯ = cell;
 
-						cell->next =
-							table_row->children;
-						table_row->children = cell;
-					} else {
-						if (prev->next != NULL)
-							prev->next->prev = cell;
-						else
-							table_row->last = cell;
+						cell->ಮುಂದಿನ =
+							ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು->children;
+						ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು->children = cell;
+					} ಇಲ್ಲದಿದ್ದರೆ {
+						ಆದರೆ (prev->ಮುಂದಿನ != ಖಾಲಿ)
+							prev->ಮುಂದಿನ->prev = cell;
+						ಇಲ್ಲದಿದ್ದರೆ
+							ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು->ಕೊನೆಯ = cell;
 
-						cell->next = prev->next;
-						prev->next = cell;
+						cell->ಮುಂದಿನ = prev->ಮುಂದಿನ;
+						prev->ಮುಂದಿನ = cell;
 						cell->prev = prev;
 					}
-					cell->parent = table_row;
-				} else {
-					spans[col].row_span--;
+					cell->ಪೋಷಕ = ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು;
+				} ಇಲ್ಲದಿದ್ದರೆ {
+					spans[ಲಂಬಸಾಲು].ಅಡ್ಡಸಾಲು_ಹರವು--;
 				}
 			}
 
-			assert(rows_left > 0);
+			ಪ್ರತಿಜ್ಞಾ(ಅಡ್ಡಸಾಲುಗಳು_ಎಡ > 0);
 
-			rows_left--;
+			ಅಡ್ಡಸಾಲುಗಳು_ಎಡ--;
 		}
 
-		group_rows_left--;
+		ಗುಂಪು_ಅಡ್ಡಸಾಲುಗಳು_ಎಡ--;
 	}
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
 
-static bool
-box_normalise_table(struct box *table, const struct box *root, html_content * c)
+ಸ್ಥಿರ bool
+box_normalise_ಕೋಷ್ಟಕ(ರಚನೆ box *ಕೋಷ್ಟಕ, ಸ್ಥಿರಾಂಕ ರಚನೆ box *ಬೇರು, html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *row_group;
+	ರಚನೆ box *ಮಗು;
+	ರಚನೆ box *ಮುಂದಿನ_ಮಗು;
+	ರಚನೆ box *ಅಡ್ಡಸಾಲು_ಗುಂಪು;
 	css_computed_style *style;
-	struct columns col_info;
+	ರಚನೆ columns ಲಂಬಸಾಲು_info;
 	nscss_select_ctx ctx;
 
-	assert(table != NULL);
-	assert(table->type == BOX_TABLE);
+	ಪ್ರತಿಜ್ಞಾ(ಕೋಷ್ಟಕ != ಖಾಲಿ);
+	ಪ್ರತಿಜ್ಞಾ(ಕೋಷ್ಟಕ->type == BOX_ಕೋಷ್ಟಕ);
 
-	ctx.root_style = root->style;
+	ctx.ಬೇರು_style = ಬೇರು->style;
 
-#ifdef BOX_NORMALISE_DEBUG
-	NSLOG(netsurf, INFO, "table %p", table);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BOX_NORMALISE_DEBUG
+	NSLOG(netsurf, INFO, "table %p", ಕೋಷ್ಟಕ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-	col_info.num_columns = 1;
-	col_info.current_column = 0;
-	col_info.spans = malloc(2 * sizeof *col_info.spans);
-	if (col_info.spans == NULL)
-		return false;
+	ಲಂಬಸಾಲು_info.ಅಂಕೆ_columns = 1;
+	ಲಂಬಸಾಲು_info.current_ಸ್ತಂಭ = 0;
+	ಲಂಬಸಾಲು_info.spans = ಸ್ಮರಣೆ_ಕೊಡು(2 * ಗಾತ್ರ *ಲಂಬಸಾಲು_info.spans);
+	ಆದರೆ (ಲಂಬಸಾಲು_info.spans == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ false;
 
-	col_info.spans[0].row_span = col_info.spans[1].row_span = 0;
-	col_info.spans[0].auto_row = false;
-	col_info.spans[1].auto_row = false;
-	col_info.num_rows = 0;
+	ಲಂಬಸಾಲು_info.spans[0].ಅಡ್ಡಸಾಲು_ಹರವು = ಲಂಬಸಾಲು_info.spans[1].ಅಡ್ಡಸಾಲು_ಹರವು = 0;
+	ಲಂಬಸಾಲು_info.spans[0].auto_ಅಡ್ಡಸಾಲು = false;
+	ಲಂಬಸಾಲು_info.spans[1].auto_ಅಡ್ಡಸಾಲು = false;
+	ಲಂಬಸಾಲು_info.ಅಂಕೆ_ಅಡ್ಡಸಾಲುಗಳು = 0;
 
-	for (child = table->children; child != NULL; child = next_child) {
-		next_child = child->next;
-		switch (child->type) {
-		case BOX_TABLE_ROW_GROUP:
+	ಗಾಗಿ (ಮಗು = ಕೋಷ್ಟಕ->children; ಮಗು != ಖಾಲಿ; ಮಗು = ಮುಂದಿನ_ಮಗು) {
+		ಮುಂದಿನ_ಮಗು = ಮಗು->ಮುಂದಿನ;
+		ಆಯ್ಕೆ (ಮಗು->type) {
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು:
 			/* ok */
-			if (box_normalise_table_row_group(child, root,
-					&col_info, c) == false) {
-				free(col_info.spans);
-				return false;
+			ಆದರೆ (box_normalise_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು(ಮಗು, ಬೇರು,
+					&ಲಂಬಸಾಲು_info, c) == false) {
+				ಬಿಡುಗಡೆ(ಲಂಬಸಾಲು_info.spans);
+				ಹಿಂತಿರುಗಿ false;
 			}
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ BOX_FLEX:
+		ಸ್ಥಿತಿ BOX_ಖಂಡ:
+		ಸ್ಥಿತಿ BOX_INLINE_CONTAINER:
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ:
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು:
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ_CELL:
 			/* insert implied table row group */
-			assert(table->style != NULL);
+			ಪ್ರತಿಜ್ಞಾ(ಕೋಷ್ಟಕ->style != ಖಾಲಿ);
 
 			ctx.ctx = c->select_ctx;
-			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-			ctx.base_url = c->base_url;
+			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_ಬಹುಲಕ_ತುಂಬಿದ);
+			ctx.ತಳ_url = c->ತಳ_url;
 			ctx.universal = c->universal;
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
-					table->style);
-			if (style == NULL) {
-				free(col_info.spans);
-				return false;
+					ಕೋಷ್ಟಕ->style);
+			ಆದರೆ (style == ಖಾಲಿ) {
+				ಬಿಡುಗಡೆ(ಲಂಬಸಾಲು_info.spans);
+				ಹಿಂತಿರುಗಿ false;
 			}
 
-			row_group = box_create(NULL, style, true, table->href,
-					table->target, NULL, NULL, c->bctx);
-			if (row_group == NULL) {
+			ಅಡ್ಡಸಾಲು_ಗುಂಪು = box_create(ಖಾಲಿ, style, true, ಕೋಷ್ಟಕ->href,
+					ಕೋಷ್ಟಕ->ಗುರಿ, ಖಾಲಿ, ಖಾಲಿ, c->bctx);
+			ಆದರೆ (ಅಡ್ಡಸಾಲು_ಗುಂಪು == ಖಾಲಿ) {
 				css_computed_style_destroy(style);
-				free(col_info.spans);
-				return false;
+				ಬಿಡುಗಡೆ(ಲಂಬಸಾಲು_info.spans);
+				ಹಿಂತಿರುಗಿ false;
 			}
 
-			row_group->type = BOX_TABLE_ROW_GROUP;
+			ಅಡ್ಡಸಾಲು_ಗುಂಪು->type = BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು;
 
-			if (child->prev == NULL)
-				table->children = row_group;
-			else
-				child->prev->next = row_group;
+			ಆದರೆ (ಮಗು->prev == ಖಾಲಿ)
+				ಕೋಷ್ಟಕ->children = ಅಡ್ಡಸಾಲು_ಗುಂಪು;
+			ಇಲ್ಲದಿದ್ದರೆ
+				ಮಗು->prev->ಮುಂದಿನ = ಅಡ್ಡಸಾಲು_ಗುಂಪು;
 
-			row_group->prev = child->prev;
+			ಅಡ್ಡಸಾಲು_ಗುಂಪು->prev = ಮಗು->prev;
 
-			while (child != NULL && (
-					child->type == BOX_FLEX ||
-					child->type == BOX_BLOCK ||
-					child->type == BOX_INLINE_CONTAINER ||
-					child->type == BOX_TABLE ||
-					child->type == BOX_TABLE_ROW ||
-					child->type == BOX_TABLE_CELL)) {
-				box_add_child(row_group, child);
+			ಆಗ (ಮಗು != ಖಾಲಿ && (
+					ಮಗು->type == BOX_FLEX ||
+					ಮಗು->type == BOX_ಖಂಡ ||
+					ಮಗು->type == BOX_INLINE_CONTAINER ||
+					ಮಗು->type == BOX_ಕೋಷ್ಟಕ ||
+					ಮಗು->type == BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು ||
+					ಮಗು->type == BOX_ಕೋಷ್ಟಕ_CELL)) {
+				box_ಕೂಡಿಸು_ಮಗು(ಅಡ್ಡಸಾಲು_ಗುಂಪು, ಮಗು);
 
-				next_child = child->next;
-				child->next = NULL;
-				child = next_child;
+				ಮುಂದಿನ_ಮಗು = ಮಗು->ಮುಂದಿನ;
+				ಮಗು->ಮುಂದಿನ = ಖಾಲಿ;
+				ಮಗು = ಮುಂದಿನ_ಮಗು;
 			}
 
-			assert(row_group->last != NULL);
+			ಪ್ರತಿಜ್ಞಾ(ಅಡ್ಡಸಾಲು_ಗುಂಪು->ಕೊನೆಯ != ಖಾಲಿ);
 
-			row_group->last->next = NULL;
-			row_group->next = next_child = child;
-			if (row_group->next != NULL)
-				row_group->next->prev = row_group;
-			else
-				table->last = row_group;
-			row_group->parent = table;
+			ಅಡ್ಡಸಾಲು_ಗುಂಪು->ಕೊನೆಯ->ಮುಂದಿನ = ಖಾಲಿ;
+			ಅಡ್ಡಸಾಲು_ಗುಂಪು->ಮುಂದಿನ = ಮುಂದಿನ_ಮಗು = ಮಗು;
+			ಆದರೆ (ಅಡ್ಡಸಾಲು_ಗುಂಪು->ಮುಂದಿನ != ಖಾಲಿ)
+				ಅಡ್ಡಸಾಲು_ಗುಂಪು->ಮುಂದಿನ->prev = ಅಡ್ಡಸಾಲು_ಗುಂಪು;
+			ಇಲ್ಲದಿದ್ದರೆ
+				ಕೋಷ್ಟಕ->ಕೊನೆಯ = ಅಡ್ಡಸಾಲು_ಗುಂಪು;
+			ಅಡ್ಡಸಾಲು_ಗುಂಪು->ಪೋಷಕ = ಕೋಷ್ಟಕ;
 
-			if (box_normalise_table_row_group(row_group, root,
-					&col_info, c) == false) {
-				free(col_info.spans);
-				return false;
+			ಆದರೆ (box_normalise_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು(ಅಡ್ಡಸಾಲು_ಗುಂಪು, ಬೇರು,
+					&ಲಂಬಸಾಲು_info, c) == false) {
+				ಬಿಡುಗಡೆ(ಲಂಬಸಾಲು_info.spans);
+				ಹಿಂತಿರುಗಿ false;
 			}
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ BOX_INLINE:
+		ಸ್ಥಿತಿ BOX_INLINE_ಕೊನೆ:
+		ಸ್ಥಿತಿ BOX_INLINE_FLEX:
+		ಸ್ಥಿತಿ BOX_INLINE_ಖಂಡ:
+		ಸ್ಥಿತಿ BOX_FLOAT_ಎಡ:
+		ಸ್ಥಿತಿ BOX_FLOAT_ಬಲ:
+		ಸ್ಥಿತಿ BOX_BR:
+		ಸ್ಥಿತಿ BOX_ಪಠ್ಯ:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		default:
-			fprintf(stderr, "%i\n", child->type);
-			assert(0);
+			ಪ್ರತಿಜ್ಞಾ(0);
+			ನಿಲ್ಲಿಸು;
+		ಪೂರ್ವನಿಯೋಜಿತ:
+			fprintf(stderr, "%i\n", ಮಗು->type);
+			ಪ್ರತಿಜ್ಞಾ(0);
 		}
 	}
 
-	table->columns = col_info.num_columns;
-	table->rows = col_info.num_rows;
+	ಕೋಷ್ಟಕ->columns = ಲಂಬಸಾಲು_info.ಅಂಕೆ_columns;
+	ಕೋಷ್ಟಕ->ಅಡ್ಡಸಾಲುಗಳು = ಲಂಬಸಾಲು_info.ಅಂಕೆ_ಅಡ್ಡಸಾಲುಗಳು;
 
-	if (table->children == NULL) {
-		struct box *row;
+	ಆದರೆ (ಕೋಷ್ಟಕ->children == ಖಾಲಿ) {
+		ರಚನೆ box *ಅಡ್ಡಸಾಲು;
 
-#ifdef BOX_NORMALISE_DEBUG
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO,
 		      "table->children == 0, creating implied row");
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-		assert(table->style != NULL);
+		ಪ್ರತಿಜ್ಞಾ(ಕೋಷ್ಟಕ->style != ಖಾಲಿ);
 
 		ctx.ctx = c->select_ctx;
-		ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-		ctx.base_url = c->base_url;
+		ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_ಬಹುಲಕ_ತುಂಬಿದ);
+		ctx.ತಳ_url = c->ತಳ_url;
 		ctx.universal = c->universal;
 
 		style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
-				table->style);
-		if (style == NULL) {
-			free(col_info.spans);
-			return false;
+				ಕೋಷ್ಟಕ->style);
+		ಆದರೆ (style == ಖಾಲಿ) {
+			ಬಿಡುಗಡೆ(ಲಂಬಸಾಲು_info.spans);
+			ಹಿಂತಿರುಗಿ false;
 		}
 
-		row_group = box_create(NULL, style, true, table->href,
-				table->target, NULL, NULL, c->bctx);
-		if (row_group == NULL) {
+		ಅಡ್ಡಸಾಲು_ಗುಂಪು = box_create(ಖಾಲಿ, style, true, ಕೋಷ್ಟಕ->href,
+				ಕೋಷ್ಟಕ->ಗುರಿ, ಖಾಲಿ, ಖಾಲಿ, c->bctx);
+		ಆದರೆ (ಅಡ್ಡಸಾಲು_ಗುಂಪು == ಖಾಲಿ) {
 			css_computed_style_destroy(style);
-			free(col_info.spans);
-			return false;
+			ಬಿಡುಗಡೆ(ಲಂಬಸಾಲು_info.spans);
+			ಹಿಂತಿರುಗಿ false;
 		}
-		row_group->type = BOX_TABLE_ROW_GROUP;
+		ಅಡ್ಡಸಾಲು_ಗುಂಪು->type = BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು;
 
 		style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
-				row_group->style);
-		if (style == NULL) {
-			box_free(row_group);
-			free(col_info.spans);
-			return false;
+				ಅಡ್ಡಸಾಲು_ಗುಂಪು->style);
+		ಆದರೆ (style == ಖಾಲಿ) {
+			box_free(ಅಡ್ಡಸಾಲು_ಗುಂಪು);
+			ಬಿಡುಗಡೆ(ಲಂಬಸಾಲು_info.spans);
+			ಹಿಂತಿರುಗಿ false;
 		}
 
-		row = box_create(NULL, style, true, row_group->href,
-				row_group->target, NULL, NULL, c->bctx);
-		if (row == NULL) {
+		ಅಡ್ಡಸಾಲು = box_create(ಖಾಲಿ, style, true, ಅಡ್ಡಸಾಲು_ಗುಂಪು->href,
+				ಅಡ್ಡಸಾಲು_ಗುಂಪು->ಗುರಿ, ಖಾಲಿ, ಖಾಲಿ, c->bctx);
+		ಆದರೆ (ಅಡ್ಡಸಾಲು == ಖಾಲಿ) {
 			css_computed_style_destroy(style);
-			box_free(row_group);
-			free(col_info.spans);
-			return false;
+			box_free(ಅಡ್ಡಸಾಲು_ಗುಂಪು);
+			ಬಿಡುಗಡೆ(ಲಂಬಸಾಲು_info.spans);
+			ಹಿಂತಿರುಗಿ false;
 		}
-		row->type = BOX_TABLE_ROW;
+		ಅಡ್ಡಸಾಲು->type = BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು;
 
-		row->parent = row_group;
-		row_group->children = row_group->last = row;
+		ಅಡ್ಡಸಾಲು->ಪೋಷಕ = ಅಡ್ಡಸಾಲು_ಗುಂಪು;
+		ಅಡ್ಡಸಾಲು_ಗುಂಪು->children = ಅಡ್ಡಸಾಲು_ಗುಂಪು->ಕೊನೆಯ = ಅಡ್ಡಸಾಲು;
 
-		row_group->parent = table;
-		table->children = table->last = row_group;
+		ಅಡ್ಡಸಾಲು_ಗುಂಪು->ಪೋಷಕ = ಕೋಷ್ಟಕ;
+		ಕೋಷ್ಟಕ->children = ಕೋಷ್ಟಕ->ಕೊನೆಯ = ಅಡ್ಡಸಾಲು_ಗುಂಪು;
 
-		table->rows = 1;
+		ಕೋಷ್ಟಕ->ಅಡ್ಡಸಾಲುಗಳು = 1;
 	}
 
-	if (box_normalise_table_spans(table, root, col_info.spans, c) == false) {
-		free(col_info.spans);
-		return false;
+	ಆದರೆ (box_normalise_ಕೋಷ್ಟಕ_spans(ಕೋಷ್ಟಕ, ಬೇರು, ಲಂಬಸಾಲು_info.spans, c) == false) {
+		ಬಿಡುಗಡೆ(ಲಂಬಸಾಲು_info.spans);
+		ಹಿಂತಿರುಗಿ false;
 	}
 
-	free(col_info.spans);
+	ಬಿಡುಗಡೆ(ಲಂಬಸಾಲು_info.spans);
 
-#ifdef BOX_NORMALISE_DEBUG
-	NSLOG(netsurf, INFO, "table %p done", table);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BOX_NORMALISE_DEBUG
+	NSLOG(netsurf, INFO, "table %p done", ಕೋಷ್ಟಕ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
-static bool box_normalise_flex(
-		struct box *flex_container,
-		const struct box *root,
+ಸ್ಥಿರ bool box_normalise_flex(
+		ರಚನೆ box *flex_container,
+		ಸ್ಥಿರಾಂಕ ರಚನೆ box *ಬೇರು,
 		html_content *c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *implied_flex_item;
+	ರಚನೆ box *ಮಗು;
+	ರಚನೆ box *ಮುಂದಿನ_ಮಗು;
+	ರಚನೆ box *implied_flex_ಅಂಶ;
 	css_computed_style *style;
 	nscss_select_ctx ctx;
 
-	assert(flex_container != NULL);
-	assert(root != NULL);
+	ಪ್ರತಿಜ್ಞಾ(flex_container != ಖಾಲಿ);
+	ಪ್ರತಿಜ್ಞಾ(ಬೇರು != ಖಾಲಿ);
 
-	ctx.root_style = root->style;
+	ctx.ಬೇರು_style = ಬೇರು->style;
 
-#ifdef BOX_NORMALISE_DEBUG
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "flex_container %p, flex_container->type %u",
 			flex_container, flex_container->type);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-	assert(flex_container->type == BOX_FLEX ||
+	ಪ್ರತಿಜ್ಞಾ(flex_container->type == BOX_FLEX ||
 	       flex_container->type == BOX_INLINE_FLEX);
 
-	for (child = flex_container->children; child != NULL; child = next_child) {
-#ifdef BOX_NORMALISE_DEBUG
+	ಗಾಗಿ (ಮಗು = flex_container->children; ಮಗು != ಖಾಲಿ; ಮಗು = ಮುಂದಿನ_ಮಗು) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO, "child %p, child->type = %d",
-				child, child->type);
-#endif
+				ಮಗು, ಮಗು->type);
+#ಆದರೆ_ಅಂತ್ಯ
 
-		next_child = child->next;	/* child may be destroyed */
+		ಮುಂದಿನ_ಮಗು = ಮಗು->ಮುಂದಿನ;	/* child may be destroyed */
 
-		switch (child->type) {
-		case BOX_FLEX:
+		ಆಯ್ಕೆ (ಮಗು->type) {
+		ಸ್ಥಿತಿ BOX_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
-				return false;
-			break;
-		case BOX_BLOCK:
+			ಆದರೆ (box_normalise_flex(ಮಗು, ಬೇರು, c) == false)
+				ಹಿಂತಿರುಗಿ false;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ BOX_ಖಂಡ:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE_CONTAINER:
+			ಆದರೆ (box_normalise_ಖಂಡ(ಮಗು, ಬೇರು, c) == false)
+				ಹಿಂತಿರುಗಿ false;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ BOX_INLINE_CONTAINER:
 			/* insert implied flex item */
-			assert(flex_container->style != NULL);
+			ಪ್ರತಿಜ್ಞಾ(flex_container->style != ಖಾಲಿ);
 
 			ctx.ctx = c->select_ctx;
-			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-			ctx.base_url = c->base_url;
+			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_ಬಹುಲಕ_ತುಂಬಿದ);
+			ctx.ತಳ_url = c->ತಳ_url;
 			ctx.universal = c->universal;
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					flex_container->style);
-			if (style == NULL)
-				return false;
+			ಆದರೆ (style == ಖಾಲಿ)
+				ಹಿಂತಿರುಗಿ false;
 
-			implied_flex_item = box_create(NULL, style, true,
+			implied_flex_ಅಂಶ = box_create(ಖಾಲಿ, style, true,
 					flex_container->href,
-					flex_container->target,
-					NULL, NULL, c->bctx);
-			if (implied_flex_item == NULL) {
+					flex_container->ಗುರಿ,
+					ಖಾಲಿ, ಖಾಲಿ, c->bctx);
+			ಆದರೆ (implied_flex_ಅಂಶ == ಖಾಲಿ) {
 				css_computed_style_destroy(style);
-				return false;
+				ಹಿಂತಿರುಗಿ false;
 			}
-			implied_flex_item->type = BOX_BLOCK;
+			implied_flex_ಅಂಶ->type = BOX_ಖಂಡ;
 
-			if (child->prev == NULL)
-				flex_container->children = implied_flex_item;
-			else
-				child->prev->next = implied_flex_item;
+			ಆದರೆ (ಮಗು->prev == ಖಾಲಿ)
+				flex_container->children = implied_flex_ಅಂಶ;
+			ಇಲ್ಲದಿದ್ದರೆ
+				ಮಗು->prev->ಮುಂದಿನ = implied_flex_ಅಂಶ;
 
-			implied_flex_item->prev = child->prev;
+			implied_flex_ಅಂಶ->prev = ಮಗು->prev;
 
-			while (child != NULL &&
-					child->type == BOX_INLINE_CONTAINER) {
-				box_add_child(implied_flex_item, child);
+			ಆಗ (ಮಗು != ಖಾಲಿ &&
+					ಮಗು->type == BOX_INLINE_CONTAINER) {
+				box_ಕೂಡಿಸು_ಮಗು(implied_flex_ಅಂಶ, ಮಗು);
 
-				next_child = child->next;
-				child->next = NULL;
-				child = next_child;
+				ಮುಂದಿನ_ಮಗು = ಮಗು->ಮುಂದಿನ;
+				ಮಗು->ಮುಂದಿನ = ಖಾಲಿ;
+				ಮಗು = ಮುಂದಿನ_ಮಗು;
 			}
 
-			implied_flex_item->last->next = NULL;
-			implied_flex_item->next = next_child = child;
-			if (implied_flex_item->next != NULL)
-				implied_flex_item->next->prev = implied_flex_item;
-			else
-				flex_container->last = implied_flex_item;
-			implied_flex_item->parent = flex_container;
+			implied_flex_ಅಂಶ->ಕೊನೆಯ->ಮುಂದಿನ = ಖಾಲಿ;
+			implied_flex_ಅಂಶ->ಮುಂದಿನ = ಮುಂದಿನ_ಮಗು = ಮಗು;
+			ಆದರೆ (implied_flex_ಅಂಶ->ಮುಂದಿನ != ಖಾಲಿ)
+				implied_flex_ಅಂಶ->ಮುಂದಿನ->prev = implied_flex_ಅಂಶ;
+			ಇಲ್ಲದಿದ್ದರೆ
+				flex_container->ಕೊನೆಯ = implied_flex_ಅಂಶ;
+			implied_flex_ಅಂಶ->ಪೋಷಕ = flex_container;
 
-			if (box_normalise_block(implied_flex_item,
-					root, c) == false)
-				return false;
-			break;
+			ಆದರೆ (box_normalise_ಖಂಡ(implied_flex_ಅಂಶ,
+					ಬೇರು, c) == false)
+				ಹಿಂತಿರುಗಿ false;
+			ನಿಲ್ಲಿಸು;
 
-		case BOX_TABLE:
-			if (box_normalise_table(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ:
+			ಆದರೆ (box_normalise_ಕೋಷ್ಟಕ(ಮಗು, ಬೇರು, c) == false)
+				ಹಿಂತಿರುಗಿ false;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ BOX_INLINE:
+		ಸ್ಥಿತಿ BOX_INLINE_ಕೊನೆ:
+		ಸ್ಥಿತಿ BOX_INLINE_FLEX:
+		ಸ್ಥಿತಿ BOX_INLINE_ಖಂಡ:
+		ಸ್ಥಿತಿ BOX_FLOAT_ಎಡ:
+		ಸ್ಥಿತಿ BOX_FLOAT_ಬಲ:
+		ಸ್ಥಿತಿ BOX_BR:
+		ಸ್ಥಿತಿ BOX_ಪಠ್ಯ:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
+			ಪ್ರತಿಜ್ಞಾ(0);
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು:
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು:
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ_CELL:
 			/* insert implied table */
-			assert(flex_container->style != NULL);
+			ಪ್ರತಿಜ್ಞಾ(flex_container->style != ಖಾಲಿ);
 
 			ctx.ctx = c->select_ctx;
-			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-			ctx.base_url = c->base_url;
+			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_ಬಹುಲಕ_ತುಂಬಿದ);
+			ctx.ತಳ_url = c->ತಳ_url;
 			ctx.universal = c->universal;
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					flex_container->style);
-			if (style == NULL)
-				return false;
+			ಆದರೆ (style == ಖಾಲಿ)
+				ಹಿಂತಿರುಗಿ false;
 
-			implied_flex_item = box_create(NULL, style, true,
+			implied_flex_ಅಂಶ = box_create(ಖಾಲಿ, style, true,
 					flex_container->href,
-					flex_container->target,
-					NULL, NULL, c->bctx);
-			if (implied_flex_item == NULL) {
+					flex_container->ಗುರಿ,
+					ಖಾಲಿ, ಖಾಲಿ, c->bctx);
+			ಆದರೆ (implied_flex_ಅಂಶ == ಖಾಲಿ) {
 				css_computed_style_destroy(style);
-				return false;
+				ಹಿಂತಿರುಗಿ false;
 			}
-			implied_flex_item->type = BOX_TABLE;
+			implied_flex_ಅಂಶ->type = BOX_ಕೋಷ್ಟಕ;
 
-			if (child->prev == NULL)
-				flex_container->children = implied_flex_item;
-			else
-				child->prev->next = implied_flex_item;
+			ಆದರೆ (ಮಗು->prev == ಖಾಲಿ)
+				flex_container->children = implied_flex_ಅಂಶ;
+			ಇಲ್ಲದಿದ್ದರೆ
+				ಮಗು->prev->ಮುಂದಿನ = implied_flex_ಅಂಶ;
 
-			implied_flex_item->prev = child->prev;
+			implied_flex_ಅಂಶ->prev = ಮಗು->prev;
 
-			while (child != NULL && (
-					child->type == BOX_TABLE_ROW_GROUP ||
-					child->type == BOX_TABLE_ROW ||
-					child->type == BOX_TABLE_CELL)) {
-				box_add_child(implied_flex_item, child);
+			ಆಗ (ಮಗು != ಖಾಲಿ && (
+					ಮಗು->type == BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು ||
+					ಮಗು->type == BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು ||
+					ಮಗು->type == BOX_ಕೋಷ್ಟಕ_CELL)) {
+				box_ಕೂಡಿಸು_ಮಗು(implied_flex_ಅಂಶ, ಮಗು);
 
-				next_child = child->next;
-				child->next = NULL;
-				child = next_child;
+				ಮುಂದಿನ_ಮಗು = ಮಗು->ಮುಂದಿನ;
+				ಮಗು->ಮುಂದಿನ = ಖಾಲಿ;
+				ಮಗು = ಮುಂದಿನ_ಮಗು;
 			}
 
-			implied_flex_item->last->next = NULL;
-			implied_flex_item->next = next_child = child;
-			if (implied_flex_item->next != NULL)
-				implied_flex_item->next->prev = implied_flex_item;
-			else
-				flex_container->last = implied_flex_item;
-			implied_flex_item->parent = flex_container;
+			implied_flex_ಅಂಶ->ಕೊನೆಯ->ಮುಂದಿನ = ಖಾಲಿ;
+			implied_flex_ಅಂಶ->ಮುಂದಿನ = ಮುಂದಿನ_ಮಗು = ಮಗು;
+			ಆದರೆ (implied_flex_ಅಂಶ->ಮುಂದಿನ != ಖಾಲಿ)
+				implied_flex_ಅಂಶ->ಮುಂದಿನ->prev = implied_flex_ಅಂಶ;
+			ಇಲ್ಲದಿದ್ದರೆ
+				flex_container->ಕೊನೆಯ = implied_flex_ಅಂಶ;
+			implied_flex_ಅಂಶ->ಪೋಷಕ = flex_container;
 
-			if (box_normalise_table(implied_flex_item,
-					root, c) == false)
-				return false;
-			break;
-		default:
-			assert(0);
+			ಆದರೆ (box_normalise_ಕೋಷ್ಟಕ(implied_flex_ಅಂಶ,
+					ಬೇರು, c) == false)
+				ಹಿಂತಿರುಗಿ false;
+			ನಿಲ್ಲಿಸು;
+		ಪೂರ್ವನಿಯೋಜಿತ:
+			ಪ್ರತಿಜ್ಞಾ(0);
 		}
 	}
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
-static bool
-box_normalise_inline_container(struct box *cont,
-			       const struct box *root,
+ಸ್ಥಿರ bool
+box_normalise_inline_container(ರಚನೆ box *cont,
+			       ಸ್ಥಿರಾಂಕ ರಚನೆ box *ಬೇರು,
 			       html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
+	ರಚನೆ box *ಮಗು;
+	ರಚನೆ box *ಮುಂದಿನ_ಮಗು;
 
-	assert(cont != NULL);
-	assert(cont->type == BOX_INLINE_CONTAINER);
+	ಪ್ರತಿಜ್ಞಾ(cont != ಖಾಲಿ);
+	ಪ್ರತಿಜ್ಞಾ(cont->type == BOX_INLINE_CONTAINER);
 
-#ifdef BOX_NORMALISE_DEBUG
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "cont %p", cont);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-	for (child = cont->children; child != NULL; child = next_child) {
-		next_child = child->next;
-		switch (child->type) {
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_BR:
-		case BOX_TEXT:
+	ಗಾಗಿ (ಮಗು = cont->children; ಮಗು != ಖಾಲಿ; ಮಗು = ಮುಂದಿನ_ಮಗು) {
+		ಮುಂದಿನ_ಮಗು = ಮಗು->ಮುಂದಿನ;
+		ಆಯ್ಕೆ (ಮಗು->type) {
+		ಸ್ಥಿತಿ BOX_INLINE:
+		ಸ್ಥಿತಿ BOX_INLINE_ಕೊನೆ:
+		ಸ್ಥಿತಿ BOX_BR:
+		ಸ್ಥಿತಿ BOX_ಪಠ್ಯ:
 			/* ok */
-			break;
-		case BOX_INLINE_BLOCK:
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ BOX_INLINE_ಖಂಡ:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE_FLEX:
+			ಆದರೆ (box_normalise_ಖಂಡ(ಮಗು, ಬೇರು, c) == false)
+				ಹಿಂತಿರುಗಿ false;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ BOX_INLINE_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
-				return false;
-			break;
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
+			ಆದರೆ (box_normalise_flex(ಮಗು, ಬೇರು, c) == false)
+				ಹಿಂತಿರುಗಿ false;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ BOX_FLOAT_ಎಡ:
+		ಸ್ಥಿತಿ BOX_FLOAT_ಬಲ:
 			/* ok */
-			assert(child->children != NULL);
+			ಪ್ರತಿಜ್ಞಾ(ಮಗು->children != ಖಾಲಿ);
 
-			switch (child->children->type) {
-			case BOX_BLOCK:
-				if (box_normalise_block(child->children, root,
+			ಆಯ್ಕೆ (ಮಗು->children->type) {
+			ಸ್ಥಿತಿ BOX_ಖಂಡ:
+				ಆದರೆ (box_normalise_ಖಂಡ(ಮಗು->children, ಬೇರು,
 						c) == false)
-					return false;
-				break;
-			case BOX_TABLE:
-				if (box_normalise_table(child->children, root,
+					ಹಿಂತಿರುಗಿ false;
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ:
+				ಆದರೆ (box_normalise_ಕೋಷ್ಟಕ(ಮಗು->children, ಬೇರು,
 						c) == false)
-					return false;
-				break;
-			case BOX_FLEX:
-				if (box_normalise_flex(child->children, root,
+					ಹಿಂತಿರುಗಿ false;
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ BOX_FLEX:
+				ಆದರೆ (box_normalise_flex(ಮಗು->children, ಬೇರು,
 						c) == false)
-					return false;
-				break;
-			default:
-				assert(0);
+					ಹಿಂತಿರುಗಿ false;
+				ನಿಲ್ಲಿಸು;
+			ಪೂರ್ವನಿಯೋಜಿತ:
+				ಪ್ರತಿಜ್ಞಾ(0);
 			}
 
-			if (child->children == NULL) {
+			ಆದರೆ (ಮಗು->children == ಖಾಲಿ) {
 				/* the child has destroyed itself: remove float */
-				if (child->prev == NULL)
-					child->parent->children = child->next;
-				else
-					child->prev->next = child->next;
-				if (child->next != NULL)
-					child->next->prev = child->prev;
-				else
-					child->parent->last = child->prev;
+				ಆದರೆ (ಮಗು->prev == ಖಾಲಿ)
+					ಮಗು->ಪೋಷಕ->children = ಮಗು->ಮುಂದಿನ;
+				ಇಲ್ಲದಿದ್ದರೆ
+					ಮಗು->prev->ಮುಂದಿನ = ಮಗು->ಮುಂದಿನ;
+				ಆದರೆ (ಮಗು->ಮುಂದಿನ != ಖಾಲಿ)
+					ಮಗು->ಮುಂದಿನ->prev = ಮಗು->prev;
+				ಇಲ್ಲದಿದ್ದರೆ
+					ಮಗು->ಪೋಷಕ->ಕೊನೆಯ = ಮಗು->prev;
 
-				box_free(child);
+				box_free(ಮಗು);
 			}
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
-		default:
-			assert(0);
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ BOX_FLEX:
+		ಸ್ಥಿತಿ BOX_ಖಂಡ:
+		ಸ್ಥಿತಿ BOX_INLINE_CONTAINER:
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ:
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು:
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು:
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ_CELL:
+		ಪೂರ್ವನಿಯೋಜಿತ:
+			ಪ್ರತಿಜ್ಞಾ(0);
 		}
 	}
 
-#ifdef BOX_NORMALISE_DEBUG
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "cont %p done", cont);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
 /* Exported function documented in html/box_normalise.h */
 bool
-box_normalise_block(struct box *block, const struct box *root, html_content *c)
+box_normalise_ಖಂಡ(ರಚನೆ box *ಖಂಡ, ಸ್ಥಿರಾಂಕ ರಚನೆ box *ಬೇರು, html_content *c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *table;
+	ರಚನೆ box *ಮಗು;
+	ರಚನೆ box *ಮುಂದಿನ_ಮಗು;
+	ರಚನೆ box *ಕೋಷ್ಟಕ;
 	css_computed_style *style;
 	nscss_select_ctx ctx;
 
-	assert(block != NULL);
-	assert(root != NULL);
+	ಪ್ರತಿಜ್ಞಾ(ಖಂಡ != ಖಾಲಿ);
+	ಪ್ರತಿಜ್ಞಾ(ಬೇರು != ಖಾಲಿ);
 
-	ctx.root_style = root->style;
+	ctx.ಬೇರು_style = ಬೇರು->style;
 
-#ifdef BOX_NORMALISE_DEBUG
-	NSLOG(netsurf, INFO, "block %p, block->type %u", block, block->type);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BOX_NORMALISE_DEBUG
+	NSLOG(netsurf, INFO, "block %p, block->type %u", ಖಂಡ, ಖಂಡ->type);
+#ಆದರೆ_ಅಂತ್ಯ
 
-	assert(block->type == BOX_BLOCK || block->type == BOX_INLINE_BLOCK ||
-			block->type == BOX_TABLE_CELL);
+	ಪ್ರತಿಜ್ಞಾ(ಖಂಡ->type == BOX_ಖಂಡ || ಖಂಡ->type == BOX_INLINE_ಖಂಡ ||
+			ಖಂಡ->type == BOX_ಕೋಷ್ಟಕ_CELL);
 
-	for (child = block->children; child != NULL; child = next_child) {
-#ifdef BOX_NORMALISE_DEBUG
-		NSLOG(netsurf, INFO, "child %p, child->type = %d", child,
-		      child->type);
-#endif
+	ಗಾಗಿ (ಮಗು = ಖಂಡ->children; ಮಗು != ಖಾಲಿ; ಮಗು = ಮುಂದಿನ_ಮಗು) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BOX_NORMALISE_DEBUG
+		NSLOG(netsurf, INFO, "child %p, child->type = %d", ಮಗು,
+		      ಮಗು->type);
+#ಆದರೆ_ಅಂತ್ಯ
 
-		next_child = child->next;	/* child may be destroyed */
+		ಮುಂದಿನ_ಮಗು = ಮಗು->ಮುಂದಿನ;	/* child may be destroyed */
 
-		switch (child->type) {
-		case BOX_FLEX:
+		ಆಯ್ಕೆ (ಮಗು->type) {
+		ಸ್ಥಿತಿ BOX_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
-				return false;
-			break;
-		case BOX_BLOCK:
+			ಆದರೆ (box_normalise_flex(ಮಗು, ಬೇರು, c) == false)
+				ಹಿಂತಿರುಗಿ false;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ BOX_ಖಂಡ:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE_CONTAINER:
-			if (box_normalise_inline_container(child, root, c) == false)
-				return false;
-			break;
-		case BOX_TABLE:
-			if (box_normalise_table(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+			ಆದರೆ (box_normalise_ಖಂಡ(ಮಗು, ಬೇರು, c) == false)
+				ಹಿಂತಿರುಗಿ false;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ BOX_INLINE_CONTAINER:
+			ಆದರೆ (box_normalise_inline_container(ಮಗು, ಬೇರು, c) == false)
+				ಹಿಂತಿರುಗಿ false;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ:
+			ಆದರೆ (box_normalise_ಕೋಷ್ಟಕ(ಮಗು, ಬೇರು, c) == false)
+				ಹಿಂತಿರುಗಿ false;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ BOX_INLINE:
+		ಸ್ಥಿತಿ BOX_INLINE_ಕೊನೆ:
+		ಸ್ಥಿತಿ BOX_INLINE_FLEX:
+		ಸ್ಥಿತಿ BOX_INLINE_ಖಂಡ:
+		ಸ್ಥಿತಿ BOX_FLOAT_ಎಡ:
+		ಸ್ಥಿತಿ BOX_FLOAT_ಬಲ:
+		ಸ್ಥಿತಿ BOX_BR:
+		ಸ್ಥಿತಿ BOX_ಪಠ್ಯ:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
+			ಪ್ರತಿಜ್ಞಾ(0);
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು:
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು:
+		ಸ್ಥಿತಿ BOX_ಕೋಷ್ಟಕ_CELL:
 			/* insert implied table */
-			assert(block->style != NULL);
+			ಪ್ರತಿಜ್ಞಾ(ಖಂಡ->style != ಖಾಲಿ);
 
 			ctx.ctx = c->select_ctx;
-			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
-			ctx.base_url = c->base_url;
+			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_ಬಹುಲಕ_ತುಂಬಿದ);
+			ctx.ತಳ_url = c->ತಳ_url;
 			ctx.universal = c->universal;
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
-					block->style);
-			if (style == NULL)
-				return false;
+					ಖಂಡ->style);
+			ಆದರೆ (style == ಖಾಲಿ)
+				ಹಿಂತಿರುಗಿ false;
 
-			table = box_create(NULL, style, true, block->href,
-					block->target, NULL, NULL, c->bctx);
-			if (table == NULL) {
+			ಕೋಷ್ಟಕ = box_create(ಖಾಲಿ, style, true, ಖಂಡ->href,
+					ಖಂಡ->ಗುರಿ, ಖಾಲಿ, ಖಾಲಿ, c->bctx);
+			ಆದರೆ (ಕೋಷ್ಟಕ == ಖಾಲಿ) {
 				css_computed_style_destroy(style);
-				return false;
+				ಹಿಂತಿರುಗಿ false;
 			}
-			table->type = BOX_TABLE;
+			ಕೋಷ್ಟಕ->type = BOX_ಕೋಷ್ಟಕ;
 
-			if (child->prev == NULL)
-				block->children = table;
-			else
-				child->prev->next = table;
+			ಆದರೆ (ಮಗು->prev == ಖಾಲಿ)
+				ಖಂಡ->children = ಕೋಷ್ಟಕ;
+			ಇಲ್ಲದಿದ್ದರೆ
+				ಮಗು->prev->ಮುಂದಿನ = ಕೋಷ್ಟಕ;
 
-			table->prev = child->prev;
+			ಕೋಷ್ಟಕ->prev = ಮಗು->prev;
 
-			while (child != NULL && (
-					child->type == BOX_TABLE_ROW_GROUP ||
-					child->type == BOX_TABLE_ROW ||
-					child->type == BOX_TABLE_CELL)) {
-				box_add_child(table, child);
+			ಆಗ (ಮಗು != ಖಾಲಿ && (
+					ಮಗು->type == BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು ||
+					ಮಗು->type == BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು ||
+					ಮಗು->type == BOX_ಕೋಷ್ಟಕ_CELL)) {
+				box_ಕೂಡಿಸು_ಮಗು(ಕೋಷ್ಟಕ, ಮಗು);
 
-				next_child = child->next;
-				child->next = NULL;
-				child = next_child;
+				ಮುಂದಿನ_ಮಗು = ಮಗು->ಮುಂದಿನ;
+				ಮಗು->ಮುಂದಿನ = ಖಾಲಿ;
+				ಮಗು = ಮುಂದಿನ_ಮಗು;
 			}
 
-			table->last->next = NULL;
-			table->next = next_child = child;
-			if (table->next != NULL)
-				table->next->prev = table;
-			else
-				block->last = table;
-			table->parent = block;
+			ಕೋಷ್ಟಕ->ಕೊನೆಯ->ಮುಂದಿನ = ಖಾಲಿ;
+			ಕೋಷ್ಟಕ->ಮುಂದಿನ = ಮುಂದಿನ_ಮಗು = ಮಗು;
+			ಆದರೆ (ಕೋಷ್ಟಕ->ಮುಂದಿನ != ಖಾಲಿ)
+				ಕೋಷ್ಟಕ->ಮುಂದಿನ->prev = ಕೋಷ್ಟಕ;
+			ಇಲ್ಲದಿದ್ದರೆ
+				ಖಂಡ->ಕೊನೆಯ = ಕೋಷ್ಟಕ;
+			ಕೋಷ್ಟಕ->ಪೋಷಕ = ಖಂಡ;
 
-			if (box_normalise_table(table, root, c) == false)
-				return false;
-			break;
-		default:
-			assert(0);
+			ಆದರೆ (box_normalise_ಕೋಷ್ಟಕ(ಕೋಷ್ಟಕ, ಬೇರು, c) == false)
+				ಹಿಂತಿರುಗಿ false;
+			ನಿಲ್ಲಿಸು;
+		ಪೂರ್ವನಿಯೋಜಿತ:
+			ಪ್ರತಿಜ್ಞಾ(0);
 		}
 	}
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }

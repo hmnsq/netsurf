@@ -21,33 +21,33 @@
  * High-level resource cache implementation.
  */
 
-#include <assert.h>
-#include <stdlib.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include "utils/http.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/ring.h"
-#include "utils/utils.h"
-#include "netsurf/inttypes.h"
-#include "netsurf/misc.h"
-#include "netsurf/content.h"
-#include "desktop/gui_internal.h"
+#ಅನ್ತರ್ಭಾವ "utils/http.h"
+#ಅನ್ತರ್ಭಾವ "utils/log.h"
+#ಅನ್ತರ್ಭಾವ "utils/messages.h"
+#ಅನ್ತರ್ಭಾವ "utils/ring.h"
+#ಅನ್ತರ್ಭಾವ "utils/utils.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/inttypes.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/misc.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/content.h"
+#ಅನ್ತರ್ಭಾವ "desktop/gui_internal.h"
 
-#include "content/mimesniff.h"
-#include "content/hlcache.h"
+#ಅನ್ತರ್ಭಾವ "content/mimesniff.h"
+#ಅನ್ತರ್ಭಾವ "content/hlcache.h"
 // Note, this is *ONLY* so that we can abort cleanly during shutdown of the cache
-#include "content/content_protected.h"
-#include "content/content_factory.h"
+#ಅನ್ತರ್ಭಾವ "content/content_protected.h"
+#ಅನ್ತರ್ಭಾವ "content/content_factory.h"
 
-typedef struct hlcache_entry hlcache_entry;
-typedef struct hlcache_retrieval_ctx hlcache_retrieval_ctx;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ hlcache_ನಮೂದು hlcache_ನಮೂದು;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ hlcache_retrieval_ctx hlcache_retrieval_ctx;
 
 /** High-level cache retrieval context */
-struct hlcache_retrieval_ctx {
-	struct hlcache_retrieval_ctx *r_prev; /**< Previous retrieval context in the ring */
-	struct hlcache_retrieval_ctx *r_next; /**< Next retrieval context in the ring */
+ರಚನೆ hlcache_retrieval_ctx {
+	ರಚನೆ hlcache_retrieval_ctx *r_prev; /**< Previous retrieval context in the ring */
+	ರಚನೆ hlcache_retrieval_ctx *r_ಮುಂದಿನ; /**< Next retrieval context in the ring */
 
 	llcache_handle *llcache;	/**< Low-level cache handle */
 
@@ -57,47 +57,47 @@ struct hlcache_retrieval_ctx {
 
 	content_type accepted_types;	/**< Accepted types */
 
-	hlcache_child_context child;	/**< Child context */
+	hlcache_ಮಗು_context ಮಗು;	/**< Child context */
 
-	bool migrate_target;		/**< Whether this context is the migration target */
+	bool migrate_ಗುರಿ;		/**< Whether this context is the migration target */
 };
 
 /** High-level cache handle */
-struct hlcache_handle {
-	hlcache_entry *entry;		/**< Pointer to cache entry */
+ರಚನೆ hlcache_handle {
+	hlcache_ನಮೂದು *ನಮೂದು;		/**< Pointer to cache entry */
 
 	hlcache_handle_callback cb;	/**< Client callback */
-	void *pw;			/**< Client data */
+	ಶೂನ್ಯ *pw;			/**< Client data */
 };
 
 /** Entry in high-level cache */
-struct hlcache_entry {
-	struct content *content;	/**< Pointer to associated content */
+ರಚನೆ hlcache_ನಮೂದು {
+	ರಚನೆ content *content;	/**< Pointer to associated content */
 
-	hlcache_entry *next;		/**< Next sibling */
-	hlcache_entry *prev;		/**< Previous sibling */
+	hlcache_ನಮೂದು *ಮುಂದಿನ;		/**< Next sibling */
+	hlcache_ನಮೂದು *prev;		/**< Previous sibling */
 };
 
 /** Current state of the cache.
  *
  * Global state of the cache.
  */
-struct hlcache_s {
-	struct hlcache_parameters params;
+ರಚನೆ hlcache_s {
+	ರಚನೆ hlcache_parameters params;
 
 	/** List of cached content objects */
-	hlcache_entry *content_list;
+	hlcache_ನಮೂದು *content_list;
 
 	/** Ring of retrieval contexts */
 	hlcache_retrieval_ctx *retrieval_ctx_ring;
 
 	/* statistics */
-	unsigned int hit_count;
-	unsigned int miss_count;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ದೊರಕಿತು_ಎಣಿಕೆ;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ತಪ್ಪಿದ_ಎಣಿಕೆ;
 };
 
 /** high level cache state */
-static struct hlcache_s *hlcache = NULL;
+ಸ್ಥಿರ ರಚನೆ hlcache_s *hlcache = ಖಾಲಿ;
 
 
 /******************************************************************************
@@ -108,26 +108,26 @@ static struct hlcache_s *hlcache = NULL;
 /**
  * Attempt to clean the cache
  */
-static void hlcache_clean(void *force_clean_flag)
+ಸ್ಥಿರ ಶೂನ್ಯ hlcache_clean(ಶೂನ್ಯ *force_clean_flag)
 {
-	hlcache_entry *entry, *next;
-	bool force_clean = (force_clean_flag != NULL);
+	hlcache_ನಮೂದು *ನಮೂದು, *ಮುಂದಿನ;
+	bool force_clean = (force_clean_flag != ಖಾಲಿ);
 
-	for (entry = hlcache->content_list; entry != NULL; entry = next) {
-		next = entry->next;
+	ಗಾಗಿ (ನಮೂದು = hlcache->content_list; ನಮೂದು != ಖಾಲಿ; ನಮೂದು = ಮುಂದಿನ) {
+		ಮುಂದಿನ = ನಮೂದು->ಮುಂದಿನ;
 
-		if (entry->content == NULL)
-			continue;
+		ಆದರೆ (ನಮೂದು->content == ಖಾಲಿ)
+			ಮುಂದುವರಿ;
 
-		if (content_count_users(entry->content) != 0)
-			continue;
+		ಆದರೆ (content_ಎಣಿಕೆ_users(ನಮೂದು->content) != 0)
+			ಮುಂದುವರಿ;
 
-		if (content__get_status(entry->content) == CONTENT_STATUS_LOADING) {
-			if (force_clean == false)
-				continue;
+		ಆದರೆ (content_get_ಸ್ಥಿತಿ_2(ನಮೂದು->content) == CONTENT_ಸ್ಥಿತಿ_LOADING) {
+			ಆದರೆ (force_clean == false)
+				ಮುಂದುವರಿ;
 			NSLOG(netsurf, DEBUG, "Forcing content cleanup during shutdown");
-			content_abort(entry->content);
-			content_set_error(entry->content);
+			content_abort(ನಮೂದು->content);
+			content_ಗಣ_error(ನಮೂದು->content);
 		}
 
 		/** \todo This is over-zealous: all unused contents
@@ -138,26 +138,26 @@ static void hlcache_clean(void *force_clean_flag)
 		 */
 
 		/* Remove entry from cache */
-		if (entry->prev == NULL)
-			hlcache->content_list = entry->next;
-		else
-			entry->prev->next = entry->next;
+		ಆದರೆ (ನಮೂದು->prev == ಖಾಲಿ)
+			hlcache->content_list = ನಮೂದು->ಮುಂದಿನ;
+		ಇಲ್ಲದಿದ್ದರೆ
+			ನಮೂದು->prev->ಮುಂದಿನ = ನಮೂದು->ಮುಂದಿನ;
 
-		if (entry->next != NULL)
-			entry->next->prev = entry->prev;
+		ಆದರೆ (ನಮೂದು->ಮುಂದಿನ != ಖಾಲಿ)
+			ನಮೂದು->ಮುಂದಿನ->prev = ನಮೂದು->prev;
 
 		/* Destroy content */
-		content_destroy(entry->content);
+		content_destroy(ನಮೂದು->content);
 
 		/* Destroy entry */
-		free(entry);
+		ಬಿಡುಗಡೆ(ನಮೂದು);
 	}
 
 	/* Attempt to clean the llcache */
 	llcache_clean(false);
 
 	/* Re-schedule ourselves */
-	guit->misc->schedule(hlcache->params.bg_clean_time, hlcache_clean, NULL);
+	guit->misc->ವೇಳಾಪಟ್ಟಿ(hlcache->params.bg_clean_ಸಮಯ, hlcache_clean, ಖಾಲಿ);
 }
 
 /**
@@ -168,7 +168,7 @@ static void hlcache_clean(void *force_clean_flag)
  * \param computed_type	  Pointer to location to receive computed type of object
  * \return True if the type is acceptable, false otherwise
  */
-static bool hlcache_type_is_acceptable(lwc_string *mime_type,
+ಸ್ಥಿರ bool hlcache_type_is_acceptable(lwc_string *mime_type,
 		content_type accepted_types, content_type *computed_type)
 {
 	content_type type;
@@ -177,7 +177,7 @@ static bool hlcache_type_is_acceptable(lwc_string *mime_type,
 
 	*computed_type = type;
 
-	return ((accepted_types & type) != 0);
+	ಹಿಂತಿರುಗಿ ((accepted_types & type) != 0);
 }
 
 /**
@@ -188,23 +188,23 @@ static bool hlcache_type_is_acceptable(lwc_string *mime_type,
  * \param data	Data for message
  * \param pw	Pointer to private data (hlcache_handle)
  */
-static void hlcache_content_callback(struct content *c, content_msg msg,
-		const union content_msg_data *data, void *pw)
+ಸ್ಥಿರ ಶೂನ್ಯ hlcache_content_callback(ರಚನೆ content *c, content_ಸಂದೇಶ ಸಂದೇಶ,
+		ಸ್ಥಿರಾಂಕ ಒಕ್ಕೂಟ content_ಸಂದೇಶ_ದತ್ತಾಂಶ *ದತ್ತಾಂಶ, ಶೂನ್ಯ *pw)
 {
 	hlcache_handle *handle = pw;
 	nserror error = NSERROR_OK;
 	hlcache_event event = {
-		.type = msg,
+		.type = ಸಂದೇಶ,
 	};
 
-	if (data != NULL) {
-		event.data = *data;
+	ಆದರೆ (ದತ್ತಾಂಶ != ಖಾಲಿ) {
+		event.ದತ್ತಾಂಶ = *ದತ್ತಾಂಶ;
 	}
 
-	if (handle->cb != NULL)
+	ಆದರೆ (handle->cb != ಖಾಲಿ)
 		error = handle->cb(handle, &event, handle->pw);
 
-	if (error != NSERROR_OK)
+	ಆದರೆ (error != NSERROR_OK)
 		NSLOG(netsurf, INFO, "Error in callback: %d", error);
 }
 
@@ -222,118 +222,118 @@ static void hlcache_content_callback(struct content *c, content_msg msg,
  * \post Low-level handle is either released, or associated with new content
  * \post High-level handle is registered with content
  */
-static nserror hlcache_find_content(hlcache_retrieval_ctx *ctx,
+ಸ್ಥಿರ nserror hlcache_ಕಂಡುಹಿಡಿ_content(hlcache_retrieval_ctx *ctx,
 		lwc_string *effective_type)
 {
-	hlcache_entry *entry;
+	hlcache_ನಮೂದು *ನಮೂದು;
 	hlcache_event event;
 	nserror error = NSERROR_OK;
 
 	/* Search list of cached contents for a suitable one */
-	for (entry = hlcache->content_list; entry != NULL; entry = entry->next) {
-		hlcache_handle entry_handle = { entry, NULL, NULL };
-		const llcache_handle *entry_llcache;
+	ಗಾಗಿ (ನಮೂದು = hlcache->content_list; ನಮೂದು != ಖಾಲಿ; ನಮೂದು = ನಮೂದು->ಮುಂದಿನ) {
+		hlcache_handle ನಮೂದು_handle = { ನಮೂದು, ಖಾಲಿ, ಖಾಲಿ };
+		ಸ್ಥಿರಾಂಕ llcache_handle *ನಮೂದು_llcache;
 
-		if (entry->content == NULL)
-			continue;
+		ಆದರೆ (ನಮೂದು->content == ಖಾಲಿ)
+			ಮುಂದುವರಿ;
 
 		/* Ignore contents in the error state */
-		if (content_get_status(&entry_handle) == CONTENT_STATUS_ERROR)
-			continue;
+		ಆದರೆ (content_get_ಸ್ಥಿತಿ(&ನಮೂದು_handle) == CONTENT_ಸ್ಥಿತಿ_ERROR)
+			ಮುಂದುವರಿ;
 
 		/* Ensure that content is shareable */
-		if (content_is_shareable(entry->content) == false)
-			continue;
+		ಆದರೆ (content_is_shareable(ನಮೂದು->content) == false)
+			ಮುಂದುವರಿ;
 
 		/* Ensure that quirks mode is acceptable */
-		if (content_matches_quirks(entry->content,
-				ctx->child.quirks) == false)
-			continue;
+		ಆದರೆ (content_matches_quirks(ನಮೂದು->content,
+				ctx->ಮಗು.quirks) == false)
+			ಮುಂದುವರಿ;
 
 		/* Ensure that content uses same low-level object as
 		 * low-level handle */
-		entry_llcache = content_get_llcache_handle(entry->content);
+		ನಮೂದು_llcache = content_get_llcache_handle(ನಮೂದು->content);
 
-		if (llcache_handle_references_same_object(entry_llcache,
+		ಆದರೆ (llcache_handle_references_same_object(ನಮೂದು_llcache,
 				ctx->llcache))
-			break;
+			ನಿಲ್ಲಿಸು;
 	}
 
-	if (entry == NULL) {
+	ಆದರೆ (ನಮೂದು == ಖಾಲಿ) {
 		/* No existing entry, so need to create one */
-		entry = malloc(sizeof(hlcache_entry));
-		if (entry == NULL)
-			return NSERROR_NOMEM;
+		ನಮೂದು = ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ(hlcache_ನಮೂದು));
+		ಆದರೆ (ನಮೂದು == ಖಾಲಿ)
+			ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 
 		/* Create content using llhandle */
-		entry->content = content_factory_create_content(ctx->llcache,
-				ctx->child.charset, ctx->child.quirks,
+		ನಮೂದು->content = content_factory_create_content(ctx->llcache,
+				ctx->ಮಗು.charset, ctx->ಮಗು.quirks,
 				effective_type);
-		if (entry->content == NULL) {
-			free(entry);
-			return NSERROR_NOMEM;
+		ಆದರೆ (ನಮೂದು->content == ಖಾಲಿ) {
+			ಬಿಡುಗಡೆ(ನಮೂದು);
+			ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 		}
 
 		/* Insert into cache */
-		entry->prev = NULL;
-		entry->next = hlcache->content_list;
-		if (hlcache->content_list != NULL)
-			hlcache->content_list->prev = entry;
-		hlcache->content_list = entry;
+		ನಮೂದು->prev = ಖಾಲಿ;
+		ನಮೂದು->ಮುಂದಿನ = hlcache->content_list;
+		ಆದರೆ (hlcache->content_list != ಖಾಲಿ)
+			hlcache->content_list->prev = ನಮೂದು;
+		hlcache->content_list = ನಮೂದು;
 
 		/* Signal to caller that we created a content */
-		error = NSERROR_NEED_DATA;
+		error = NSERROR_NEED_ದತ್ತಾಂಶ;
 
-		hlcache->miss_count++;
-	} else {
+		hlcache->ತಪ್ಪಿದ_ಎಣಿಕೆ++;
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		/* Found a suitable content: no longer need low-level handle */
 		llcache_handle_release(ctx->llcache);
-		hlcache->hit_count++;
+		hlcache->ದೊರಕಿತು_ಎಣಿಕೆ++;
 	}
 
 	/* Associate handle with content */
-	if (content_add_user(entry->content,
+	ಆದರೆ (content_ಕೂಡಿಸು_user(ನಮೂದು->content,
 			hlcache_content_callback, ctx->handle) == false)
-		return NSERROR_NOMEM;
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 
 	/* Associate cache entry with handle */
-	ctx->handle->entry = entry;
+	ctx->handle->ನಮೂದು = ನಮೂದು;
 
 	/* Catch handle up with state of content */
-	if (ctx->handle->cb != NULL) {
-		content_status status = content_get_status(ctx->handle);
+	ಆದರೆ (ctx->handle->cb != ಖಾಲಿ) {
+		content_ಸ್ಥಿತಿ ಸ್ಥಿತಿ_2 = content_get_ಸ್ಥಿತಿ(ctx->handle);
 
-		if (status == CONTENT_STATUS_LOADING) {
-			event.type = CONTENT_MSG_LOADING;
+		ಆದರೆ (ಸ್ಥಿತಿ_2 == CONTENT_ಸ್ಥಿತಿ_LOADING) {
+			event.type = CONTENT_ಸಂದೇಶ_LOADING;
 			ctx->handle->cb(ctx->handle, &event, ctx->handle->pw);
-		} else if (status == CONTENT_STATUS_READY) {
-			event.type = CONTENT_MSG_LOADING;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ಸ್ಥಿತಿ_2 == CONTENT_ಸ್ಥಿತಿ_READY) {
+			event.type = CONTENT_ಸಂದೇಶ_LOADING;
 			ctx->handle->cb(ctx->handle, &event, ctx->handle->pw);
 
-			if (ctx->handle->cb != NULL) {
-				event.type = CONTENT_MSG_READY;
+			ಆದರೆ (ctx->handle->cb != ಖಾಲಿ) {
+				event.type = CONTENT_ಸಂದೇಶ_READY;
 				ctx->handle->cb(ctx->handle, &event,
 						ctx->handle->pw);
 			}
-		} else if (status == CONTENT_STATUS_DONE) {
-			event.type = CONTENT_MSG_LOADING;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ಸ್ಥಿತಿ_2 == CONTENT_ಸ್ಥಿತಿ_ಮುಗಿದ) {
+			event.type = CONTENT_ಸಂದೇಶ_LOADING;
 			ctx->handle->cb(ctx->handle, &event, ctx->handle->pw);
 
-			if (ctx->handle->cb != NULL) {
-				event.type = CONTENT_MSG_READY;
+			ಆದರೆ (ctx->handle->cb != ಖಾಲಿ) {
+				event.type = CONTENT_ಸಂದೇಶ_READY;
 				ctx->handle->cb(ctx->handle, &event,
 						ctx->handle->pw);
 			}
 
-			if (ctx->handle->cb != NULL) {
-				event.type = CONTENT_MSG_DONE;
+			ಆದರೆ (ctx->handle->cb != ಖಾಲಿ) {
+				event.type = CONTENT_ಸಂದೇಶ_ಮುಗಿದ;
 				ctx->handle->cb(ctx->handle, &event,
 						ctx->handle->pw);
 			}
 		}
 	}
 
-	return error;
+	ಹಿಂತಿರುಗಿ error;
 }
 
 /**
@@ -345,26 +345,26 @@ static nserror hlcache_find_content(hlcache_retrieval_ctx *ctx,
  *         NSERROR_NEED_DATA on success where data is needed,
  *         appropriate error otherwise
  */
-static nserror hlcache_migrate_ctx(hlcache_retrieval_ctx *ctx,
+ಸ್ಥಿರ nserror hlcache_migrate_ctx(hlcache_retrieval_ctx *ctx,
 		lwc_string *effective_type)
 {
 	content_type type = CONTENT_NONE;
 	nserror error = NSERROR_OK;
 
-	ctx->migrate_target = true;
+	ctx->migrate_ಗುರಿ = true;
 
-	if ((effective_type != NULL) &&
+	ಆದರೆ ((effective_type != ಖಾಲಿ) &&
 	    hlcache_type_is_acceptable(effective_type,
 				       ctx->accepted_types,
 				       &type)) {
-		error = hlcache_find_content(ctx, effective_type);
-		if (error != NSERROR_OK && error != NSERROR_NEED_DATA) {
-			if (ctx->handle->cb != NULL) {
+		error = hlcache_ಕಂಡುಹಿಡಿ_content(ctx, effective_type);
+		ಆದರೆ (error != NSERROR_OK && error != NSERROR_NEED_ದತ್ತಾಂಶ) {
+			ಆದರೆ (ctx->handle->cb != ಖಾಲಿ) {
 				hlcache_event hlevent;
 
-				hlevent.type = CONTENT_MSG_ERROR;
-				hlevent.data.errordata.errorcode = NSERROR_UNKNOWN;
-				hlevent.data.errordata.errormsg = messages_get("MiscError");
+				hlevent.type = CONTENT_ಸಂದೇಶ_ERROR;
+				hlevent.ದತ್ತಾಂಶ.errordata.errorcode = NSERROR_UNKNOWN;
+				hlevent.ದತ್ತಾಂಶ.errordata.errormsg = messages_get("MiscError");
 
 				ctx->handle->cb(ctx->handle, &hlevent,
 						ctx->handle->pw);
@@ -373,31 +373,31 @@ static nserror hlcache_migrate_ctx(hlcache_retrieval_ctx *ctx,
 			llcache_handle_abort(ctx->llcache);
 			llcache_handle_release(ctx->llcache);
 		}
-	} else if (type == CONTENT_NONE &&
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (type == CONTENT_NONE &&
 			(ctx->flags & HLCACHE_RETRIEVE_MAY_DOWNLOAD)) {
 		/* Unknown type, and we can download, so convert */
-		llcache_handle_force_stream(ctx->llcache);
+		llcache_handle_force_ಹರಿವು(ctx->llcache);
 
-		if (ctx->handle->cb != NULL) {
+		ಆದರೆ (ctx->handle->cb != ಖಾಲಿ) {
 			hlcache_event hlevent;
 
-			hlevent.type = CONTENT_MSG_DOWNLOAD;
-			hlevent.data.download = ctx->llcache;
+			hlevent.type = CONTENT_ಸಂದೇಶ_DOWNLOAD;
+			hlevent.ದತ್ತಾಂಶ.download = ctx->llcache;
 
 			ctx->handle->cb(ctx->handle, &hlevent,
 					ctx->handle->pw);
 		}
 
 		/* Ensure caller knows we need data */
-		error = NSERROR_NEED_DATA;
-	} else {
+		error = NSERROR_NEED_ದತ್ತಾಂಶ;
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		/* Unacceptable type: report error */
-		if (ctx->handle->cb != NULL) {
+		ಆದರೆ (ctx->handle->cb != ಖಾಲಿ) {
 			hlcache_event hlevent;
 
-			hlevent.type = CONTENT_MSG_ERROR;
-			hlevent.data.errordata.errorcode = NSERROR_UNKNOWN;
-			hlevent.data.errordata.errormsg = messages_get("UnacceptableType");
+			hlevent.type = CONTENT_ಸಂದೇಶ_ERROR;
+			hlevent.ದತ್ತಾಂಶ.errordata.errorcode = NSERROR_UNKNOWN;
+			hlevent.ದತ್ತಾಂಶ.errordata.errormsg = messages_get("UnacceptableType");
 
 			ctx->handle->cb(ctx->handle, &hlevent,
 					ctx->handle->pw);
@@ -407,14 +407,14 @@ static nserror hlcache_migrate_ctx(hlcache_retrieval_ctx *ctx,
 		llcache_handle_release(ctx->llcache);
 	}
 
-	ctx->migrate_target = false;
+	ctx->migrate_ಗುರಿ = false;
 
 	/* No longer require retrieval context */
 	RING_REMOVE(hlcache->retrieval_ctx_ring, ctx);
-	free((char *) ctx->child.charset);
-	free(ctx);
+	ಬಿಡುಗಡೆ((ಅಕ್ಷರ *) ctx->ಮಗು.charset);
+	ಬಿಡುಗಡೆ(ctx);
 
-	return error;
+	ಹಿಂತಿರುಗಿ error;
 }
 
 /**
@@ -425,35 +425,35 @@ static nserror hlcache_migrate_ctx(hlcache_retrieval_ctx *ctx,
  * \param pw	  Pointer to client-specific data
  * \return NSERROR_OK on success, appropriate error otherwise
  */
-static nserror
+ಸ್ಥಿರ nserror
 hlcache_llcache_callback(llcache_handle *handle,
-			 const llcache_event *event,
-			 void *pw)
+			 ಸ್ಥಿರಾಂಕ llcache_event *event,
+			 ಶೂನ್ಯ *pw)
 {
 	hlcache_retrieval_ctx *ctx = pw;
-	lwc_string *effective_type = NULL;
+	lwc_string *effective_type = ಖಾಲಿ;
 	nserror error;
 
-	assert(ctx->llcache == handle);
+	ಪ್ರತಿಜ್ಞಾ(ctx->llcache == handle);
 
-	switch (event->type) {
-	case LLCACHE_EVENT_GOT_CERTS:
+	ಆಯ್ಕೆ (event->type) {
+	ಸ್ಥಿತಿ LLCACHE_EVENT_GOT_CERTS:
 		/* Pass them on upward */
-		if (ctx->handle->cb != NULL) {
+		ಆದರೆ (ctx->handle->cb != ಖಾಲಿ) {
 			hlcache_event hlevent;
 
-			hlevent.type = CONTENT_MSG_SSL_CERTS;
-			hlevent.data.chain = event->data.chain;
+			hlevent.type = CONTENT_ಸಂದೇಶ_SSL_CERTS;
+			hlevent.ದತ್ತಾಂಶ.chain = event->ದತ್ತಾಂಶ.chain;
 
 			ctx->handle->cb(ctx->handle, &hlevent, ctx->handle->pw);
 		}
-		break;
-	case LLCACHE_EVENT_HAD_HEADERS:
-		error = mimesniff_compute_effective_type(llcache_handle_get_header(handle, "Content-Type"), NULL, 0,
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ LLCACHE_EVENT_HAD_ಶೀರ್ಷಿಕೆಗಳು:
+		error = mimesniff_compute_effective_type(llcache_handle_get_ಶೀರ್ಷಿಕೆ(handle, "Content-Type"), ಖಾಲಿ, 0,
 				ctx->flags & HLCACHE_RETRIEVE_SNIFF_TYPE,
 				ctx->accepted_types == CONTENT_IMAGE,
 				&effective_type);
-		if (error == NSERROR_OK || error == NSERROR_NOT_FOUND) {
+		ಆದರೆ (error == NSERROR_OK || error == NSERROR_NOT_ಸಿಕ್ಕಿತು) {
 			/* If the sniffer was successful or failed to find
 			 * a Content-Type header when sniffing was
 			 * prohibited, we must migrate the retrieval context. */
@@ -464,78 +464,78 @@ hlcache_llcache_callback(llcache_handle *handle,
 
 		/* No need to report that we need data:
 		 * we'll get some anyway if there is any */
-		if (error == NSERROR_NEED_DATA)
+		ಆದರೆ (error == NSERROR_NEED_ದತ್ತಾಂಶ)
 			error = NSERROR_OK;
 
-		return error;
+		ಹಿಂತಿರುಗಿ error;
 
-		break;
-	case LLCACHE_EVENT_HAD_DATA:
-		error = mimesniff_compute_effective_type(llcache_handle_get_header(handle, "Content-Type"),
-				event->data.data.buf, event->data.data.len,
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ LLCACHE_EVENT_HAD_ದತ್ತಾಂಶ:
+		error = mimesniff_compute_effective_type(llcache_handle_get_ಶೀರ್ಷಿಕೆ(handle, "Content-Type"),
+				event->ದತ್ತಾಂಶ.ದತ್ತಾಂಶ.buf, event->ದತ್ತಾಂಶ.ದತ್ತಾಂಶ.len,
 				ctx->flags & HLCACHE_RETRIEVE_SNIFF_TYPE,
 				ctx->accepted_types == CONTENT_IMAGE,
 				&effective_type);
-		if (error != NSERROR_OK) {
-			assert(0 && "MIME sniff failed with data");
+		ಆದರೆ (error != NSERROR_OK) {
+			ಪ್ರತಿಜ್ಞಾ(0 && "MIME sniff failed with data");
 		}
 
 		error = hlcache_migrate_ctx(ctx, effective_type);
 
 		lwc_string_unref(effective_type);
 
-		return error;
+		ಹಿಂತಿರುಗಿ error;
 
-		break;
-	case LLCACHE_EVENT_DONE:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ LLCACHE_EVENT_ಮುಗಿದ:
 		/* DONE event before we could determine the effective MIME type.
 		 */
-		error = mimesniff_compute_effective_type(llcache_handle_get_header(handle, "Content-Type"),
-				NULL, 0, false, false, &effective_type);
-		if (error == NSERROR_OK || error == NSERROR_NOT_FOUND) {
+		error = mimesniff_compute_effective_type(llcache_handle_get_ಶೀರ್ಷಿಕೆ(handle, "Content-Type"),
+				ಖಾಲಿ, 0, false, false, &effective_type);
+		ಆದರೆ (error == NSERROR_OK || error == NSERROR_NOT_ಸಿಕ್ಕಿತು) {
 			error = hlcache_migrate_ctx(ctx, effective_type);
 
 			lwc_string_unref(effective_type);
-			return error;
+			ಹಿಂತಿರುಗಿ error;
 		}
 
-		if (ctx->handle->cb != NULL) {
+		ಆದರೆ (ctx->handle->cb != ಖಾಲಿ) {
 			hlcache_event hlevent;
 
-			hlevent.type = CONTENT_MSG_ERROR;
-			hlevent.data.errordata.errorcode = error;
-			hlevent.data.errordata.errormsg = NULL;
+			hlevent.type = CONTENT_ಸಂದೇಶ_ERROR;
+			hlevent.ದತ್ತಾಂಶ.errordata.errorcode = error;
+			hlevent.ದತ್ತಾಂಶ.errordata.errormsg = ಖಾಲಿ;
 
 			ctx->handle->cb(ctx->handle, &hlevent, ctx->handle->pw);
 		}
-		break;
-	case LLCACHE_EVENT_ERROR:
-		if (ctx->handle->cb != NULL) {
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ LLCACHE_EVENT_ERROR:
+		ಆದರೆ (ctx->handle->cb != ಖಾಲಿ) {
 			hlcache_event hlevent;
 
-			hlevent.type = CONTENT_MSG_ERROR;
-			hlevent.data.errordata.errorcode = event->data.error.code;
-			hlevent.data.errordata.errormsg = event->data.error.msg;
+			hlevent.type = CONTENT_ಸಂದೇಶ_ERROR;
+			hlevent.ದತ್ತಾಂಶ.errordata.errorcode = event->ದತ್ತಾಂಶ.error.ಸಂಕೇತ_2;
+			hlevent.ದತ್ತಾಂಶ.errordata.errormsg = event->ದತ್ತಾಂಶ.error.ಸಂದೇಶ;
 
 			ctx->handle->cb(ctx->handle, &hlevent, ctx->handle->pw);
 		}
-		break;
-	case LLCACHE_EVENT_PROGRESS:
-		break;
-	case LLCACHE_EVENT_REDIRECT:
-		if (ctx->handle->cb != NULL) {
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ LLCACHE_EVENT_ಪ್ರಗತಿ:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ LLCACHE_EVENT_REDIRECT:
+		ಆದರೆ (ctx->handle->cb != ಖಾಲಿ) {
 			hlcache_event hlevent;
 
-			hlevent.type = CONTENT_MSG_REDIRECT;
-			hlevent.data.redirect.from = event->data.redirect.from;
-			hlevent.data.redirect.to = event->data.redirect.to;
+			hlevent.type = CONTENT_ಸಂದೇಶ_REDIRECT;
+			hlevent.ದತ್ತಾಂಶ.redirect.from = event->ದತ್ತಾಂಶ.redirect.from;
+			hlevent.ದತ್ತಾಂಶ.redirect.ಗಮ್ಯ = event->ದತ್ತಾಂಶ.redirect.ಗಮ್ಯ;
 
 			ctx->handle->cb(ctx->handle, &hlevent, ctx->handle->pw);
 		}
-		break;
+		ನಿಲ್ಲಿಸು;
 	}
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
 
@@ -545,126 +545,126 @@ hlcache_llcache_callback(llcache_handle *handle,
 
 
 nserror
-hlcache_initialise(const struct hlcache_parameters *hlcache_parameters)
+hlcache_initialise(ಸ್ಥಿರಾಂಕ ರಚನೆ hlcache_parameters *hlcache_parameters)
 {
 	nserror ret;
 
-	hlcache = calloc(1, sizeof(struct hlcache_s));
-	if (hlcache == NULL) {
-		return NSERROR_NOMEM;
+	hlcache = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(ರಚನೆ hlcache_s));
+	ಆದರೆ (hlcache == ಖಾಲಿ) {
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 	}
 
 	ret = llcache_initialise(&hlcache_parameters->llcache);
-	if (ret != NSERROR_OK) {
-		free(hlcache);
-		hlcache = NULL;
-		return ret;
+	ಆದರೆ (ret != NSERROR_OK) {
+		ಬಿಡುಗಡೆ(hlcache);
+		hlcache = ಖಾಲಿ;
+		ಹಿಂತಿರುಗಿ ret;
 	}
 
 	hlcache->params = *hlcache_parameters;
 
 	/* Schedule the cache cleanup */
-	guit->misc->schedule(hlcache->params.bg_clean_time, hlcache_clean, NULL);
+	guit->misc->ವೇಳಾಪಟ್ಟಿ(hlcache->params.bg_clean_ಸಮಯ, hlcache_clean, ಖಾಲಿ);
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
 /* See hlcache.h for documentation */
-void hlcache_stop(void)
+ಶೂನ್ಯ hlcache_stop(ಶೂನ್ಯ)
 {
 	/* Remove the hlcache_clean schedule */
-	guit->misc->schedule(-1, hlcache_clean, NULL);
+	guit->misc->ವೇಳಾಪಟ್ಟಿ(-1, hlcache_clean, ಖಾಲಿ);
 }
 
 /* See hlcache.h for documentation */
-void hlcache_finalise(void)
+ಶೂನ್ಯ hlcache_finalise(ಶೂನ್ಯ)
 {
-	uint32_t num_contents, prev_contents;
-	hlcache_entry *entry;
-	hlcache_retrieval_ctx *ctx, *next;
+	uint32_t ಅಂಕೆ_contents, prev_contents;
+	hlcache_ನಮೂದು *ನಮೂದು;
+	hlcache_retrieval_ctx *ctx, *ಮುಂದಿನ;
 
 	/* Obtain initial count of contents remaining */
-	for (num_contents = 0, entry = hlcache->content_list;
-			entry != NULL; entry = entry->next) {
-		num_contents++;
+	ಗಾಗಿ (ಅಂಕೆ_contents = 0, ನಮೂದು = hlcache->content_list;
+			ನಮೂದು != ಖಾಲಿ; ನಮೂದು = ನಮೂದು->ಮುಂದಿನ) {
+		ಅಂಕೆ_contents++;
 	}
 
 	NSLOG(netsurf, INFO, "%"PRIu32" contents remain before cache drain",
-	      num_contents);
+	      ಅಂಕೆ_contents);
 
 	/* Drain cache */
-	do {
-		prev_contents = num_contents;
+	ಮಾಡು {
+		prev_contents = ಅಂಕೆ_contents;
 
-		hlcache_clean(NULL);
+		hlcache_clean(ಖಾಲಿ);
 
-		for (num_contents = 0, entry = hlcache->content_list;
-				entry != NULL; entry = entry->next) {
-			num_contents++;
+		ಗಾಗಿ (ಅಂಕೆ_contents = 0, ನಮೂದು = hlcache->content_list;
+				ನಮೂದು != ಖಾಲಿ; ನಮೂದು = ನಮೂದು->ಮುಂದಿನ) {
+			ಅಂಕೆ_contents++;
 		}
-	} while (num_contents > 0 && num_contents != prev_contents);
+	} ಆಗ (ಅಂಕೆ_contents > 0 && ಅಂಕೆ_contents != prev_contents);
 
 	NSLOG(netsurf, INFO, "%"PRIu32" contents remaining after being polite",
-			num_contents);
+			ಅಂಕೆ_contents);
 
 	/* Drain cache again, forcing the matter */
-	do {
-		prev_contents = num_contents;
+	ಮಾಡು {
+		prev_contents = ಅಂಕೆ_contents;
 
-		hlcache_clean(&entry); // Any non-NULL pointer will do
+		hlcache_clean(&ನಮೂದು); // Any non-NULL pointer will do
 
-		for (num_contents = 0, entry = hlcache->content_list;
-				entry != NULL; entry = entry->next) {
-			num_contents++;
+		ಗಾಗಿ (ಅಂಕೆ_contents = 0, ನಮೂದು = hlcache->content_list;
+				ನಮೂದು != ಖಾಲಿ; ನಮೂದು = ನಮೂದು->ಮುಂದಿನ) {
+			ಅಂಕೆ_contents++;
 		}
-	} while (num_contents > 0 && num_contents != prev_contents);
+	} ಆಗ (ಅಂಕೆ_contents > 0 && ಅಂಕೆ_contents != prev_contents);
 
-	NSLOG(netsurf, INFO, "%"PRIu32" contents remaining:", num_contents);
-	for (entry = hlcache->content_list; entry != NULL; entry = entry->next) {
-		hlcache_handle entry_handle = { entry, NULL, NULL };
+	NSLOG(netsurf, INFO, "%"PRIu32" contents remaining:", ಅಂಕೆ_contents);
+	ಗಾಗಿ (ನಮೂದು = hlcache->content_list; ನಮೂದು != ಖಾಲಿ; ನಮೂದು = ನಮೂದು->ಮುಂದಿನ) {
+		hlcache_handle ನಮೂದು_handle = { ನಮೂದು, ಖಾಲಿ, ಖಾಲಿ };
 
-		if (entry->content != NULL) {
+		ಆದರೆ (ನಮೂದು->content != ಖಾಲಿ) {
 			NSLOG(netsurf, INFO, "	%p : %s (%"PRIu32" users)",
-			      entry,
-			      nsurl_access(hlcache_handle_get_url(&entry_handle)),
-			      content_count_users(entry->content));
-		} else {
-			NSLOG(netsurf, INFO, "	%p", entry);
+			      ನಮೂದು,
+			      nsurl_access(hlcache_handle_get_url(&ನಮೂದು_handle)),
+			      content_ಎಣಿಕೆ_users(ನಮೂದು->content));
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			NSLOG(netsurf, INFO, "	%p", ನಮೂದು);
 		}
 	}
 
 	/* Clean up retrieval contexts */
-	if (hlcache->retrieval_ctx_ring != NULL) {
+	ಆದರೆ (hlcache->retrieval_ctx_ring != ಖಾಲಿ) {
 		ctx = hlcache->retrieval_ctx_ring;
 
-		do {
-			next = ctx->r_next;
+		ಮಾಡು {
+			ಮುಂದಿನ = ctx->r_ಮುಂದಿನ;
 
-			if (ctx->llcache != NULL)
+			ಆದರೆ (ctx->llcache != ಖಾಲಿ)
 				llcache_handle_release(ctx->llcache);
 
-			if (ctx->handle != NULL)
-				free(ctx->handle);
+			ಆದರೆ (ctx->handle != ಖಾಲಿ)
+				ಬಿಡುಗಡೆ(ctx->handle);
 
-			if (ctx->child.charset != NULL)
-				free((char *) ctx->child.charset);
+			ಆದರೆ (ctx->ಮಗು.charset != ಖಾಲಿ)
+				ಬಿಡುಗಡೆ((ಅಕ್ಷರ *) ctx->ಮಗು.charset);
 
-			free(ctx);
+			ಬಿಡುಗಡೆ(ctx);
 
-			ctx = next;
-		} while (ctx != hlcache->retrieval_ctx_ring);
+			ctx = ಮುಂದಿನ;
+		} ಆಗ (ctx != hlcache->retrieval_ctx_ring);
 
-		hlcache->retrieval_ctx_ring = NULL;
+		hlcache->retrieval_ctx_ring = ಖಾಲಿ;
 	}
 
-	NSLOG(netsurf, INFO, "hit/miss %d/%d", hlcache->hit_count,
-	      hlcache->miss_count);
+	NSLOG(netsurf, INFO, "hit/miss %d/%d", hlcache->ದೊರಕಿತು_ಎಣಿಕೆ,
+	      hlcache->ತಪ್ಪಿದ_ಎಣಿಕೆ);
 
 	/* De-schedule ourselves */
-	guit->misc->schedule(-1, hlcache_clean, NULL);
+	guit->misc->ವೇಳಾಪಟ್ಟಿ(-1, hlcache_clean, ಖಾಲಿ);
 
-	free(hlcache);
-	hlcache = NULL;
+	ಬಿಡುಗಡೆ(hlcache);
+	hlcache = ಖಾಲಿ;
 
 	NSLOG(netsurf, INFO, "Finalising low-level cache");
 	llcache_finalise();
@@ -675,38 +675,38 @@ nserror
 hlcache_handle_retrieve(nsurl *url,
 			uint32_t flags,
 			nsurl *referer,
-			llcache_post_data *post,
-			hlcache_handle_callback cb, void *pw,
-			hlcache_child_context *child,
+			llcache_post_ದತ್ತಾಂಶ *post,
+			hlcache_handle_callback cb, ಶೂನ್ಯ *pw,
+			hlcache_ಮಗು_context *ಮಗು,
 			content_type accepted_types,
-			hlcache_handle **result)
+			hlcache_handle **ಫಲಿತಾಂಶ)
 {
 	hlcache_retrieval_ctx *ctx;
 	nserror error;
 
-	assert(cb != NULL);
+	ಪ್ರತಿಜ್ಞಾ(cb != ಖಾಲಿ);
 
-	ctx = calloc(1, sizeof(hlcache_retrieval_ctx));
-	if (ctx == NULL) {
-		return NSERROR_NOMEM;
+	ctx = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(hlcache_retrieval_ctx));
+	ಆದರೆ (ctx == ಖಾಲಿ) {
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 	}
 
-	ctx->handle = calloc(1, sizeof(hlcache_handle));
-	if (ctx->handle == NULL) {
-		free(ctx);
-		return NSERROR_NOMEM;
+	ctx->handle = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(hlcache_handle));
+	ಆದರೆ (ctx->handle == ಖಾಲಿ) {
+		ಬಿಡುಗಡೆ(ctx);
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 	}
 
-	if (child != NULL) {
-		if (child->charset != NULL) {
-			ctx->child.charset = strdup(child->charset);
-			if (ctx->child.charset == NULL) {
-				free(ctx->handle);
-				free(ctx);
-				return NSERROR_NOMEM;
+	ಆದರೆ (ಮಗು != ಖಾಲಿ) {
+		ಆದರೆ (ಮಗು->charset != ಖಾಲಿ) {
+			ctx->ಮಗು.charset = strdup(ಮಗು->charset);
+			ಆದರೆ (ctx->ಮಗು.charset == ಖಾಲಿ) {
+				ಬಿಡುಗಡೆ(ctx->handle);
+				ಬಿಡುಗಡೆ(ctx);
+				ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 			}
 		}
-		ctx->child.quirks = child->quirks;
+		ctx->ಮಗು.quirks = ಮಗು->quirks;
 	}
 
 	ctx->flags = flags;
@@ -718,32 +718,32 @@ hlcache_handle_retrieve(nsurl *url,
 	error = llcache_handle_retrieve(url, flags, referer, post,
 			hlcache_llcache_callback, ctx,
 			&ctx->llcache);
-	if (error != NSERROR_OK) {
+	ಆದರೆ (error != NSERROR_OK) {
 		/* error retrieving handle so free context and return error */
-		free((char *) ctx->child.charset);
-		free(ctx->handle);
-		free(ctx);
-	} else {
+		ಬಿಡುಗಡೆ((ಅಕ್ಷರ *) ctx->ಮಗು.charset);
+		ಬಿಡುಗಡೆ(ctx->handle);
+		ಬಿಡುಗಡೆ(ctx);
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		/* successfully started fetch so add new context to list */
-		RING_INSERT(hlcache->retrieval_ctx_ring, ctx);
+		RING_ಸೇರಿಸು(hlcache->retrieval_ctx_ring, ctx);
 
-		*result = ctx->handle;
+		*ಫಲಿತಾಂಶ = ctx->handle;
 	}
-	return error;
+	ಹಿಂತಿರುಗಿ error;
 }
 
 /* See hlcache.h for documentation */
 nserror hlcache_handle_release(hlcache_handle *handle)
 {
-	if (handle->entry != NULL) {
-		content_remove_user(handle->entry->content,
+	ಆದರೆ (handle->ನಮೂದು != ಖಾಲಿ) {
+		content_remove_user(handle->ನಮೂದು->content,
 				hlcache_content_callback, handle);
-	} else {
-		RING_ITERATE_START(struct hlcache_retrieval_ctx,
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		RING_ITERATE_ಆರಂಭ(ರಚನೆ hlcache_retrieval_ctx,
 				   hlcache->retrieval_ctx_ring,
 				   ictx) {
-			if (ictx->handle == handle &&
-					ictx->migrate_target == false) {
+			ಆದರೆ (ictx->handle == handle &&
+					ictx->migrate_ಗುರಿ == false) {
 				/* This is the nascent context for us,
 				 * so abort the fetch */
 				llcache_handle_abort(ictx->llcache);
@@ -751,50 +751,50 @@ nserror hlcache_handle_release(hlcache_handle *handle)
 				/* Remove us from the ring */
 				RING_REMOVE(hlcache->retrieval_ctx_ring, ictx);
 				/* Throw us away */
-				free((char *) ictx->child.charset);
-				free(ictx);
+				ಬಿಡುಗಡೆ((ಅಕ್ಷರ *) ictx->ಮಗು.charset);
+				ಬಿಡುಗಡೆ(ictx);
 				/* And stop */
 				RING_ITERATE_STOP(hlcache->retrieval_ctx_ring,
 						ictx);
 			}
-		} RING_ITERATE_END(hlcache->retrieval_ctx_ring, ictx);
+		} RING_ITERATE_ಕೊನೆ(hlcache->retrieval_ctx_ring, ictx);
 	}
 
-	handle->cb = NULL;
-	handle->pw = NULL;
+	handle->cb = ಖಾಲಿ;
+	handle->pw = ಖಾಲಿ;
 
-	free(handle);
+	ಬಿಡುಗಡೆ(handle);
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
 /* See hlcache.h for documentation */
-struct content *hlcache_handle_get_content(const hlcache_handle *handle)
+ರಚನೆ content *hlcache_handle_get_content(ಸ್ಥಿರಾಂಕ hlcache_handle *handle)
 {
-	if ((handle != NULL) && (handle->entry != NULL)) {
-		return handle->entry->content;
+	ಆದರೆ ((handle != ಖಾಲಿ) && (handle->ನಮೂದು != ಖಾಲಿ)) {
+		ಹಿಂತಿರುಗಿ handle->ನಮೂದು->content;
 	}
 
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
 /* See hlcache.h for documentation */
 nserror hlcache_handle_abort(hlcache_handle *handle)
 {
-	struct hlcache_entry *entry = handle->entry;
-	struct content *c;
+	ರಚನೆ hlcache_ನಮೂದು *ನಮೂದು = handle->ನಮೂದು;
+	ರಚನೆ content *c;
 
-	if (entry == NULL) {
+	ಆದರೆ (ನಮೂದು == ಖಾಲಿ) {
 		/* This handle is not yet associated with a cache entry.
 		 * The implication is that the fetch for the handle has
 		 * not progressed to the point where the entry can be
 		 * created. */
 
-		RING_ITERATE_START(struct hlcache_retrieval_ctx,
+		RING_ITERATE_ಆರಂಭ(ರಚನೆ hlcache_retrieval_ctx,
 				   hlcache->retrieval_ctx_ring,
 				   ictx) {
-			if (ictx->handle == handle &&
-					ictx->migrate_target == false) {
+			ಆದರೆ (ictx->handle == handle &&
+					ictx->migrate_ಗುರಿ == false) {
 				/* This is the nascent context for us,
 				 * so abort the fetch */
 				llcache_handle_abort(ictx->llcache);
@@ -802,95 +802,95 @@ nserror hlcache_handle_abort(hlcache_handle *handle)
 				/* Remove us from the ring */
 				RING_REMOVE(hlcache->retrieval_ctx_ring, ictx);
 				/* Throw us away */
-				free((char *) ictx->child.charset);
-				free(ictx);
+				ಬಿಡುಗಡೆ((ಅಕ್ಷರ *) ictx->ಮಗು.charset);
+				ಬಿಡುಗಡೆ(ictx);
 				/* And stop */
 				RING_ITERATE_STOP(hlcache->retrieval_ctx_ring,
 						ictx);
 			}
-		} RING_ITERATE_END(hlcache->retrieval_ctx_ring, ictx);
+		} RING_ITERATE_ಕೊನೆ(hlcache->retrieval_ctx_ring, ictx);
 
-		return NSERROR_OK;
+		ಹಿಂತಿರುಗಿ NSERROR_OK;
 	}
 
-	c = entry->content;
+	c = ನಮೂದು->content;
 
-	if (content_count_users(c) > 1) {
+	ಆದರೆ (content_ಎಣಿಕೆ_users(c) > 1) {
 		/* We are not the only user of 'c' so clone it. */
-		struct content *clone = content_clone(c);
+		ರಚನೆ content *clone = content_clone(c);
 
-		if (clone == NULL)
-			return NSERROR_NOMEM;
+		ಆದರೆ (clone == ಖಾಲಿ)
+			ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 
-		entry = calloc(1, sizeof(struct hlcache_entry));
+		ನಮೂದು = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(ರಚನೆ hlcache_ನಮೂದು));
 
-		if (entry == NULL) {
+		ಆದರೆ (ನಮೂದು == ಖಾಲಿ) {
 			content_destroy(clone);
-			return NSERROR_NOMEM;
+			ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 		}
 
-		if (content_add_user(clone,
+		ಆದರೆ (content_ಕೂಡಿಸು_user(clone,
 				hlcache_content_callback, handle) == false) {
 			content_destroy(clone);
-			free(entry);
-			return NSERROR_NOMEM;
+			ಬಿಡುಗಡೆ(ನಮೂದು);
+			ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 		}
 
 		content_remove_user(c, hlcache_content_callback, handle);
 
-		entry->content = clone;
-		handle->entry = entry;
-		entry->prev = NULL;
-		entry->next = hlcache->content_list;
-		if (hlcache->content_list != NULL)
-			hlcache->content_list->prev = entry;
-		hlcache->content_list = entry;
+		ನಮೂದು->content = clone;
+		handle->ನಮೂದು = ನಮೂದು;
+		ನಮೂದು->prev = ಖಾಲಿ;
+		ನಮೂದು->ಮುಂದಿನ = hlcache->content_list;
+		ಆದರೆ (hlcache->content_list != ಖಾಲಿ)
+			hlcache->content_list->prev = ನಮೂದು;
+		hlcache->content_list = ನಮೂದು;
 
 		c = clone;
 	}
 
-	return content_abort(c);
+	ಹಿಂತಿರುಗಿ content_abort(c);
 }
 
 /* See hlcache.h for documentation */
 nserror hlcache_handle_replace_callback(hlcache_handle *handle,
-		hlcache_handle_callback cb, void *pw)
+		hlcache_handle_callback cb, ಶೂನ್ಯ *pw)
 {
 	handle->cb = cb;
 	handle->pw = pw;
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
-nserror hlcache_handle_clone(hlcache_handle *handle, hlcache_handle **result)
+nserror hlcache_handle_clone(hlcache_handle *handle, hlcache_handle **ಫಲಿತಾಂಶ)
 {
-	*result = NULL;
-	return NSERROR_CLONE_FAILED;
+	*ಫಲಿತಾಂಶ = ಖಾಲಿ;
+	ಹಿಂತಿರುಗಿ NSERROR_CLONE_FAILED;
 }
 
 /* See hlcache.h for documentation */
-nsurl *hlcache_handle_get_url(const hlcache_handle *handle)
+nsurl *hlcache_handle_get_url(ಸ್ಥಿರಾಂಕ hlcache_handle *handle)
 {
-	nsurl *result = NULL;
+	nsurl *ಫಲಿತಾಂಶ = ಖಾಲಿ;
 
-	assert(handle != NULL);
+	ಪ್ರತಿಜ್ಞಾ(handle != ಖಾಲಿ);
 
-	if (handle->entry != NULL) {
-		result = content_get_url(handle->entry->content);
-	} else {
-		RING_ITERATE_START(struct hlcache_retrieval_ctx,
+	ಆದರೆ (handle->ನಮೂದು != ಖಾಲಿ) {
+		ಫಲಿತಾಂಶ = content_get_url(handle->ನಮೂದು->content);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		RING_ITERATE_ಆರಂಭ(ರಚನೆ hlcache_retrieval_ctx,
 				   hlcache->retrieval_ctx_ring,
 				   ictx) {
-			if (ictx->handle == handle) {
+			ಆದರೆ (ictx->handle == handle) {
 				/* This is the nascent context for us */
-				result = llcache_handle_get_url(ictx->llcache);
+				ಫಲಿತಾಂಶ = llcache_handle_get_url(ictx->llcache);
 
 				/* And stop */
 				RING_ITERATE_STOP(hlcache->retrieval_ctx_ring,
 						ictx);
 			}
-		} RING_ITERATE_END(hlcache->retrieval_ctx_ring, ictx);
+		} RING_ITERATE_ಕೊನೆ(hlcache->retrieval_ctx_ring, ictx);
 	}
 
-	return result;
+	ಹಿಂತಿರುಗಿ ಫಲಿತಾಂಶ;
 }

@@ -21,10 +21,10 @@
  * HTML layout private interface.
  */
 
-#ifndef NETSURF_HTML_LAYOUT_INTERNAL_H
-#define NETSURF_HTML_LAYOUT_INTERNAL_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NETSURF_HTML_LAYOUT_ಆಂತರಿಕ_H
+#ವ್ಯಾಖ್ಯಾನಿಸು NETSURF_HTML_LAYOUT_ಆಂತರಿಕ_H
 
-#define AUTO INT_MIN
+#ವ್ಯಾಖ್ಯಾನಿಸು AUTO INT_MIN
 
 /**
  * Layout a block formatting context.
@@ -37,9 +37,9 @@
  * This function carries out layout of a block and its children, as described
  * in CSS 2.1 9.4.1.
  */
-bool layout_block_context(
-		struct box *block,
-		int viewport_height,
+bool layout_ಖಂಡ_context(
+		ರಚನೆ box *ಖಂಡ,
+		ಪೂರ್ಣಾಂಕ viewport_ಎತ್ತರ,
 		html_content *content);
 
 /**
@@ -50,9 +50,9 @@ bool layout_block_context(
  * \param  content          memory pool for any new boxes
  * \return  true on success, false on memory exhaustion
  */
-bool layout_table(
-		struct box *table,
-		int available_width,
+bool layout_ಕೋಷ್ಟಕ(
+		ರಚನೆ box *ಕೋಷ್ಟಕ,
+		ಪೂರ್ಣಾಂಕ ಲಭ್ಯ_ಅಗಲ,
 		html_content *content);
 
 /**
@@ -64,238 +64,238 @@ bool layout_table(
  * \return  true on success, false on memory exhaustion
  */
 bool layout_flex(
-		struct box *flex,
-		int available_width,
+		ರಚನೆ box *flex,
+		ಪೂರ್ಣಾಂಕ ಲಭ್ಯ_ಅಗಲ,
 		html_content *content);
 
-typedef uint8_t (*css_len_func)(
-		const css_computed_style *style,
-		css_fixed *length, css_unit *unit);
-typedef uint8_t (*css_border_style_func)(
-		const css_computed_style *style);
-typedef uint8_t (*css_border_color_func)(
-		const css_computed_style *style,
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ uint8_t (*css_len_func)(
+		ಸ್ಥಿರಾಂಕ css_computed_style *style,
+		css_fixed *ಉದ್ದಳತೆ, css_unit *unit);
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ uint8_t (*css_border_style_func)(
+		ಸ್ಥಿರಾಂಕ css_computed_style *style);
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ uint8_t (*css_border_color_func)(
+		ಸ್ಥಿರಾಂಕ css_computed_style *style,
 		css_color *color);
 
 /** Array of per-side access functions for computed style margins. */
-extern const css_len_func margin_funcs[4];
+ಬಾಹ್ಯ ಸ್ಥಿರಾಂಕ css_len_func margin_funcs[4];
 
 /** Array of per-side access functions for computed style paddings. */
-extern const css_len_func padding_funcs[4];
+ಬಾಹ್ಯ ಸ್ಥಿರಾಂಕ css_len_func padding_funcs[4];
 
 /** Array of per-side access functions for computed style border_widths. */
-extern const css_len_func border_width_funcs[4];
+ಬಾಹ್ಯ ಸ್ಥಿರಾಂಕ css_len_func border_ಅಗಲ_funcs[4];
 
 /** Array of per-side access functions for computed style border styles. */
-extern const css_border_style_func border_style_funcs[4];
+ಬಾಹ್ಯ ಸ್ಥಿರಾಂಕ css_border_style_func border_style_funcs[4];
 
 /** Array of per-side access functions for computed style border colors. */
-extern const css_border_color_func border_color_funcs[4];
+ಬಾಹ್ಯ ಸ್ಥಿರಾಂಕ css_border_color_func border_color_funcs[4];
 
 /** Layout helper: Check whether box is a float. */
-static inline bool lh__box_is_float_box(const struct box *b)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool lh__box_is_float_box(ಸ್ಥಿರಾಂಕ ರಚನೆ box *b)
 {
-	return b->type == BOX_FLOAT_LEFT ||
-	       b->type == BOX_FLOAT_RIGHT;
+	ಹಿಂತಿರುಗಿ b->type == BOX_FLOAT_ಎಡ ||
+	       b->type == BOX_FLOAT_ಬಲ;
 }
 
 /** Layout helper: Check whether box takes part in inline flow. */
-static inline bool lh__box_is_inline_flow(const struct box *b)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool lh__box_is_inline_flow(ಸ್ಥಿರಾಂಕ ರಚನೆ box *b)
 {
-	return b->type == BOX_INLINE ||
+	ಹಿಂತಿರುಗಿ b->type == BOX_INLINE ||
 	       b->type == BOX_INLINE_FLEX ||
-	       b->type == BOX_INLINE_BLOCK ||
-	       b->type == BOX_TEXT ||
-	       b->type == BOX_INLINE_END;
+	       b->type == BOX_INLINE_ಖಂಡ ||
+	       b->type == BOX_ಪಠ್ಯ ||
+	       b->type == BOX_INLINE_ಕೊನೆ;
 }
 
 /** Layout helper: Check whether box takes part in inline flow. */
-static inline bool lh__box_is_flex_container(const struct box *b)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool lh__box_is_flex_container(ಸ್ಥಿರಾಂಕ ರಚನೆ box *b)
 {
-	return b->type == BOX_FLEX ||
+	ಹಿಂತಿರುಗಿ b->type == BOX_FLEX ||
 	       b->type == BOX_INLINE_FLEX;
 }
 
 /** Layout helper: Check whether box takes part in inline flow. */
-static inline bool lh__box_is_flex_item(const struct box *b)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool lh_box_is_flex_ಅಂಶ(ಸ್ಥಿರಾಂಕ ರಚನೆ box *b)
 {
-	return (b->parent != NULL) && lh__box_is_flex_container(b->parent);
+	ಹಿಂತಿರುಗಿ (b->ಪೋಷಕ != ಖಾಲಿ) && lh__box_is_flex_container(b->ಪೋಷಕ);
 }
 
 /** Layout helper: Check whether box is inline level. (Includes BR.) */
-static inline bool lh__box_is_inline_level(const struct box *b)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool lh__box_is_inline_level(ಸ್ಥಿರಾಂಕ ರಚನೆ box *b)
 {
-	return lh__box_is_inline_flow(b) ||
+	ಹಿಂತಿರುಗಿ lh__box_is_inline_flow(b) ||
 	       b->type == BOX_BR;
 }
 
 /** Layout helper: Check whether box is inline level. (Includes BR, floats.) */
-static inline bool lh__box_is_inline_content(const struct box *b)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool lh__box_is_inline_content(ಸ್ಥಿರಾಂಕ ರಚನೆ box *b)
 {
-	return lh__box_is_float_box(b) ||
+	ಹಿಂತಿರುಗಿ lh__box_is_float_box(b) ||
 	       lh__box_is_inline_level(b);
 }
 
 /** Layout helper: Check whether box is an object. */
-static inline bool lh__box_is_object(const struct box *b)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool lh__box_is_object(ಸ್ಥಿರಾಂಕ ರಚನೆ box *b)
 {
-	return b->object ||
+	ಹಿಂತಿರುಗಿ b->object ||
 	       (b->flags & (IFRAME | REPLACE_DIM));
 }
 
 /** Layout helper: Check whether box is replaced. */
-static inline bool lh__box_is_replace(const struct box *b)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool lh__box_is_replace(ಸ್ಥಿರಾಂಕ ರಚನೆ box *b)
 {
-	return b->gadget ||
+	ಹಿಂತಿರುಗಿ b->gadget ||
 	       lh__box_is_object(b);
 }
 
 /** Layout helper: Check for CSS border on given side. */
-static inline bool lh__have_border(
-		enum box_side side,
-		const css_computed_style *style)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool lh__have_border(
+		ಎಣಿಕೆ box_side side,
+		ಸ್ಥಿರಾಂಕ css_computed_style *style)
 {
-	return border_style_funcs[side](style) != CSS_BORDER_STYLE_NONE;
+	ಹಿಂತಿರುಗಿ border_style_funcs[side](style) != CSS_BORDER_STYLE_NONE;
 }
 
-static inline bool lh__box_is_absolute(const struct box *b)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool lh__box_is_absolute(ಸ್ಥಿರಾಂಕ ರಚನೆ box *b)
 {
-	return css_computed_position(b->style) == CSS_POSITION_ABSOLUTE ||
+	ಹಿಂತಿರುಗಿ css_computed_position(b->style) == CSS_POSITION_ABSOLUTE ||
 	       css_computed_position(b->style) == CSS_POSITION_FIXED;
 }
 
-static inline bool lh__flex_main_is_horizontal(const struct box *flex)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool lh__flex_main_is_horizontal(ಸ್ಥಿರಾಂಕ ರಚನೆ box *flex)
 {
-	const css_computed_style *style = flex->style;
+	ಸ್ಥಿರಾಂಕ css_computed_style *style = flex->style;
 
-	assert(style != NULL);
+	ಪ್ರತಿಜ್ಞಾ(style != ಖಾಲಿ);
 
-	switch (css_computed_flex_direction(style)) {
-	default:                        /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_ROW:    /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_ROW_REVERSE:
-		return true;
-	case CSS_FLEX_DIRECTION_COLUMN: /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_COLUMN_REVERSE:
-		return false;
+	ಆಯ್ಕೆ (css_computed_flex_direction(style)) {
+	ಪೂರ್ವನಿಯೋಜಿತ:                        /* Fallthrough. */
+	ಸ್ಥಿತಿ CSS_FLEX_DIRECTION_ಅಡ್ಡಸಾಲು:    /* Fallthrough. */
+	ಸ್ಥಿತಿ CSS_FLEX_DIRECTION_ಅಡ್ಡಸಾಲು_ಹಿಮ್ಮುಖ:
+		ಹಿಂತಿರುಗಿ true;
+	ಸ್ಥಿತಿ CSS_FLEX_DIRECTION_ಸ್ತಂಭ: /* Fallthrough. */
+	ಸ್ಥಿತಿ CSS_FLEX_DIRECTION_ಸ್ತಂಭ_ಹಿಮ್ಮುಖ:
+		ಹಿಂತಿರುಗಿ false;
 	}
 }
 
-static inline bool lh__flex_direction_reversed(const struct box *flex)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool lh__flex_direction_reversed(ಸ್ಥಿರಾಂಕ ರಚನೆ box *flex)
 {
-	switch (css_computed_flex_direction(flex->style)) {
-	default:                             /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_ROW_REVERSE: /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_COLUMN_REVERSE:
-		return true;
-	case CSS_FLEX_DIRECTION_ROW: /* Fallthrough. */
-	case CSS_FLEX_DIRECTION_COLUMN:
-		return false;
+	ಆಯ್ಕೆ (css_computed_flex_direction(flex->style)) {
+	ಪೂರ್ವನಿಯೋಜಿತ:                             /* Fallthrough. */
+	ಸ್ಥಿತಿ CSS_FLEX_DIRECTION_ಅಡ್ಡಸಾಲು_ಹಿಮ್ಮುಖ: /* Fallthrough. */
+	ಸ್ಥಿತಿ CSS_FLEX_DIRECTION_ಸ್ತಂಭ_ಹಿಮ್ಮುಖ:
+		ಹಿಂತಿರುಗಿ true;
+	ಸ್ಥಿತಿ CSS_FLEX_DIRECTION_ಅಡ್ಡಸಾಲು: /* Fallthrough. */
+	ಸ್ಥಿತಿ CSS_FLEX_DIRECTION_ಸ್ತಂಭ:
+		ಹಿಂತಿರುಗಿ false;
 	}
 }
 
-static inline int lh__non_auto_margin(const struct box *b, enum box_side side)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ lh__non_auto_margin(ಸ್ಥಿರಾಂಕ ರಚನೆ box *b, ಎಣಿಕೆ box_side side)
 {
-	return (b->margin[side] == AUTO) ? 0 : b->margin[side];
+	ಹಿಂತಿರುಗಿ (b->margin[side] == AUTO) ? 0 : b->margin[side];
 }
 
-static inline int lh__delta_outer_height(const struct box *b)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ lh_delta_outer_ಎತ್ತರ(ಸ್ಥಿರಾಂಕ ರಚನೆ box *b)
 {
-	return b->padding[TOP] +
+	ಹಿಂತಿರುಗಿ b->padding[ತುದಿ_2] +
 	       b->padding[BOTTOM] +
-	       b->border[TOP].width +
-	       b->border[BOTTOM].width +
-	       lh__non_auto_margin(b, TOP) +
+	       b->border[ತುದಿ_2].ಅಗಲ +
+	       b->border[BOTTOM].ಅಗಲ +
+	       lh__non_auto_margin(b, ತುದಿ_2) +
 	       lh__non_auto_margin(b, BOTTOM);
 }
 
-static inline int lh__delta_outer_width(const struct box *b)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ lh_delta_outer_ಅಗಲ(ಸ್ಥಿರಾಂಕ ರಚನೆ box *b)
 {
-	return b->padding[LEFT] +
-	       b->padding[RIGHT] +
-	       b->border[LEFT].width +
-	       b->border[RIGHT].width +
-	       lh__non_auto_margin(b, LEFT) +
-	       lh__non_auto_margin(b, RIGHT);
+	ಹಿಂತಿರುಗಿ b->padding[ಎಡ_2] +
+	       b->padding[ಬಲ_2] +
+	       b->border[ಎಡ_2].ಅಗಲ +
+	       b->border[ಬಲ_2].ಅಗಲ +
+	       lh__non_auto_margin(b, ಎಡ_2) +
+	       lh__non_auto_margin(b, ಬಲ_2);
 }
 
-static inline int lh__delta_outer_main(
-		const struct box *flex,
-		const struct box *b)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ lh__delta_outer_main(
+		ಸ್ಥಿರಾಂಕ ರಚನೆ box *flex,
+		ಸ್ಥಿರಾಂಕ ರಚನೆ box *b)
 {
-	if (lh__flex_main_is_horizontal(flex)) {
-		return lh__delta_outer_width(b);
-	} else {
-		return lh__delta_outer_height(b);
+	ಆದರೆ (lh__flex_main_is_horizontal(flex)) {
+		ಹಿಂತಿರುಗಿ lh_delta_outer_ಅಗಲ(b);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಹಿಂತಿರುಗಿ lh_delta_outer_ಎತ್ತರ(b);
 	}
 }
 
-static inline int lh__delta_outer_cross(
-		const struct box *flex,
-		const struct box *b)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ lh__delta_outer_cross(
+		ಸ್ಥಿರಾಂಕ ರಚನೆ box *flex,
+		ಸ್ಥಿರಾಂಕ ರಚನೆ box *b)
 {
-	if (lh__flex_main_is_horizontal(flex) == false) {
-		return lh__delta_outer_width(b);
-	} else {
-		return lh__delta_outer_height(b);
+	ಆದರೆ (lh__flex_main_is_horizontal(flex) == false) {
+		ಹಿಂತಿರುಗಿ lh_delta_outer_ಅಗಲ(b);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಹಿಂತಿರುಗಿ lh_delta_outer_ಎತ್ತರ(b);
 	}
 }
 
-static inline int *lh__box_size_main_ptr(
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ *lh_box_ಗಾತ್ರ_main_ptr(
 		bool horizontal,
-		struct box *b)
+		ರಚನೆ box *b)
 {
-	return horizontal ? &b->width : &b->height;
+	ಹಿಂತಿರುಗಿ horizontal ? &b->ಅಗಲ : &b->ಎತ್ತರ;
 }
 
-static inline int *lh__box_size_cross_ptr(
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ *lh_box_ಗಾತ್ರ_cross_ptr(
 		bool horizontal,
-		struct box *b)
+		ರಚನೆ box *b)
 {
-	return horizontal ? &b->height : &b->width;
+	ಹಿಂತಿರುಗಿ horizontal ? &b->ಎತ್ತರ : &b->ಅಗಲ;
 }
 
-static inline int lh__box_size_main(
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ lh_box_ಗಾತ್ರ_main(
 		bool horizontal,
-		const struct box *b)
+		ಸ್ಥಿರಾಂಕ ರಚನೆ box *b)
 {
-	return horizontal ? b->width : b->height;
+	ಹಿಂತಿರುಗಿ horizontal ? b->ಅಗಲ : b->ಎತ್ತರ;
 }
 
-static inline int lh__box_size_cross(
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ lh_box_ಗಾತ್ರ_cross(
 		bool horizontal,
-		const struct box *b)
+		ಸ್ಥಿರಾಂಕ ರಚನೆ box *b)
 {
-	return horizontal ? b->height : b->width;
+	ಹಿಂತಿರುಗಿ horizontal ? b->ಎತ್ತರ : b->ಅಗಲ;
 }
 
-static inline bool lh__box_size_cross_is_auto(
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool lh_box_ಗಾತ್ರ_cross_is_auto(
 		bool horizontal,
-		struct box *b)
+		ರಚನೆ box *b)
 {
-	css_fixed length;
+	css_fixed ಉದ್ದಳತೆ;
 	css_unit unit;
 
-	if (horizontal) {
-		return css_computed_height(b->style,
-				&length, &unit) == CSS_HEIGHT_AUTO;
-	} else {
-		return css_computed_width(b->style,
-				&length, &unit) == CSS_WIDTH_AUTO;
+	ಆದರೆ (horizontal) {
+		ಹಿಂತಿರುಗಿ css_computed_ಎತ್ತರ(b->style,
+				&ಉದ್ದಳತೆ, &unit) == CSS_ಎತ್ತರ_AUTO;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಹಿಂತಿರುಗಿ css_computed_ಅಗಲ(b->style,
+				&ಉದ್ದಳತೆ, &unit) == CSS_ಅಗಲ_AUTO;
 	}
 }
 
-static inline enum css_align_self_e lh__box_align_self(
-		const struct box *flex,
-		const struct box *item)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಎಣಿಕೆ css_align_self_e lh__box_align_self(
+		ಸ್ಥಿರಾಂಕ ರಚನೆ box *flex,
+		ಸ್ಥಿರಾಂಕ ರಚನೆ box *ಅಂಶ)
 {
-	enum css_align_self_e align_self = css_computed_align_self(item->style);
+	ಎಣಿಕೆ css_align_self_e align_self = css_computed_align_self(ಅಂಶ->style);
 
-	if (align_self == CSS_ALIGN_SELF_AUTO) {
-		align_self = css_computed_align_items(flex->style);
+	ಆದರೆ (align_self == CSS_ALIGN_SELF_AUTO) {
+		align_self = css_computed_align_ವಸ್ತುಗಳು(flex->style);
 	}
 
-	return align_self;
+	ಹಿಂತಿರುಗಿ align_self;
 }
 
 /**
@@ -310,57 +310,57 @@ static inline enum css_align_self_e lh__box_align_self(
  * \param fixed    increased by sum of fixed margin, border, and padding
  * \param frac     increased by sum of fractional margin and padding
  */
-static inline void calculate_mbp_width(
-		const css_unit_ctx *unit_len_ctx,
-		const css_computed_style *style,
-		unsigned int side,
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ calculate_mbp_ಅಗಲ(
+		ಸ್ಥಿರಾಂಕ css_unit_ctx *unit_len_ctx,
+		ಸ್ಥಿರಾಂಕ css_computed_style *style,
+		ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ side,
 		bool margin,
 		bool border,
 		bool padding,
-		int *fixed,
-		float *frac)
+		ಪೂರ್ಣಾಂಕ *fixed,
+		ದಶಮಾಂಶ *frac)
 {
-	css_fixed value = 0;
+	css_fixed ಮೌಲ್ಯ = 0;
 	css_unit unit = CSS_UNIT_PX;
 
-	assert(style);
+	ಪ್ರತಿಜ್ಞಾ(style);
 
 	/* margin */
-	if (margin) {
-		enum css_margin_e type;
+	ಆದರೆ (margin) {
+		ಎಣಿಕೆ css_margin_e type;
 
-		type = margin_funcs[side](style, &value, &unit);
-		if (type == CSS_MARGIN_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				*frac += FIXTOFLT(FDIV(value, F_100));
-			} else {
+		type = margin_funcs[side](style, &ಮೌಲ್ಯ, &unit);
+		ಆದರೆ (type == CSS_MARGIN_ಗಣ) {
+			ಆದರೆ (unit == CSS_UNIT_PCT) {
+				*frac += FIXTOFLT(FDIV(ಮೌಲ್ಯ, F_100));
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				*fixed += FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						ಮೌಲ್ಯ, unit));
 			}
 		}
 	}
 
 	/* border */
-	if (border) {
-		if (lh__have_border(side, style)) {
-			border_width_funcs[side](style, &value, &unit);
+	ಆದರೆ (border) {
+		ಆದರೆ (lh__have_border(side, style)) {
+			border_ಅಗಲ_funcs[side](style, &ಮೌಲ್ಯ, &unit);
 
 			*fixed += FIXTOINT(css_unit_len2device_px(
 					style, unit_len_ctx,
-					value, unit));
+					ಮೌಲ್ಯ, unit));
 		}
 	}
 
 	/* padding */
-	if (padding) {
-		padding_funcs[side](style, &value, &unit);
-		if (unit == CSS_UNIT_PCT) {
-			*frac += FIXTOFLT(FDIV(value, F_100));
-		} else {
+	ಆದರೆ (padding) {
+		padding_funcs[side](style, &ಮೌಲ್ಯ, &unit);
+		ಆದರೆ (unit == CSS_UNIT_PCT) {
+			*frac += FIXTOFLT(FDIV(ಮೌಲ್ಯ, F_100));
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			*fixed += FIXTOINT(css_unit_len2device_px(
 					style, unit_len_ctx,
-					value, unit));
+					ಮೌಲ್ಯ, unit));
 		}
 	}
 }
@@ -379,31 +379,31 @@ static inline void calculate_mbp_width(
  *				updated to new value after consideration of
  *				gadget properties.
  */
-static inline void layout_handle_box_sizing(
-		const css_unit_ctx *unit_len_ctx,
-		const struct box *box,
-		int available_width,
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ layout_handle_box_sizing(
+		ಸ್ಥಿರಾಂಕ css_unit_ctx *unit_len_ctx,
+		ಸ್ಥಿರಾಂಕ ರಚನೆ box *box,
+		ಪೂರ್ಣಾಂಕ ಲಭ್ಯ_ಅಗಲ,
 		bool setwidth,
-		int *dimension)
+		ಪೂರ್ಣಾಂಕ *dimension)
 {
-	enum css_box_sizing_e bs;
+	ಎಣಿಕೆ css_box_sizing_e bs;
 
-	assert(box && box->style);
+	ಪ್ರತಿಜ್ಞಾ(box && box->style);
 
 	bs = css_computed_box_sizing(box->style);
 
-	if (bs == CSS_BOX_SIZING_BORDER_BOX) {
-		int orig = *dimension;
-		int fixed = 0;
-		float frac = 0;
+	ಆದರೆ (bs == CSS_BOX_SIZING_BORDER_BOX) {
+		ಪೂರ್ಣಾಂಕ orig = *dimension;
+		ಪೂರ್ಣಾಂಕ fixed = 0;
+		ದಶಮಾಂಶ frac = 0;
 
-		calculate_mbp_width(unit_len_ctx, box->style,
-				setwidth ? LEFT : TOP,
+		calculate_mbp_ಅಗಲ(unit_len_ctx, box->style,
+				setwidth ? ಎಡ_2 : ತುದಿ_2,
 				false, true, true, &fixed, &frac);
-		calculate_mbp_width(unit_len_ctx, box->style,
-				setwidth ? RIGHT : BOTTOM,
+		calculate_mbp_ಅಗಲ(unit_len_ctx, box->style,
+				setwidth ? ಬಲ_2 : BOTTOM,
 				false, true, true, &fixed, &frac);
-		orig -= frac * available_width + fixed;
+		orig -= frac * ಲಭ್ಯ_ಅಗಲ + fixed;
 		*dimension = orig > 0 ? orig : 0;
 	}
 }
@@ -427,293 +427,293 @@ static inline void layout_handle_box_sizing(
  * \param  padding          filled with paddings, may be NULL
  * \param  border           filled with border widths, may be NULL
  */
-static inline void layout_find_dimensions(
-		const css_unit_ctx *unit_len_ctx,
-		int available_width,
-		int viewport_height,
-		const struct box *box,
-		const css_computed_style *style,
-		int *width,
-		int *height,
-		int *max_width,
-		int *min_width,
-		int *max_height,
-		int *min_height,
-		int margin[4],
-		int padding[4],
-		struct box_border border[4])
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ layout_ಕಂಡುಹಿಡಿ_dimensions(
+		ಸ್ಥಿರಾಂಕ css_unit_ctx *unit_len_ctx,
+		ಪೂರ್ಣಾಂಕ ಲಭ್ಯ_ಅಗಲ,
+		ಪೂರ್ಣಾಂಕ viewport_ಎತ್ತರ,
+		ಸ್ಥಿರಾಂಕ ರಚನೆ box *box,
+		ಸ್ಥಿರಾಂಕ css_computed_style *style,
+		ಪೂರ್ಣಾಂಕ *ಅಗಲ,
+		ಪೂರ್ಣಾಂಕ *ಎತ್ತರ,
+		ಪೂರ್ಣಾಂಕ *max_ಅಗಲ,
+		ಪೂರ್ಣಾಂಕ *min_ಅಗಲ,
+		ಪೂರ್ಣಾಂಕ *max_ಎತ್ತರ,
+		ಪೂರ್ಣಾಂಕ *min_ಎತ್ತರ,
+		ಪೂರ್ಣಾಂಕ margin[4],
+		ಪೂರ್ಣಾಂಕ padding[4],
+		ರಚನೆ box_border border[4])
 {
-	struct box *containing_block = NULL;
-	unsigned int i;
+	ರಚನೆ box *containing_ಖಂಡ = ಖಾಲಿ;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ i;
 
-	if (width) {
-		if (css_computed_width_px(style, unit_len_ctx,
-				available_width, width) == CSS_WIDTH_SET) {
+	ಆದರೆ (ಅಗಲ) {
+		ಆದರೆ (css_computed_ಅಗಲ_px(style, unit_len_ctx,
+				ಲಭ್ಯ_ಅಗಲ, ಅಗಲ) == CSS_ಅಗಲ_ಗಣ) {
 			layout_handle_box_sizing(unit_len_ctx, box,
-					available_width, true, width);
-		} else {
-			*width = AUTO;
+					ಲಭ್ಯ_ಅಗಲ, true, ಅಗಲ);
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			*ಅಗಲ = AUTO;
 		}
 	}
 
-	if (height) {
-		enum css_height_e htype;
-		css_fixed value = 0;
+	ಆದರೆ (ಎತ್ತರ) {
+		ಎಣಿಕೆ css_ಎತ್ತರ_e htype;
+		css_fixed ಮೌಲ್ಯ = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		htype = css_computed_height(style, &value, &unit);
+		htype = css_computed_ಎತ್ತರ(style, &ಮೌಲ್ಯ, &unit);
 
-		if (htype == CSS_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				enum css_height_e cbhtype;
+		ಆದರೆ (htype == CSS_ಎತ್ತರ_ಗಣ) {
+			ಆದರೆ (unit == CSS_UNIT_PCT) {
+				ಎಣಿಕೆ css_ಎತ್ತರ_e cbhtype;
 
-				if (css_computed_position(box->style) ==
+				ಆದರೆ (css_computed_position(box->style) ==
 						CSS_POSITION_ABSOLUTE &&
-						box->parent) {
+						box->ಪೋಷಕ) {
 					/* Box is absolutely positioned */
-					assert(box->float_container);
-					containing_block = box->float_container;
-				} else if (box->float_container &&
+					ಪ್ರತಿಜ್ಞಾ(box->float_container);
+					containing_ಖಂಡ = box->float_container;
+				} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (box->float_container &&
 					css_computed_position(box->style) !=
 						CSS_POSITION_ABSOLUTE &&
 					(css_computed_float(box->style) ==
-						CSS_FLOAT_LEFT ||
+						CSS_FLOAT_ಎಡ ||
 					 css_computed_float(box->style) ==
-						CSS_FLOAT_RIGHT)) {
+						CSS_FLOAT_ಬಲ)) {
 					/* Box is a float */
-					assert(box->parent &&
-						box->parent->parent &&
-						box->parent->parent->parent);
+					ಪ್ರತಿಜ್ಞಾ(box->ಪೋಷಕ &&
+						box->ಪೋಷಕ->ಪೋಷಕ &&
+						box->ಪೋಷಕ->ಪೋಷಕ->ಪೋಷಕ);
 
-					containing_block =
-						box->parent->parent->parent;
-				} else if (box->parent && box->parent->type !=
+					containing_ಖಂಡ =
+						box->ಪೋಷಕ->ಪೋಷಕ->ಪೋಷಕ;
+				} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (box->ಪೋಷಕ && box->ಪೋಷಕ->type !=
 						BOX_INLINE_CONTAINER) {
 					/* Box is a block level element */
-					containing_block = box->parent;
-				} else if (box->parent && box->parent->type ==
+					containing_ಖಂಡ = box->ಪೋಷಕ;
+				} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (box->ಪೋಷಕ && box->ಪೋಷಕ->type ==
 						BOX_INLINE_CONTAINER) {
 					/* Box is an inline block */
-					assert(box->parent->parent);
-					containing_block = box->parent->parent;
+					ಪ್ರತಿಜ್ಞಾ(box->ಪೋಷಕ->ಪೋಷಕ);
+					containing_ಖಂಡ = box->ಪೋಷಕ->ಪೋಷಕ;
 				}
 
-				if (containing_block) {
+				ಆದರೆ (containing_ಖಂಡ) {
 					css_fixed f = 0;
 					css_unit u = CSS_UNIT_PX;
 
-					cbhtype = css_computed_height(
-							containing_block->style,
+					cbhtype = css_computed_ಎತ್ತರ(
+							containing_ಖಂಡ->style,
 							&f, &u);
 				}
 
-				if (containing_block &&
-					containing_block->height != AUTO &&
+				ಆದರೆ (containing_ಖಂಡ &&
+					containing_ಖಂಡ->ಎತ್ತರ != AUTO &&
 					(css_computed_position(box->style) ==
 							CSS_POSITION_ABSOLUTE ||
-						cbhtype == CSS_HEIGHT_SET)) {
+						cbhtype == CSS_ಎತ್ತರ_ಗಣ)) {
 					/* Box is absolutely positioned or its
 					 * containing block has a valid
 					 * specified height.
 					 * (CSS 2.1 Section 10.5) */
-					*height = FPCT_OF_INT_TOINT(value,
-						containing_block->height);
-				} else if ((!box->parent ||
-						!box->parent->parent) &&
-						viewport_height >= 0) {
+					*ಎತ್ತರ = FPCT_ದ_INT_TOINT(ಮೌಲ್ಯ,
+						containing_ಖಂಡ->ಎತ್ತರ);
+				} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((!box->ಪೋಷಕ ||
+						!box->ಪೋಷಕ->ಪೋಷಕ) &&
+						viewport_ಎತ್ತರ >= 0) {
 					/* If root element or it's child
 					 * (HTML or BODY) */
-					*height = FPCT_OF_INT_TOINT(value,
-							viewport_height);
-				} else {
+					*ಎತ್ತರ = FPCT_ದ_INT_TOINT(ಮೌಲ್ಯ,
+							viewport_ಎತ್ತರ);
+				} ಇಲ್ಲದಿದ್ದರೆ {
 					/* precentage height not permissible
 					 * treat height as auto */
-					*height = AUTO;
+					*ಎತ್ತರ = AUTO;
 				}
-			} else {
-				*height = FIXTOINT(css_unit_len2device_px(
+			} ಇಲ್ಲದಿದ್ದರೆ {
+				*ಎತ್ತರ = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						ಮೌಲ್ಯ, unit));
 			}
-		} else {
-			*height = AUTO;
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			*ಎತ್ತರ = AUTO;
 		}
 
-		if (*height != AUTO) {
+		ಆದರೆ (*ಎತ್ತರ != AUTO) {
 			layout_handle_box_sizing(unit_len_ctx, box,
-					available_width, false, height);
+					ಲಭ್ಯ_ಅಗಲ, false, ಎತ್ತರ);
 		}
 	}
 
-	if (max_width) {
-		enum css_max_width_e type;
-		css_fixed value = 0;
+	ಆದರೆ (max_ಅಗಲ) {
+		ಎಣಿಕೆ css_max_ಅಗಲ_e type;
+		css_fixed ಮೌಲ್ಯ = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		type = css_computed_max_width(style, &value, &unit);
+		type = css_computed_max_ಅಗಲ(style, &ಮೌಲ್ಯ, &unit);
 
-		if (type == CSS_MAX_WIDTH_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				*max_width = FPCT_OF_INT_TOINT(value,
-						available_width);
-			} else {
-				*max_width = FIXTOINT(css_unit_len2device_px(
+		ಆದರೆ (type == CSS_MAX_ಅಗಲ_ಗಣ) {
+			ಆದರೆ (unit == CSS_UNIT_PCT) {
+				*max_ಅಗಲ = FPCT_ದ_INT_TOINT(ಮೌಲ್ಯ,
+						ಲಭ್ಯ_ಅಗಲ);
+			} ಇಲ್ಲದಿದ್ದರೆ {
+				*max_ಅಗಲ = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						ಮೌಲ್ಯ, unit));
 			}
-		} else {
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			/* Inadmissible */
-			*max_width = -1;
+			*max_ಅಗಲ = -1;
 		}
 
-		if (*max_width != -1) {
+		ಆದರೆ (*max_ಅಗಲ != -1) {
 			layout_handle_box_sizing(unit_len_ctx, box,
-					available_width, true, max_width);
+					ಲಭ್ಯ_ಅಗಲ, true, max_ಅಗಲ);
 		}
 	}
 
-	if (min_width) {
-		enum css_min_width_e type;
-		css_fixed value = 0;
+	ಆದರೆ (min_ಅಗಲ) {
+		ಎಣಿಕೆ css_min_ಅಗಲ_e type;
+		css_fixed ಮೌಲ್ಯ = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		type = ns_computed_min_width(style, &value, &unit);
+		type = ns_computed_min_ಅಗಲ(style, &ಮೌಲ್ಯ, &unit);
 
-		if (type == CSS_MIN_WIDTH_SET) {
-			if (unit == CSS_UNIT_PCT) {
-				*min_width = FPCT_OF_INT_TOINT(value,
-						available_width);
-			} else {
-				*min_width = FIXTOINT(css_unit_len2device_px(
+		ಆದರೆ (type == CSS_MIN_ಅಗಲ_ಗಣ) {
+			ಆದರೆ (unit == CSS_UNIT_PCT) {
+				*min_ಅಗಲ = FPCT_ದ_INT_TOINT(ಮೌಲ್ಯ,
+						ಲಭ್ಯ_ಅಗಲ);
+			} ಇಲ್ಲದಿದ್ದರೆ {
+				*min_ಅಗಲ = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						ಮೌಲ್ಯ, unit));
 			}
-		} else {
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			/* Inadmissible */
-			*min_width = 0;
+			*min_ಅಗಲ = 0;
 		}
 
-		if (*min_width != 0) {
+		ಆದರೆ (*min_ಅಗಲ != 0) {
 			layout_handle_box_sizing(unit_len_ctx, box,
-					available_width, true, min_width);
+					ಲಭ್ಯ_ಅಗಲ, true, min_ಅಗಲ);
 		}
 	}
 
-	if (max_height) {
-		enum css_max_height_e type;
-		css_fixed value = 0;
+	ಆದರೆ (max_ಎತ್ತರ) {
+		ಎಣಿಕೆ css_max_ಎತ್ತರ_e type;
+		css_fixed ಮೌಲ್ಯ = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		type = css_computed_max_height(style, &value, &unit);
+		type = css_computed_max_ಎತ್ತರ(style, &ಮೌಲ್ಯ, &unit);
 
-		if (type == CSS_MAX_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
+		ಆದರೆ (type == CSS_MAX_ಎತ್ತರ_ಗಣ) {
+			ಆದರೆ (unit == CSS_UNIT_PCT) {
 				/* TODO: handle percentage */
-				*max_height = -1;
-			} else {
-				*max_height = FIXTOINT(css_unit_len2device_px(
+				*max_ಎತ್ತರ = -1;
+			} ಇಲ್ಲದಿದ್ದರೆ {
+				*max_ಎತ್ತರ = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						ಮೌಲ್ಯ, unit));
 			}
-		} else {
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			/* Inadmissible */
-			*max_height = -1;
+			*max_ಎತ್ತರ = -1;
 		}
 	}
 
-	if (min_height) {
-		enum css_min_height_e type;
-		css_fixed value = 0;
+	ಆದರೆ (min_ಎತ್ತರ) {
+		ಎಣಿಕೆ css_min_ಎತ್ತರ_e type;
+		css_fixed ಮೌಲ್ಯ = 0;
 		css_unit unit = CSS_UNIT_PX;
 
-		type = ns_computed_min_height(style, &value, &unit);
+		type = ns_computed_min_ಎತ್ತರ(style, &ಮೌಲ್ಯ, &unit);
 
-		if (type == CSS_MIN_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
+		ಆದರೆ (type == CSS_MIN_ಎತ್ತರ_ಗಣ) {
+			ಆದರೆ (unit == CSS_UNIT_PCT) {
 				/* TODO: handle percentage */
-				*min_height = 0;
-			} else {
-				*min_height = FIXTOINT(css_unit_len2device_px(
+				*min_ಎತ್ತರ = 0;
+			} ಇಲ್ಲದಿದ್ದರೆ {
+				*min_ಎತ್ತರ = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						ಮೌಲ್ಯ, unit));
 			}
-		} else {
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			/* Inadmissible */
-			*min_height = 0;
+			*min_ಎತ್ತರ = 0;
 		}
 	}
 
-	for (i = 0; i != 4; i++) {
-		if (margin) {
-			enum css_margin_e type = CSS_MARGIN_AUTO;
-			css_fixed value = 0;
+	ಗಾಗಿ (i = 0; i != 4; i++) {
+		ಆದರೆ (margin) {
+			ಎಣಿಕೆ css_margin_e type = CSS_MARGIN_AUTO;
+			css_fixed ಮೌಲ್ಯ = 0;
 			css_unit unit = CSS_UNIT_PX;
 
-			type = margin_funcs[i](style, &value, &unit);
+			type = margin_funcs[i](style, &ಮೌಲ್ಯ, &unit);
 
-			if (type == CSS_MARGIN_SET) {
-				if (unit == CSS_UNIT_PCT) {
-					margin[i] = FPCT_OF_INT_TOINT(value,
-							available_width);
-				} else {
+			ಆದರೆ (type == CSS_MARGIN_ಗಣ) {
+				ಆದರೆ (unit == CSS_UNIT_PCT) {
+					margin[i] = FPCT_ದ_INT_TOINT(ಮೌಲ್ಯ,
+							ಲಭ್ಯ_ಅಗಲ);
+				} ಇಲ್ಲದಿದ್ದರೆ {
 					margin[i] = FIXTOINT(css_unit_len2device_px(
 							style, unit_len_ctx,
-							value, unit));
+							ಮೌಲ್ಯ, unit));
 				}
-			} else {
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				margin[i] = AUTO;
 			}
 		}
 
-		if (padding) {
-			css_fixed value = 0;
+		ಆದರೆ (padding) {
+			css_fixed ಮೌಲ್ಯ = 0;
 			css_unit unit = CSS_UNIT_PX;
 
-			padding_funcs[i](style, &value, &unit);
+			padding_funcs[i](style, &ಮೌಲ್ಯ, &unit);
 
-			if (unit == CSS_UNIT_PCT) {
-				padding[i] = FPCT_OF_INT_TOINT(value,
-						available_width);
-			} else {
+			ಆದರೆ (unit == CSS_UNIT_PCT) {
+				padding[i] = FPCT_ದ_INT_TOINT(ಮೌಲ್ಯ,
+						ಲಭ್ಯ_ಅಗಲ);
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				padding[i] = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						ಮೌಲ್ಯ, unit));
 			}
 		}
 
 		/* Table cell borders are populated in table.c */
-		if (border && box->type != BOX_TABLE_CELL) {
-			enum css_border_style_e bstyle = CSS_BORDER_STYLE_NONE;
+		ಆದರೆ (border && box->type != BOX_ಕೋಷ್ಟಕ_CELL) {
+			ಎಣಿಕೆ css_border_style_e bstyle = CSS_BORDER_STYLE_NONE;
 			css_color color = 0;
-			css_fixed value = 0;
+			css_fixed ಮೌಲ್ಯ = 0;
 			css_unit unit = CSS_UNIT_PX;
 
-			border_width_funcs[i](style, &value, &unit);
+			border_ಅಗಲ_funcs[i](style, &ಮೌಲ್ಯ, &unit);
 			bstyle = border_style_funcs[i](style);
 			border_color_funcs[i](style, &color);
 
 			border[i].style = bstyle;
 			border[i].c = color;
 
-			if (bstyle == CSS_BORDER_STYLE_HIDDEN ||
+			ಆದರೆ (bstyle == CSS_BORDER_STYLE_HIDDEN ||
 					bstyle == CSS_BORDER_STYLE_NONE)
 				/* spec unclear: following Mozilla */
-				border[i].width = 0;
-			else
-				border[i].width = FIXTOINT(css_unit_len2device_px(
+				border[i].ಅಗಲ = 0;
+			ಇಲ್ಲದಿದ್ದರೆ
+				border[i].ಅಗಲ = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
-						value, unit));
+						ಮೌಲ್ಯ, unit));
 
 			/* Special case for border-collapse: make all borders
 			 * on table/table-row-group/table-row zero width. */
-			if (css_computed_border_collapse(style) ==
+			ಆದರೆ (css_computed_border_collapse(style) ==
 					CSS_BORDER_COLLAPSE_COLLAPSE &&
-					(box->type == BOX_TABLE ||
-					 box->type == BOX_TABLE_ROW_GROUP ||
-					 box->type == BOX_TABLE_ROW))
-				border[i].width = 0;
+					(box->type == BOX_ಕೋಷ್ಟಕ ||
+					 box->type == BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು_ಗುಂಪು ||
+					 box->type == BOX_ಕೋಷ್ಟಕ_ಅಡ್ಡಸಾಲು))
+				border[i].ಅಗಲ = 0;
 		}
 	}
 }
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

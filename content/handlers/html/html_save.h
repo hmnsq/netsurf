@@ -24,23 +24,23 @@
  *         exporting the html content to disc.
  */
 
-#ifndef NETSURF_HTML_HTML_SAVE_H
-#define NETSURF_HTML_HTML_SAVE_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NETSURF_HTML_HTML_SAVE_H
+#ವ್ಯಾಖ್ಯಾನಿಸು NETSURF_HTML_HTML_SAVE_H
 
 /**
  * get the dom document of a html content from a handle
  */
-dom_document *html_get_document(struct hlcache_handle *h);
+dom_document *html_get_document(ರಚನೆ hlcache_handle *h);
 
 
 /**
  * get the render box tree of a html content from a handle
  */
-struct box *html_get_box_tree(struct hlcache_handle *h);
+ರಚನೆ box *html_get_box_ವೃಕ್ಷ(ರಚನೆ hlcache_handle *h);
 
 /**
  * get the base url of an html content from a handle
  */
-struct nsurl *html_get_base_url(struct hlcache_handle *h);
+ರಚನೆ nsurl *html_get_ತಳ_url(ರಚನೆ hlcache_handle *h);
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

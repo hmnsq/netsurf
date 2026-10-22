@@ -21,62 +21,62 @@
  * content generator for the about scheme query privacy page
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdint.h>
-#include <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
 
-#include "utils/errors.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "content/fetch.h"
+#ಅನ್ತರ್ಭಾವ "utils/errors.h"
+#ಅನ್ತರ್ಭಾವ "utils/log.h"
+#ಅನ್ತರ್ಭಾವ "utils/messages.h"
+#ಅನ್ತರ್ಭಾವ "content/fetch.h"
 
-#include "private.h"
-#include "query_auth.h"
+#ಅನ್ತರ್ಭಾವ "private.h"
+#ಅನ್ತರ್ಭಾವ "query_auth.h"
 
 
 /**
  * generate the description of the login query
  */
-static nserror
-get_authentication_description(struct nsurl *url,
-			       const char *realm,
-			       const char *username,
-			       const char *password,
-			       char **out_str)
+ಸ್ಥಿರ nserror
+get_authentication_description(ರಚನೆ nsurl *url,
+			       ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *realm,
+			       ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *username,
+			       ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *password,
+			       ಅಕ್ಷರ **ಹೊರಹೋಗು_str)
 {
 	nserror res;
-	char *url_s;
+	ಅಕ್ಷರ *url_s;
 	size_t url_l;
-	char *str = NULL;
-	const char *key;
+	ಅಕ್ಷರ *str = ಖಾಲಿ;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಕೀಲಿ;
 
 	res = nsurl_get(url, NSURL_HOST, &url_s, &url_l);
-	if (res != NSERROR_OK) {
-		return res;
+	ಆದರೆ (res != NSERROR_OK) {
+		ಹಿಂತಿರುಗಿ res;
 	}
 
-	if ((*username == 0) && (*password == 0)) {
-		key = "LoginDescription";
-	} else {
-		key = "LoginAgain";
+	ಆದರೆ ((*username == 0) && (*password == 0)) {
+		ಕೀಲಿ = "LoginDescription";
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಕೀಲಿ = "LoginAgain";
 	}
 
-	str = messages_get_buff(key, url_s, realm);
-	if (str != NULL) {
+	str = messages_get_buff(ಕೀಲಿ, url_s, realm);
+	ಆದರೆ (str != ಖಾಲಿ) {
 		NSLOG(netsurf, INFO,
 		      "key:%s url:%s realm:%s str:%s",
-		      key, url_s, realm, str);
-		*out_str = str;
-	} else {
+		      ಕೀಲಿ, url_s, realm, str);
+		*ಹೊರಹೋಗು_str = str;
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		res = NSERROR_NOMEM;
 	}
 
-	free(url_s);
+	ಬಿಡುಗಡೆ(url_s);
 
-	return res;
+	ಹಿಂತಿರುಗಿ res;
 }
 
 
@@ -86,47 +86,47 @@ get_authentication_description(struct nsurl *url,
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
+bool fetch_about_query_auth_handler(ರಚನೆ fetch_about_context *ctx)
 {
 	nserror res;
-	char *url_s;
+	ಅಕ್ಷರ *url_s;
 	size_t url_l;
-	const char *realm = "";
-	const char *username = "";
-	const char *password = "";
-	const char *title;
-	char *description = NULL;
-	struct nsurl *siteurl = NULL;
-	const struct fetch_multipart_data *curmd; /* mutipart data iterator */
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *realm = "";
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *username = "";
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *password = "";
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *title;
+	ಅಕ್ಷರ *description = ಖಾಲಿ;
+	ರಚನೆ nsurl *siteurl = ಖಾಲಿ;
+	ಸ್ಥಿರಾಂಕ ರಚನೆ fetch_multipart_ದತ್ತಾಂಶ *curmd; /* mutipart data iterator */
 
 	/* extract parameters from multipart post data */
 	curmd = fetch_about_get_multipart(ctx);
-	while (curmd != NULL) {
-		if (strcmp(curmd->name, "siteurl") == 0) {
-			res = nsurl_create(curmd->value, &siteurl);
-			if (res != NSERROR_OK) {
-				return fetch_about_srverror(ctx);
+	ಆಗ (curmd != ಖಾಲಿ) {
+		ಆದರೆ (strcmp(curmd->name, "siteurl") == 0) {
+			res = nsurl_create(curmd->ಮೌಲ್ಯ, &siteurl);
+			ಆದರೆ (res != NSERROR_OK) {
+				ಹಿಂತಿರುಗಿ fetch_about_srverror(ctx);
 			}
-		} else if (strcmp(curmd->name, "realm") == 0) {
-			realm = curmd->value;
-		} else if (strcmp(curmd->name, "username") == 0) {
-			username = curmd->value;
-		} else if (strcmp(curmd->name, "password") == 0) {
-			password = curmd->value;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(curmd->name, "realm") == 0) {
+			realm = curmd->ಮೌಲ್ಯ;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(curmd->name, "username") == 0) {
+			username = curmd->ಮೌಲ್ಯ;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(curmd->name, "password") == 0) {
+			password = curmd->ಮೌಲ್ಯ;
 		}
-		curmd = curmd->next;
+		curmd = curmd->ಮುಂದಿನ;
 	}
 
-	if (siteurl == NULL) {
-		return fetch_about_srverror(ctx);
+	ಆದರೆ (siteurl == ಖಾಲಿ) {
+		ಹಿಂತಿರುಗಿ fetch_about_srverror(ctx);
 	}
 
 	/* content is going to return ok */
-	fetch_about_set_http_code(ctx, 200);
+	fetch_about_ಗಣ_http_ಸಂಕೇತ(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8")) {
-		goto fetch_about_query_auth_handler_aborted;
+	ಆದರೆ (fetch_about_send_ಶೀರ್ಷಿಕೆ(ctx, "Content-Type: text/html; charset=utf-8")) {
+		ಹೋಗು fetch_about_query_auth_handler_aborted;
 	}
 
 	title = messages_get("LoginTitle");
@@ -139,15 +139,15 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 			"<body class=\"ns-even-bg ns-even-fg ns-border\" id =\"authentication\">\n"
 			"<h1 class=\"ns-border\">%s</h1>\n",
 			title, title);
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_auth_handler_aborted;
+	ಆದರೆ (res != NSERROR_OK) {
+		ಹೋಗು fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<form method=\"post\""
 			 " enctype=\"multipart/form-data\">");
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_auth_handler_aborted;
+	ಆದರೆ (res != NSERROR_OK) {
+		ಹೋಗು fetch_about_query_auth_handler_aborted;
 	}
 
 	res = get_authentication_description(siteurl,
@@ -155,17 +155,17 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 					     username,
 					     password,
 					     &description);
-	if (res == NSERROR_OK) {
+	ಆದರೆ (res == NSERROR_OK) {
 		res = fetch_about_ssenddataf(ctx, "<p>%s</p>", description);
-		free(description);
-		if (res != NSERROR_OK) {
-			goto fetch_about_query_auth_handler_aborted;
+		ಬಿಡುಗಡೆ(description);
+		ಆದರೆ (res != NSERROR_OK) {
+			ಹೋಗು fetch_about_query_auth_handler_aborted;
 		}
 	}
 
 	res = fetch_about_ssenddataf(ctx, "<table>");
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_auth_handler_aborted;
+	ಆದರೆ (res != NSERROR_OK) {
+		ಹೋಗು fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
@@ -175,8 +175,8 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 			 "name=\"username\" value=\"%s\"></td>"
 			 "</tr>",
 			 messages_get("Username"), username);
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_auth_handler_aborted;
+	ಆದರೆ (res != NSERROR_OK) {
+		ಹೋಗು fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
@@ -186,13 +186,13 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 			 "name=\"password\" value=\"%s\"></td>"
 			 "</tr>",
 			 messages_get("Password"), password);
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_auth_handler_aborted;
+	ಆದರೆ (res != NSERROR_OK) {
+		ಹೋಗು fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</table>");
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_auth_handler_aborted;
+	ಆದರೆ (res != NSERROR_OK) {
+		ಹೋಗು fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
@@ -204,43 +204,43 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 			 "</div>",
 			 messages_get("Login"),
 			 messages_get("Cancel"));
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_auth_handler_aborted;
+	ಆದರೆ (res != NSERROR_OK) {
+		ಹೋಗು fetch_about_query_auth_handler_aborted;
 	}
 
 	res = nsurl_get(siteurl, NSURL_COMPLETE, &url_s, &url_l);
-	if (res != NSERROR_OK) {
+	ಆದರೆ (res != NSERROR_OK) {
 		url_s = strdup("");
 	}
 	res = fetch_about_ssenddataf(ctx,
 			 "<input type=\"hidden\" name=\"siteurl\" value=\"%s\">",
 			 url_s);
-	free(url_s);
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_auth_handler_aborted;
+	ಬಿಡುಗಡೆ(url_s);
+	ಆದರೆ (res != NSERROR_OK) {
+		ಹೋಗು fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<input type=\"hidden\" name=\"realm\" value=\"%s\">",
 			 realm);
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_auth_handler_aborted;
+	ಆದರೆ (res != NSERROR_OK) {
+		ಹೋಗು fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</form></body>\n</html>\n");
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_auth_handler_aborted;
+	ಆದರೆ (res != NSERROR_OK) {
+		ಹೋಗು fetch_about_query_auth_handler_aborted;
 	}
 
-	fetch_about_send_finished(ctx);
+	fetch_about_send_ಪೂರ್ಣಗೊಂಡ(ctx);
 
 	nsurl_unref(siteurl);
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 
 fetch_about_query_auth_handler_aborted:
 
 	nsurl_unref(siteurl);
 
-	return false;
+	ಹಿಂತಿರುಗಿ false;
 }

@@ -16,47 +16,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NETSURF_CONTENT_CONTENT_FACTORY_H_
-#define NETSURF_CONTENT_CONTENT_FACTORY_H_
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ NETSURF_CONTENT_CONTENT_FACTORY_H_
+#ವ್ಯಾಖ್ಯಾನಿಸು NETSURF_CONTENT_CONTENT_FACTORY_H_
 
-#include <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
 
-#include <libwapcaplet/libwapcaplet.h>
+#ಅನ್ತರ್ಭಾವ <libwapcaplet/libwapcaplet.h>
 
-#include "netsurf/content_type.h"
-#include "utils/errors.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/content_type.h"
+#ಅನ್ತರ್ಭಾವ "utils/errors.h"
 
-#define CONTENT_FACTORY_REGISTER_TYPES(HNAME, HTYPELIST, HHANDLER)	\
+#ವ್ಯಾಖ್ಯಾನಿಸು CONTENT_FACTORY_ರಿಜಿಸ್ಟರ್_TYPES(HNAME, HTYPELIST, HHANDLER)	\
 									\
-nserror HNAME##_init(void)						\
+nserror HNAME##_init(ಶೂನ್ಯ)						\
 {									\
 	uint32_t i;							\
 	nserror error = NSERROR_OK;					\
 									\
-	for (i = 0; i < NOF_ELEMENTS(HTYPELIST); i++) {			\
-		error = content_factory_register_handler(		\
+	ಗಾಗಿ (i = 0; i < NOF_ELEMENTS(HTYPELIST); i++) {			\
+		error = content_factory_ರಿಜಿಸ್ಟರ್_handler(		\
 			HTYPELIST[i],					\
 			&HHANDLER);					\
-		if (error != NSERROR_OK)				\
-			break;						\
+		ಆದರೆ (error != NSERROR_OK)				\
+			ನಿಲ್ಲಿಸು;						\
 	}								\
 									\
-	return error;							\
+	ಹಿಂತಿರುಗಿ error;							\
 }
 
-struct content;
-struct llcache_handle;
-struct content_handler;
+ರಚನೆ content;
+ರಚನೆ llcache_handle;
+ರಚನೆ content_handler;
 
-void content_factory_fini(void);
+ಶೂನ್ಯ content_factory_fini(ಶೂನ್ಯ);
 
-nserror content_factory_register_handler(const char *mime_type,
-		const struct content_handler *handler);
+nserror content_factory_ರಿಜಿಸ್ಟರ್_handler(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *mime_type,
+		ಸ್ಥಿರಾಂಕ ರಚನೆ content_handler *handler);
 
-struct content *content_factory_create_content(struct llcache_handle *llcache, 
-		const char *fallback_charset, bool quirks,
+ರಚನೆ content *content_factory_create_content(ರಚನೆ llcache_handle *llcache, 
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fallback_charset, bool quirks,
 		lwc_string *effective_type);
 
 content_type content_factory_type_from_mime_type(lwc_string *mime_type);
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

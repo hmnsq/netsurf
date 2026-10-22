@@ -22,146 +22,146 @@
  * HTML fetcher for CSS objects
  */
 
-#include <assert.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-#include <dom/dom.h>
-#include <libwapcaplet/libwapcaplet.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ಅನ್ತರ್ಭಾವ <stdbool.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <dom/dom.h>
+#ಅನ್ತರ್ಭಾವ <libwapcaplet/libwapcaplet.h>
 
-#include "netsurf/inttypes.h"
-#include "utils/config.h"
-#include "utils/corestrings.h"
-#include "utils/log.h"
-#include "utils/ring.h"
-#include "utils/nsurl.h"
-#include "utils/utils.h"
-#include "content/fetch.h"
-#include "content/fetchers.h"
+#ಅನ್ತರ್ಭಾವ "netsurf/inttypes.h"
+#ಅನ್ತರ್ಭಾವ "utils/config.h"
+#ಅನ್ತರ್ಭಾವ "utils/corestrings.h"
+#ಅನ್ತರ್ಭಾವ "utils/log.h"
+#ಅನ್ತರ್ಭಾವ "utils/ring.h"
+#ಅನ್ತರ್ಭಾವ "utils/nsurl.h"
+#ಅನ್ತರ್ಭಾವ "utils/utils.h"
+#ಅನ್ತರ್ಭಾವ "content/fetch.h"
+#ಅನ್ತರ್ಭಾವ "content/fetchers.h"
 
-#include "html/private.h"
+#ಅನ್ತರ್ಭಾವ "html/private.h"
 
-typedef struct html_css_fetcher_item {
-	uint32_t key;
-	dom_string *data;
-	nsurl *base_url;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ html_css_fetcher_ಅಂಶ {
+	uint32_t ಕೀಲಿ;
+	dom_string *ದತ್ತಾಂಶ;
+	nsurl *ತಳ_url;
 
-	struct html_css_fetcher_item *r_next, *r_prev;
-} html_css_fetcher_item;
+	ರಚನೆ html_css_fetcher_ಅಂಶ *r_ಮುಂದಿನ, *r_prev;
+} html_css_fetcher_ಅಂಶ;
 
-typedef struct html_css_fetcher_context {
-	struct fetch *parent_fetch;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ html_css_fetcher_context {
+	ರಚನೆ fetch *ಪೋಷಕ_fetch;
 
 	nsurl *url;
-	html_css_fetcher_item *item;
+	html_css_fetcher_ಅಂಶ *ಅಂಶ;
 
 	bool aborted;
 	bool locked;
 
-	struct html_css_fetcher_context *r_next, *r_prev;
+	ರಚನೆ html_css_fetcher_context *r_ಮುಂದಿನ, *r_prev;
 } html_css_fetcher_context;
 
-static uint32_t current_key = 0;
-static html_css_fetcher_item *items = NULL;
-static html_css_fetcher_context *ring = NULL;
+ಸ್ಥಿರ uint32_t current_ಕೀಲಿ = 0;
+ಸ್ಥಿರ html_css_fetcher_ಅಂಶ *ವಸ್ತುಗಳು = ಖಾಲಿ;
+ಸ್ಥಿರ html_css_fetcher_context *ring = ಖಾಲಿ;
 
-static bool html_css_fetcher_initialise(lwc_string *scheme)
+ಸ್ಥಿರ bool html_css_fetcher_initialise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "html_css_fetcher_initialise called for %s",
-	      lwc_string_data(scheme));
-	return true;
+	      lwc_string_ದತ್ತಾಂಶ(scheme));
+	ಹಿಂತಿರುಗಿ true;
 }
 
-static void html_css_fetcher_finalise(lwc_string *scheme)
+ಸ್ಥಿರ ಶೂನ್ಯ html_css_fetcher_finalise(lwc_string *scheme)
 {
 	NSLOG(netsurf, INFO, "html_css_fetcher_finalise called for %s",
-	      lwc_string_data(scheme));
+	      lwc_string_ದತ್ತಾಂಶ(scheme));
 }
 
-static bool html_css_fetcher_can_fetch(const nsurl *url)
+ಸ್ಥಿರ bool html_css_fetcher_can_fetch(ಸ್ಥಿರಾಂಕ nsurl *url)
 {
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
-static void *html_css_fetcher_setup(struct fetch *parent_fetch, nsurl *url,
-		 bool only_2xx, bool downgrade_tls, const char *post_urlenc,
-		 const struct fetch_multipart_data *post_multipart,
-		 const char **headers)
+ಸ್ಥಿರ ಶೂನ್ಯ *html_css_fetcher_ಸಿದ್ಧತೆ(ರಚನೆ fetch *ಪೋಷಕ_fetch, nsurl *url,
+		 bool only_2xx, bool downgrade_tls, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *post_urlenc,
+		 ಸ್ಥಿರಾಂಕ ರಚನೆ fetch_multipart_ದತ್ತಾಂಶ *post_multipart,
+		 ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ **ಶೀರ್ಷಿಕೆಗಳು)
 {
 	html_css_fetcher_context *ctx;
-	lwc_string *path;
-	uint32_t key;
-	html_css_fetcher_item *item, *found = NULL;
+	lwc_string *ಮಾರ್ಗ;
+	uint32_t ಕೀಲಿ;
+	html_css_fetcher_ಅಂಶ *ಅಂಶ, *ಸಿಕ್ಕಿತು = ಖಾಲಿ;
 
 	/* format of a x-ns-css URL is:
 	 *   x-ns-url:<key>
 	 * Where key is an unsigned 32bit integer
 	 */
 
-	path = nsurl_get_component(url, NSURL_PATH);
+	ಮಾರ್ಗ = nsurl_get_component(url, NSURL_ಮಾರ್ಗ);
 	/* The path must exist */
-	if (path == NULL) {
-		return NULL;
+	ಆದರೆ (ಮಾರ್ಗ == ಖಾಲಿ) {
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
-	key = strtoul(lwc_string_data(path), NULL, 10);
+	ಕೀಲಿ = strtoul(lwc_string_ದತ್ತಾಂಶ(ಮಾರ್ಗ), ಖಾಲಿ, 10);
 
-	lwc_string_unref(path);
+	lwc_string_unref(ಮಾರ್ಗ);
 
 	/* There must be at least one item */
-	if (items == NULL) {
-		return NULL;
+	ಆದರೆ (ವಸ್ತುಗಳು == ಖಾಲಿ) {
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
-	item = items;
-	do {
-		if (item->key == key) {
-			found = item;
-			break;
+	ಅಂಶ = ವಸ್ತುಗಳು;
+	ಮಾಡು {
+		ಆದರೆ (ಅಂಶ->ಕೀಲಿ == ಕೀಲಿ) {
+			ಸಿಕ್ಕಿತು = ಅಂಶ;
+			ನಿಲ್ಲಿಸು;
 		}
 
-		item = item->r_next;
-	} while (item != items);
+		ಅಂಶ = ಅಂಶ->r_ಮುಂದಿನ;
+	} ಆಗ (ಅಂಶ != ವಸ್ತುಗಳು);
 
 	/* We must have found the item */
-	if (found == NULL) {
-		return NULL;
+	ಆದರೆ (ಸಿಕ್ಕಿತು == ಖಾಲಿ) {
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
-	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	ctx = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(*ctx));
+	ಆದರೆ (ctx == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-	ctx->parent_fetch = parent_fetch;
+	ctx->ಪೋಷಕ_fetch = ಪೋಷಕ_fetch;
 	ctx->url = nsurl_ref(url);
-	ctx->item = found;
+	ctx->ಅಂಶ = ಸಿಕ್ಕಿತು;
 
-	RING_INSERT(ring, ctx);
+	RING_ಸೇರಿಸು(ring, ctx);
 
-	return ctx;
+	ಹಿಂತಿರುಗಿ ctx;
 }
 
-static bool html_css_fetcher_start(void *ctx)
+ಸ್ಥಿರ bool html_css_fetcher_ಆರಂಭ(ಶೂನ್ಯ *ctx)
 {
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
-static void html_css_fetcher_free(void *ctx)
+ಸ್ಥಿರ ಶೂನ್ಯ html_css_fetcher_free(ಶೂನ್ಯ *ctx)
 {
 	html_css_fetcher_context *c = ctx;
 
 	nsurl_unref(c->url);
-	if (c->item != NULL) {
-		nsurl_unref(c->item->base_url);
-		dom_string_unref(c->item->data);
-		RING_REMOVE(items, c->item);
-		free(c->item);
+	ಆದರೆ (c->ಅಂಶ != ಖಾಲಿ) {
+		nsurl_unref(c->ಅಂಶ->ತಳ_url);
+		dom_string_unref(c->ಅಂಶ->ದತ್ತಾಂಶ);
+		RING_REMOVE(ವಸ್ತುಗಳು, c->ಅಂಶ);
+		ಬಿಡುಗಡೆ(c->ಅಂಶ);
 	}
 	RING_REMOVE(ring, c);
-	free(ctx);
+	ಬಿಡುಗಡೆ(ctx);
 }
 
-static void html_css_fetcher_abort(void *ctx)
+ಸ್ಥಿರ ಶೂನ್ಯ html_css_fetcher_abort(ಶೂನ್ಯ *ctx)
 {
 	html_css_fetcher_context *c = ctx;
 
@@ -172,149 +172,149 @@ static void html_css_fetcher_abort(void *ctx)
 	c->aborted = true;
 }
 
-static void html_css_fetcher_send_callback(const fetch_msg *msg,
+ಸ್ಥಿರ ಶೂನ್ಯ html_css_fetcher_send_callback(ಸ್ಥಿರಾಂಕ fetch_ಸಂದೇಶ *ಸಂದೇಶ,
 		html_css_fetcher_context *c)
 {
 	c->locked = true;
-	fetch_send_callback(msg, c->parent_fetch);
+	fetch_send_callback(ಸಂದೇಶ, c->ಪೋಷಕ_fetch);
 	c->locked = false;
 }
 
-static void html_css_fetcher_poll(lwc_string *scheme)
+ಸ್ಥಿರ ಶೂನ್ಯ html_css_fetcher_poll(lwc_string *scheme)
 {
-	fetch_msg msg;
-	html_css_fetcher_context *c, *next;
+	fetch_ಸಂದೇಶ ಸಂದೇಶ;
+	html_css_fetcher_context *c, *ಮುಂದಿನ;
 
-	if (ring == NULL) return;
+	ಆದರೆ (ring == ಖಾಲಿ) ಹಿಂತಿರುಗಿ;
 
 	/* Iterate over ring, processing each pending fetch */
 	c = ring;
-	do {
+	ಮಾಡು {
 		/* Ignore fetches that have been flagged as locked.
 		 * This allows safe re-entrant calls to this function.
 		 * Re-entrancy can occur if, as a result of a callback,
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
-			next = c->r_next;
-			continue;
+		ಆದರೆ (c->locked == true) {
+			ಮುಂದಿನ = c->r_ಮುಂದಿನ;
+			ಮುಂದುವರಿ;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted) {
+		ಆದರೆ (c->aborted) {
 			/* Nothing to do */
-			assert(c->locked == false);
-		} else if (c->item != NULL) {
-			char header[4096];
+			ಪ್ರತಿಜ್ಞಾ(c->locked == false);
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (c->ಅಂಶ != ಖಾಲಿ) {
+			ಅಕ್ಷರ ಶೀರ್ಷಿಕೆ[4096];
 
-			fetch_set_http_code(c->parent_fetch, 200);
+			fetch_ಗಣ_http_ಸಂಕೇತ(c->ಪೋಷಕ_fetch, 200);
 
 			/* Any callback can result in the fetch being aborted.
 			 * Therefore, we _must_ check for this after _every_
 			 * call to html_css_fetcher_send_callback().
 			 */
-			snprintf(header, sizeof header,
+			snprintf(ಶೀರ್ಷಿಕೆ, ಗಾತ್ರ ಶೀರ್ಷಿಕೆ,
 				"Content-Type: text/css; charset=utf-8");
-			msg.type = FETCH_HEADER;
-			msg.data.header_or_data.buf = (const uint8_t *) header;
-			msg.data.header_or_data.len = strlen(header);
-			html_css_fetcher_send_callback(&msg, c);
+			ಸಂದೇಶ.type = FETCH_ಶೀರ್ಷಿಕೆ;
+			ಸಂದೇಶ.ದತ್ತಾಂಶ.ಶೀರ್ಷಿಕೆ_or_ದತ್ತಾಂಶ.buf = (ಸ್ಥಿರಾಂಕ uint8_t *) ಶೀರ್ಷಿಕೆ;
+			ಸಂದೇಶ.ದತ್ತಾಂಶ.ಶೀರ್ಷಿಕೆ_or_ದತ್ತಾಂಶ.len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಶೀರ್ಷಿಕೆ);
+			html_css_fetcher_send_callback(&ಸಂದೇಶ, c);
 
-			if (c->aborted == false) {
-				snprintf(header, sizeof header,
+			ಆದರೆ (c->aborted == false) {
+				snprintf(ಶೀರ್ಷಿಕೆ, ಗಾತ್ರ ಶೀರ್ಷಿಕೆ,
 					"Content-Length: %"PRIsizet,
-					dom_string_byte_length(c->item->data));
-				msg.type = FETCH_HEADER;
-				msg.data.header_or_data.buf =
-						(const uint8_t *) header;
-				msg.data.header_or_data.len = strlen(header);
-				html_css_fetcher_send_callback(&msg, c);
+					dom_string_byte_ಉದ್ದಳತೆ(c->ಅಂಶ->ದತ್ತಾಂಶ));
+				ಸಂದೇಶ.type = FETCH_ಶೀರ್ಷಿಕೆ;
+				ಸಂದೇಶ.ದತ್ತಾಂಶ.ಶೀರ್ಷಿಕೆ_or_ದತ್ತಾಂಶ.buf =
+						(ಸ್ಥಿರಾಂಕ uint8_t *) ಶೀರ್ಷಿಕೆ;
+				ಸಂದೇಶ.ದತ್ತಾಂಶ.ಶೀರ್ಷಿಕೆ_or_ದತ್ತಾಂಶ.len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಶೀರ್ಷಿಕೆ);
+				html_css_fetcher_send_callback(&ಸಂದೇಶ, c);
 			}
 
-			if (c->aborted == false) {
-				snprintf(header, sizeof header,
+			ಆದರೆ (c->aborted == false) {
+				snprintf(ಶೀರ್ಷಿಕೆ, ಗಾತ್ರ ಶೀರ್ಷಿಕೆ,
 					"X-NS-Base: %.*s",
-					(int) nsurl_length(c->item->base_url),
-					nsurl_access(c->item->base_url));
-				msg.type = FETCH_HEADER;
-				msg.data.header_or_data.buf =
-						(const uint8_t *) header;
-				msg.data.header_or_data.len = strlen(header);
-				html_css_fetcher_send_callback(&msg, c);
+					(ಪೂರ್ಣಾಂಕ) nsurl_ಉದ್ದಳತೆ(c->ಅಂಶ->ತಳ_url),
+					nsurl_access(c->ಅಂಶ->ತಳ_url));
+				ಸಂದೇಶ.type = FETCH_ಶೀರ್ಷಿಕೆ;
+				ಸಂದೇಶ.ದತ್ತಾಂಶ.ಶೀರ್ಷಿಕೆ_or_ದತ್ತಾಂಶ.buf =
+						(ಸ್ಥಿರಾಂಕ uint8_t *) ಶೀರ್ಷಿಕೆ;
+				ಸಂದೇಶ.ದತ್ತಾಂಶ.ಶೀರ್ಷಿಕೆ_or_ದತ್ತಾಂಶ.len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಶೀರ್ಷಿಕೆ);
+				html_css_fetcher_send_callback(&ಸಂದೇಶ, c);
 			}
 
-			if (c->aborted == false) {
-				msg.type = FETCH_DATA;
-				msg.data.header_or_data.buf =
-						(const uint8_t *)
-						dom_string_data(c->item->data);
-				msg.data.header_or_data.len =
-					dom_string_byte_length(c->item->data);
-				html_css_fetcher_send_callback(&msg, c);
+			ಆದರೆ (c->aborted == false) {
+				ಸಂದೇಶ.type = FETCH_ದತ್ತಾಂಶ;
+				ಸಂದೇಶ.ದತ್ತಾಂಶ.ಶೀರ್ಷಿಕೆ_or_ದತ್ತಾಂಶ.buf =
+						(ಸ್ಥಿರಾಂಕ uint8_t *)
+						dom_string_ದತ್ತಾಂಶ(c->ಅಂಶ->ದತ್ತಾಂಶ);
+				ಸಂದೇಶ.ದತ್ತಾಂಶ.ಶೀರ್ಷಿಕೆ_or_ದತ್ತಾಂಶ.len =
+					dom_string_byte_ಉದ್ದಳತೆ(c->ಅಂಶ->ದತ್ತಾಂಶ);
+				html_css_fetcher_send_callback(&ಸಂದೇಶ, c);
 			}
 
-			if (c->aborted == false) {
-				msg.type = FETCH_FINISHED;
-				html_css_fetcher_send_callback(&msg, c);
+			ಆದರೆ (c->aborted == false) {
+				ಸಂದೇಶ.type = FETCH_ಪೂರ್ಣಗೊಂಡ;
+				html_css_fetcher_send_callback(&ಸಂದೇಶ, c);
 			}
-		} else {
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			NSLOG(netsurf, INFO, "Processing of %s failed!",
 			      nsurl_access(c->url));
 
 			/* Ensure that we're unlocked here. If we aren't,
 			 * then html_css_fetcher_process() is broken.
 			 */
-			assert(c->locked == false);
+			ಪ್ರತಿಜ್ಞಾ(c->locked == false);
 		}
 
 		/* Compute next fetch item at the last possible moment as
 		 * processing this item may have added to the ring.
 		 */
-		next = c->r_next;
+		ಮುಂದಿನ = c->r_ಮುಂದಿನ;
 
-		fetch_remove_from_queues(c->parent_fetch);
-		fetch_free(c->parent_fetch);
+		fetch_remove_from_queues(c->ಪೋಷಕ_fetch);
+		fetch_free(c->ಪೋಷಕ_fetch);
 
 		/* Advance to next ring entry, exiting if we've reached
 		 * the start of the ring or the ring has become empty
 		 */
-	} while ( (c = next) != ring && ring != NULL);
+	} ಆಗ ( (c = ಮುಂದಿನ) != ring && ring != ಖಾಲಿ);
 }
 
 /* exported interface documented in html_internal.h */
-nserror html_css_fetcher_register(void)
+nserror html_css_fetcher_ರಿಜಿಸ್ಟರ್(ಶೂನ್ಯ)
 {
-	const struct fetcher_operation_table html_css_fetcher_ops = {
+	ಸ್ಥಿರಾಂಕ ರಚನೆ fetcher_operation_ಕೋಷ್ಟಕ html_css_fetcher_ops = {
 		.initialise = html_css_fetcher_initialise,
 		.acceptable = html_css_fetcher_can_fetch,
-		.setup = html_css_fetcher_setup,
-		.start = html_css_fetcher_start,
+		.ಸಿದ್ಧತೆ = html_css_fetcher_ಸಿದ್ಧತೆ,
+		.ಆರಂಭ = html_css_fetcher_ಆರಂಭ,
 		.abort = html_css_fetcher_abort,
-		.free = html_css_fetcher_free,
+		.ಬಿಡುಗಡೆ = html_css_fetcher_free,
 		.poll = html_css_fetcher_poll,
 		.finalise = html_css_fetcher_finalise
 	};
 
-	return fetcher_add(lwc_string_ref(corestring_lwc_x_ns_css),
+	ಹಿಂತಿರುಗಿ fetcher_ಕೂಡಿಸು(lwc_string_ref(corestring_lwc_x_ns_css),
 			&html_css_fetcher_ops);
 }
 
 /* exported interface documented in html_internal.h */
 nserror
-html_css_fetcher_add_item(dom_string *data, nsurl *base_url, uint32_t *key)
+html_css_fetcher_ಕೂಡಿಸು_ಅಂಶ(dom_string *ದತ್ತಾಂಶ, nsurl *ತಳ_url, uint32_t *ಕೀಲಿ)
 {
-	html_css_fetcher_item *item = malloc(sizeof(*item));
+	html_css_fetcher_ಅಂಶ *ಅಂಶ = ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ(*ಅಂಶ));
 
-	if (item == NULL) {
-		return NSERROR_NOMEM;
+	ಆದರೆ (ಅಂಶ == ಖಾಲಿ) {
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 	}
 
-	*key = item->key = current_key++;
-	item->data = dom_string_ref(data);
-	item->base_url = nsurl_ref(base_url);
+	*ಕೀಲಿ = ಅಂಶ->ಕೀಲಿ = current_ಕೀಲಿ++;
+	ಅಂಶ->ದತ್ತಾಂಶ = dom_string_ref(ದತ್ತಾಂಶ);
+	ಅಂಶ->ತಳ_url = nsurl_ref(ತಳ_url);
 
-	RING_INSERT(items, item);
+	RING_ಸೇರಿಸು(ವಸ್ತುಗಳು, ಅಂಶ);
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }

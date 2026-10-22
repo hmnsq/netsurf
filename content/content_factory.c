@@ -21,50 +21,50 @@
  * Content factory implementation
  */
 
-#include <assert.h>
-#include <stdlib.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <assert.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include "utils/http.h"
+#ಅನ್ತರ್ಭಾವ "utils/http.h"
 
-#include "content/content.h"
-#include "content/content_factory.h"
-#include "content/content_protected.h"
-#include "content/llcache.h"
+#ಅನ್ತರ್ಭಾವ "content/content.h"
+#ಅನ್ತರ್ಭಾವ "content/content_factory.h"
+#ಅನ್ತರ್ಭಾವ "content/content_protected.h"
+#ಅನ್ತರ್ಭಾವ "content/llcache.h"
 
 /**
  * Entry in list of content handlers
  */
-typedef struct content_handler_entry {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ content_handler_ನಮೂದು {
 	/** Next entry */
-	struct content_handler_entry *next;
+	ರಚನೆ content_handler_ನಮೂದು *ಮುಂದಿನ;
 
 	/** MIME type handled by handler */
 	lwc_string *mime_type;
 	/** Content handler object */
-	const content_handler *handler;
-} content_handler_entry;
+	ಸ್ಥಿರಾಂಕ content_handler *handler;
+} content_handler_ನಮೂದು;
 
-static content_handler_entry *content_handlers;
+ಸ್ಥಿರ content_handler_ನಮೂದು *content_handlers;
 
 /**
  * Clean up after the content factory
  */
-void content_factory_fini(void)
+ಶೂನ್ಯ content_factory_fini(ಶೂನ್ಯ)
 {
-	content_handler_entry *victim;
+	content_handler_ನಮೂದು *victim;
 
-	while (content_handlers != NULL) {
+	ಆಗ (content_handlers != ಖಾಲಿ) {
 		victim = content_handlers;
 
-		content_handlers = content_handlers->next;
+		content_handlers = content_handlers->ಮುಂದಿನ;
 
-		if (victim->handler->fini != NULL)
+		ಆದರೆ (victim->handler->fini != ಖಾಲಿ)
 			victim->handler->fini();
 
 		lwc_string_unref(victim->mime_type);
 
-		free(victim);
+		ಬಿಡುಗಡೆ(victim);
 	}
 }
 
@@ -77,40 +77,40 @@ void content_factory_fini(void)
  *
  * \note Latest registration for a MIME type wins
  */
-nserror content_factory_register_handler(const char *mime_type,
-		const content_handler *handler)
+nserror content_factory_ರಿಜಿಸ್ಟರ್_handler(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *mime_type,
+		ಸ್ಥಿರಾಂಕ content_handler *handler)
 {
 	lwc_string *imime_type;
 	lwc_error lerror;
-	content_handler_entry *entry;
-	bool match;
+	content_handler_ನಮೂದು *ನಮೂದು;
+	bool ಹೊಂದಿಕೆ;
 
-	lerror = lwc_intern_string(mime_type, strlen(mime_type), &imime_type);
-	if (lerror != lwc_error_ok)
-		return NSERROR_NOMEM;
+	lerror = lwc_intern_string(mime_type, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(mime_type), &imime_type);
+	ಆದರೆ (lerror != lwc_error_ok)
+		ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 
-	for (entry = content_handlers; entry != NULL; entry = entry->next) {
-		if (lwc_string_caseless_isequal(imime_type, entry->mime_type,
-				&match) == lwc_error_ok && match)
-			break;
+	ಗಾಗಿ (ನಮೂದು = content_handlers; ನಮೂದು != ಖಾಲಿ; ನಮೂದು = ನಮೂದು->ಮುಂದಿನ) {
+		ಆದರೆ (lwc_string_caseless_isequal(imime_type, ನಮೂದು->mime_type,
+				&ಹೊಂದಿಕೆ) == lwc_error_ok && ಹೊಂದಿಕೆ)
+			ನಿಲ್ಲಿಸು;
 	}
 
-	if (entry == NULL) {
-		entry = malloc(sizeof(content_handler_entry));
-		if (entry == NULL)
-			return NSERROR_NOMEM;
+	ಆದರೆ (ನಮೂದು == ಖಾಲಿ) {
+		ನಮೂದು = ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ(content_handler_ನಮೂದು));
+		ಆದರೆ (ನಮೂದು == ಖಾಲಿ)
+			ಹಿಂತಿರುಗಿ NSERROR_NOMEM;
 
-		entry->next = content_handlers;
-		content_handlers = entry;
+		ನಮೂದು->ಮುಂದಿನ = content_handlers;
+		content_handlers = ನಮೂದು;
 
-		entry->mime_type = imime_type;
-	} else {
+		ನಮೂದು->mime_type = imime_type;
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		lwc_string_unref(imime_type);
 	}
 
-	entry->handler = handler;
+	ನಮೂದು->handler = handler;
 
-	return NSERROR_OK;
+	ಹಿಂತಿರುಗಿ NSERROR_OK;
 }
 
 /**
@@ -119,23 +119,23 @@ nserror content_factory_register_handler(const char *mime_type,
  * \param mime_type  MIME type to search for
  * \return Associated handler, or NULL if none
  */
-static const content_handler *content_lookup(lwc_string *mime_type)
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ content_handler *content_lookup(lwc_string *mime_type)
 {
-	content_handler_entry *entry;
-	bool match;
+	content_handler_ನಮೂದು *ನಮೂದು;
+	bool ಹೊಂದಿಕೆ;
 
-	for (entry = content_handlers; entry != NULL; entry = entry->next) {
-		if (lwc_string_caseless_isequal(mime_type, entry->mime_type,
-					&match) == lwc_error_ok && match) {
-			break;
+	ಗಾಗಿ (ನಮೂದು = content_handlers; ನಮೂದು != ಖಾಲಿ; ನಮೂದು = ನಮೂದು->ಮುಂದಿನ) {
+		ಆದರೆ (lwc_string_caseless_isequal(mime_type, ನಮೂದು->mime_type,
+					&ಹೊಂದಿಕೆ) == lwc_error_ok && ಹೊಂದಿಕೆ) {
+			ನಿಲ್ಲಿಸು;
 		}
 	}
 
-	if (entry != NULL) {
-		return entry->handler;
+	ಆದರೆ (ನಮೂದು != ಖಾಲಿ) {
+		ಹಿಂತಿರುಗಿ ನಮೂದು->handler;
 	}
 
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
 /**
@@ -146,15 +146,15 @@ static const content_handler *content_lookup(lwc_string *mime_type)
  */
 content_type content_factory_type_from_mime_type(lwc_string *mime_type)
 {
-	const content_handler *handler;
+	ಸ್ಥಿರಾಂಕ content_handler *handler;
 	content_type type = CONTENT_NONE;
 
 	handler = content_lookup(mime_type);
-	if (handler != NULL) {
+	ಆದರೆ (handler != ಖಾಲಿ) {
 		type = handler->type();
 	}
 
-	return type;
+	ಹಿಂತಿರುಗಿ type;
 }
 
 /**
@@ -166,41 +166,41 @@ content_type content_factory_type_from_mime_type(lwc_string *mime_type)
  * \param effective_type    Effective MIME type of content
  * \return Pointer to content object, or NULL on failure
  */
-struct content *content_factory_create_content(llcache_handle *llcache,
-		const char *fallback_charset, bool quirks,
+ರಚನೆ content *content_factory_create_content(llcache_handle *llcache,
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fallback_charset, bool quirks,
 		lwc_string *effective_type)
 {
-	struct content *c;
-	const char *content_type_header;
-	const content_handler *handler;
-	http_content_type *ct = NULL;
+	ರಚನೆ content *c;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *content_type_ಶೀರ್ಷಿಕೆ;
+	ಸ್ಥಿರಾಂಕ content_handler *handler;
+	http_content_type *ct = ಖಾಲಿ;
 	nserror error;
 
 	handler = content_lookup(effective_type);
-	if (handler == NULL)
-		return NULL;
+	ಆದರೆ (handler == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-	assert(handler->create != NULL);
+	ಪ್ರತಿಜ್ಞಾ(handler->create != ಖಾಲಿ);
 
 	/* Use the parameters from the declared Content-Type header */
-	content_type_header = 
-			llcache_handle_get_header(llcache, "Content-Type");
-	if (content_type_header != NULL) {
+	content_type_ಶೀರ್ಷಿಕೆ = 
+			llcache_handle_get_ಶೀರ್ಷಿಕೆ(llcache, "Content-Type");
+	ಆದರೆ (content_type_ಶೀರ್ಷಿಕೆ != ಖಾಲಿ) {
 		/* We don't care if this fails */
-		http_parse_content_type(content_type_header, &ct);
+		http_parse_content_type(content_type_ಶೀರ್ಷಿಕೆ, &ct);
 	}
 
 	error = handler->create(handler, effective_type, 
-			ct != NULL ? ct->parameters : NULL, 
+			ct != ಖಾಲಿ ? ct->parameters : ಖಾಲಿ, 
 			llcache, fallback_charset, quirks, 
 			&c);
 
-	if (ct != NULL)
+	ಆದರೆ (ct != ಖಾಲಿ)
 		http_content_type_destroy(ct);
 
-	if (error != NSERROR_OK)
-		return NULL;
+	ಆದರೆ (error != NSERROR_OK)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-	return c;
+	ಹಿಂತಿರುಗಿ c;
 }
 
