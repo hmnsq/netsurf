@@ -35,30 +35,30 @@
  * \return Plot font family
  */
 static plot_font_generic_family_t
-plot_font_generic_family(enum css_font_family_e css)
+plot_font_generic_family(ga_nanaa css_font_family_e css)
 {
 	plot_font_generic_family_t plot;
 
 	switch (css) {
-	case CSS_FONT_FAMILY_SERIF:
+	pak_sa CSS_FONT_FAMILY_SERIF:
 		plot = PLOT_FONT_FAMILY_SERIF;
-		break;
-	case CSS_FONT_FAMILY_MONOSPACE:
+		bha_nga;
+	pak_sa CSS_FONT_FAMILY_MONOSPACE:
 		plot = PLOT_FONT_FAMILY_MONOSPACE;
-		break;
-	case CSS_FONT_FAMILY_CURSIVE:
+		bha_nga;
+	pak_sa CSS_FONT_FAMILY_CURSIVE:
 		plot = PLOT_FONT_FAMILY_CURSIVE;
-		break;
-	case CSS_FONT_FAMILY_FANTASY:
+		bha_nga;
+	pak_sa CSS_FONT_FAMILY_FANTASY:
 		plot = PLOT_FONT_FAMILY_FANTASY;
-		break;
-	case CSS_FONT_FAMILY_SANS_SERIF:
+		bha_nga;
+	pak_sa CSS_FONT_FAMILY_SANS_SERIF:
 	default:
 		plot = PLOT_FONT_FAMILY_SANS_SERIF;
-		break;
+		bha_nga;
 	}
 
-	return plot;
+	คืน plot;
 }
 
 /**
@@ -67,44 +67,44 @@ plot_font_generic_family(enum css_font_family_e css)
  * \param css  CSS font weight
  * \return Plot weight
  */
-static int plot_font_weight(enum css_font_weight_e css)
+static จำนวนเต็ม plot_font_weight(ga_nanaa css_font_weight_e css)
 {
-	int weight;
+	จำนวนเต็ม weight;
 
 	switch (css) {
-	case CSS_FONT_WEIGHT_100:
+	pak_sa CSS_FONT_WEIGHT_100:
 		weight = 100;
-		break;
-	case CSS_FONT_WEIGHT_200:
+		bha_nga;
+	pak_sa CSS_FONT_WEIGHT_200:
 		weight = 200;
-		break;
-	case CSS_FONT_WEIGHT_300:
+		bha_nga;
+	pak_sa CSS_FONT_WEIGHT_300:
 		weight = 300;
-		break;
-	case CSS_FONT_WEIGHT_400:
-	case CSS_FONT_WEIGHT_NORMAL:
+		bha_nga;
+	pak_sa CSS_FONT_WEIGHT_400:
+	pak_sa CSS_FONT_WEIGHT_NORMAL:
 	default:
 		weight = 400;
-		break;
-	case CSS_FONT_WEIGHT_500:
+		bha_nga;
+	pak_sa CSS_FONT_WEIGHT_500:
 		weight = 500;
-		break;
-	case CSS_FONT_WEIGHT_600:
+		bha_nga;
+	pak_sa CSS_FONT_WEIGHT_600:
 		weight = 600;
-		break;
-	case CSS_FONT_WEIGHT_700:
-	case CSS_FONT_WEIGHT_BOLD:
+		bha_nga;
+	pak_sa CSS_FONT_WEIGHT_700:
+	pak_sa CSS_FONT_WEIGHT_BOLD:
 		weight = 700;
-		break;
-	case CSS_FONT_WEIGHT_800:
+		bha_nga;
+	pak_sa CSS_FONT_WEIGHT_800:
 		weight = 800;
-		break;
-	case CSS_FONT_WEIGHT_900:
+		bha_nga;
+	pak_sa CSS_FONT_WEIGHT_900:
 		weight = 900;
-		break;
+		bha_nga;
 	}
 
-	return weight;
+	คืน weight;
 }
 
 /**
@@ -114,20 +114,20 @@ static int plot_font_weight(enum css_font_weight_e css)
  * \param variant  CSS font variant
  * \return Computed plot flags
  */
-static plot_font_flags_t plot_font_flags(enum css_font_style_e style,
-		enum css_font_variant_e variant)
+static plot_font_flags_t plot_font_flags(ga_nanaa css_font_style_e style,
+		ga_nanaa css_font_variant_e variant)
 {
 	plot_font_flags_t flags = FONTF_NONE;
 
-	if (style == CSS_FONT_STYLE_ITALIC)
+	ถ้า (style == CSS_FONT_STYLE_ITALIC)
 		flags |= FONTF_ITALIC;
-	else if (style == CSS_FONT_STYLE_OBLIQUE)
+	มิฉะนั้น ถ้า (style == CSS_FONT_STYLE_OBLIQUE)
 		flags |= FONTF_OBLIQUE;
 
-	if (variant == CSS_FONT_VARIANT_SMALL_CAPS)
+	ถ้า (variant == CSS_FONT_VARIANT_SMALL_CAPS)
 		flags |= FONTF_SMALLCAPS;
 
-	return flags;
+	คืน flags;
 }
 
 
@@ -152,7 +152,7 @@ void font_plot_style_from_css(
 				      INTTOFIX(PLOT_STYLE_SCALE)));
 
 	/* Clamp font size to configured minimum */
-	if (fstyle->size < (nsoption_int(font_min_size) * PLOT_STYLE_SCALE) / 10)
+	ถ้า (fstyle->size < (nsoption_int(font_min_size) * PLOT_STYLE_SCALE) / 10)
 		fstyle->size = (nsoption_int(font_min_size) * PLOT_STYLE_SCALE) / 10;
 
 	fstyle->weight = plot_font_weight(css_computed_font_weight(css));

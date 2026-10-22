@@ -52,18 +52,18 @@
 static nserror
 webp_create(const content_handler *handler,
 	      lwc_string *imime_type,
-	      const struct http_parameter *params,
+	      const sa_nracanaa http_parameter *params,
 	      llcache_handle *llcache,
-	      const char *fallback_charset,
+	      const var_na *fallback_charset,
 	      bool quirks,
-	      struct content **c)
+	      sa_nracanaa content **c)
 {
-	struct content *webp_c; /* webp content object */
+	sa_nracanaa content *webp_c; /* webp content object */
 	nserror res;
 
-	webp_c = calloc(1, sizeof(struct content));
-	if (webp_c == NULL) {
-		return NSERROR_NOMEM;
+	webp_c = calloc(1, parimaa_na(sa_nracanaa content));
+	ถ้า (webp_c == NULL) {
+		คืน NSERROR_NOMEM;
 	}
 
 	res = content__init(webp_c,
@@ -73,31 +73,31 @@ webp_create(const content_handler *handler,
 			    llcache,
 			    fallback_charset,
 			    quirks);
-	if (res != NSERROR_OK) {
+	ถ้า (res != NSERROR_OK) {
 		free(webp_c);
-		return res;
+		คืน res;
 	}
 
 	*c = webp_c;
 
-	return NSERROR_OK;
+	คืน NSERROR_OK;
 }
 
 /**
  * create a bitmap from webp content.
  */
-static struct bitmap *
-webp_cache_convert(struct content *c)
+static sa_nracanaa bitmap *
+webp_cache_convert(sa_nracanaa content *c)
 {
 	const uint8_t *source_data; /* webp source data */
 	size_t source_size; /* length of webp source data */
 	VP8StatusCode webpres;
 	WebPBitstreamFeatures webpfeatures;
-	unsigned int bmap_flags;
+	unsigned จำนวนเต็ม bmap_flags;
 	uint8_t *pixels = NULL;
 	uint8_t *decoded;
 	size_t rowstride;
-	struct bitmap *bitmap = NULL;
+	sa_nracanaa bitmap *bitmap = NULL;
 	bitmap_fmt_t webp_fmt = {
 		.layout = bitmap_fmt.layout,
 	};
@@ -106,17 +106,17 @@ webp_cache_convert(struct content *c)
 
 	webpres = WebPGetFeatures(source_data, source_size, &webpfeatures);
 
-	if (webpres != VP8_STATUS_OK) {
-		return NULL;
+	ถ้า (webpres != VP8_STATUS_OK) {
+		คืน NULL;
 	}
 
-	if (webpfeatures.has_alpha == 0) {
+	ถ้า (webpfeatures.has_alpha == 0) {
 		bmap_flags = BITMAP_OPAQUE;
 		/* Image has no alpha. Premultiplied alpha makes no difference.
 		 * Optimisation: Avoid unnecessary conversion by copying format.
 		 */
 		webp_fmt.pma = bitmap_fmt.pma;
-	} else {
+	} มิฉะนั้น {
 		bmap_flags = BITMAP_NONE;
 	}
 
@@ -124,16 +124,16 @@ webp_cache_convert(struct content *c)
 	bitmap = guit->bitmap->create(webpfeatures.width,
 				      webpfeatures.height,
 				      bmap_flags);
-	if (bitmap == NULL) {
+	ถ้า (bitmap == NULL) {
 		/* empty bitmap could not be created */
-		return NULL;
+		คืน NULL;
 	}
 
 	pixels = guit->bitmap->get_buffer(bitmap);
-	if (pixels == NULL) {
+	ถ้า (pixels == NULL) {
 		/* bitmap with no buffer available */
 		guit->bitmap->destroy(bitmap);
-		return NULL;
+		คืน NULL;
 	}
 
 	rowstride = guit->bitmap->get_rowstride(bitmap);
@@ -143,31 +143,31 @@ webp_cache_convert(struct content *c)
 		/* WebP has no ABGR function, fall back to default. */
 		webp_fmt.layout = BITMAP_LAYOUT_R8G8B8A8;
 		fallthrough;
-	case BITMAP_LAYOUT_R8G8B8A8:
+	pak_sa BITMAP_LAYOUT_R8G8B8A8:
 		decoded = WebPDecodeRGBAInto(source_data, source_size, pixels,
 				rowstride * webpfeatures.height, rowstride);
-		break;
+		bha_nga;
 
-	case BITMAP_LAYOUT_B8G8R8A8:
+	pak_sa BITMAP_LAYOUT_B8G8R8A8:
 		decoded = WebPDecodeBGRAInto(source_data, source_size, pixels,
 				rowstride * webpfeatures.height, rowstride);
-		break;
+		bha_nga;
 
-	case BITMAP_LAYOUT_A8R8G8B8:
+	pak_sa BITMAP_LAYOUT_A8R8G8B8:
 		decoded = WebPDecodeARGBInto(source_data, source_size, pixels,
 				rowstride * webpfeatures.height, rowstride);
-		break;
+		bha_nga;
 	}
-	if (decoded == NULL) {
+	ถ้า (decoded == NULL) {
 		/* decode failed */
 		guit->bitmap->destroy(bitmap);
-		return NULL;
+		คืน NULL;
 	}
 
 	bitmap_format_to_client(bitmap, &webp_fmt);
 	guit->bitmap->modified(bitmap);
 
-	return bitmap;
+	คืน bitmap;
 }
 
 /**
@@ -180,20 +180,20 @@ webp_cache_convert(struct content *c)
  * \param c The webp content object
  * \return true on successful processing of teh webp content else false
  */
-static bool webp_convert(struct content *c)
+static bool webp_convert(sa_nracanaa content *c)
 {
-	int res;
+	จำนวนเต็ม res;
 	const uint8_t* data;
 	size_t data_size;
-	int width;
-	int height;
+	จำนวนเต็ม width;
+	จำนวนเต็ม height;
 
 	data = content__get_source_data(c, &data_size);
 
 	res = WebPGetInfo(data, data_size, &width, &height);
-	if (res == 0) {
+	ถ้า (res == 0) {
 		NSLOG(netsurf, INFO, "WebPGetInfo failed:%p", c);
-		return false;
+		คืน false;
 	}
 
 	c->width = width;
@@ -205,40 +205,40 @@ static bool webp_convert(struct content *c)
 	content_set_ready(c);
 	content_set_done(c);
 
-	return true;
+	คืน true;
 }
 
 /**
  * Clone content.
  */
-static nserror webp_clone(const struct content *old, struct content **new_c)
+static nserror webp_clone(const sa_nracanaa content *old, sa_nracanaa content **new_c)
 {
-	struct content *webp_c; /* cloned webp content */
+	sa_nracanaa content *webp_c; /* cloned webp content */
 	nserror res;
 
-	webp_c = calloc(1, sizeof(struct content));
-	if (webp_c == NULL) {
-		return NSERROR_NOMEM;
+	webp_c = calloc(1, parimaa_na(sa_nracanaa content));
+	ถ้า (webp_c == NULL) {
+		คืน NSERROR_NOMEM;
 	}
 
 	res = content__clone(old, webp_c);
-	if (res != NSERROR_OK) {
+	ถ้า (res != NSERROR_OK) {
 		content_destroy(webp_c);
-		return res;
+		คืน res;
 	}
 
 	/* re-convert if the content is ready */
-	if ((old->status == CONTENT_STATUS_READY) ||
+	ถ้า ((old->status == CONTENT_STATUS_READY) ||
 	    (old->status == CONTENT_STATUS_DONE)) {
-		if (webp_convert(webp_c) == false) {
+		ถ้า (webp_convert(webp_c) == false) {
 			content_destroy(webp_c);
-			return NSERROR_CLONE_FAILED;
+			คืน NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*new_c = webp_c;
 
-	return NSERROR_OK;
+	คืน NSERROR_OK;
 }
 
 static const content_handler webp_content_handler = {
@@ -253,7 +253,7 @@ static const content_handler webp_content_handler = {
 	.no_share = false,
 };
 
-static const char *webp_types[] = {
+static const var_na *webp_types[] = {
 	"image/webp"
 };
 

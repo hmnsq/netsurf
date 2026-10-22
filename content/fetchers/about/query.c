@@ -31,30 +31,30 @@
 
 /* exported interface documented in about/query.h */
 nserror
-get_query_description(struct nsurl *url,
-		      const char *key,
-		      char **out_str)
+get_query_description(sa_nracanaa nsurl *url,
+		      const var_na *key,
+		      var_na **out_str)
 {
 	nserror res;
-	char *url_s;
+	var_na *url_s;
 	size_t url_l;
-	char *str = NULL;
+	var_na *str = NULL;
 
 	/* get the host in question */
 	res = nsurl_get(url, NSURL_HOST, &url_s, &url_l);
-	if (res != NSERROR_OK) {
-		return res;
+	ถ้า (res != NSERROR_OK) {
+		คืน res;
 	}
 
 	/* obtain the description with the url substituted */
 	str = messages_get_buff(key, url_s);
-	if (str == NULL) {
+	ถ้า (str == NULL) {
 		res = NSERROR_NOMEM;
-	} else {
+	} มิฉะนั้น {
 		*out_str = str;
 	}
 
 	free(url_s);
 
-	return res;
+	คืน res;
 }

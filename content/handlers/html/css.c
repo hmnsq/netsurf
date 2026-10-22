@@ -55,34 +55,34 @@ static nsurl *html_user_stylesheet_url;
 static nserror css_error_to_nserror(css_error error)
 {
 	switch (error) {
-	case CSS_OK:
-		return NSERROR_OK;
+	pak_sa CSS_OK:
+		คืน NSERROR_OK;
 
-	case CSS_NOMEM:
-		return NSERROR_NOMEM;
+	pak_sa CSS_NOMEM:
+		คืน NSERROR_NOMEM;
 
-	case CSS_BADPARM:
-		return NSERROR_BAD_PARAMETER;
+	pak_sa CSS_BADPARM:
+		คืน NSERROR_BAD_PARAMETER;
 
-	case CSS_INVALID:
-		return NSERROR_INVALID;
+	pak_sa CSS_INVALID:
+		คืน NSERROR_INVALID;
 
-	case CSS_FILENOTFOUND:
-		return NSERROR_NOT_FOUND;
+	pak_sa CSS_FILENOTFOUND:
+		คืน NSERROR_NOT_FOUND;
 
-	case CSS_NEEDDATA:
-		return NSERROR_NEED_DATA;
+	pak_sa CSS_NEEDDATA:
+		คืน NSERROR_NEED_DATA;
 
-	case CSS_BADCHARSET:
-		return NSERROR_BAD_ENCODING;
+	pak_sa CSS_BADCHARSET:
+		คืน NSERROR_BAD_ENCODING;
 
-	case CSS_EOF:
-	case CSS_IMPORTS_PENDING:
-	case CSS_PROPERTY_NOT_SET:
+	pak_sa CSS_EOF:
+	pak_sa CSS_IMPORTS_PENDING:
+	pak_sa CSS_PROPERTY_NOT_SET:
 	default:
-		break;
+		bha_nga;
 	}
-	return NSERROR_CSS;
+	คืน NSERROR_CSS;
 }
 
 
@@ -95,29 +95,29 @@ html_convert_css_callback(hlcache_handle *css,
 			  void *pw)
 {
 	html_content *parent = pw;
-	unsigned int i;
-	struct html_stylesheet *s;
+	unsigned จำนวนเต็ม i;
+	sa_nracanaa html_stylesheet *s;
 
 	/* Find sheet */
-	for (i = 0, s = parent->stylesheets;
+	สำหรับ (i = 0, s = parent->stylesheets;
 	     i != parent->stylesheet_count;
 	     i++, s++) {
-		if (s->sheet == css)
-			break;
+		ถ้า (s->sheet == css)
+			bha_nga;
 	}
 
 	assert(i != parent->stylesheet_count);
 
 	switch (event->type) {
 
-	case CONTENT_MSG_DONE:
+	pak_sa CONTENT_MSG_DONE:
 		NSLOG(netsurf, INFO, "done stylesheet slot %d '%s'", i,
 		      nsurl_access(hlcache_handle_get_url(css)));
 		parent->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
-		break;
+		bha_nga;
 
-	case CONTENT_MSG_ERROR:
+	pak_sa CONTENT_MSG_ERROR:
 		NSLOG(netsurf, INFO, "stylesheet %s failed: %s",
 		      nsurl_access(hlcache_handle_get_url(css)),
 		      event->data.errordata.errormsg);
@@ -126,21 +126,21 @@ html_convert_css_callback(hlcache_handle *css,
 		s->sheet = NULL;
 		parent->base.active--;
 		NSLOG(netsurf, INFO, "%d fetches active", parent->base.active);
-		break;
+		bha_nga;
 
-	case CONTENT_MSG_POINTER:
+	pak_sa CONTENT_MSG_POINTER:
 		/* Really don't want this to continue after the switch */
-		return NSERROR_OK;
+		คืน NSERROR_OK;
 
 	default:
-		break;
+		bha_nga;
 	}
 
-	if (html_can_begin_conversion(parent)) {
+	ถ้า (html_can_begin_conversion(parent)) {
 		html_begin_conversion(parent);
 	}
 
-	return NSERROR_OK;
+	คืน NSERROR_OK;
 }
 
 
@@ -155,39 +155,39 @@ html_stylesheet_from_domnode(html_content *c,
 	dom_exception exc;
 	nserror error;
 	uint32_t key;
-	char urlbuf[64];
+	var_na urlbuf[64];
 
 	child.charset = c->encoding;
 	child.quirks = c->base.quirks;
 
 	exc = dom_node_get_text_content(node, &style);
-	if ((exc != DOM_NO_ERR) || (style == NULL)) {
+	ถ้า ((exc != DOM_NO_ERR) || (style == NULL)) {
 		NSLOG(netsurf, INFO, "No text content");
-		return NSERROR_OK;
+		คืน NSERROR_OK;
 	}
 
 	error = html_css_fetcher_add_item(style, c->base_url, &key);
-	if (error != NSERROR_OK) {
+	ถ้า (error != NSERROR_OK) {
 		dom_string_unref(style);
-		return error;
+		คืน error;
 	}
 
 	dom_string_unref(style);
 
-	snprintf(urlbuf, sizeof(urlbuf), "x-ns-css:%"PRIu32"", key);
+	snprintf(urlbuf, parimaa_na(urlbuf), "x-ns-css:%"PRIu32"", key);
 
 	error = nsurl_create(urlbuf, &url);
-	if (error != NSERROR_OK) {
-		return error;
+	ถ้า (error != NSERROR_OK) {
+		คืน error;
 	}
 
 	error = hlcache_handle_retrieve(url, 0,
 			content_get_url(&c->base), NULL,
 			html_convert_css_callback, c, &child, CONTENT_CSS,
 			sheet);
-	if (error != NSERROR_OK) {
+	ถ้า (error != NSERROR_OK) {
 		nsurl_unref(url);
-		return error;
+		คืน error;
 	}
 
 	nsurl_unref(url);
@@ -195,7 +195,7 @@ html_stylesheet_from_domnode(html_content *c,
 	c->base.active++;
 	NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
-	return NSERROR_OK;
+	คืน NSERROR_OK;
 }
 
 
@@ -206,44 +206,44 @@ html_stylesheet_from_domnode(html_content *c,
  * \param  style  xml node of style element
  * \return  true on success, false if an error occurred
  */
-static struct html_stylesheet *
+static sa_nracanaa html_stylesheet *
 html_create_style_element(html_content *c, dom_node *style)
 {
 	dom_string *val;
 	dom_exception exc;
-	struct html_stylesheet *stylesheets;
+	sa_nracanaa html_stylesheet *stylesheets;
 
 	/* type='text/css', or not present (invalid but common) */
 	exc = dom_element_get_attribute(style, corestring_dom_type, &val);
-	if (exc == DOM_NO_ERR && val != NULL) {
-		if (!dom_string_caseless_lwc_isequal(val,
+	ถ้า (exc == DOM_NO_ERR && val != NULL) {
+		ถ้า (!dom_string_caseless_lwc_isequal(val,
 				corestring_lwc_text_css)) {
 			dom_string_unref(val);
-			return NULL;
+			คืน NULL;
 		}
 		dom_string_unref(val);
 	}
 
 	/* media contains 'screen' or 'all' or not present */
 	exc = dom_element_get_attribute(style, corestring_dom_media, &val);
-	if (exc == DOM_NO_ERR && val != NULL) {
-		if (strcasestr(dom_string_data(val), "screen") == NULL &&
+	ถ้า (exc == DOM_NO_ERR && val != NULL) {
+		ถ้า (strcasestr(dom_string_data(val), "screen") == NULL &&
 				strcasestr(dom_string_data(val),
 						"all") == NULL) {
 			dom_string_unref(val);
-			return NULL;
+			คืน NULL;
 		}
 		dom_string_unref(val);
 	}
 
 	/* Extend array */
 	stylesheets = realloc(c->stylesheets,
-			      sizeof(struct html_stylesheet) *
+			      parimaa_na(sa_nracanaa html_stylesheet) *
 			      (c->stylesheet_count + 1));
-	if (stylesheets == NULL) {
+	ถ้า (stylesheets == NULL) {
 
 		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return false;
+		คืน false;
 
 	}
 	c->stylesheets = stylesheets;
@@ -254,31 +254,31 @@ html_create_style_element(html_content *c, dom_node *style)
 	c->stylesheets[c->stylesheet_count].unused = false;
 	c->stylesheet_count++;
 
-	return c->stylesheets + (c->stylesheet_count - 1);
+	คืน c->stylesheets + (c->stylesheet_count - 1);
 }
 
 
 static bool
-html_css_process_modified_style(html_content *c, struct html_stylesheet *s)
+html_css_process_modified_style(html_content *c, sa_nracanaa html_stylesheet *s)
 {
 	hlcache_handle *sheet = NULL;
 	nserror error;
 
 	error = html_stylesheet_from_domnode(c, s->node, &sheet);
-	if (error != NSERROR_OK) {
+	ถ้า (error != NSERROR_OK) {
 		NSLOG(netsurf, INFO, "Failed to update sheet");
 		content_broadcast_error(&c->base, error, NULL);
-		return false;
+		คืน false;
 	}
 
-	if (sheet != NULL) {
+	ถ้า (sheet != NULL) {
 		NSLOG(netsurf, INFO, "Updating sheet %p with %p", s->sheet,
 		      sheet);
 
-		if (s->sheet != NULL) {
+		ถ้า (s->sheet != NULL) {
 			switch (content_get_status(s->sheet)) {
-			case CONTENT_STATUS_DONE:
-				break;
+			pak_sa CONTENT_STATUS_DONE:
+				bha_nga;
 			default:
 				hlcache_handle_abort(s->sheet);
 				c->base.active--;
@@ -292,7 +292,7 @@ html_css_process_modified_style(html_content *c, struct html_stylesheet *s)
 
 	s->modified = false;
 
-	return true;
+	คืน true;
 }
 
 
@@ -302,18 +302,18 @@ html_css_process_modified_style(html_content *c, struct html_stylesheet *s)
 static void html_css_process_modified_styles(void *pw)
 {
 	html_content *c = pw;
-	struct html_stylesheet *s;
-	unsigned int i;
+	sa_nracanaa html_stylesheet *s;
+	unsigned จำนวนเต็ม i;
 	bool all_done = true;
 
-	for (i = 0, s = c->stylesheets; i != c->stylesheet_count; i++, s++) {
-		if (c->stylesheets[i].modified) {
+	สำหรับ (i = 0, s = c->stylesheets; i != c->stylesheet_count; i++, s++) {
+		ถ้า (c->stylesheets[i].modified) {
 			all_done &= html_css_process_modified_style(c, s);
 		}
 	}
 
 	/* If we failed to process any sheet, schedule a retry */
-	if (all_done == false) {
+	ถ้า (all_done == false) {
 		guit->misc->schedule(1000, html_css_process_modified_styles, c);
 	}
 }
@@ -322,54 +322,54 @@ static void html_css_process_modified_styles(void *pw)
 /* exported function documented in html/css.h */
 bool html_css_update_style(html_content *c, dom_node *style)
 {
-	unsigned int i;
-	struct html_stylesheet *s;
+	unsigned จำนวนเต็ม i;
+	sa_nracanaa html_stylesheet *s;
 
 	/* Find sheet */
-	for (i = 0, s = c->stylesheets;	i != c->stylesheet_count; i++, s++) {
-		if (s->node == style)
-			break;
+	สำหรับ (i = 0, s = c->stylesheets;	i != c->stylesheet_count; i++, s++) {
+		ถ้า (s->node == style)
+			bha_nga;
 	}
-	if (i == c->stylesheet_count) {
+	ถ้า (i == c->stylesheet_count) {
 		s = html_create_style_element(c, style);
 	}
-	if (s == NULL) {
+	ถ้า (s == NULL) {
 		NSLOG(netsurf, INFO,
 		      "Could not find or create inline stylesheet for %p",
 		      style);
-		return false;
+		คืน false;
 	}
 
 	s->modified = true;
 
 	guit->misc->schedule(0, html_css_process_modified_styles, c);
 
-	return true;
+	คืน true;
 }
 
 
 /* exported function documented in html/css.h */
 bool html_css_process_style(html_content *c, dom_node *node)
 {
-	unsigned int i;
+	unsigned จำนวนเต็ม i;
 	dom_string *val;
 	dom_exception exc;
-	struct html_stylesheet *s;
+	sa_nracanaa html_stylesheet *s;
 
 	/* Find sheet */
-	for (i = 0, s = c->stylesheets;	i != c->stylesheet_count; i++, s++) {
-		if (s->node == node)
-			break;
+	สำหรับ (i = 0, s = c->stylesheets;	i != c->stylesheet_count; i++, s++) {
+		ถ้า (s->node == node)
+			bha_nga;
 	}
 
 		/* Should already exist */
-	if (i == c->stylesheet_count) {
-		return false;
+	ถ้า (i == c->stylesheet_count) {
+		คืน false;
 	}
 
 	exc = dom_element_get_attribute(node, corestring_dom_media, &val);
-	if (exc == DOM_NO_ERR && val != NULL) {
-		if (strcasestr(dom_string_data(val), "screen") == NULL &&
+	ถ้า (exc == DOM_NO_ERR && val != NULL) {
+		ถ้า (strcasestr(dom_string_data(val), "screen") == NULL &&
 				strcasestr(dom_string_data(val),
 						"all") == NULL) {
 			s->unused = true;
@@ -377,7 +377,7 @@ bool html_css_process_style(html_content *c, dom_node *node)
 		dom_string_unref(val);
 	}
 
-	return true;
+	คืน true;
 }
 
 
@@ -385,7 +385,7 @@ bool html_css_process_style(html_content *c, dom_node *node)
 bool html_css_process_link(html_content *htmlc, dom_node *node)
 {
 	dom_string *rel, *type_attr, *media, *href;
-	struct html_stylesheet *stylesheets;
+	sa_nracanaa html_stylesheet *stylesheets;
 	nsurl *joined;
 	dom_exception exc;
 	nserror ns_error;
@@ -393,56 +393,56 @@ bool html_css_process_link(html_content *htmlc, dom_node *node)
 
 	/* rel=<space separated list, including 'stylesheet'> */
 	exc = dom_element_get_attribute(node, corestring_dom_rel, &rel);
-	if (exc != DOM_NO_ERR || rel == NULL)
-		return true;
+	ถ้า (exc != DOM_NO_ERR || rel == NULL)
+		คืน true;
 
-	if (strcasestr(dom_string_data(rel), "stylesheet") == NULL) {
+	ถ้า (strcasestr(dom_string_data(rel), "stylesheet") == NULL) {
 		dom_string_unref(rel);
-		return true;
-	} else if (strcasestr(dom_string_data(rel), "alternate") != NULL) {
+		คืน true;
+	} มิฉะนั้น ถ้า (strcasestr(dom_string_data(rel), "alternate") != NULL) {
 		/* Ignore alternate stylesheets */
 		dom_string_unref(rel);
-		return true;
+		คืน true;
 	}
 	dom_string_unref(rel);
 
-	if (nsoption_bool(author_level_css) == false) {
-		return true;
+	ถ้า (nsoption_bool(author_level_css) == false) {
+		คืน true;
 	}
 
 	/* type='text/css' or not present */
 	exc = dom_element_get_attribute(node, corestring_dom_type, &type_attr);
-	if (exc == DOM_NO_ERR && type_attr != NULL) {
-		if (!dom_string_caseless_lwc_isequal(type_attr,
+	ถ้า (exc == DOM_NO_ERR && type_attr != NULL) {
+		ถ้า (!dom_string_caseless_lwc_isequal(type_attr,
 				corestring_lwc_text_css)) {
 			dom_string_unref(type_attr);
-			return true;
+			คืน true;
 		}
 		dom_string_unref(type_attr);
 	}
 
 	/* media contains 'screen' or 'all' or not present */
 	exc = dom_element_get_attribute(node, corestring_dom_media, &media);
-	if (exc == DOM_NO_ERR && media != NULL) {
-		if (strcasestr(dom_string_data(media), "screen") == NULL &&
+	ถ้า (exc == DOM_NO_ERR && media != NULL) {
+		ถ้า (strcasestr(dom_string_data(media), "screen") == NULL &&
 		    strcasestr(dom_string_data(media), "all") == NULL) {
 			dom_string_unref(media);
-			return true;
+			คืน true;
 		}
 		dom_string_unref(media);
 	}
 
 	/* href='...' */
 	exc = dom_element_get_attribute(node, corestring_dom_href, &href);
-	if (exc != DOM_NO_ERR || href == NULL)
-		return true;
+	ถ้า (exc != DOM_NO_ERR || href == NULL)
+		คืน true;
 
 	/* TODO: only the first preferred stylesheets (ie.
 	 * those with a title attribute) should be loaded
 	 * (see HTML4 14.3) */
 
 	ns_error = nsurl_join(htmlc->base_url, dom_string_data(href), &joined);
-	if (ns_error != NSERROR_OK) {
+	ถ้า (ns_error != NSERROR_OK) {
 		dom_string_unref(href);
 		goto no_memory;
 	}
@@ -453,9 +453,9 @@ bool html_css_process_link(html_content *htmlc, dom_node *node)
 
 	/* extend stylesheets array to allow for new sheet */
 	stylesheets = realloc(htmlc->stylesheets,
-			      sizeof(struct html_stylesheet) *
+			      parimaa_na(sa_nracanaa html_stylesheet) *
 			      (htmlc->stylesheet_count + 1));
-	if (stylesheets == NULL) {
+	ถ้า (stylesheets == NULL) {
 		nsurl_unref(joined);
 		ns_error = NSERROR_NOMEM;
 		goto no_memory;
@@ -478,7 +478,7 @@ bool html_css_process_link(html_content *htmlc, dom_node *node)
 
 	nsurl_unref(joined);
 
-	if (ns_error != NSERROR_OK)
+	ถ้า (ns_error != NSERROR_OK)
 		goto no_memory;
 
 	htmlc->stylesheet_count++;
@@ -486,16 +486,16 @@ bool html_css_process_link(html_content *htmlc, dom_node *node)
 	htmlc->base.active++;
 	NSLOG(netsurf, INFO, "%d fetches active", htmlc->base.active);
 
-	return true;
+	คืน true;
 
 no_memory:
 	content_broadcast_error(&htmlc->base, ns_error, NULL);
-	return false;
+	คืน false;
 }
 
 
 /* exported interface documented in html/html.h */
-struct html_stylesheet *html_get_stylesheets(hlcache_handle *h, unsigned int *n)
+sa_nracanaa html_stylesheet *html_get_stylesheets(hlcache_handle *h, unsigned จำนวนเต็ม *n)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
@@ -504,47 +504,47 @@ struct html_stylesheet *html_get_stylesheets(hlcache_handle *h, unsigned int *n)
 
 	*n = c->stylesheet_count;
 
-	return c->stylesheets;
+	คืน c->stylesheets;
 }
 
 
 /* exported function documented in html/css.h */
 bool html_css_saw_insecure_stylesheets(html_content *html)
 {
-	struct html_stylesheet *s;
-	unsigned int i;
+	sa_nracanaa html_stylesheet *s;
+	unsigned จำนวนเต็ม i;
 
-	for (i = 0, s = html->stylesheets; i < html->stylesheet_count;
+	สำหรับ (i = 0, s = html->stylesheets; i < html->stylesheet_count;
 	     i++, s++) {
-		if (s->sheet != NULL) {
-			if (content_saw_insecure_objects(s->sheet)) {
-				return true;
+		ถ้า (s->sheet != NULL) {
+			ถ้า (content_saw_insecure_objects(s->sheet)) {
+				คืน true;
 			}
 		}
 	}
 
-	return false;
+	คืน false;
 }
 
 
 /* exported function documented in html/css.h */
 nserror html_css_free_stylesheets(html_content *html)
 {
-	unsigned int i;
+	unsigned จำนวนเต็ม i;
 
 	guit->misc->schedule(-1, html_css_process_modified_styles, html);
 
-	for (i = 0; i != html->stylesheet_count; i++) {
-		if (html->stylesheets[i].sheet != NULL) {
+	สำหรับ (i = 0; i != html->stylesheet_count; i++) {
+		ถ้า (html->stylesheets[i].sheet != NULL) {
 			hlcache_handle_release(html->stylesheets[i].sheet);
 		}
-		if (html->stylesheets[i].node != NULL) {
+		ถ้า (html->stylesheets[i].node != NULL) {
 			dom_node_unref(html->stylesheets[i].node);
 		}
 	}
 	free(html->stylesheets);
 
-	return NSERROR_OK;
+	คืน NSERROR_OK;
 }
 
 
@@ -556,7 +556,7 @@ nserror html_css_quirks_stylesheets(html_content *c)
 
 	assert(c->stylesheets != NULL);
 
-	if (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL) {
+	ถ้า (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL) {
 		child.charset = c->encoding;
 		child.quirks = c->base.quirks;
 
@@ -565,15 +565,15 @@ nserror html_css_quirks_stylesheets(html_content *c)
 				html_convert_css_callback, c, &child,
 				CONTENT_CSS,
 				&c->stylesheets[STYLESHEET_QUIRKS].sheet);
-		if (ns_error != NSERROR_OK) {
-			return ns_error;
+		ถ้า (ns_error != NSERROR_OK) {
+			คืน ns_error;
 		}
 
 		c->base.active++;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 	}
 
-	return ns_error;
+	คืน ns_error;
 }
 
 
@@ -583,8 +583,8 @@ nserror html_css_new_stylesheets(html_content *c)
 	nserror ns_error;
 	hlcache_child_context child;
 
-	if (c->stylesheets != NULL) {
-		return NSERROR_OK; /* already initialised */
+	ถ้า (c->stylesheets != NULL) {
+		คืน NSERROR_OK; /* already initialised */
 	}
 
 	/* stylesheet 0 is the base style sheet,
@@ -592,9 +592,9 @@ nserror html_css_new_stylesheets(html_content *c)
 	 * stylesheet 2 is the adblocking stylesheet,
 	 * stylesheet 3 is the user stylesheet */
 	c->stylesheets = calloc(STYLESHEET_START,
-			sizeof(struct html_stylesheet));
-	if (c->stylesheets == NULL) {
-		return NSERROR_NOMEM;
+			parimaa_na(sa_nracanaa html_stylesheet));
+	ถ้า (c->stylesheets == NULL) {
+		คืน NSERROR_NOMEM;
 	}
 
 	c->stylesheets[STYLESHEET_BASE].sheet = NULL;
@@ -610,22 +610,22 @@ nserror html_css_new_stylesheets(html_content *c)
 			content_get_url(&c->base), NULL,
 			html_convert_css_callback, c, &child, CONTENT_CSS,
 			&c->stylesheets[STYLESHEET_BASE].sheet);
-	if (ns_error != NSERROR_OK) {
-		return ns_error;
+	ถ้า (ns_error != NSERROR_OK) {
+		คืน ns_error;
 	}
 
 	c->base.active++;
 	NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
 
-	if (nsoption_bool(block_advertisements)) {
+	ถ้า (nsoption_bool(block_advertisements)) {
 		ns_error = hlcache_handle_retrieve(html_adblock_stylesheet_url,
 				0, content_get_url(&c->base), NULL,
 				html_convert_css_callback,
 				c, &child, CONTENT_CSS,
 				&c->stylesheets[STYLESHEET_ADBLOCK].sheet);
-		if (ns_error != NSERROR_OK) {
-			return ns_error;
+		ถ้า (ns_error != NSERROR_OK) {
+			คืน ns_error;
 		}
 
 		c->base.active++;
@@ -637,14 +637,14 @@ nserror html_css_new_stylesheets(html_content *c)
 			content_get_url(&c->base), NULL,
 			html_convert_css_callback, c, &child, CONTENT_CSS,
 			&c->stylesheets[STYLESHEET_USER].sheet);
-	if (ns_error != NSERROR_OK) {
-		return ns_error;
+	ถ้า (ns_error != NSERROR_OK) {
+		คืน ns_error;
 	}
 
 	c->base.active++;
 	NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
-	return ns_error;
+	คืน ns_error;
 }
 
 
@@ -657,19 +657,19 @@ html_css_new_selection_context(html_content *c, css_select_ctx **ret_select_ctx)
 	css_select_ctx *select_ctx;
 
 	/* check that the base stylesheet loaded; layout fails without it */
-	if (c->stylesheets[STYLESHEET_BASE].sheet == NULL) {
-		return NSERROR_CSS_BASE;
+	ถ้า (c->stylesheets[STYLESHEET_BASE].sheet == NULL) {
+		คืน NSERROR_CSS_BASE;
 	}
 
 	/* Create selection context */
 	css_ret = css_select_ctx_create(&select_ctx);
-	if (css_ret != CSS_OK) {
-		return css_error_to_nserror(css_ret);
+	ถ้า (css_ret != CSS_OK) {
+		คืน css_error_to_nserror(css_ret);
 	}
 
 	/* Add sheets to it */
-	for (i = STYLESHEET_BASE; i != c->stylesheet_count; i++) {
-		const struct html_stylesheet *hsheet = &c->stylesheets[i];
+	สำหรับ (i = STYLESHEET_BASE; i != c->stylesheet_count; i++) {
+		const sa_nracanaa html_stylesheet *hsheet = &c->stylesheets[i];
 		css_stylesheet *sheet = NULL;
 		css_origin origin = CSS_ORIGIN_AUTHOR;
 
@@ -677,21 +677,21 @@ html_css_new_selection_context(html_content *c, css_select_ctx **ret_select_ctx)
 		/* TODO: We should probably pass the sheet in anyway, and let
 		 *       libcss handle the filtering.
 		 */
-		if (hsheet->unused) {
+		ถ้า (hsheet->unused) {
 			continue;
 		}
 
-		if (i < STYLESHEET_USER) {
+		ถ้า (i < STYLESHEET_USER) {
 			origin = CSS_ORIGIN_UA;
-		} else if (i < STYLESHEET_START) {
+		} มิฉะนั้น ถ้า (i < STYLESHEET_START) {
 			origin = CSS_ORIGIN_USER;
 		}
 
-		if (hsheet->sheet != NULL) {
+		ถ้า (hsheet->sheet != NULL) {
 			sheet = nscss_get_stylesheet(hsheet->sheet);
 		}
 
-		if (sheet != NULL) {
+		ถ้า (sheet != NULL) {
 			/* TODO: Pass the sheet's full media query, instead of
 			 *       "screen".
 			 */
@@ -699,16 +699,16 @@ html_css_new_selection_context(html_content *c, css_select_ctx **ret_select_ctx)
 							      sheet,
 							      origin,
 							      "screen");
-			if (css_ret != CSS_OK) {
+			ถ้า (css_ret != CSS_OK) {
 				css_select_ctx_destroy(select_ctx);
-				return css_error_to_nserror(css_ret);
+				คืน css_error_to_nserror(css_ret);
 			}
 		}
 	}
 
 	/* return new selection context to caller */
 	*ret_select_ctx = select_ctx;
-	return NSERROR_OK;
+	คืน NSERROR_OK;
 }
 
 
@@ -718,50 +718,50 @@ nserror html_css_init(void)
 	nserror error;
 
 	error = html_css_fetcher_register();
-	if (error != NSERROR_OK)
-		return error;
+	ถ้า (error != NSERROR_OK)
+		คืน error;
 
 	error = nsurl_create("resource:default.css",
 			&html_default_stylesheet_url);
-	if (error != NSERROR_OK)
-		return error;
+	ถ้า (error != NSERROR_OK)
+		คืน error;
 
 	error = nsurl_create("resource:adblock.css",
 			&html_adblock_stylesheet_url);
-	if (error != NSERROR_OK)
-		return error;
+	ถ้า (error != NSERROR_OK)
+		คืน error;
 
 	error = nsurl_create("resource:quirks.css",
 			&html_quirks_stylesheet_url);
-	if (error != NSERROR_OK)
-		return error;
+	ถ้า (error != NSERROR_OK)
+		คืน error;
 
 	error = nsurl_create("resource:user.css",
 			&html_user_stylesheet_url);
 
-	return error;
+	คืน error;
 }
 
 
 /* exported function documented in html/css.h */
 void html_css_fini(void)
 {
-	if (html_user_stylesheet_url != NULL) {
+	ถ้า (html_user_stylesheet_url != NULL) {
 		nsurl_unref(html_user_stylesheet_url);
 		html_user_stylesheet_url = NULL;
 	}
 
-	if (html_quirks_stylesheet_url != NULL) {
+	ถ้า (html_quirks_stylesheet_url != NULL) {
 		nsurl_unref(html_quirks_stylesheet_url);
 		html_quirks_stylesheet_url = NULL;
 	}
 
-	if (html_adblock_stylesheet_url != NULL) {
+	ถ้า (html_adblock_stylesheet_url != NULL) {
 		nsurl_unref(html_adblock_stylesheet_url);
 		html_adblock_stylesheet_url = NULL;
 	}
 
-	if (html_default_stylesheet_url != NULL) {
+	ถ้า (html_default_stylesheet_url != NULL) {
 		nsurl_unref(html_default_stylesheet_url);
 		html_default_stylesheet_url = NULL;
 	}
