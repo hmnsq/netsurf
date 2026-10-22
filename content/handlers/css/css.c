@@ -96,7 +96,7 @@ static nserror nscss_create_css_data(struct content_css_data *c,
 		const char *url, const char *charset, bool quirks,
 		nscss_done_callback done, void *pw);
 static css_error nscss_process_css_data(struct content_css_data *c, const char *data,
-		unsigned int size);
+		unsigned số_nguyên size);
 static css_error nscss_convert_css_data(struct content_css_data *c);
 static void nscss_destroy_css_data(struct content_css_data *c);
 
@@ -143,48 +143,48 @@ nscss_create(const content_handler *handler,
 	nserror error;
 
 	result = calloc(1, sizeof(nscss_content));
-	if (result == NULL)
-		return NSERROR_NOMEM;
+	nếu (result == NULL)
+		trả_về NSERROR_NOMEM;
 
 	error = content__init(&result->base, handler, imime_type,
 			params, llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
+	nếu (error != NSERROR_OK) {
 		free(result);
-		return error;
+		trả_về error;
 	}
 
 	/* Find charset specified on HTTP layer, if any */
 	error = http_parameter_list_find_item(params, corestring_lwc_charset,
 			&charset_value);
-	if (error != NSERROR_OK || lwc_string_length(charset_value) == 0) {
+	nếu (error != NSERROR_OK || lwc_string_length(charset_value) == 0) {
 		/* No charset specified, use fallback, if any */
 		/** \todo libcss will take this as gospel, which is wrong */
 		charset = fallback_charset;
-	} else {
+	} không_thì {
 		charset = lwc_string_data(charset_value);
 	}
 
 	/* Compute base URL for stylesheet */
 	xnsbase = llcache_handle_get_header(llcache, "X-NS-Base");
-	if (xnsbase == NULL) {
+	nếu (xnsbase == NULL) {
 		xnsbase = nsurl_access(content_get_url(&result->base));
 	}
 
 	error = nscss_create_css_data(&result->data,
 			xnsbase, charset, result->base.quirks,
 			nscss_content_done, result);
-	if (error != NSERROR_OK) {
+	nếu (error != NSERROR_OK) {
 		content_broadcast_error(&result->base, NSERROR_NOMEM, NULL);
 		lwc_string_unref(charset_value);
 		free(result);
-		return error;
+		trả_về error;
 	}
 
 	lwc_string_unref(charset_value);
 
 	*c = (struct content *) result;
 
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 /**
@@ -210,9 +210,9 @@ static nserror nscss_create_css_data(struct content_css_data *c,
 	c->next_to_register = (uint32_t) -1;
 	c->import_count = 0;
 	c->imports = NULL;
-	if (charset != NULL)
+	nếu (charset != NULL)
 		c->charset = strdup(charset);
-	else
+	không_thì
 		c->charset = NULL;
 
 	params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
@@ -232,11 +232,11 @@ static nserror nscss_create_css_data(struct content_css_data *c,
 	params.font_pw = NULL;
 
 	error = css_stylesheet_create(&params, &c->sheet);
-	if (error != CSS_OK) {
-		return NSERROR_NOMEM;
+	nếu (error != CSS_OK) {
+		trả_về NSERROR_NOMEM;
 	}
 
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 /**
@@ -248,17 +248,17 @@ static nserror nscss_create_css_data(struct content_css_data *c,
  * \return true on success, false on failure
  */
 static bool
-nscss_process_data(struct content *c, const char *data, unsigned int size)
+nscss_process_data(struct content *c, const char *data, unsigned số_nguyên size)
 {
 	nscss_content *css = (nscss_content *) c;
 	css_error error;
 
 	error = nscss_process_css_data(&css->data, data, size);
-	if (error != CSS_OK && error != CSS_NEEDDATA) {
+	nếu (error != CSS_OK && error != CSS_NEEDDATA) {
 		content_broadcast_error(c, NSERROR_CSS, NULL);
 	}
 
-	return (error == CSS_OK || error == CSS_NEEDDATA);
+	trả_về (error == CSS_OK || error == CSS_NEEDDATA);
 }
 
 /**
@@ -270,9 +270,9 @@ nscss_process_data(struct content *c, const char *data, unsigned int size)
  * \return CSS_OK on success, appropriate error otherwise
  */
 static css_error nscss_process_css_data(struct content_css_data *c,
-		const char *data, unsigned int size)
+		const char *data, unsigned số_nguyên size)
 {
-	return css_stylesheet_append_data(c->sheet,
+	trả_về css_stylesheet_append_data(c->sheet,
 			(const uint8_t *) data, size);
 }
 
@@ -288,12 +288,12 @@ bool nscss_convert(struct content *c)
 	css_error error;
 
 	error = nscss_convert_css_data(&css->data);
-	if (error != CSS_OK) {
+	nếu (error != CSS_OK) {
 		content_broadcast_error(c, NSERROR_CSS, NULL);
-		return false;
+		trả_về false;
 	}
 
-	return true;
+	trả_về true;
 }
 
 /**
@@ -309,7 +309,7 @@ static css_error nscss_convert_css_data(struct content_css_data *c)
 	error = css_stylesheet_data_done(c->sheet);
 
 	/* Process pending imports */
-	if (error == CSS_IMPORTS_PENDING) {
+	nếu (error == CSS_IMPORTS_PENDING) {
 		/* We must not have registered any imports yet */
 		assert(c->next_to_register == (uint32_t) -1);
 
@@ -317,22 +317,22 @@ static css_error nscss_convert_css_data(struct content_css_data *c)
 		 * hasn't finished fetching */
 		c->next_to_register = 0;
 		error = nscss_register_imports(c);
-	} else if (error == CSS_OK) {
+	} không_thì nếu (error == CSS_OK) {
 		/* No imports, and no errors, so complete conversion */
 		c->done(c, c->pw);
-	} else {
+	} không_thì {
 		const char *url;
 
-		if (css_stylesheet_get_url(c->sheet, &url) == CSS_OK) {
+		nếu (css_stylesheet_get_url(c->sheet, &url) == CSS_OK) {
 			NSLOG(netsurf, INFO, "Failed converting %p %s (%d)",
 			      c, url, error);
-		} else {
+		} không_thì {
 			NSLOG(netsurf, INFO, "Failed converting %p (%d)", c,
 			      error);
 		}
 	}
 
-	return error;
+	trả_về error;
 }
 
 /**
@@ -356,8 +356,8 @@ static void nscss_destroy_css_data(struct content_css_data *c)
 {
 	uint32_t i;
 
-	for (i = 0; i < c->import_count; i++) {
-		if (c->imports[i].c != NULL) {
+	cho (i = 0; i < c->import_count; i++) {
+		nếu (c->imports[i].c != NULL) {
 			hlcache_handle_release(c->imports[i].c);
 		}
 		c->imports[i].c = NULL;
@@ -365,7 +365,7 @@ static void nscss_destroy_css_data(struct content_css_data *c)
 
 	free(c->imports);
 
-	if (c->sheet != NULL) {
+	nếu (c->sheet != NULL) {
 		css_stylesheet_destroy(c->sheet);
 		c->sheet = NULL;
 	}
@@ -382,14 +382,14 @@ nserror nscss_clone(const struct content *old, struct content **newc)
 	nserror error;
 
 	new_css = calloc(1, sizeof(nscss_content));
-	if (new_css == NULL)
-		return NSERROR_NOMEM;
+	nếu (new_css == NULL)
+		trả_về NSERROR_NOMEM;
 
 	/* Clone content */
 	error = content__clone(old, &new_css->base);
-	if (error != NSERROR_OK) {
+	nếu (error != NSERROR_OK) {
 		content_destroy(&new_css->base);
-		return error;
+		trả_về error;
 	}
 
 	/* Simply replay create/process/convert */
@@ -398,37 +398,37 @@ nserror nscss_clone(const struct content *old, struct content **newc)
 			old_css->data.charset,
 			new_css->base.quirks,
 			nscss_content_done, new_css);
-	if (error != NSERROR_OK) {
+	nếu (error != NSERROR_OK) {
 		content_destroy(&new_css->base);
-		return error;
+		trả_về error;
 	}
 
 	data = content__get_source_data(&new_css->base, &size);
-	if (size > 0) {
-		if (nscss_process_data(&new_css->base,
+	nếu (size > 0) {
+		nếu (nscss_process_data(&new_css->base,
 				       (char *)data,
-				       (unsigned int)size) == false) {
+				       (unsigned số_nguyên)size) == false) {
 			content_destroy(&new_css->base);
-			return NSERROR_CLONE_FAILED;
+			trả_về NSERROR_CLONE_FAILED;
 		}
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
+	nếu (old->status == CONTENT_STATUS_READY ||
 			old->status == CONTENT_STATUS_DONE) {
-		if (nscss_convert(&new_css->base) == false) {
+		nếu (nscss_convert(&new_css->base) == false) {
 			content_destroy(&new_css->base);
-			return NSERROR_CLONE_FAILED;
+			trả_về NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*newc = (struct content *) new_css;
 
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 bool nscss_matches_quirks(const struct content *c, bool quirks)
 {
-	return c->quirks == quirks;
+	trả_về c->quirks == quirks;
 }
 
 /* exported interface documented in netsurf/css.h */
@@ -438,7 +438,7 @@ css_stylesheet *nscss_get_stylesheet(struct hlcache_handle *h)
 
 	assert(c != NULL);
 
-	return c->data.sheet;
+	trả_về c->data.sheet;
 }
 
 /* exported interface documented in netsurf/css.h */
@@ -451,7 +451,7 @@ struct nscss_import *nscss_get_imports(hlcache_handle *h, uint32_t *n)
 
 	*n = c->data.import_count;
 
-	return c->data.imports;
+	trả_về c->data.imports;
 }
 
 /**
@@ -461,7 +461,7 @@ struct nscss_import *nscss_get_imports(hlcache_handle *h, uint32_t *n)
  */
 content_type nscss_content_type(void)
 {
-	return CONTENT_CSS;
+	trả_về CONTENT_CSS;
 }
 
 /*****************************************************************************
@@ -483,20 +483,20 @@ void nscss_content_done(struct content_css_data *css, void *pw)
 
 	/* Retrieve the size of this sheet */
 	error = css_stylesheet_size(css->sheet, &size);
-	if (error != CSS_OK) {
+	nếu (error != CSS_OK) {
 		content_broadcast_error(c, NSERROR_CSS, NULL);
 		content_set_error(c);
-		return;
+		trả_về;
 	}
 	c->size += size;
 
 	/* Add on the size of the imported sheets */
-	for (i = 0; i < css->import_count; i++) {
-		if (css->imports[i].c != NULL) {
+	cho (i = 0; i < css->import_count; i++) {
+		nếu (css->imports[i].c != NULL) {
 			struct content *import = hlcache_handle_get_content(
 					css->imports[i].c);
 
-			if (import != NULL) {
+			nếu (import != NULL) {
 				c->size += import->size;
 			}
 		}
@@ -537,13 +537,13 @@ css_error nscss_handle_import(void *pw, css_stylesheet *parent,
 	assert(parent == c->sheet);
 
 	error = css_stylesheet_get_url(c->sheet, &referer);
-	if (error != CSS_OK) {
-		return error;
+	nếu (error != CSS_OK) {
+		trả_về error;
 	}
 
 	ctx = malloc(sizeof(*ctx));
-	if (ctx == NULL)
-		return CSS_NOMEM;
+	nếu (ctx == NULL)
+		trả_về CSS_NOMEM;
 
 	ctx->css = c;
 	ctx->index = c->import_count;
@@ -551,51 +551,51 @@ css_error nscss_handle_import(void *pw, css_stylesheet *parent,
 	/* Increase space in table */
 	imports = realloc(c->imports, (c->import_count + 1) *
 			sizeof(struct nscss_import));
-	if (imports == NULL) {
+	nếu (imports == NULL) {
 		free(ctx);
-		return CSS_NOMEM;
+		trả_về CSS_NOMEM;
 	}
 	c->imports = imports;
 
 	/** \todo fallback charset */
 	child.charset = NULL;
 	error = css_stylesheet_quirks_allowed(c->sheet, &child.quirks);
-	if (error != CSS_OK) {
+	nếu (error != CSS_OK) {
 		free(ctx);
-		return error;
+		trả_về error;
 	}
 
 	/* Create content */
 
 	/** \todo Why aren't we getting a relative url part, to join? */
 	nerror = nsurl_create(lwc_string_data(url), &ns_url);
-	if (nerror != NSERROR_OK) {
+	nếu (nerror != NSERROR_OK) {
 		free(ctx);
-		return CSS_NOMEM;
+		trả_về CSS_NOMEM;
 	}
 
 	/** \todo Constructing nsurl for referer here is silly, avoid */
 	nerror = nsurl_create(referer, &ns_ref);
-	if (nerror != NSERROR_OK) {
+	nếu (nerror != NSERROR_OK) {
 		nsurl_unref(ns_url);
 		free(ctx);
-		return CSS_NOMEM;
+		trả_về CSS_NOMEM;
 	}
 
 	/* Avoid importing ourself */
-	if (nsurl_compare(ns_url, ns_ref, NSURL_COMPLETE)) {
+	nếu (nsurl_compare(ns_url, ns_ref, NSURL_COMPLETE)) {
 		c->imports[c->import_count].c = NULL;
 		/* No longer require context as we're not fetching anything */
 		free(ctx);
 		ctx = NULL;
-	} else {
+	} không_thì {
 		nerror = hlcache_handle_retrieve(ns_url,
 				0, ns_ref, NULL, nscss_import, ctx,
 				&child, accept,
 				&c->imports[c->import_count].c);
-		if (nerror != NSERROR_OK) {
+		nếu (nerror != NSERROR_OK) {
 			free(ctx);
-			return CSS_NOMEM;
+			trả_về CSS_NOMEM;
 		}
 	}
 
@@ -610,7 +610,7 @@ css_error nscss_handle_import(void *pw, css_stylesheet *parent,
 
 	c->import_count++;
 
-	return CSS_OK;
+	trả_về CSS_OK;
 }
 
 /**
@@ -650,7 +650,7 @@ nserror nscss_import(hlcache_handle *handle,
 	}
 
 	/* Preserve out-of-memory. Anything else is OK */
-	return error == CSS_NOMEM ? NSERROR_NOMEM : NSERROR_OK;
+	trả_về error == CSS_NOMEM ? NSERROR_NOMEM : NSERROR_OK;
 }
 
 /**
@@ -664,7 +664,7 @@ css_error nscss_import_complete(nscss_import_ctx *ctx)
 	css_error error = CSS_OK;
 
 	/* If this import is the next to be registered, do so */
-	if (ctx->css->next_to_register == ctx->index)
+	nếu (ctx->css->next_to_register == ctx->index)
 		error = nscss_register_imports(ctx->css);
 
 #ifdef NSCSS_IMPORT_TRACE
@@ -675,7 +675,7 @@ css_error nscss_import_complete(nscss_import_ctx *ctx)
 	/* No longer need import context */
 	free(ctx);
 
-	return error;
+	trả_về error;
 }
 
 /*****************************************************************************
@@ -697,31 +697,31 @@ css_error nscss_register_imports(struct content_css_data *c)
 	assert(c->next_to_register < c->import_count);
 
 	/* Register imported sheets */
-	for (index = c->next_to_register; index < c->import_count; index++) {
+	cho (index = c->next_to_register; index < c->import_count; index++) {
 		/* Stop registering if we encounter one whose fetch hasn't
 		 * completed yet. We'll resume at this point when it has
 		 * completed.
 		 */
-		if (c->imports[index].c != NULL &&
+		nếu (c->imports[index].c != NULL &&
 			content_get_status(c->imports[index].c) !=
 				CONTENT_STATUS_DONE) {
 			break;
 		}
 
 		error = nscss_register_import(c, c->imports[index].c);
-		if (error != CSS_OK)
-			return error;
+		nếu (error != CSS_OK)
+			trả_về error;
 	}
 
 	/* Record identity of the next import to register */
 	c->next_to_register = (uint32_t) index;
 
-	if (c->next_to_register == c->import_count) {
+	nếu (c->next_to_register == c->import_count) {
 		/* No more imports: notify parent that we're DONE */
 		c->done(c, c->pw);
 	}
 
-	return CSS_OK;
+	trả_về CSS_OK;
 }
 
 
@@ -738,13 +738,13 @@ css_error nscss_register_import(struct content_css_data *c,
 	css_stylesheet *sheet;
 	css_error error;
 
-	if (import != NULL) {
+	nếu (import != NULL) {
 		nscss_content *s =
 			(nscss_content *) hlcache_handle_get_content(import);
 		sheet = s->data.sheet;
-	} else {
+	} không_thì {
 		/* Create a blank sheet if needed. */
-		if (blank_import == NULL) {
+		nếu (blank_import == NULL) {
 			css_stylesheet_params params;
 
 			params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
@@ -764,14 +764,14 @@ css_error nscss_register_import(struct content_css_data *c,
 			params.font_pw = NULL;
 
 			error = css_stylesheet_create(&params, &blank_import);
-			if (error != CSS_OK) {
-				return error;
+			nếu (error != CSS_OK) {
+				trả_về error;
 			}
 
 			error = css_stylesheet_data_done(blank_import);
-			if (error != CSS_OK) {
+			nếu (error != CSS_OK) {
 				css_stylesheet_destroy(blank_import);
-				return error;
+				trả_về error;
 			}
 		}
 
@@ -779,11 +779,11 @@ css_error nscss_register_import(struct content_css_data *c,
 	}
 
 	error = css_stylesheet_register_import(c->sheet, sheet);
-	if (error != CSS_OK) {
-		return error;
+	nếu (error != CSS_OK) {
+		trả_về error;
 	}
 
-	return error;
+	trả_về error;
 }
 
 /**
@@ -791,7 +791,7 @@ css_error nscss_register_import(struct content_css_data *c,
  */
 static void nscss_fini(void)
 {
-	if (blank_import != NULL) {
+	nếu (blank_import != NULL) {
 		css_stylesheet_destroy(blank_import);
 		blank_import = NULL;
 	}
@@ -817,17 +817,17 @@ nserror nscss_init(void)
 
 	error = content_factory_register_handler("text/css",
 			&css_content_handler);
-	if (error != NSERROR_OK)
+	nếu (error != NSERROR_OK)
 		goto error;
 
 	error = css_hint_init();
-	if (error != NSERROR_OK)
+	nếu (error != NSERROR_OK)
 		goto error;
 
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 
 error:
 	nscss_fini();
 
-	return error;
+	trả_về error;
 }

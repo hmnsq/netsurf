@@ -117,7 +117,7 @@ struct textsearch_context {
  */
 static inline void
 textsearch_broadcast(struct textsearch_context *textsearch,
-		     int type,
+		     số_nguyên type,
 		     bool state,
 		     const char *string)
 {
@@ -150,9 +150,9 @@ static void free_matches(struct textsearch_context *textsearch)
 	textsearch->found->prev = NULL;
 	textsearch->found->next = NULL;
 
-	for (; cur; cur = nxt) {
+	cho (; cur; cur = nxt) {
 		nxt = cur->next;
-		if (cur->sel) {
+		nếu (cur->sel) {
 			selection_destroy(cur->sel);
 		}
 		free(cur);
@@ -168,20 +168,20 @@ static void search_show_all(bool all, struct textsearch_context *context)
 {
 	struct list_entry *a;
 
-	for (a = context->found->next; a; a = a->next) {
+	cho (a = context->found->next; a; a = a->next) {
 		bool add = true;
-		if (!all && a != context->current) {
+		nếu (!all && a != context->current) {
 			add = false;
-			if (a->sel) {
+			nếu (a->sel) {
 				selection_destroy(a->sel);
 				a->sel = NULL;
 			}
 		}
 
-		if (add && !a->sel) {
+		nếu (add && !a->sel) {
 
 			a->sel = selection_create(context->c);
-			if (a->sel != NULL) {
+			nếu (a->sel != NULL) {
 				selection_init(a->sel);
 				selection_set_position(a->sel,
 						       a->start_idx,
@@ -203,7 +203,7 @@ static void search_show_all(bool all, struct textsearch_context *context)
 static nserror
 search_text(struct textsearch_context *context,
 	    const char *string,
-	    int string_len,
+	    số_nguyên string_len,
 	    search_flags_t flags)
 {
 	struct rect bounds;
@@ -216,15 +216,15 @@ search_text(struct textsearch_context *context,
 	forwards = ((flags & SEARCH_FLAG_FORWARDS) != 0) ? true : false;
 	showall = ((flags & SEARCH_FLAG_SHOWALL) != 0) ? true : false;
 
-	if (context->c == NULL) {
-		return res;
+	nếu (context->c == NULL) {
+		trả_về res;
 	}
 
 	/* check if we need to start a new search or continue an old one */
-	if ((context->newsearch) ||
+	nếu ((context->newsearch) ||
 	    (context->prev_case_sens != case_sensitive)) {
 
-		if (context->string != NULL) {
+		nếu (context->string != NULL) {
 			free(context->string);
 		}
 
@@ -232,7 +232,7 @@ search_text(struct textsearch_context *context,
 		free_matches(context);
 
 		context->string = malloc(string_len + 1);
-		if (context->string != NULL) {
+		nếu (context->string != NULL) {
 			memcpy(context->string, string, string_len);
 			context->string[string_len] = '\0';
 		}
@@ -251,9 +251,9 @@ search_text(struct textsearch_context *context,
 		/* indicate find operation finished */
 		textsearch_broadcast(context, CONTENT_TEXTSEARCH_FIND, false, NULL);
 
-		if (res != NSERROR_OK) {
+		nếu (res != NSERROR_OK) {
 			free_matches(context);
-			return res;
+			trả_về res;
 		}
 
 		context->prev_case_sens = case_sensitive;
@@ -262,13 +262,13 @@ search_text(struct textsearch_context *context,
 		context->current = context->found->next;
 		context->newsearch = false;
 
-	} else if (context->current != NULL) {
+	} không_thì nếu (context->current != NULL) {
 		/* continued search in the direction specified */
-		if (forwards) {
-			if (context->current->next)
+		nếu (forwards) {
+			nếu (context->current->next)
 				context->current = context->current->next;
-		} else {
-			if (context->current->prev)
+		} không_thì {
+			nếu (context->current->prev)
 				context->current = context->current->prev;
 		}
 	}
@@ -296,9 +296,9 @@ search_text(struct textsearch_context *context,
 			     NULL);
 
 
-	if (context->current == NULL) {
+	nếu (context->current == NULL) {
 		/* no current match */
-		return res;
+		trả_về res;
 	}
 
 	/* call content match bounds handler */
@@ -308,7 +308,7 @@ search_text(struct textsearch_context *context,
 					context->current->start_box,
 					context->current->end_box,
 					&bounds);
-	if (res == NSERROR_OK) {
+	nếu (res == NSERROR_OK) {
 		msg_data.scroll.area = true;
 		msg_data.scroll.x0 = bounds.x0;
 		msg_data.scroll.y0 = bounds.y0;
@@ -317,7 +317,7 @@ search_text(struct textsearch_context *context,
 		content_broadcast(context->c, CONTENT_MSG_SCROLL, &msg_data);
 	}
 
-	return res;
+	trả_về res;
 }
 
 
@@ -335,8 +335,8 @@ content_textsearch_step(struct textsearch_context *textsearch,
 			search_flags_t flags,
 			const char *string)
 {
-	int string_len;
-	int i = 0;
+	số_nguyên string_len;
+	số_nguyên i = 0;
 	nserror res = NSERROR_OK;
 
 	assert(textsearch != NULL);
@@ -348,14 +348,14 @@ content_textsearch_step(struct textsearch_context *textsearch,
 			     string);
 
 	string_len = strlen(string);
-	for (i = 0; i < string_len; i++) {
-		if (string[i] != '#' && string[i] != '*')
+	cho (i = 0; i < string_len; i++) {
+		nếu (string[i] != '#' && string[i] != '*')
 			break;
 	}
 
-	if (i < string_len) {
+	nếu (i < string_len) {
 		res = search_text(textsearch, string, string_len, flags);
-	} else {
+	} không_thì {
 		union content_msg_data msg_data;
 
 		free_matches(textsearch);
@@ -387,7 +387,7 @@ content_textsearch_step(struct textsearch_context *textsearch,
 				  &msg_data);
 	}
 
-	return res;
+	trả_về res;
 }
 
 
@@ -401,11 +401,11 @@ static nserror content_textsearch__clear(struct content *c)
 	free(c->textsearch.string);
 	c->textsearch.string = NULL;
 
-	if (c->textsearch.context != NULL) {
+	nếu (c->textsearch.context != NULL) {
 		content_textsearch_destroy(c->textsearch.context);
 		c->textsearch.context = NULL;
 	}
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 
@@ -426,26 +426,26 @@ content_textsearch_create(struct content *c,
 	struct list_entry *search_head;
 	content_type type;
 
-	if ((c->handler->textsearch_find == NULL) ||
+	nếu ((c->handler->textsearch_find == NULL) ||
 	    (c->handler->textsearch_bounds == NULL)) {
 		/*
 		 * content has no free text find handler so searching
 		 *   is unsupported.
 		 */
-		return NSERROR_NOT_IMPLEMENTED;
+		trả_về NSERROR_NOT_IMPLEMENTED;
 	}
 
 	type = c->handler->type();
 
 	context = malloc(sizeof(struct textsearch_context));
-	if (context == NULL) {
-		return NSERROR_NOMEM;
+	nếu (context == NULL) {
+		trả_về NSERROR_NOMEM;
 	}
 
 	search_head = malloc(sizeof(struct list_entry));
-	if (search_head == NULL) {
+	nếu (search_head == NULL) {
 		free(context);
-		return NSERROR_NOMEM;
+		trả_về NSERROR_NOMEM;
 	}
 
 	search_head->start_idx = 0;
@@ -466,18 +466,18 @@ content_textsearch_create(struct content *c,
 
 	*textsearch_out = context;
 
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/textsearch.h */
 const char *
 content_textsearch_find_pattern(const char *string,
-				int s_len,
+				số_nguyên s_len,
 				const char *pattern,
-				int p_len,
+				số_nguyên p_len,
 				bool case_sens,
-				unsigned int *m_len)
+				unsigned số_nguyên *m_len)
 {
 	struct { const char *ss, *s, *p; bool first; } context[16];
 	const char *ep = pattern + p_len;
@@ -486,43 +486,43 @@ content_textsearch_find_pattern(const char *string,
 	const char *ss = string;
 	const char *s = string;
 	bool first = true;
-	int top = 0;
+	số_nguyên top = 0;
 
-	while (p < ep) {
+	trong_khi (p < ep) {
 		bool matches;
-		if (p < pattern || *p == '*') {
+		nếu (p < pattern || *p == '*') {
 			char ch;
 
 			/* skip any further asterisks; one is the same as many
 			*/
-			do p++; while (p < ep && *p == '*');
+			do p++; trong_khi (p < ep && *p == '*');
 
 			/* if we're at the end of the pattern, yes, it matches
 			*/
-			if (p >= ep) break;
+			nếu (p >= ep) break;
 
 			/* anything matches a # so continue matching from
 			   here, and stack a context that will try to match
 			   the wildcard against the next character */
 
 			ch = *p;
-			if (ch != '#') {
+			nếu (ch != '#') {
 				/* scan forwards until we find a match for
 				   this char */
-				if (!case_sens) ch = ascii_to_upper(ch);
-				while (s < es) {
-					if (case_sens) {
-						if (*s == ch) break;
-					} else if (ascii_to_upper(*s) == ch)
+				nếu (!case_sens) ch = ascii_to_upper(ch);
+				trong_khi (s < es) {
+					nếu (case_sens) {
+						nếu (*s == ch) break;
+					} không_thì nếu (ascii_to_upper(*s) == ch)
 						break;
 					s++;
 				}
 			}
 
-			if (s < es) {
+			nếu (s < es) {
 				/* remember where we are in case the match
 				   fails; we may then resume */
-				if (top < (int)NOF_ELEMENTS(context)) {
+				nếu (top < (số_nguyên)NOF_ELEMENTS(context)) {
 					context[top].ss = ss;
 					context[top].s  = s + 1;
 					context[top].p  = p - 1;
@@ -531,42 +531,42 @@ content_textsearch_find_pattern(const char *string,
 					top++;
 				}
 
-				if (first) {
+				nếu (first) {
 					ss = s;
 					/* remember first non-'*' char */
 					first = false;
 				}
 
 				matches = true;
-			} else {
+			} không_thì {
 				matches = false;
 			}
 
-		} else if (s < es) {
+		} không_thì nếu (s < es) {
 			char ch = *p;
-			if (ch == '#')
+			nếu (ch == '#')
 				matches = true;
-			else {
-				if (case_sens)
+			không_thì {
+				nếu (case_sens)
 					matches = (*s == ch);
-				else
+				không_thì
 					matches = (ascii_to_upper(*s) == ascii_to_upper(ch));
 			}
-			if (matches && first) {
+			nếu (matches && first) {
 				ss = s;  /* remember first non-'*' char */
 				first = false;
 			}
-		} else {
+		} không_thì {
 			matches = false;
 		}
 
-		if (matches) {
+		nếu (matches) {
 			p++; s++;
-		} else {
+		} không_thì {
 			/* doesn't match,
 			 * resume with stacked context if we have one */
-			if (--top < 0)
-				return NULL;  /* no match, give up */
+			nếu (--top < 0)
+				trả_về NULL;  /* no match, give up */
 
 			ss = context[top].ss;
 			s  = context[top].s;
@@ -577,7 +577,7 @@ content_textsearch_find_pattern(const char *string,
 
 	/* end of pattern reached */
 	*m_len = max(s - ss, 1);
-	return ss;
+	trả_về ss;
 }
 
 
@@ -593,8 +593,8 @@ content_textsearch_add_match(struct textsearch_context *context,
 
 	/* found string in box => add to list */
 	entry = calloc(1, sizeof(*entry));
-	if (entry == NULL) {
-		return NSERROR_NOMEM;
+	nếu (entry == NULL) {
+		trả_về NSERROR_NOMEM;
 	}
 
 	entry->start_idx = start_idx;
@@ -606,15 +606,15 @@ content_textsearch_add_match(struct textsearch_context *context,
 	entry->next = NULL;
 	entry->prev = context->found->prev;
 
-	if (context->found->prev == NULL) {
+	nếu (context->found->prev == NULL) {
 		context->found->next = entry;
-	} else {
+	} không_thì {
 		context->found->prev->next = entry;
 	}
 
 	context->found->prev = entry;
 
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 
@@ -628,18 +628,18 @@ content_textsearch_ishighlighted(struct textsearch_context *textsearch,
 {
 	struct list_entry *cur;
 
-	for (cur = textsearch->found->next; cur != NULL; cur = cur->next) {
-		if (cur->sel &&
+	cho (cur = textsearch->found->next; cur != NULL; cur = cur->next) {
+		nếu (cur->sel &&
 		    selection_highlighted(cur->sel,
 					  start_offset,
 					  end_offset,
 					  start_idx,
 					  end_idx)) {
-			return true;
+			trả_về true;
 		}
 	}
 
-	return false;
+	trả_về false;
 }
 
 
@@ -648,7 +648,7 @@ nserror content_textsearch_destroy(struct textsearch_context *textsearch)
 {
 	assert(textsearch != NULL);
 
-	if (textsearch->string != NULL) {
+	nếu (textsearch->string != NULL) {
 		/* broadcast recent query string */
 		textsearch_broadcast(textsearch,
 				     CONTENT_TEXTSEARCH_RECENT,
@@ -673,7 +673,7 @@ nserror content_textsearch_destroy(struct textsearch_context *textsearch)
 	free_matches(textsearch);
 	free(textsearch);
 
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 
@@ -689,22 +689,22 @@ content_textsearch(struct hlcache_handle *h,
 
 	assert(c != NULL);
 
-	if (string != NULL &&
+	nếu (string != NULL &&
 	    c->textsearch.string != NULL &&
 	    c->textsearch.context != NULL &&
 	    strcmp(string, c->textsearch.string) == 0) {
 		/* Continue prev. search */
 		content_textsearch_step(c->textsearch.context, flags, string);
 
-	} else if (string != NULL) {
+	} không_thì nếu (string != NULL) {
 		/* New search */
 		free(c->textsearch.string);
 		c->textsearch.string = strdup(string);
-		if (c->textsearch.string == NULL) {
-			return NSERROR_NOMEM;
+		nếu (c->textsearch.string == NULL) {
+			trả_về NSERROR_NOMEM;
 		}
 
-		if (c->textsearch.context != NULL) {
+		nếu (c->textsearch.context != NULL) {
 			content_textsearch_destroy(c->textsearch.context);
 			c->textsearch.context = NULL;
 		}
@@ -712,13 +712,13 @@ content_textsearch(struct hlcache_handle *h,
 		res = content_textsearch_create(c,
 						context,
 						&c->textsearch.context);
-		if (res != NSERROR_OK) {
-			return res;
+		nếu (res != NSERROR_OK) {
+			trả_về res;
 		}
 
 		content_textsearch_step(c->textsearch.context, flags, string);
 
-	} else {
+	} không_thì {
 		/* Clear search */
 		content_textsearch__clear(c);
 
@@ -726,7 +726,7 @@ content_textsearch(struct hlcache_handle *h,
 		c->textsearch.string = NULL;
 	}
 
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 
@@ -736,5 +736,5 @@ nserror content_textsearch_clear(struct hlcache_handle *h)
 	struct content *c = hlcache_handle_get_content(h);
 	assert(c != 0);
 
-	return(content_textsearch__clear(c));
+	trả_về(content_textsearch__clear(c));
 }

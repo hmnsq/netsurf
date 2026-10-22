@@ -57,7 +57,7 @@ static void html_object_refresh(void *p);
  * \param n  Pointer to location to receive number of objects
  * \return Pointer to list of objects
  */
-struct content_html_object *html_get_objects(hlcache_handle *h, unsigned int *n)
+struct content_html_object *html_get_objects(hlcache_handle *h, unsigned số_nguyên *n)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
@@ -66,7 +66,7 @@ struct content_html_object *html_get_objects(hlcache_handle *h, unsigned int *n)
 
 	*n = c->num_objects;
 
-	return c->object_list;
+	trả_về c->object_list;
 }
 
 /**
@@ -81,7 +81,7 @@ static void
 html_object_failed(struct box *box, html_content *content, bool background)
 {
 	/* Nothing to do */
-	return;
+	trả_về;
 }
 
 /**
@@ -95,9 +95,9 @@ html_object_done(struct box *box,
 {
 	struct box *b;
 
-	if (background) {
+	nếu (background) {
 		box->background = object;
-		return;
+		trả_về;
 	}
 
 	box->object = object;
@@ -112,13 +112,13 @@ html_object_done(struct box *box,
 		break;
 	}
 
-	if (!(box->flags & REPLACE_DIM)) {
+	nếu (!(box->flags & REPLACE_DIM)) {
 		/* invalidate parent min, max widths */
-		for (b = box; b; b = b->parent)
+		cho (b = box; b; b = b->parent)
 			b->max_width = UNKNOWN_MAX_WIDTH;
 
 		/* delete any clones of this box */
-		while (box->next && (box->next->flags & CLONE)) {
+		trong_khi (box->next && (box->next->flags & CLONE)) {
 			/* box_free_box(box->next); */
 			box->next = box->next->next;
 		}
@@ -147,7 +147,7 @@ html_object_nobox_callback(hlcache_handle *object,
 		break;
 	}
 
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 
@@ -161,21 +161,21 @@ html_object_callback(hlcache_handle *object,
 {
 	struct content_html_object *o = pw;
 	html_content *c = (html_content *) o->parent;
-	int x, y;
+	số_nguyên x, y;
 	struct box *box;
 
 	box = o->box;
 
 	switch (event->type) {
 	case CONTENT_MSG_LOADING:
-		if (c->base.status != CONTENT_STATUS_LOADING && c->bw != NULL)
+		nếu (c->base.status != CONTENT_STATUS_LOADING && c->bw != NULL)
 			content_open(object,
 					c->bw, &c->base,
 					box->object_params);
 		break;
 
 	case CONTENT_MSG_READY:
-		if (content_can_reformat(object)) {
+		nếu (content_can_reformat(object)) {
 			/* TODO: avoid knowledge of box internals here */
 			content_reformat(object, false,
 					box->max_width != UNKNOWN_MAX_WIDTH ?
@@ -185,7 +185,7 @@ html_object_callback(hlcache_handle *object,
 
 			/* Adjust parent content for new object size */
 			html_object_done(box, object, o->background);
-			if (c->base.status == CONTENT_STATUS_READY ||
+			nếu (c->base.status == CONTENT_STATUS_READY ||
 					c->base.status == CONTENT_STATUS_DONE)
 				content__reformat(&c->base, false,
 						c->base.available_width,
@@ -199,15 +199,15 @@ html_object_callback(hlcache_handle *object,
 
 		html_object_done(box, object, o->background);
 
-		if (c->base.status != CONTENT_STATUS_LOADING &&
+		nếu (c->base.status != CONTENT_STATUS_LOADING &&
 				box->flags & REPLACE_DIM) {
 			union content_msg_data data;
 
-			if (c->had_initial_layout == false) {
+			nếu (c->had_initial_layout == false) {
 				break;
 			}
 
-			if (!box_visible(box))
+			nếu (!box_visible(box))
 				break;
 
 			box_coords(box, &x, &y);
@@ -234,37 +234,37 @@ html_object_callback(hlcache_handle *object,
 		break;
 
 	case CONTENT_MSG_REDRAW:
-		if (c->base.status != CONTENT_STATUS_LOADING) {
+		nếu (c->base.status != CONTENT_STATUS_LOADING) {
 			union content_msg_data data = event->data;
 
-			if (c->had_initial_layout == false) {
+			nếu (c->had_initial_layout == false) {
 				break;
 			}
 
-			if (!box_visible(box))
+			nếu (!box_visible(box))
 				break;
 
 			box_coords(box, &x, &y);
 
-			if (object == box->background) {
+			nếu (object == box->background) {
 				/* Redraw request is for background */
 				css_fixed hpos = 0, vpos = 0;
 				css_unit hunit = CSS_UNIT_PX;
 				css_unit vunit = CSS_UNIT_PX;
-				int width = box->padding[LEFT] + box->width +
+				số_nguyên width = box->padding[LEFT] + box->width +
 						box->padding[RIGHT];
-				int height = box->padding[TOP] + box->height +
+				số_nguyên height = box->padding[TOP] + box->height +
 						box->padding[BOTTOM];
-				int t, h, l, w;
+				số_nguyên t, h, l, w;
 
 				/* Need to know background-position */
 				css_computed_background_position(box->style,
 						&hpos, &hunit, &vpos, &vunit);
 
 				w = content_get_width(box->background);
-				if (hunit == CSS_UNIT_PCT) {
+				nếu (hunit == CSS_UNIT_PCT) {
 					l = (width - w) * hpos / INTTOFIX(100);
-				} else {
+				} không_thì {
 					l = FIXTOINT(css_unit_len2device_px(
 							box->style,
 							&c->unit_len_ctx,
@@ -272,9 +272,9 @@ html_object_callback(hlcache_handle *object,
 				}
 
 				h = content_get_height(box->background);
-				if (vunit == CSS_UNIT_PCT) {
+				nếu (vunit == CSS_UNIT_PCT) {
 					t = (height - h) * vpos / INTTOFIX(100);
-				} else {
+				} không_thì {
 					t = FIXTOINT(css_unit_len2device_px(
 							box->style,
 							&c->unit_len_ctx,
@@ -316,12 +316,12 @@ html_object_callback(hlcache_handle *object,
 				data.redraw.x += x;
 				data.redraw.y += y;
 
-			} else {
+			} không_thì {
 				/* Non-background case */
-				int w = content_get_width(object);
-				int h = content_get_height(object);
+				số_nguyên w = content_get_width(object);
+				số_nguyên h = content_get_height(object);
 
-				if (w != 0 && box->width != w) {
+				nếu (w != 0 && box->width != w) {
 					/* Not showing image at intrinsic
 					 * width; need to scale the redraw
 					 * request area. */
@@ -332,7 +332,7 @@ html_object_callback(hlcache_handle *object,
 							box->width / w;
 				}
 
-				if (h != 0 && box->height != w) {
+				nếu (h != 0 && box->height != w) {
 					/* Not showing image at intrinsic
 					 * height; need to scale the redraw
 					 * request area. */
@@ -352,7 +352,7 @@ html_object_callback(hlcache_handle *object,
 		break;
 
 	case CONTENT_MSG_REFRESH:
-		if (content_get_type(object) == CONTENT_HTML) {
+		nếu (content_get_type(object) == CONTENT_HTML) {
 			/* only for HTML objects */
 			guit->misc->schedule(event->data.delay * 1000,
 					html_object_refresh, o);
@@ -377,10 +377,10 @@ html_object_callback(hlcache_handle *object,
 		break;
 
 	case CONTENT_MSG_SCROLL:
-		if (box->scroll_x != NULL)
+		nếu (box->scroll_x != NULL)
 			scrollbar_set(box->scroll_x, event->data.scroll.x0,
 					false);
-		if (box->scroll_y != NULL)
+		nếu (box->scroll_y != NULL)
 			scrollbar_set(box->scroll_y, event->data.scroll.y0,
 					false);
 		break;
@@ -388,9 +388,9 @@ html_object_callback(hlcache_handle *object,
 	case CONTENT_MSG_DRAGSAVE:
 	{
 		union content_msg_data msg_data;
-		if (event->data.dragsave.content == NULL)
+		nếu (event->data.dragsave.content == NULL)
 			msg_data.dragsave.content = object;
-		else
+		không_thì
 			msg_data.dragsave.content =
 					event->data.dragsave.content;
 
@@ -457,10 +457,10 @@ html_object_callback(hlcache_handle *object,
 		html_selection_type sel_type;
 		union html_selection_owner sel_owner;
 
-		if (event->data.selection.selection) {
+		nếu (event->data.selection.selection) {
 			sel_type = HTML_SELECTION_CONTENT;
 			sel_owner.content = box;
-		} else {
+		} không_thì {
 			sel_type = HTML_SELECTION_NONE;
 			sel_owner.none = true;
 		}
@@ -473,7 +473,7 @@ html_object_callback(hlcache_handle *object,
 		break;
 	}
 
-	if (c->base.status == CONTENT_STATUS_READY &&
+	nếu (c->base.status == CONTENT_STATUS_READY &&
 	    c->base.active == 0 &&
 	    (event->type == CONTENT_MSG_LOADING ||
 	     event->type == CONTENT_MSG_DONE ||
@@ -482,7 +482,7 @@ html_object_callback(hlcache_handle *object,
 		content__reformat(&c->base, false, c->base.available_width,
 				c->base.available_height);
 		content_set_done(&c->base);
-	} else if (nsoption_bool(incremental_reflow) &&
+	} không_thì nếu (nsoption_bool(incremental_reflow) &&
 		   event->type == CONTENT_MSG_DONE &&
 		   box != NULL &&
 		   !(box->flags & REPLACE_DIM) &&
@@ -496,7 +496,7 @@ html_object_callback(hlcache_handle *object,
 		 */
 		uint64_t ms_now;
 		nsu_getmonotonic_ms(&ms_now);
-		if (ms_now > c->base.reformat_time) {
+		nếu (ms_now > c->base.reformat_time) {
 			/* The time since the previous reformat is
 			 *  more than the configured minimum time
 			 *  between reformats so reformat the page to
@@ -509,7 +509,7 @@ html_object_callback(hlcache_handle *object,
 		}
 	}
 
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 
@@ -535,9 +535,9 @@ static bool html_replace_object(struct content_html_object *object, nsurl *url)
 	child.charset = c->encoding;
 	child.quirks = c->base.quirks;
 
-	if (object->content != NULL) {
+	nếu (object->content != NULL) {
 		/* remove existing object */
-		if (content_get_status(object->content) != CONTENT_STATUS_DONE) {
+		nếu (content_get_status(object->content) != CONTENT_STATUS_DONE) {
 			c->base.active--;
 			NSLOG(netsurf, INFO, "%d fetches active",
 			      c->base.active);
@@ -556,17 +556,17 @@ static bool html_replace_object(struct content_html_object *object, nsurl *url)
 			object->permitted_types,
 			&object->content);
 
-	if (error != NSERROR_OK)
-		return false;
+	nếu (error != NSERROR_OK)
+		trả_về false;
 
-	for (page = c; page != NULL; page = page->page) {
+	cho (page = c; page != NULL; page = page->page) {
 		page->base.active++;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
 		page->base.status = CONTENT_STATUS_READY;
 	}
 
-	return true;
+	trả_về true;
 }
 
 /**
@@ -583,12 +583,12 @@ static void html_object_refresh(void *p)
 
 	/* Ignore if refresh URL has gone
 	 * (may happen if fetch errored) */
-	if (refresh_url == NULL)
-		return;
+	nếu (refresh_url == NULL)
+		trả_về;
 
 	content_invalidate_reuse_data(object->content);
 
-	if (!html_replace_object(object, refresh_url)) {
+	nếu (!html_replace_object(object, refresh_url)) {
 		/** \todo handle memory exhaustion */
 	}
 }
@@ -599,13 +599,13 @@ nserror html_object_open_objects(html_content *html, struct browser_window *bw)
 {
 	struct content_html_object *object, *next;
 
-	for (object = html->object_list; object != NULL; object = next) {
+	cho (object = html->object_list; object != NULL; object = next) {
 		next = object->next;
 
-		if (object->content == NULL || object->box == NULL)
+		nếu (object->content == NULL || object->box == NULL)
 			continue;
 
-		if (content_get_type(object->content) == CONTENT_NONE)
+		nếu (content_get_type(object->content) == CONTENT_NONE)
 			continue;
 
 		content_open(object->content,
@@ -613,7 +613,7 @@ nserror html_object_open_objects(html_content *html, struct browser_window *bw)
 			     &html->base,
 			     object->box->object_params);
 	}
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 
@@ -622,10 +622,10 @@ nserror html_object_abort_objects(html_content *htmlc)
 {
 	struct content_html_object *object;
 
-	for (object = htmlc->object_list;
+	cho (object = htmlc->object_list;
 	     object != NULL;
 	     object = object->next) {
-		if (object->content == NULL)
+		nếu (object->content == NULL)
 			continue;
 
 		switch (content_get_status(object->content)) {
@@ -645,7 +645,7 @@ nserror html_object_abort_objects(html_content *htmlc)
 			hlcache_handle_abort(object->content);
 			hlcache_handle_release(object->content);
 			object->content = NULL;
-			if (object->box != NULL) {
+			nếu (object->box != NULL) {
 				htmlc->base.active--;
 				NSLOG(netsurf, INFO, "%d fetches active",
 				      htmlc->base.active);
@@ -655,7 +655,7 @@ nserror html_object_abort_objects(html_content *htmlc)
 		}
 	}
 
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 
@@ -664,35 +664,35 @@ nserror html_object_close_objects(html_content *html)
 {
 	struct content_html_object *object, *next;
 
-	for (object = html->object_list; object != NULL; object = next) {
+	cho (object = html->object_list; object != NULL; object = next) {
 		next = object->next;
 
-		if (object->content == NULL || object->box == NULL)
+		nếu (object->content == NULL || object->box == NULL)
 			continue;
 
-		if (content_get_type(object->content) == CONTENT_NONE)
+		nếu (content_get_type(object->content) == CONTENT_NONE)
 			continue;
 
-		if (content_get_type(object->content) == CONTENT_HTML) {
+		nếu (content_get_type(object->content) == CONTENT_HTML) {
 			guit->misc->schedule(-1, html_object_refresh, object);
 		}
 
 		content_close(object->content);
 	}
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 
 /* exported interface documented in html/object.h */
 nserror html_object_free_objects(html_content *html)
 {
-	while (html->object_list != NULL) {
+	trong_khi (html->object_list != NULL) {
 		struct content_html_object *victim = html->object_list;
 
-		if (victim->content != NULL) {
+		nếu (victim->content != NULL) {
 			NSLOG(netsurf, INFO, "object %p", victim->content);
 
-			if (content_get_type(victim->content) == CONTENT_HTML) {
+			nếu (content_get_type(victim->content) == CONTENT_HTML) {
 				guit->misc->schedule(-1, html_object_refresh, victim);
 			}
 			hlcache_handle_release(victim->content);
@@ -701,7 +701,7 @@ nserror html_object_free_objects(html_content *html)
 		html->object_list = victim->next;
 		free(victim);
 	}
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 
@@ -719,20 +719,20 @@ html_fetch_object(html_content *c,
 	nserror error;
 
 	/* If we've already been aborted, don't bother attempting the fetch */
-	if (c->aborted)
-		return true;
+	nếu (c->aborted)
+		trả_về true;
 
 	child.charset = c->encoding;
 	child.quirks = c->base.quirks;
 
 	object = calloc(1, sizeof(struct content_html_object));
-	if (object == NULL) {
-		return false;
+	nếu (object == NULL) {
+		trả_về false;
 	}
 
-	if (box == NULL) {
+	nếu (box == NULL) {
 		object_callback = html_object_nobox_callback;
-	} else {
+	} không_thì {
 		object_callback = html_object_callback;
 	}
 
@@ -752,9 +752,9 @@ html_fetch_object(html_content *c,
 					&child,
 					object->permitted_types,
 					&object->content);
-	if (error != NSERROR_OK) {
+	nếu (error != NSERROR_OK) {
 		free(object);
-		return error != NSERROR_NOMEM;
+		trả_về error != NSERROR_NOMEM;
 	}
 
 	/* add to content object list */
@@ -762,10 +762,10 @@ html_fetch_object(html_content *c,
 	c->object_list = object;
 
 	c->num_objects++;
-	if (box != NULL) {
+	nếu (box != NULL) {
 		c->base.active++;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 	}
 
-	return true;
+	trả_về true;
 }

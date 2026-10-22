@@ -55,27 +55,27 @@ bool fetch_about_query_timeout_handler(struct fetch_about_context *ctx)
 
 	/* extract parameters from multipart post data */
 	curmd = fetch_about_get_multipart(ctx);
-	while (curmd != NULL) {
-		if (strcmp(curmd->name, "siteurl") == 0) {
+	trong_khi (curmd != NULL) {
+		nếu (strcmp(curmd->name, "siteurl") == 0) {
 			res = nsurl_create(curmd->value, &siteurl);
-			if (res != NSERROR_OK) {
-				return fetch_about_srverror(ctx);
+			nếu (res != NSERROR_OK) {
+				trả_về fetch_about_srverror(ctx);
 			}
-		} else if (strcmp(curmd->name, "reason") == 0) {
+		} không_thì nếu (strcmp(curmd->name, "reason") == 0) {
 			reason = curmd->value;
 		}
 		curmd = curmd->next;
 	}
 
-	if (siteurl == NULL) {
-		return fetch_about_srverror(ctx);
+	nếu (siteurl == NULL) {
+		trả_về fetch_about_srverror(ctx);
 	}
 
 	/* content is going to return ok */
 	fetch_about_set_http_code(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8")) {
+	nếu (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8")) {
 		goto fetch_about_query_timeout_handler_aborted;
 	}
 
@@ -89,29 +89,29 @@ bool fetch_about_query_timeout_handler(struct fetch_about_context *ctx)
 			"<body class=\"ns-even-bg ns-even-fg ns-border\" id =\"timeout\">\n"
 			"<h1 class=\"ns-border ns-odd-fg-bad\">%s</h1>\n",
 			title, title);
-	if (res != NSERROR_OK) {
+	nếu (res != NSERROR_OK) {
 		goto fetch_about_query_timeout_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<form method=\"post\""
 			 " enctype=\"multipart/form-data\">");
-	if (res != NSERROR_OK) {
+	nếu (res != NSERROR_OK) {
 		goto fetch_about_query_timeout_handler_aborted;
 	}
 
 	res = get_query_description(siteurl,
 				    "TimeoutDescription",
 				    &description);
-	if (res == NSERROR_OK) {
+	nếu (res == NSERROR_OK) {
 		res = fetch_about_ssenddataf(ctx, "<div><p>%s</p></div>", description);
 		free(description);
-		if (res != NSERROR_OK) {
+		nếu (res != NSERROR_OK) {
 			goto fetch_about_query_timeout_handler_aborted;
 		}
 	}
 	res = fetch_about_ssenddataf(ctx, "<div><p>%s</p></div>", reason);
-	if (res != NSERROR_OK) {
+	nếu (res != NSERROR_OK) {
 		goto fetch_about_query_timeout_handler_aborted;
 	}
 
@@ -124,24 +124,24 @@ bool fetch_about_query_timeout_handler(struct fetch_about_context *ctx)
 			 "</div>",
 			 messages_get("Backtoprevious"),
 			 messages_get("TryAgain"));
-	if (res != NSERROR_OK) {
+	nếu (res != NSERROR_OK) {
 		goto fetch_about_query_timeout_handler_aborted;
 	}
 
 	res = nsurl_get(siteurl, NSURL_COMPLETE, &url_s, &url_l);
-	if (res != NSERROR_OK) {
+	nếu (res != NSERROR_OK) {
 		url_s = strdup("");
 	}
 	res = fetch_about_ssenddataf(ctx,
 			 "<input type=\"hidden\" name=\"siteurl\" value=\"%s\">",
 			 url_s);
 	free(url_s);
-	if (res != NSERROR_OK) {
+	nếu (res != NSERROR_OK) {
 		goto fetch_about_query_timeout_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</form></body>\n</html>\n");
-	if (res != NSERROR_OK) {
+	nếu (res != NSERROR_OK) {
 		goto fetch_about_query_timeout_handler_aborted;
 	}
 
@@ -149,10 +149,10 @@ bool fetch_about_query_timeout_handler(struct fetch_about_context *ctx)
 
 	nsurl_unref(siteurl);
 
-	return true;
+	trả_về true;
 
 fetch_about_query_timeout_handler_aborted:
 	nsurl_unref(siteurl);
 
-	return false;
+	trả_về false;
 }

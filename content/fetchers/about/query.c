@@ -42,19 +42,19 @@ get_query_description(struct nsurl *url,
 
 	/* get the host in question */
 	res = nsurl_get(url, NSURL_HOST, &url_s, &url_l);
-	if (res != NSERROR_OK) {
-		return res;
+	nếu (res != NSERROR_OK) {
+		trả_về res;
 	}
 
 	/* obtain the description with the url substituted */
 	str = messages_get_buff(key, url_s);
-	if (str == NULL) {
+	nếu (str == NULL) {
 		res = NSERROR_NOMEM;
-	} else {
+	} không_thì {
 		*out_str = str;
 	}
 
 	free(url_s);
 
-	return res;
+	trả_về res;
 }

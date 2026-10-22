@@ -31,7 +31,7 @@
  * \param  x    updated to x coordinate
  * \param  y    updated to y coordinate
  */
-void box_coords(struct box *box, int *x, int *y);
+void box_coords(struct box *box, số_nguyên *x, số_nguyên *y);
 
 
 /**
@@ -67,7 +67,7 @@ void box_bounds(struct box *box, struct rect *r);
  *	}
  * \endcode
  */
-struct box *box_at_point(const css_unit_ctx *unit_len_ctx, struct box *box, const int x, const int y, int *box_x, int *box_y);
+struct box *box_at_point(const css_unit_ctx *unit_len_ctx, struct box *box, const số_nguyên x, const số_nguyên y, số_nguyên *box_x, số_nguyên *box_y);
 
 
 /**
@@ -92,7 +92,7 @@ bool box_visible(struct box *box);
 /**
  * Print a box tree to a file.
  */
-void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style);
+void box_dump(FILE *stream, struct box *box, unsigned số_nguyên depth, bool style);
 
 
 /**
@@ -125,7 +125,7 @@ bool box_hscrollbar_present(const struct box *box);
  * \param dx	receives x ordinate of mouse relative to text box
  * \param dy	receives y ordinate of mouse relative to text box
  */
-struct box *box_pick_text_box(struct html_content *html, int x, int y, int dir, int *dx, int *dy);
+struct box *box_pick_text_box(struct html_content *html, số_nguyên x, số_nguyên y, số_nguyên dir, số_nguyên *dx, số_nguyên *dy);
 
 
 /**
@@ -136,7 +136,7 @@ struct box *box_pick_text_box(struct html_content *html, int x, int y, int dir, 
  */
 static inline bool box_is_first_child(struct box *b)
 {
-	return (b->parent == NULL || b == b->parent->children);
+	trả_về (b->parent == NULL || b == b->parent->children);
 }
 
 static inline unsigned box_count_children(const struct box *b)
@@ -144,12 +144,12 @@ static inline unsigned box_count_children(const struct box *b)
 	const struct box *c = b->children;
 	unsigned count = 0;
 
-	while (c != NULL) {
+	trong_khi (c != NULL) {
 		count++;
 		c = c->next;
 	}
 
-	return count;
+	trả_về count;
 }
 
 #endif

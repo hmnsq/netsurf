@@ -28,12 +28,12 @@
 /* default to disabled backing store */
 static nserror initialise(const struct llcache_store_parameters *parameters)
 {
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 static nserror finalise(void)
 {
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 static nserror store(nsurl *url,
@@ -41,7 +41,7 @@ static nserror store(nsurl *url,
 		     uint8_t *data,
 		     const size_t datalen)
 {
-	return NSERROR_SAVE_FAILED;
+	trả_về NSERROR_SAVE_FAILED;
 }
 
 static nserror fetch(nsurl *url,
@@ -49,12 +49,12 @@ static nserror fetch(nsurl *url,
 		     uint8_t **data_out,
 		     size_t *datalen_out)
 {
-	return NSERROR_NOT_FOUND;
+	trả_về NSERROR_NOT_FOUND;
 }
 
 static nserror invalidate(nsurl *url)
 {
-	return NSERROR_NOT_FOUND;
+	trả_về NSERROR_NOT_FOUND;
 }
 
 /**
@@ -71,7 +71,7 @@ static nserror invalidate(nsurl *url)
  */
 static nserror release(nsurl *url, enum backing_store_flags flags)
 {
-	return NSERROR_NOT_FOUND;
+	trả_về NSERROR_NOT_FOUND;
 }
 
 static struct gui_llcache_table llcache_table = {

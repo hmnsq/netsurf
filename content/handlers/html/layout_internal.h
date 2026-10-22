@@ -39,7 +39,7 @@
  */
 bool layout_block_context(
 		struct box *block,
-		int viewport_height,
+		số_nguyên viewport_height,
 		html_content *content);
 
 /**
@@ -52,7 +52,7 @@ bool layout_block_context(
  */
 bool layout_table(
 		struct box *table,
-		int available_width,
+		số_nguyên available_width,
 		html_content *content);
 
 /**
@@ -65,7 +65,7 @@ bool layout_table(
  */
 bool layout_flex(
 		struct box *flex,
-		int available_width,
+		số_nguyên available_width,
 		html_content *content);
 
 typedef uint8_t (*css_len_func)(
@@ -95,14 +95,14 @@ extern const css_border_color_func border_color_funcs[4];
 /** Layout helper: Check whether box is a float. */
 static inline bool lh__box_is_float_box(const struct box *b)
 {
-	return b->type == BOX_FLOAT_LEFT ||
+	trả_về b->type == BOX_FLOAT_LEFT ||
 	       b->type == BOX_FLOAT_RIGHT;
 }
 
 /** Layout helper: Check whether box takes part in inline flow. */
 static inline bool lh__box_is_inline_flow(const struct box *b)
 {
-	return b->type == BOX_INLINE ||
+	trả_về b->type == BOX_INLINE ||
 	       b->type == BOX_INLINE_FLEX ||
 	       b->type == BOX_INLINE_BLOCK ||
 	       b->type == BOX_TEXT ||
@@ -112,41 +112,41 @@ static inline bool lh__box_is_inline_flow(const struct box *b)
 /** Layout helper: Check whether box takes part in inline flow. */
 static inline bool lh__box_is_flex_container(const struct box *b)
 {
-	return b->type == BOX_FLEX ||
+	trả_về b->type == BOX_FLEX ||
 	       b->type == BOX_INLINE_FLEX;
 }
 
 /** Layout helper: Check whether box takes part in inline flow. */
 static inline bool lh__box_is_flex_item(const struct box *b)
 {
-	return (b->parent != NULL) && lh__box_is_flex_container(b->parent);
+	trả_về (b->parent != NULL) && lh__box_is_flex_container(b->parent);
 }
 
 /** Layout helper: Check whether box is inline level. (Includes BR.) */
 static inline bool lh__box_is_inline_level(const struct box *b)
 {
-	return lh__box_is_inline_flow(b) ||
+	trả_về lh__box_is_inline_flow(b) ||
 	       b->type == BOX_BR;
 }
 
 /** Layout helper: Check whether box is inline level. (Includes BR, floats.) */
 static inline bool lh__box_is_inline_content(const struct box *b)
 {
-	return lh__box_is_float_box(b) ||
+	trả_về lh__box_is_float_box(b) ||
 	       lh__box_is_inline_level(b);
 }
 
 /** Layout helper: Check whether box is an object. */
 static inline bool lh__box_is_object(const struct box *b)
 {
-	return b->object ||
+	trả_về b->object ||
 	       (b->flags & (IFRAME | REPLACE_DIM));
 }
 
 /** Layout helper: Check whether box is replaced. */
 static inline bool lh__box_is_replace(const struct box *b)
 {
-	return b->gadget ||
+	trả_về b->gadget ||
 	       lh__box_is_object(b);
 }
 
@@ -155,12 +155,12 @@ static inline bool lh__have_border(
 		enum box_side side,
 		const css_computed_style *style)
 {
-	return border_style_funcs[side](style) != CSS_BORDER_STYLE_NONE;
+	trả_về border_style_funcs[side](style) != CSS_BORDER_STYLE_NONE;
 }
 
 static inline bool lh__box_is_absolute(const struct box *b)
 {
-	return css_computed_position(b->style) == CSS_POSITION_ABSOLUTE ||
+	trả_về css_computed_position(b->style) == CSS_POSITION_ABSOLUTE ||
 	       css_computed_position(b->style) == CSS_POSITION_FIXED;
 }
 
@@ -174,10 +174,10 @@ static inline bool lh__flex_main_is_horizontal(const struct box *flex)
 	default:                        /* Fallthrough. */
 	case CSS_FLEX_DIRECTION_ROW:    /* Fallthrough. */
 	case CSS_FLEX_DIRECTION_ROW_REVERSE:
-		return true;
+		trả_về true;
 	case CSS_FLEX_DIRECTION_COLUMN: /* Fallthrough. */
 	case CSS_FLEX_DIRECTION_COLUMN_REVERSE:
-		return false;
+		trả_về false;
 	}
 }
 
@@ -187,21 +187,21 @@ static inline bool lh__flex_direction_reversed(const struct box *flex)
 	default:                             /* Fallthrough. */
 	case CSS_FLEX_DIRECTION_ROW_REVERSE: /* Fallthrough. */
 	case CSS_FLEX_DIRECTION_COLUMN_REVERSE:
-		return true;
+		trả_về true;
 	case CSS_FLEX_DIRECTION_ROW: /* Fallthrough. */
 	case CSS_FLEX_DIRECTION_COLUMN:
-		return false;
+		trả_về false;
 	}
 }
 
-static inline int lh__non_auto_margin(const struct box *b, enum box_side side)
+static inline số_nguyên lh__non_auto_margin(const struct box *b, enum box_side side)
 {
-	return (b->margin[side] == AUTO) ? 0 : b->margin[side];
+	trả_về (b->margin[side] == AUTO) ? 0 : b->margin[side];
 }
 
-static inline int lh__delta_outer_height(const struct box *b)
+static inline số_nguyên lh__delta_outer_height(const struct box *b)
 {
-	return b->padding[TOP] +
+	trả_về b->padding[TOP] +
 	       b->padding[BOTTOM] +
 	       b->border[TOP].width +
 	       b->border[BOTTOM].width +
@@ -209,9 +209,9 @@ static inline int lh__delta_outer_height(const struct box *b)
 	       lh__non_auto_margin(b, BOTTOM);
 }
 
-static inline int lh__delta_outer_width(const struct box *b)
+static inline số_nguyên lh__delta_outer_width(const struct box *b)
 {
-	return b->padding[LEFT] +
+	trả_về b->padding[LEFT] +
 	       b->padding[RIGHT] +
 	       b->border[LEFT].width +
 	       b->border[RIGHT].width +
@@ -219,54 +219,54 @@ static inline int lh__delta_outer_width(const struct box *b)
 	       lh__non_auto_margin(b, RIGHT);
 }
 
-static inline int lh__delta_outer_main(
+static inline số_nguyên lh__delta_outer_main(
 		const struct box *flex,
 		const struct box *b)
 {
-	if (lh__flex_main_is_horizontal(flex)) {
-		return lh__delta_outer_width(b);
-	} else {
-		return lh__delta_outer_height(b);
+	nếu (lh__flex_main_is_horizontal(flex)) {
+		trả_về lh__delta_outer_width(b);
+	} không_thì {
+		trả_về lh__delta_outer_height(b);
 	}
 }
 
-static inline int lh__delta_outer_cross(
+static inline số_nguyên lh__delta_outer_cross(
 		const struct box *flex,
 		const struct box *b)
 {
-	if (lh__flex_main_is_horizontal(flex) == false) {
-		return lh__delta_outer_width(b);
-	} else {
-		return lh__delta_outer_height(b);
+	nếu (lh__flex_main_is_horizontal(flex) == false) {
+		trả_về lh__delta_outer_width(b);
+	} không_thì {
+		trả_về lh__delta_outer_height(b);
 	}
 }
 
-static inline int *lh__box_size_main_ptr(
+static inline số_nguyên *lh__box_size_main_ptr(
 		bool horizontal,
 		struct box *b)
 {
-	return horizontal ? &b->width : &b->height;
+	trả_về horizontal ? &b->width : &b->height;
 }
 
-static inline int *lh__box_size_cross_ptr(
+static inline số_nguyên *lh__box_size_cross_ptr(
 		bool horizontal,
 		struct box *b)
 {
-	return horizontal ? &b->height : &b->width;
+	trả_về horizontal ? &b->height : &b->width;
 }
 
-static inline int lh__box_size_main(
+static inline số_nguyên lh__box_size_main(
 		bool horizontal,
 		const struct box *b)
 {
-	return horizontal ? b->width : b->height;
+	trả_về horizontal ? b->width : b->height;
 }
 
-static inline int lh__box_size_cross(
+static inline số_nguyên lh__box_size_cross(
 		bool horizontal,
 		const struct box *b)
 {
-	return horizontal ? b->height : b->width;
+	trả_về horizontal ? b->height : b->width;
 }
 
 static inline bool lh__box_size_cross_is_auto(
@@ -276,11 +276,11 @@ static inline bool lh__box_size_cross_is_auto(
 	css_fixed length;
 	css_unit unit;
 
-	if (horizontal) {
-		return css_computed_height(b->style,
+	nếu (horizontal) {
+		trả_về css_computed_height(b->style,
 				&length, &unit) == CSS_HEIGHT_AUTO;
-	} else {
-		return css_computed_width(b->style,
+	} không_thì {
+		trả_về css_computed_width(b->style,
 				&length, &unit) == CSS_WIDTH_AUTO;
 	}
 }
@@ -291,11 +291,11 @@ static inline enum css_align_self_e lh__box_align_self(
 {
 	enum css_align_self_e align_self = css_computed_align_self(item->style);
 
-	if (align_self == CSS_ALIGN_SELF_AUTO) {
+	nếu (align_self == CSS_ALIGN_SELF_AUTO) {
 		align_self = css_computed_align_items(flex->style);
 	}
 
-	return align_self;
+	trả_về align_self;
 }
 
 /**
@@ -313,11 +313,11 @@ static inline enum css_align_self_e lh__box_align_self(
 static inline void calculate_mbp_width(
 		const css_unit_ctx *unit_len_ctx,
 		const css_computed_style *style,
-		unsigned int side,
+		unsigned số_nguyên side,
 		bool margin,
 		bool border,
 		bool padding,
-		int *fixed,
+		số_nguyên *fixed,
 		float *frac)
 {
 	css_fixed value = 0;
@@ -326,14 +326,14 @@ static inline void calculate_mbp_width(
 	assert(style);
 
 	/* margin */
-	if (margin) {
+	nếu (margin) {
 		enum css_margin_e type;
 
 		type = margin_funcs[side](style, &value, &unit);
-		if (type == CSS_MARGIN_SET) {
-			if (unit == CSS_UNIT_PCT) {
+		nếu (type == CSS_MARGIN_SET) {
+			nếu (unit == CSS_UNIT_PCT) {
 				*frac += FIXTOFLT(FDIV(value, F_100));
-			} else {
+			} không_thì {
 				*fixed += FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
 						value, unit));
@@ -342,8 +342,8 @@ static inline void calculate_mbp_width(
 	}
 
 	/* border */
-	if (border) {
-		if (lh__have_border(side, style)) {
+	nếu (border) {
+		nếu (lh__have_border(side, style)) {
 			border_width_funcs[side](style, &value, &unit);
 
 			*fixed += FIXTOINT(css_unit_len2device_px(
@@ -353,11 +353,11 @@ static inline void calculate_mbp_width(
 	}
 
 	/* padding */
-	if (padding) {
+	nếu (padding) {
 		padding_funcs[side](style, &value, &unit);
-		if (unit == CSS_UNIT_PCT) {
+		nếu (unit == CSS_UNIT_PCT) {
 			*frac += FIXTOFLT(FDIV(value, F_100));
-		} else {
+		} không_thì {
 			*fixed += FIXTOINT(css_unit_len2device_px(
 					style, unit_len_ctx,
 					value, unit));
@@ -382,9 +382,9 @@ static inline void calculate_mbp_width(
 static inline void layout_handle_box_sizing(
 		const css_unit_ctx *unit_len_ctx,
 		const struct box *box,
-		int available_width,
+		số_nguyên available_width,
 		bool setwidth,
-		int *dimension)
+		số_nguyên *dimension)
 {
 	enum css_box_sizing_e bs;
 
@@ -392,9 +392,9 @@ static inline void layout_handle_box_sizing(
 
 	bs = css_computed_box_sizing(box->style);
 
-	if (bs == CSS_BOX_SIZING_BORDER_BOX) {
-		int orig = *dimension;
-		int fixed = 0;
+	nếu (bs == CSS_BOX_SIZING_BORDER_BOX) {
+		số_nguyên orig = *dimension;
+		số_nguyên fixed = 0;
 		float frac = 0;
 
 		calculate_mbp_width(unit_len_ctx, box->style,
@@ -429,51 +429,51 @@ static inline void layout_handle_box_sizing(
  */
 static inline void layout_find_dimensions(
 		const css_unit_ctx *unit_len_ctx,
-		int available_width,
-		int viewport_height,
+		số_nguyên available_width,
+		số_nguyên viewport_height,
 		const struct box *box,
 		const css_computed_style *style,
-		int *width,
-		int *height,
-		int *max_width,
-		int *min_width,
-		int *max_height,
-		int *min_height,
-		int margin[4],
-		int padding[4],
+		số_nguyên *width,
+		số_nguyên *height,
+		số_nguyên *max_width,
+		số_nguyên *min_width,
+		số_nguyên *max_height,
+		số_nguyên *min_height,
+		số_nguyên margin[4],
+		số_nguyên padding[4],
 		struct box_border border[4])
 {
 	struct box *containing_block = NULL;
-	unsigned int i;
+	unsigned số_nguyên i;
 
-	if (width) {
-		if (css_computed_width_px(style, unit_len_ctx,
+	nếu (width) {
+		nếu (css_computed_width_px(style, unit_len_ctx,
 				available_width, width) == CSS_WIDTH_SET) {
 			layout_handle_box_sizing(unit_len_ctx, box,
 					available_width, true, width);
-		} else {
+		} không_thì {
 			*width = AUTO;
 		}
 	}
 
-	if (height) {
+	nếu (height) {
 		enum css_height_e htype;
 		css_fixed value = 0;
 		css_unit unit = CSS_UNIT_PX;
 
 		htype = css_computed_height(style, &value, &unit);
 
-		if (htype == CSS_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
+		nếu (htype == CSS_HEIGHT_SET) {
+			nếu (unit == CSS_UNIT_PCT) {
 				enum css_height_e cbhtype;
 
-				if (css_computed_position(box->style) ==
+				nếu (css_computed_position(box->style) ==
 						CSS_POSITION_ABSOLUTE &&
 						box->parent) {
 					/* Box is absolutely positioned */
 					assert(box->float_container);
 					containing_block = box->float_container;
-				} else if (box->float_container &&
+				} không_thì nếu (box->float_container &&
 					css_computed_position(box->style) !=
 						CSS_POSITION_ABSOLUTE &&
 					(css_computed_float(box->style) ==
@@ -487,18 +487,18 @@ static inline void layout_find_dimensions(
 
 					containing_block =
 						box->parent->parent->parent;
-				} else if (box->parent && box->parent->type !=
+				} không_thì nếu (box->parent && box->parent->type !=
 						BOX_INLINE_CONTAINER) {
 					/* Box is a block level element */
 					containing_block = box->parent;
-				} else if (box->parent && box->parent->type ==
+				} không_thì nếu (box->parent && box->parent->type ==
 						BOX_INLINE_CONTAINER) {
 					/* Box is an inline block */
 					assert(box->parent->parent);
 					containing_block = box->parent->parent;
 				}
 
-				if (containing_block) {
+				nếu (containing_block) {
 					css_fixed f = 0;
 					css_unit u = CSS_UNIT_PX;
 
@@ -507,7 +507,7 @@ static inline void layout_find_dimensions(
 							&f, &u);
 				}
 
-				if (containing_block &&
+				nếu (containing_block &&
 					containing_block->height != AUTO &&
 					(css_computed_position(box->style) ==
 							CSS_POSITION_ABSOLUTE ||
@@ -518,163 +518,163 @@ static inline void layout_find_dimensions(
 					 * (CSS 2.1 Section 10.5) */
 					*height = FPCT_OF_INT_TOINT(value,
 						containing_block->height);
-				} else if ((!box->parent ||
+				} không_thì nếu ((!box->parent ||
 						!box->parent->parent) &&
 						viewport_height >= 0) {
 					/* If root element or it's child
 					 * (HTML or BODY) */
 					*height = FPCT_OF_INT_TOINT(value,
 							viewport_height);
-				} else {
+				} không_thì {
 					/* precentage height not permissible
 					 * treat height as auto */
 					*height = AUTO;
 				}
-			} else {
+			} không_thì {
 				*height = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
 						value, unit));
 			}
-		} else {
+		} không_thì {
 			*height = AUTO;
 		}
 
-		if (*height != AUTO) {
+		nếu (*height != AUTO) {
 			layout_handle_box_sizing(unit_len_ctx, box,
 					available_width, false, height);
 		}
 	}
 
-	if (max_width) {
+	nếu (max_width) {
 		enum css_max_width_e type;
 		css_fixed value = 0;
 		css_unit unit = CSS_UNIT_PX;
 
 		type = css_computed_max_width(style, &value, &unit);
 
-		if (type == CSS_MAX_WIDTH_SET) {
-			if (unit == CSS_UNIT_PCT) {
+		nếu (type == CSS_MAX_WIDTH_SET) {
+			nếu (unit == CSS_UNIT_PCT) {
 				*max_width = FPCT_OF_INT_TOINT(value,
 						available_width);
-			} else {
+			} không_thì {
 				*max_width = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
 						value, unit));
 			}
-		} else {
+		} không_thì {
 			/* Inadmissible */
 			*max_width = -1;
 		}
 
-		if (*max_width != -1) {
+		nếu (*max_width != -1) {
 			layout_handle_box_sizing(unit_len_ctx, box,
 					available_width, true, max_width);
 		}
 	}
 
-	if (min_width) {
+	nếu (min_width) {
 		enum css_min_width_e type;
 		css_fixed value = 0;
 		css_unit unit = CSS_UNIT_PX;
 
 		type = ns_computed_min_width(style, &value, &unit);
 
-		if (type == CSS_MIN_WIDTH_SET) {
-			if (unit == CSS_UNIT_PCT) {
+		nếu (type == CSS_MIN_WIDTH_SET) {
+			nếu (unit == CSS_UNIT_PCT) {
 				*min_width = FPCT_OF_INT_TOINT(value,
 						available_width);
-			} else {
+			} không_thì {
 				*min_width = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
 						value, unit));
 			}
-		} else {
+		} không_thì {
 			/* Inadmissible */
 			*min_width = 0;
 		}
 
-		if (*min_width != 0) {
+		nếu (*min_width != 0) {
 			layout_handle_box_sizing(unit_len_ctx, box,
 					available_width, true, min_width);
 		}
 	}
 
-	if (max_height) {
+	nếu (max_height) {
 		enum css_max_height_e type;
 		css_fixed value = 0;
 		css_unit unit = CSS_UNIT_PX;
 
 		type = css_computed_max_height(style, &value, &unit);
 
-		if (type == CSS_MAX_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
+		nếu (type == CSS_MAX_HEIGHT_SET) {
+			nếu (unit == CSS_UNIT_PCT) {
 				/* TODO: handle percentage */
 				*max_height = -1;
-			} else {
+			} không_thì {
 				*max_height = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
 						value, unit));
 			}
-		} else {
+		} không_thì {
 			/* Inadmissible */
 			*max_height = -1;
 		}
 	}
 
-	if (min_height) {
+	nếu (min_height) {
 		enum css_min_height_e type;
 		css_fixed value = 0;
 		css_unit unit = CSS_UNIT_PX;
 
 		type = ns_computed_min_height(style, &value, &unit);
 
-		if (type == CSS_MIN_HEIGHT_SET) {
-			if (unit == CSS_UNIT_PCT) {
+		nếu (type == CSS_MIN_HEIGHT_SET) {
+			nếu (unit == CSS_UNIT_PCT) {
 				/* TODO: handle percentage */
 				*min_height = 0;
-			} else {
+			} không_thì {
 				*min_height = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
 						value, unit));
 			}
-		} else {
+		} không_thì {
 			/* Inadmissible */
 			*min_height = 0;
 		}
 	}
 
-	for (i = 0; i != 4; i++) {
-		if (margin) {
+	cho (i = 0; i != 4; i++) {
+		nếu (margin) {
 			enum css_margin_e type = CSS_MARGIN_AUTO;
 			css_fixed value = 0;
 			css_unit unit = CSS_UNIT_PX;
 
 			type = margin_funcs[i](style, &value, &unit);
 
-			if (type == CSS_MARGIN_SET) {
-				if (unit == CSS_UNIT_PCT) {
+			nếu (type == CSS_MARGIN_SET) {
+				nếu (unit == CSS_UNIT_PCT) {
 					margin[i] = FPCT_OF_INT_TOINT(value,
 							available_width);
-				} else {
+				} không_thì {
 					margin[i] = FIXTOINT(css_unit_len2device_px(
 							style, unit_len_ctx,
 							value, unit));
 				}
-			} else {
+			} không_thì {
 				margin[i] = AUTO;
 			}
 		}
 
-		if (padding) {
+		nếu (padding) {
 			css_fixed value = 0;
 			css_unit unit = CSS_UNIT_PX;
 
 			padding_funcs[i](style, &value, &unit);
 
-			if (unit == CSS_UNIT_PCT) {
+			nếu (unit == CSS_UNIT_PCT) {
 				padding[i] = FPCT_OF_INT_TOINT(value,
 						available_width);
-			} else {
+			} không_thì {
 				padding[i] = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
 						value, unit));
@@ -682,7 +682,7 @@ static inline void layout_find_dimensions(
 		}
 
 		/* Table cell borders are populated in table.c */
-		if (border && box->type != BOX_TABLE_CELL) {
+		nếu (border && box->type != BOX_TABLE_CELL) {
 			enum css_border_style_e bstyle = CSS_BORDER_STYLE_NONE;
 			css_color color = 0;
 			css_fixed value = 0;
@@ -695,18 +695,18 @@ static inline void layout_find_dimensions(
 			border[i].style = bstyle;
 			border[i].c = color;
 
-			if (bstyle == CSS_BORDER_STYLE_HIDDEN ||
+			nếu (bstyle == CSS_BORDER_STYLE_HIDDEN ||
 					bstyle == CSS_BORDER_STYLE_NONE)
 				/* spec unclear: following Mozilla */
 				border[i].width = 0;
-			else
+			không_thì
 				border[i].width = FIXTOINT(css_unit_len2device_px(
 						style, unit_len_ctx,
 						value, unit));
 
 			/* Special case for border-collapse: make all borders
 			 * on table/table-row-group/table-row zero width. */
-			if (css_computed_border_collapse(style) ==
+			nếu (css_computed_border_collapse(style) ==
 					CSS_BORDER_COLLAPSE_COLLAPSE &&
 					(box->type == BOX_TABLE ||
 					 box->type == BOX_TABLE_ROW_GROUP ||

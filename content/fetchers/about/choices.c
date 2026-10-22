@@ -42,16 +42,16 @@
 bool fetch_about_choices_handler(struct fetch_about_context *ctx)
 {
 	char buffer[1024];
-	int code = 200;
-	int slen;
-	unsigned int opt_loop = 0;
-	int res = 0;
+	số_nguyên code = 200;
+	số_nguyên slen;
+	unsigned số_nguyên opt_loop = 0;
+	số_nguyên res = 0;
 
 	/* content is going to return ok */
 	fetch_about_set_http_code(ctx, code);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/plain"))
+	nếu (fetch_about_send_header(ctx, "Content-Type: text/plain"))
 		goto fetch_about_choices_handler_aborted;
 
 	slen = snprintf(buffer, sizeof buffer,
@@ -62,32 +62,32 @@ bool fetch_about_choices_handler(struct fetch_about_context *ctx)
 				sizeof buffer - slen,
 				opt_loop,
 				"%k:%v\n");
-		if (res <= 0)
+		nếu (res <= 0)
 			break; /* last option */
 
-		if (res >= (int) (sizeof buffer - slen)) {
+		nếu (res >= (số_nguyên) (sizeof buffer - slen)) {
 			/* last entry would not fit in buffer, submit buffer */
 			res = fetch_about_senddata(ctx, (const uint8_t *)buffer, slen);
-			if (res != NSERROR_OK) {
+			nếu (res != NSERROR_OK) {
 				goto fetch_about_choices_handler_aborted;
 			}
 			slen = 0;
-		} else {
+		} không_thì {
 			/* normal addition */
 			slen += res;
 			opt_loop++;
 		}
-	} while (res > 0);
+	} trong_khi (res > 0);
 
 	res = fetch_about_senddata(ctx, (const uint8_t *)buffer, slen);
-	if (res != NSERROR_OK) {
+	nếu (res != NSERROR_OK) {
 		goto fetch_about_choices_handler_aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	trả_về true;
 
 fetch_about_choices_handler_aborted:
-	return false;
+	trả_về false;
 }

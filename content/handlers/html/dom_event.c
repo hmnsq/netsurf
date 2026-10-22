@@ -60,15 +60,15 @@ static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
 
 	/* get href attribute if present */
 	exc = dom_element_get_attribute(node, corestring_dom_href, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	nếu ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
 		nsurl *url;
 		nserror error;
 
 		/* get url from string */
 		error = nsurl_create(dom_string_data(atr_string), &url);
 		dom_string_unref(atr_string);
-		if (error == NSERROR_OK) {
-			if (htmlc->base_url != NULL) {
+		nếu (error == NSERROR_OK) {
+			nếu (htmlc->base_url != NULL) {
 				nsurl_unref(htmlc->base_url);
 			}
 			htmlc->base_url = url;
@@ -77,20 +77,20 @@ static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
 
 
 	/* get target attribute if present and not already set */
-	if (htmlc->base_target != NULL) {
-		return true;
+	nếu (htmlc->base_target != NULL) {
+		trả_về true;
 	}
 
 	exc = dom_element_get_attribute(node,
 					corestring_dom_target,
 					&atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	nếu ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
 		/* Validation rules from the HTML5 spec for the base element:
 		 *  The target must be one of _blank, _self, _parent, or
 		 *  _top or any identifier which does not begin with an
 		 *  underscore
 		 */
-		if (*dom_string_data(atr_string) != '_' ||
+		nếu (*dom_string_data(atr_string) != '_' ||
 				dom_string_caseless_lwc_isequal(atr_string,
 						corestring_lwc__blank) ||
 				dom_string_caseless_lwc_isequal(atr_string,
@@ -104,7 +104,7 @@ static bool html_process_inserted_base(html_content *htmlc, dom_node *node)
 		dom_string_unref(atr_string);
 	}
 
-	return true;
+	trả_về true;
 }
 
 
@@ -125,19 +125,19 @@ static bool html_process_inserted_img(html_content *htmlc, dom_node *node)
 	bool success;
 
 	/* Do nothing if foreground images are disabled */
-	if (nsoption_bool(foreground_images) == false) {
-		return true;
+	nếu (nsoption_bool(foreground_images) == false) {
+		trả_về true;
 	}
 
 	exc = dom_element_get_attribute(node, corestring_dom_src, &src);
-	if (exc != DOM_NO_ERR || src == NULL) {
-		return true;
+	nếu (exc != DOM_NO_ERR || src == NULL) {
+		trả_về true;
 	}
 
 	err = nsurl_join(htmlc->base_url, dom_string_data(src), &url);
-	if (err != NSERROR_OK) {
+	nếu (err != NSERROR_OK) {
 		dom_string_unref(src);
-		return false;
+		trả_về false;
 	}
 	dom_string_unref(src);
 
@@ -145,7 +145,7 @@ static bool html_process_inserted_img(html_content *htmlc, dom_node *node)
 	success = html_fetch_object(htmlc, url, NULL, CONTENT_IMAGE, false);
 	nsurl_unref(url);
 
-	return success;
+	trả_về success;
 }
 
 
@@ -174,37 +174,37 @@ static bool html_process_inserted_link(html_content *c, dom_node *node)
 
 	/* check that the relation exists - w3c spec says must be present */
 	exc = dom_element_get_attribute(node, corestring_dom_rel, &atr_string);
-	if ((exc != DOM_NO_ERR) || (atr_string == NULL)) {
-		return false;
+	nếu ((exc != DOM_NO_ERR) || (atr_string == NULL)) {
+		trả_về false;
 	}
 	/* get a lwc string containing the link relation */
 	exc = dom_string_intern(atr_string, &link.rel);
 	dom_string_unref(atr_string);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	nếu (exc != DOM_NO_ERR) {
+		trả_về false;
 	}
 
 	/* check that the href exists - w3c spec says must be present */
 	exc = dom_element_get_attribute(node, corestring_dom_href, &atr_string);
-	if ((exc != DOM_NO_ERR) || (atr_string == NULL)) {
+	nếu ((exc != DOM_NO_ERR) || (atr_string == NULL)) {
 		lwc_string_unref(link.rel);
-		return false;
+		trả_về false;
 	}
 
 	/* get nsurl */
 	error = nsurl_join(c->base_url, dom_string_data(atr_string),
 			&link.href);
 	dom_string_unref(atr_string);
-	if (error != NSERROR_OK) {
+	nếu (error != NSERROR_OK) {
 		lwc_string_unref(link.rel);
-		return false;
+		trả_về false;
 	}
 
 	/* look for optional properties -- we don't care if internment fails */
 
 	exc = dom_element_get_attribute(node,
 			corestring_dom_hreflang, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	nếu ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
 		/* get a lwc string containing the href lang */
 		(void)dom_string_intern(atr_string, &link.hreflang);
 		dom_string_unref(atr_string);
@@ -212,7 +212,7 @@ static bool html_process_inserted_link(html_content *c, dom_node *node)
 
 	exc = dom_element_get_attribute(node,
 			corestring_dom_type, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	nếu ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
 		/* get a lwc string containing the type */
 		(void)dom_string_intern(atr_string, &link.type);
 		dom_string_unref(atr_string);
@@ -220,7 +220,7 @@ static bool html_process_inserted_link(html_content *c, dom_node *node)
 
 	exc = dom_element_get_attribute(node,
 			corestring_dom_media, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	nếu ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
 		/* get a lwc string containing the media */
 		(void)dom_string_intern(atr_string, &link.media);
 		dom_string_unref(atr_string);
@@ -228,7 +228,7 @@ static bool html_process_inserted_link(html_content *c, dom_node *node)
 
 	exc = dom_element_get_attribute(node,
 			corestring_dom_sizes, &atr_string);
-	if ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
+	nếu ((exc == DOM_NO_ERR) && (atr_string != NULL)) {
 		/* get a lwc string containing the sizes */
 		(void)dom_string_intern(atr_string, &link.sizes);
 		dom_string_unref(atr_string);
@@ -245,7 +245,7 @@ static bool html_process_inserted_link(html_content *c, dom_node *node)
 	nsurl_unref(link.href);
 	lwc_string_unref(link.rel);
 
-	return true;
+	trả_về true;
 }
 
 
@@ -258,42 +258,42 @@ dom_SCRIPT_showed_up(html_content *htmlc, dom_html_script_element *script)
 	dom_hubbub_error res;
 	bool within;
 
-	if (!htmlc->enable_scripting) {
+	nếu (!htmlc->enable_scripting) {
 		NSLOG(netsurf, INFO, "Encountered a script, but scripting is off, ignoring");
-		return;
+		trả_về;
 	}
 
 	NSLOG(netsurf, DEEPDEBUG, "Encountered a script, node %p showed up", script);
 
 	exc = dom_html_script_element_get_flags(script, &flags);
-	if (exc != DOM_NO_ERR) {
+	nếu (exc != DOM_NO_ERR) {
 		NSLOG(netsurf, DEEPDEBUG, "Unable to retrieve flags, giving up");
-		return;
+		trả_về;
 	}
 
-	if (flags & DOM_HTML_SCRIPT_ELEMENT_FLAG_PARSER_INSERTED) {
+	nếu (flags & DOM_HTML_SCRIPT_ELEMENT_FLAG_PARSER_INSERTED) {
 		NSLOG(netsurf, DEBUG, "Script was parser inserted, skipping");
-		return;
+		trả_về;
 	}
 
 	exc = dom_node_contains(htmlc->document, script, &within);
-	if (exc != DOM_NO_ERR) {
+	nếu (exc != DOM_NO_ERR) {
 		NSLOG(netsurf, DEBUG, "Unable to determine if script was within document, ignoring");
-		return;
+		trả_về;
 	}
 
-	if (!within) {
+	nếu (!within) {
 		NSLOG(netsurf, DEBUG, "Script was not within the document, ignoring for now");
-		return;
+		trả_về;
 	}
 
 	res = html_process_script(htmlc, (dom_node *) script);
-	if (res == DOM_HUBBUB_OK) {
+	nếu (res == DOM_HUBBUB_OK) {
 		NSLOG(netsurf, DEEPDEBUG, "Inserted script has finished running");
-	} else {
-		if (res == (DOM_HUBBUB_HUBBUB_ERR | HUBBUB_PAUSED)) {
+	} không_thì {
+		nếu (res == (DOM_HUBBUB_HUBBUB_ERR | HUBBUB_PAUSED)) {
 			NSLOG(netsurf, DEEPDEBUG, "Inserted script has launced asynchronously");
-		} else {
+		} không_thì {
 			NSLOG(netsurf, DEEPDEBUG, "Failure starting script");
 		}
 	}
@@ -320,34 +320,34 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 	nsurl *nsurl;
 	nserror error = NSERROR_OK;
 
-	if (c->refresh) {
+	nếu (c->refresh) {
 		/* refresh already delt with */
-		return NSERROR_OK;
+		trả_về NSERROR_OK;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_http_equiv, &equiv);
-	if (exc != DOM_NO_ERR) {
-		return NSERROR_DOM;
+	nếu (exc != DOM_NO_ERR) {
+		trả_về NSERROR_DOM;
 	}
 
-	if (equiv == NULL) {
-		return NSERROR_OK;
+	nếu (equiv == NULL) {
+		trả_về NSERROR_OK;
 	}
 
-	if (!dom_string_caseless_lwc_isequal(equiv, corestring_lwc_refresh)) {
+	nếu (!dom_string_caseless_lwc_isequal(equiv, corestring_lwc_refresh)) {
 		dom_string_unref(equiv);
-		return NSERROR_OK;
+		trả_về NSERROR_OK;
 	}
 
 	dom_string_unref(equiv);
 
 	exc = dom_element_get_attribute(n, corestring_dom_content, &content);
-	if (exc != DOM_NO_ERR) {
-		return NSERROR_DOM;
+	nếu (exc != DOM_NO_ERR) {
+		trả_về NSERROR_DOM;
 	}
 
-	if (content == NULL) {
-		return NSERROR_OK;
+	nếu (content == NULL) {
+		trả_về NSERROR_OK;
 	}
 
 	end = dom_string_data(content) + dom_string_byte_length(content);
@@ -366,48 +366,48 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 	url = dom_string_data(content);
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	trong_khi (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* intpart */
-	if (url == end || (*url < '0' || '9' < *url)) {
+	nếu (url == end || (*url < '0' || '9' < *url)) {
 		/* Empty content, or invalid timeval */
 		dom_string_unref(content);
-		return NSERROR_OK;
+		trả_về NSERROR_OK;
 	}
 
-	msg_data.delay = (int) strtol(url, &new_url, 10);
+	msg_data.delay = (số_nguyên) strtol(url, &new_url, 10);
 	/* a very small delay and self-referencing URL can cause a loop
 	 * that grinds machines to a halt. To prevent this we set a
 	 * minimum refresh delay of 1s. */
-	if (msg_data.delay < 1) {
+	nếu (msg_data.delay < 1) {
 		msg_data.delay = 1;
 	}
 
 	url = new_url;
 
 	/* fracpart? (ignored, as delay is integer only) */
-	while (url < end && (('0' <= *url && *url <= '9') ||
+	trong_khi (url < end && (('0' <= *url && *url <= '9') ||
 			*url == '.')) {
 		url++;
 	}
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	trong_khi (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* ';' */
-	if (url < end && *url == ';')
+	nếu (url < end && *url == ';')
 		url++;
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	trong_khi (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
-	if (url == end) {
+	nếu (url == end) {
 		/* Just delay specified, so refresh current page */
 		dom_string_unref(content);
 
@@ -415,51 +415,51 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 
 		content_broadcast(&c->base, CONTENT_MSG_REFRESH, &msg_data);
 
-		return NSERROR_OK;
+		trả_về NSERROR_OK;
 	}
 
 	/* "url" */
-	if (url <= end - 3) {
-		if (strncasecmp(url, "url", 3) == 0) {
+	nếu (url <= end - 3) {
+		nếu (strncasecmp(url, "url", 3) == 0) {
 			url += 3;
-		} else {
+		} không_thì {
 			/* Unexpected input, ignore this header */
 			dom_string_unref(content);
-			return NSERROR_OK;
+			trả_về NSERROR_OK;
 		}
-	} else {
+	} không_thì {
 		/* Insufficient input, ignore this header */
 		dom_string_unref(content);
-		return NSERROR_OK;
+		trả_về NSERROR_OK;
 	}
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	trong_khi (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* '=' */
-	if (url < end) {
-		if (*url == '=') {
+	nếu (url < end) {
+		nếu (*url == '=') {
 			url++;
-		} else {
+		} không_thì {
 			/* Unexpected input, ignore this header */
 			dom_string_unref(content);
-			return NSERROR_OK;
+			trả_về NSERROR_OK;
 		}
-	} else {
+	} không_thì {
 		/* Insufficient input, ignore this header */
 		dom_string_unref(content);
-		return NSERROR_OK;
+		trả_về NSERROR_OK;
 	}
 
 	/* *LWS */
-	while (url < end && ascii_is_space(*url)) {
+	trong_khi (url < end && ascii_is_space(*url)) {
 		url++;
 	}
 
 	/* '"' or "'" */
-	if (url < end && (*url == '"' || *url == '\'')) {
+	nếu (url < end && (*url == '"' || *url == '\'')) {
 		quote = *url;
 		url++;
 	}
@@ -467,27 +467,27 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 	/* Start of URL */
 	refresh = url;
 
-	if (quote != 0) {
+	nếu (quote != 0) {
 		/* url-sq | url-dq */
-		while (url < end && *url != quote)
+		trong_khi (url < end && *url != quote)
 			url++;
-	} else {
+	} không_thì {
 		/* url-nq */
-		while (url < end && !ascii_is_space(*url))
+		trong_khi (url < end && !ascii_is_space(*url))
 			url++;
 	}
 
 	/* '"' or "'" or *LWS (we don't care) */
-	if (url > refresh) {
+	nếu (url > refresh) {
 		/* There's a URL */
 		new_url = strndup(refresh, url - refresh);
-		if (new_url == NULL) {
+		nếu (new_url == NULL) {
 			dom_string_unref(content);
-			return NSERROR_NOMEM;
+			trả_về NSERROR_NOMEM;
 		}
 
 		error = nsurl_join(c->base_url, new_url, &nsurl);
-		if (error == NSERROR_OK) {
+		nếu (error == NSERROR_OK) {
 			/* broadcast valid refresh url */
 
 			c->base.refresh = nsurl;
@@ -504,7 +504,7 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
 
 	dom_string_unref(content);
 
-	return error;
+	trả_về error;
 }
 
 
@@ -519,11 +519,11 @@ static nserror html_process_inserted_meta(html_content *c, dom_node *n)
  */
 static nserror html_process_inserted_title(html_content *htmlc, dom_node *node)
 {
-	if (htmlc->title == NULL) {
+	nếu (htmlc->title == NULL) {
 		/* only the first title is considered */
 		htmlc->title = dom_node_ref(node);
 	}
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 
@@ -536,22 +536,22 @@ static bool html_process_title(html_content *c, dom_node *node)
 	bool success;
 
 	exc = dom_node_get_text_content(node, &title);
-	if ((exc != DOM_NO_ERR) || (title == NULL)) {
-		return false;
+	nếu ((exc != DOM_NO_ERR) || (title == NULL)) {
+		trả_về false;
 	}
 
 	title_str = squash_whitespace(dom_string_data(title));
 	dom_string_unref(title);
 
-	if (title_str == NULL) {
-		return false;
+	nếu (title_str == NULL) {
+		trả_về false;
 	}
 
 	success = content__set_title(&c->base, title_str);
 
 	free(title_str);
 
-	return success;
+	trả_về success;
 }
 
 
@@ -562,11 +562,11 @@ static bool html_process_title(html_content *c, dom_node *node)
 static void html_texty_element_update(html_content *htmlc, dom_node *node)
 {
 	struct box *box = box_for_node(node);
-	if (box == NULL) {
-		return; /* No Box (yet?) so no gadget to update */
+	nếu (box == NULL) {
+		trả_về; /* No Box (yet?) so no gadget to update */
 	}
-	if (box->gadget == NULL) {
-		return; /* No gadget yet (under construction perhaps?) */
+	nếu (box->gadget == NULL) {
+		trả_về; /* No gadget yet (under construction perhaps?) */
 	}
 	form_gadget_sync_with_dom(box->gadget);
 	/* And schedule a redraw for the box */
@@ -586,18 +586,18 @@ dom_default_action_DOMNodeInserted_cb(struct dom_event *evt, void *pw)
 	html_content *htmlc = pw;
 
 	exc = dom_event_get_target(evt, &node);
-	if ((exc != DOM_NO_ERR) || (node == NULL)) {
+	nếu ((exc != DOM_NO_ERR) || (node == NULL)) {
 		/* failed to obtain the event target node */
-		return;
+		trả_về;
 	}
 
 	exc = dom_node_get_node_type(node, &type);
-	if ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
+	nếu ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
 		/* an element node has been inserted */
 		dom_html_element_type tag_type;
 
 		exc = dom_html_element_get_tag_type(node, &tag_type);
-		if (exc != DOM_NO_ERR) {
+		nếu (exc != DOM_NO_ERR) {
 			tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 		}
 
@@ -619,7 +619,7 @@ dom_default_action_DOMNodeInserted_cb(struct dom_event *evt, void *pw)
 			break;
 
 		case DOM_HTML_ELEMENT_TYPE_STYLE:
-			if (nsoption_bool(author_level_css)) {
+			nếu (nsoption_bool(author_level_css)) {
 				html_css_process_style(htmlc, (dom_node *)node);
 			}
 			break;
@@ -637,9 +637,9 @@ dom_default_action_DOMNodeInserted_cb(struct dom_event *evt, void *pw)
 			break;
 		}
 
-		if (htmlc->enable_scripting) {
+		nếu (htmlc->enable_scripting) {
 			/* ensure javascript context is available */
-			if (htmlc->jsthread == NULL) {
+			nếu (htmlc->jsthread == NULL) {
 				union content_msg_data msg_data;
 
 				msg_data.jsthread = &htmlc->jsthread;
@@ -651,7 +651,7 @@ dom_default_action_DOMNodeInserted_cb(struct dom_event *evt, void *pw)
 				      htmlc->jsthread,
 				      htmlc);
 			}
-			if (htmlc->jsthread != NULL) {
+			nếu (htmlc->jsthread != NULL) {
 				js_handle_new_element(htmlc->jsthread,
 						      (dom_element *) node);
 			}
@@ -674,14 +674,14 @@ dom_default_action_DOMNodeInsertedIntoDocument_cb(struct dom_event *evt,
 	dom_exception exc;
 
 	exc = dom_event_get_target(evt, &node);
-	if ((exc == DOM_NO_ERR) && (node != NULL)) {
+	nếu ((exc == DOM_NO_ERR) && (node != NULL)) {
 		exc = dom_node_get_node_type(node, &type);
-		if ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
+		nếu ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
 			/* an element node has been modified */
 			dom_html_element_type tag_type;
 
 			exc = dom_html_element_get_tag_type(node, &tag_type);
-			if (exc != DOM_NO_ERR) {
+			nếu (exc != DOM_NO_ERR) {
 				tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 			}
 
@@ -710,27 +710,27 @@ dom_default_action_DOMSubtreeModified_cb(struct dom_event *evt, void *pw)
 	html_content *htmlc = pw;
 
 	exc = dom_event_get_target(evt, &node);
-	if ((exc == DOM_NO_ERR) && (node != NULL)) {
-		if (htmlc->title == (dom_node *)node) {
+	nếu ((exc == DOM_NO_ERR) && (node != NULL)) {
+		nếu (htmlc->title == (dom_node *)node) {
 			/* Node is our title node */
 			html_process_title(htmlc, (dom_node *)node);
 			dom_node_unref(node);
-			return;
+			trả_về;
 		}
 
 		exc = dom_node_get_node_type(node, &type);
-		if ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
+		nếu ((exc == DOM_NO_ERR) && (type == DOM_ELEMENT_NODE)) {
 			/* an element node has been modified */
 			dom_html_element_type tag_type;
 
 			exc = dom_html_element_get_tag_type(node, &tag_type);
-			if (exc != DOM_NO_ERR) {
+			nếu (exc != DOM_NO_ERR) {
 				tag_type = DOM_HTML_ELEMENT_TYPE__UNKNOWN;
 			}
 
 			switch (tag_type) {
 			case DOM_HTML_ELEMENT_TYPE_STYLE:
-				if (nsoption_bool(author_level_css)) {
+				nếu (nsoption_bool(author_level_css)) {
 					html_css_update_style(htmlc,
 							(dom_node *)node);
 				}
@@ -756,7 +756,7 @@ dom_default_action_finished_cb(struct dom_event *evt, void *pw)
 {
 	html_content *htmlc = pw;
 
-	if (htmlc->jsthread != NULL)
+	nếu (htmlc->jsthread != NULL)
 		js_event_cleanup(htmlc->jsthread, evt);
 }
 
@@ -770,16 +770,16 @@ html_dom_event_fetcher(dom_string *type,
 	NSLOG(netsurf, DEEPDEBUG,
 	      "phase:%d type:%s", phase, dom_string_data(type));
 
-	if (phase == DOM_DEFAULT_ACTION_END) {
-		if (dom_string_isequal(type, corestring_dom_DOMNodeInserted)) {
-			return dom_default_action_DOMNodeInserted_cb;
-		} else if (dom_string_isequal(type, corestring_dom_DOMNodeInsertedIntoDocument)) {
-			return dom_default_action_DOMNodeInsertedIntoDocument_cb;
-		} else if (dom_string_isequal(type, corestring_dom_DOMSubtreeModified)) {
-			return dom_default_action_DOMSubtreeModified_cb;
+	nếu (phase == DOM_DEFAULT_ACTION_END) {
+		nếu (dom_string_isequal(type, corestring_dom_DOMNodeInserted)) {
+			trả_về dom_default_action_DOMNodeInserted_cb;
+		} không_thì nếu (dom_string_isequal(type, corestring_dom_DOMNodeInsertedIntoDocument)) {
+			trả_về dom_default_action_DOMNodeInsertedIntoDocument_cb;
+		} không_thì nếu (dom_string_isequal(type, corestring_dom_DOMSubtreeModified)) {
+			trả_về dom_default_action_DOMSubtreeModified_cb;
 		}
-	} else if (phase == DOM_DEFAULT_ACTION_FINISHED) {
-		return dom_default_action_finished_cb;
+	} không_thì nếu (phase == DOM_DEFAULT_ACTION_FINISHED) {
+		trả_về dom_default_action_finished_cb;
 	}
-	return NULL;
+	trả_về NULL;
 }

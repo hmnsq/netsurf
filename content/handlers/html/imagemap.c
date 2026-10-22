@@ -55,18 +55,18 @@ struct mapentry {
 	char *target;			/**< target frame (if any) */
 	union {
 		struct {
-			int x;		/**< x coordinate of centre */
-			int y;		/**< y coordinate of center */
-			int r;		/**< radius of circle */
+			số_nguyên x;		/**< x coordinate of centre */
+			số_nguyên y;		/**< y coordinate of center */
+			số_nguyên r;		/**< radius of circle */
 		} circle;
 		struct {
-			int x0;		/**< left hand edge */
-			int y0;		/**< top edge */
-			int x1;		/**< right hand edge */
-			int y1;		/**< bottom edge */
+			số_nguyên x0;		/**< left hand edge */
+			số_nguyên y0;		/**< top edge */
+			số_nguyên x1;		/**< right hand edge */
+			số_nguyên y1;		/**< bottom edge */
 		} rect;
 		struct {
-			int num;	/**< number of points */
+			số_nguyên num;	/**< number of points */
 			float *xcoords;	/**< x coordinates */
 			float *ycoords;	/**< y coordinates */
 		} poly;
@@ -90,14 +90,14 @@ static bool imagemap_create(html_content *c)
 {
 	assert(c != NULL);
 
-	if (c->imagemaps == NULL) {
+	nếu (c->imagemaps == NULL) {
 		c->imagemaps = calloc(HASH_SIZE, sizeof(struct imagemap *));
-		if (c->imagemaps == NULL) {
-			return false;
+		nếu (c->imagemaps == NULL) {
+			trả_về false;
 		}
 	}
 
-	return true;
+	trả_về true;
 }
 
 /**
@@ -106,17 +106,17 @@ static bool imagemap_create(html_content *c)
  * \param key The key to hash.
  * \return The hashed value.
  */
-static unsigned int imagemap_hash(const char *key)
+static unsigned số_nguyên imagemap_hash(const char *key)
 {
-	unsigned int z = 0;
+	unsigned số_nguyên z = 0;
 
-	if (key == 0) return 0;
+	nếu (key == 0) trả_về 0;
 
-	for (; *key != 0; key++) {
+	cho (; *key != 0; key++) {
 		z += *key & 0x1f;
 	}
 
-	return (z % (HASH_SIZE - 1)) + 1;
+	trả_về (z % (HASH_SIZE - 1)) + 1;
 }
 
 /**
@@ -131,24 +131,24 @@ static bool
 imagemap_add(html_content *c, dom_string *key, struct mapentry *list)
 {
 	struct imagemap *map;
-	unsigned int slot;
+	unsigned số_nguyên slot;
 
 	assert(c != NULL);
 	assert(key != NULL);
 	assert(list != NULL);
 
-	if (imagemap_create(c) == false)
-		return false;
+	nếu (imagemap_create(c) == false)
+		trả_về false;
 
 	map = calloc(1, sizeof(*map));
-	if (map == NULL)
-		return false;
+	nếu (map == NULL)
+		trả_về false;
 
 	/* \todo Stop relying on NULL termination of dom_string */
 	map->key = strdup(dom_string_data(key));
-	if (map->key == NULL) {
+	nếu (map->key == NULL) {
 		free(map);
-		return false;
+		trả_về false;
 	}
 
 	map->list = list;
@@ -158,7 +158,7 @@ imagemap_add(html_content *c, dom_string *key, struct mapentry *list)
 	map->next = c->imagemaps[slot];
 	c->imagemaps[slot] = map;
 
-	return true;
+	trả_về true;
 }
 
 /**
@@ -174,15 +174,15 @@ static void imagemap_freelist(struct mapentry *list)
 
 	entry = list;
 
-	while (entry != NULL) {
+	trong_khi (entry != NULL) {
 		prev = entry;
 
 		nsurl_unref(entry->url);
 
-		if (entry->target)
+		nếu (entry->target)
 			free(entry->target);
 
-		if (entry->type == IMAGEMAP_POLY) {
+		nếu (entry->type == IMAGEMAP_POLY) {
 			free(entry->bounds.poly.xcoords);
 			free(entry->bounds.poly.ycoords);
 		}
@@ -199,19 +199,19 @@ static void imagemap_freelist(struct mapentry *list)
  */
 void imagemap_destroy(html_content *c)
 {
-	unsigned int i;
+	unsigned số_nguyên i;
 
 	assert(c != NULL);
 
 	/* no imagemaps -> return */
-	if (c->imagemaps == NULL)
-		return;
+	nếu (c->imagemaps == NULL)
+		trả_về;
 
-	for (i = 0; i != HASH_SIZE; i++) {
+	cho (i = 0; i != HASH_SIZE; i++) {
 		struct imagemap *map, *next;
 
 		map = c->imagemaps[i];
-		while (map != NULL) {
+		trong_khi (map != NULL) {
 			next = map->next;
 			imagemap_freelist(map->list);
 			free(map->key);
@@ -230,24 +230,24 @@ void imagemap_destroy(html_content *c)
  */
 void imagemap_dump(html_content *c)
 {
-	unsigned int i;
+	unsigned số_nguyên i;
 
-	int j;
+	số_nguyên j;
 
 	assert(c != NULL);
 
-	if (c->imagemaps == NULL)
-		return;
+	nếu (c->imagemaps == NULL)
+		trả_về;
 
-	for (i = 0; i != HASH_SIZE; i++) {
+	cho (i = 0; i != HASH_SIZE; i++) {
 		struct imagemap *map;
 		struct mapentry *entry;
 
 		map = c->imagemaps[i];
-		while (map != NULL) {
+		trong_khi (map != NULL) {
 			NSLOG(netsurf, INFO, "Imagemap: %s", map->key);
 
-			for (entry = map->list; entry; entry = entry->next) {
+			cho (entry = map->list; entry; entry = entry->next) {
 				switch (entry->type) {
 				case IMAGEMAP_DEFAULT:
 					NSLOG(netsurf, INFO, "\tDefault: %s",
@@ -274,11 +274,11 @@ void imagemap_dump(html_content *c)
 					NSLOG(netsurf, INFO,
 					      "\tPolygon: %s:",
 					      nsurl_access(entry->url));
-					for (j = 0; j != entry->bounds.poly.num;
+					cho (j = 0; j != entry->bounds.poly.num;
 							j++) {
 						fprintf(stderr, "(%d,%d) ",
-							(int)entry->bounds.poly.xcoords[j],
-							(int)entry->bounds.poly.ycoords[j]);
+							(số_nguyên)entry->bounds.poly.xcoords[j],
+							(số_nguyên)entry->bounds.poly.ycoords[j]);
 					}
 					fprintf(stderr,"\n");
 					break;
@@ -312,74 +312,74 @@ imagemap_addtolist(const struct html_content *c,
 	struct mapentry *new_map, *temp;
 	bool ret = true;
 
-	if (dom_string_caseless_isequal(tagtype, corestring_dom_area)) {
+	nếu (dom_string_caseless_isequal(tagtype, corestring_dom_area)) {
 		bool nohref = false;
 		exc = dom_element_has_attribute(n,
 				corestring_dom_nohref, &nohref);
-		if ((exc != DOM_NO_ERR) || nohref)
+		nếu ((exc != DOM_NO_ERR) || nohref)
 			/* Skip <area nohref="anything" /> */
 			goto ok_out;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_href, &href);
-	if (exc != DOM_NO_ERR || href == NULL) {
+	nếu (exc != DOM_NO_ERR || href == NULL) {
 		/* No href="" attribute, skip this element */
 		goto ok_out;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_target, &target);
-	if (exc != DOM_NO_ERR) {
+	nếu (exc != DOM_NO_ERR) {
 		goto ok_out;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_shape, &shape);
-	if (exc != DOM_NO_ERR) {
+	nếu (exc != DOM_NO_ERR) {
 		goto ok_out;
 	}
 
 	/* If there's no shape, we default to rectangles */
-	if (shape == NULL)
+	nếu (shape == NULL)
 		shape = dom_string_ref(corestring_dom_rect);
 
-	if (!dom_string_caseless_lwc_isequal(shape, corestring_lwc_default)) {
+	nếu (!dom_string_caseless_lwc_isequal(shape, corestring_lwc_default)) {
 		/* If not 'default' and there's no 'coords' give up */
 		exc = dom_element_get_attribute(n, corestring_dom_coords,
 						&coords);
-		if (exc != DOM_NO_ERR || coords == NULL) {
+		nếu (exc != DOM_NO_ERR || coords == NULL) {
 			goto ok_out;
 		}
 	}
 
 	new_map = calloc(1, sizeof(*new_map));
-	if (new_map == NULL) {
+	nếu (new_map == NULL) {
 		goto bad_out;
 	}
 
-	if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_rect) ||
+	nếu (dom_string_caseless_lwc_isequal(shape, corestring_lwc_rect) ||
 	    dom_string_caseless_lwc_isequal(shape, corestring_lwc_rectangle))
 		new_map->type = IMAGEMAP_RECT;
-	else if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_circle))
+	không_thì nếu (dom_string_caseless_lwc_isequal(shape, corestring_lwc_circle))
 		new_map->type = IMAGEMAP_CIRCLE;
-	else if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_poly) ||
+	không_thì nếu (dom_string_caseless_lwc_isequal(shape, corestring_lwc_poly) ||
 		 dom_string_caseless_lwc_isequal(shape, corestring_lwc_polygon))
 		new_map->type = IMAGEMAP_POLY;
-	else if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_default))
+	không_thì nếu (dom_string_caseless_lwc_isequal(shape, corestring_lwc_default))
 		new_map->type = IMAGEMAP_DEFAULT;
-	else
+	không_thì
 		goto bad_out;
 
-	if (box_extract_link(c, href, base_url, &new_map->url) == false)
+	nếu (box_extract_link(c, href, base_url, &new_map->url) == false)
 		goto bad_out;
 
-	if (new_map->url == NULL) {
+	nếu (new_map->url == NULL) {
 		/* non-fatal error -> ignore this */
 		goto ok_free_map_out;
 	}
 
-	if (target != NULL) {
+	nếu (target != NULL) {
 		/* Copy target dom string into the map data */
 		new_map->target = malloc(dom_string_byte_length(target) + 1);
-		if (new_map->target == NULL)
+		nếu (new_map->target == NULL)
 			goto bad_out;
 
 		memcpy(new_map->target,
@@ -389,17 +389,17 @@ imagemap_addtolist(const struct html_content *c,
 		new_map->target[dom_string_byte_length(target)] = 0;
 	}
 
-	if (new_map->type != IMAGEMAP_DEFAULT) {
-		int x, y;
+	nếu (new_map->type != IMAGEMAP_DEFAULT) {
+		số_nguyên x, y;
 		float *xcoords, *ycoords;
 		/* coordinates are a comma-separated list of values */
 		char *val = strtok((char *)dom_string_data(coords), ",");
-		int num = 1;
+		số_nguyên num = 1;
 
 		switch (new_map->type) {
 		case IMAGEMAP_RECT:
 			/* (left, top, right, bottom) */
-			while (val != NULL && num <= 4) {
+			trong_khi (val != NULL && num <= 4) {
 				switch (num) {
 				case 1:
 					new_map->bounds.rect.x0 = atoi(val);
@@ -421,7 +421,7 @@ imagemap_addtolist(const struct html_content *c,
 			break;
 		case IMAGEMAP_CIRCLE:
 			/* (x, y, radius ) */
-			while (val != NULL && num <= 3) {
+			trong_khi (val != NULL && num <= 3) {
 				switch (num) {
 				case 1:
 					new_map->bounds.circle.x = atoi(val);
@@ -442,25 +442,25 @@ imagemap_addtolist(const struct html_content *c,
 			new_map->bounds.poly.xcoords = NULL;
 			new_map->bounds.poly.ycoords = NULL;
 
-			while (val != NULL) {
+			trong_khi (val != NULL) {
 				x = atoi(val);
 
 				val = strtok(NULL, ",");
-				if (val == NULL)
+				nếu (val == NULL)
 					break;
 
 				y = atoi(val);
 
 				xcoords = realloc(new_map->bounds.poly.xcoords,
 						num * sizeof(float));
-				if (xcoords == NULL) {
+				nếu (xcoords == NULL) {
 					goto bad_out;
 				}
 				new_map->bounds.poly.xcoords = xcoords;
 
 				ycoords = realloc(new_map->bounds.poly.ycoords,
 					num * sizeof(float));
-				if (ycoords == NULL) {
+				nếu (ycoords == NULL) {
 					goto bad_out;
 				}
 				new_map->bounds.poly.ycoords = ycoords;
@@ -482,12 +482,12 @@ imagemap_addtolist(const struct html_content *c,
 
 	new_map->next = NULL;
 
-	if (*entry) {
+	nếu (*entry) {
 		/* add to END of list */
-		for (temp = (*entry); temp->next != NULL; temp = temp->next)
+		cho (temp = (*entry); temp->next != NULL; temp = temp->next)
 			;
 		temp->next = new_map;
-	} else {
+	} không_thì {
 		(*entry) = new_map;
 	}
 
@@ -497,31 +497,31 @@ imagemap_addtolist(const struct html_content *c,
 bad_out:
 	ret = false;
 ok_free_map_out:
-	if (new_map != NULL) {
-		if (new_map->url != NULL)
+	nếu (new_map != NULL) {
+		nếu (new_map->url != NULL)
 			nsurl_unref(new_map->url);
-		if (new_map->type == IMAGEMAP_POLY &&
+		nếu (new_map->type == IMAGEMAP_POLY &&
 				new_map->bounds.poly.ycoords != NULL)
 			free(new_map->bounds.poly.ycoords);
-		if (new_map->type == IMAGEMAP_POLY &&
+		nếu (new_map->type == IMAGEMAP_POLY &&
 				new_map->bounds.poly.xcoords != NULL)
 			free(new_map->bounds.poly.xcoords);
-		if (new_map->target != NULL)
+		nếu (new_map->target != NULL)
 			free(new_map->target);
 
 		free(new_map);
 	}
 ok_out:
-	if (href != NULL)
+	nếu (href != NULL)
 		dom_string_unref(href);
-	if (target != NULL)
+	nếu (target != NULL)
 		dom_string_unref(target);
-	if (shape != NULL)
+	nếu (shape != NULL)
 		dom_string_unref(shape);
-	if (coords != NULL)
+	nếu (coords != NULL)
 		dom_string_unref(coords);
 
-	return ret;
+	trả_về ret;
 }
 
 /**
@@ -543,36 +543,36 @@ imagemap_extract_map_entries(dom_node *node, html_content *c,
 	uint32_t tag_count;
 
 	exc = dom_element_get_elements_by_tag_name(node, tname, &nlist);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	nếu (exc != DOM_NO_ERR) {
+		trả_về false;
 	}
 
 	exc = dom_nodelist_get_length(nlist, &tag_count);
-	if (exc != DOM_NO_ERR) {
+	nếu (exc != DOM_NO_ERR) {
 		dom_nodelist_unref(nlist);
-		return false;
+		trả_về false;
 	}
 
-	for (ent = 0; ent < tag_count; ++ent) {
+	cho (ent = 0; ent < tag_count; ++ent) {
 		dom_node *subnode;
 
 		exc = dom_nodelist_item(nlist, ent, &subnode);
-		if (exc != DOM_NO_ERR) {
+		nếu (exc != DOM_NO_ERR) {
 			dom_nodelist_unref(nlist);
-			return false;
+			trả_về false;
 		}
-		if (imagemap_addtolist(c, subnode, c->base_url,
+		nếu (imagemap_addtolist(c, subnode, c->base_url,
 				       entry, tname) == false) {
 			dom_node_unref(subnode);
 			dom_nodelist_unref(nlist);
-			return false;
+			trả_về false;
 		}
 		dom_node_unref(subnode);
 	}
 
 	dom_nodelist_unref(nlist);
 
-	return true;
+	trả_về true;
 }
 
 /**
@@ -586,10 +586,10 @@ imagemap_extract_map_entries(dom_node *node, html_content *c,
 static bool imagemap_extract_map(dom_node *node, html_content *c,
 		struct mapentry **entry)
 {
-	if (imagemap_extract_map_entries(node, c, entry,
+	nếu (imagemap_extract_map_entries(node, c, entry,
 			corestring_dom_area) == false)
-		return false;
-	return imagemap_extract_map_entries(node, c, entry,
+		trả_về false;
+	trả_về imagemap_extract_map_entries(node, c, entry,
 			corestring_dom_a);
 }
 
@@ -611,48 +611,48 @@ imagemap_extract(html_content *c)
 	exc = dom_document_get_elements_by_tag_name(c->document,
 						    corestring_dom_map,
 						    &nlist);
-	if (exc != DOM_NO_ERR) {
-		return NSERROR_DOM;
+	nếu (exc != DOM_NO_ERR) {
+		trả_về NSERROR_DOM;
 	}
 
 	exc = dom_nodelist_get_length(nlist, &maybe_maps);
-	if (exc != DOM_NO_ERR) {
+	nếu (exc != DOM_NO_ERR) {
 		ret = NSERROR_DOM;
 		goto out_nlist;
 	}
 
-	for (mapnr = 0; mapnr < maybe_maps; ++mapnr) {
+	cho (mapnr = 0; mapnr < maybe_maps; ++mapnr) {
 		dom_node *node;
 		dom_string *name;
 		exc = dom_nodelist_item(nlist, mapnr, &node);
-		if (exc != DOM_NO_ERR) {
+		nếu (exc != DOM_NO_ERR) {
 			ret = NSERROR_DOM;
 			goto out_nlist;
 		}
 
 		exc = dom_element_get_attribute(node, corestring_dom_id,
 						&name);
-		if (exc != DOM_NO_ERR) {
+		nếu (exc != DOM_NO_ERR) {
 			dom_node_unref(node);
 			ret = NSERROR_DOM;
 			goto out_nlist;
 		}
 
-		if (name == NULL) {
+		nếu (name == NULL) {
 			exc = dom_element_get_attribute(node,
 							corestring_dom_name,
 							&name);
-			if (exc != DOM_NO_ERR) {
+			nếu (exc != DOM_NO_ERR) {
 				dom_node_unref(node);
 				ret = NSERROR_DOM;
 				goto out_nlist;
 			}
 		}
 
-		if (name != NULL) {
+		nếu (name != NULL) {
 			struct mapentry *entry = NULL;
-			if (imagemap_extract_map(node, c, &entry) == false) {
-				if (entry != NULL) {
+			nếu (imagemap_extract_map(node, c, &entry) == false) {
+				nếu (entry != NULL) {
 					imagemap_freelist(entry);
 				}
 
@@ -667,7 +667,7 @@ imagemap_extract(html_content *c)
 			 * error as it just means that we've encountered
 			 * an incorrectly defined <map>...</map> block
 			 */
-			if ((entry != NULL) &&
+			nếu ((entry != NULL) &&
 			    (imagemap_add(c, name, entry) == false)) {
 				imagemap_freelist(entry);
 
@@ -686,7 +686,7 @@ out_nlist:
 
 	dom_nodelist_unref(nlist);
 
-	return ret;
+	trả_về ret;
 }
 
 /**
@@ -702,24 +702,24 @@ out_nlist:
  * \param click_y Y coordinate of click
  * \return 1 if point is in polygon, 0 if outside. 0 or 1 if on boundary
  */
-static int
-imagemap_point_in_poly(int num, float *xpt, float *ypt, unsigned long x,
+static số_nguyên
+imagemap_point_in_poly(số_nguyên num, float *xpt, float *ypt, unsigned long x,
 		unsigned long y, unsigned long click_x,	unsigned long click_y)
 {
-	int i, j, c = 0;
+	số_nguyên i, j, c = 0;
 
 	assert(xpt != NULL);
 	assert(ypt != NULL);
 
-	for (i = 0, j = num - 1; i < num; j = i++) {
-		if ((((ypt[i] + y <= click_y) && (click_y < ypt[j] + y)) ||
+	cho (i = 0, j = num - 1; i < num; j = i++) {
+		nếu ((((ypt[i] + y <= click_y) && (click_y < ypt[j] + y)) ||
 		     ((ypt[j] + y <= click_y) && (click_y < ypt[i] + y))) &&
 		     (click_x < (xpt[j] - xpt[i]) *
 		     (click_y - (ypt[i] + y)) / (ypt[j] - ypt[i]) + xpt[i] + x))
 			c = !c;
 	}
 
-	return c;
+	trả_về c;
 }
 
 /**
@@ -739,73 +739,73 @@ nsurl *imagemap_get(struct html_content *c, const char *key,
 		unsigned long click_x, unsigned long click_y,
 		const char **target)
 {
-	unsigned int slot = 0;
+	unsigned số_nguyên slot = 0;
 	struct imagemap *map;
 	struct mapentry *entry;
 	unsigned long cx, cy;
 
 	assert(c != NULL);
 
-	if (key == NULL)
-		return NULL;
+	nếu (key == NULL)
+		trả_về NULL;
 
-	if (c->imagemaps == NULL)
-		return NULL;
+	nếu (c->imagemaps == NULL)
+		trả_về NULL;
 
 	slot = imagemap_hash(key);
 
-	for (map = c->imagemaps[slot]; map != NULL; map = map->next) {
-		if (map->key != NULL && strcasecmp(map->key, key) == 0)
+	cho (map = c->imagemaps[slot]; map != NULL; map = map->next) {
+		nếu (map->key != NULL && strcasecmp(map->key, key) == 0)
 			break;
 	}
 
-	if (map == NULL || map->list == NULL)
-		return NULL;
+	nếu (map == NULL || map->list == NULL)
+		trả_về NULL;
 
-	for (entry = map->list; entry; entry = entry->next) {
+	cho (entry = map->list; entry; entry = entry->next) {
 		switch (entry->type) {
 		case IMAGEMAP_DEFAULT:
 			/* just return the URL. no checks required */
-			if (target)
+			nếu (target)
 				*target = entry->target;
-			return entry->url;
+			trả_về entry->url;
 			break;
 		case IMAGEMAP_RECT:
-			if (click_x >= x + entry->bounds.rect.x0 &&
+			nếu (click_x >= x + entry->bounds.rect.x0 &&
 				    click_x <= x + entry->bounds.rect.x1 &&
 				    click_y >= y + entry->bounds.rect.y0 &&
 				    click_y <= y + entry->bounds.rect.y1) {
-				if (target)
+				nếu (target)
 					*target = entry->target;
-				return entry->url;
+				trả_về entry->url;
 			}
 			break;
 		case IMAGEMAP_CIRCLE:
 			cx = x + entry->bounds.circle.x - click_x;
 			cy = y + entry->bounds.circle.y - click_y;
-			if ((cx * cx + cy * cy) <=
+			nếu ((cx * cx + cy * cy) <=
 				(unsigned long) (entry->bounds.circle.r *
 					entry->bounds.circle.r)) {
-				if (target)
+				nếu (target)
 					*target = entry->target;
-				return entry->url;
+				trả_về entry->url;
 			}
 			break;
 		case IMAGEMAP_POLY:
-			if (imagemap_point_in_poly(entry->bounds.poly.num,
+			nếu (imagemap_point_in_poly(entry->bounds.poly.num,
 					entry->bounds.poly.xcoords,
 					entry->bounds.poly.ycoords, x, y,
 					click_x, click_y)) {
-				if (target)
+				nếu (target)
 					*target = entry->target;
-				return entry->url;
+				trả_về entry->url;
 			}
 			break;
 		}
 	}
 
-	if (target)
+	nếu (target)
 		*target = NULL;
 
-	return NULL;
+	trả_về NULL;
 }

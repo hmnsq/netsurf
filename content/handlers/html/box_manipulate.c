@@ -46,42 +46,42 @@
  * \param b The box being destroyed.
  * \return 0 to allow talloc to continue destroying the tree.
  */
-static int box_talloc_destructor(struct box *b)
+static số_nguyên box_talloc_destructor(struct box *b)
 {
 	struct html_scrollbar_data *data;
 
-	if ((b->flags & STYLE_OWNED) && b->style != NULL) {
+	nếu ((b->flags & STYLE_OWNED) && b->style != NULL) {
 		css_computed_style_destroy(b->style);
 		b->style = NULL;
 	}
 
-	if (b->styles != NULL) {
+	nếu (b->styles != NULL) {
 		css_select_results_destroy(b->styles);
 		b->styles = NULL;
 	}
 
-	if (b->href != NULL)
+	nếu (b->href != NULL)
 		nsurl_unref(b->href);
 
 	lwc_string_unref(b->id);
 
-	if (b->node != NULL) {
+	nếu (b->node != NULL) {
 		dom_node_unref(b->node);
 	}
 
-	if (b->scroll_x != NULL) {
+	nếu (b->scroll_x != NULL) {
 		data = scrollbar_get_data(b->scroll_x);
 		scrollbar_destroy(b->scroll_x);
 		free(data);
 	}
 
-	if (b->scroll_y != NULL) {
+	nếu (b->scroll_y != NULL) {
 		data = scrollbar_get_data(b->scroll_y);
 		scrollbar_destroy(b->scroll_y);
 		free(data);
 	}
 
-	return 0;
+	trả_về 0;
 }
 
 
@@ -96,12 +96,12 @@ box_create(css_select_results *styles,
 	   lwc_string *id,
 	   void *context)
 {
-	unsigned int i;
+	unsigned số_nguyên i;
 	struct box *box;
 
 	box = talloc(context, struct box);
-	if (!box) {
-		return 0;
+	nếu (!box) {
+		trả_về 0;
 	}
 
 	talloc_set_destructor(box, box_talloc_destructor);
@@ -116,7 +116,7 @@ box_create(css_select_results *styles,
 	box->height = 0;
 	box->descendant_x0 = box->descendant_y0 = 0;
 	box->descendant_x1 = box->descendant_y1 = 0;
-	for (i = 0; i != 4; i++)
+	cho (i = 0; i != 4; i++)
 		box->margin[i] = box->padding[i] = box->border[i].width = 0;
 	box->scroll_x = box->scroll_y = NULL;
 	box->min_width = 0;
@@ -153,7 +153,7 @@ box_create(css_select_results *styles,
 	box->iframe = NULL;
 	box->node = NULL;
 
-	return box;
+	trả_về box;
 }
 
 
@@ -163,10 +163,10 @@ void box_add_child(struct box *parent, struct box *child)
 	assert(parent);
 	assert(child);
 
-	if (parent->children != 0) {	/* has children already */
+	nếu (parent->children != 0) {	/* has children already */
 		parent->last->next = child;
 		child->prev = parent->last;
-	} else {			/* this is the first child */
+	} không_thì {			/* this is the first child */
 		parent->children = child;
 		child->prev = 0;
 	}
@@ -183,9 +183,9 @@ void box_insert_sibling(struct box *box, struct box *new_box)
 	new_box->prev = box;
 	new_box->next = box->next;
 	box->next = new_box;
-	if (new_box->next)
+	nếu (new_box->next)
 		new_box->next->prev = new_box;
-	else if (new_box->parent)
+	không_thì nếu (new_box->parent)
 		new_box->parent->last = new_box;
 }
 
@@ -197,16 +197,16 @@ void box_unlink_and_free(struct box *box)
 	struct box *next = box->next;
 	struct box *prev = box->prev;
 
-	if (parent) {
-		if (parent->children == box)
+	nếu (parent) {
+		nếu (parent->children == box)
 			parent->children = next;
-		if (parent->last == box)
+		nếu (parent->last == box)
 			parent->last = next ? next : prev;
 	}
 
-	if (prev)
+	nếu (prev)
 		prev->next = next;
-	if (next)
+	nếu (next)
 		next->prev = prev;
 
 	box_free(box);
@@ -219,7 +219,7 @@ void box_free(struct box *box)
 	struct box *child, *next;
 
 	/* free children first */
-	for (child = box->children; child; child = next) {
+	cho (child = box->children; child; child = next) {
 		next = child->next;
 		box_free(child);
 	}
@@ -232,14 +232,14 @@ void box_free(struct box *box)
 /* Exported function documented in html/box.h */
 void box_free_box(struct box *box)
 {
-	if (!(box->flags & CLONE)) {
-		if (box->gadget)
+	nếu (!(box->flags & CLONE)) {
+		nếu (box->gadget)
 			form_free_control(box->gadget);
-		if (box->scroll_x != NULL)
+		nếu (box->scroll_x != NULL)
 			scrollbar_destroy(box->scroll_x);
-		if (box->scroll_y != NULL)
+		nếu (box->scroll_y != NULL)
 			scrollbar_destroy(box->scroll_y);
-		if (box->styles != NULL)
+		nếu (box->styles != NULL)
 			css_select_results_destroy(box->styles);
 	}
 
@@ -255,26 +255,26 @@ box_handle_scrollbars(struct content *c,
 		      bool right)
 {
 	struct html_scrollbar_data *data;
-	int visible_width, visible_height;
-	int full_width, full_height;
+	số_nguyên visible_width, visible_height;
+	số_nguyên full_width, full_height;
 	nserror res;
 
-	if (!bottom && box->scroll_x != NULL) {
+	nếu (!bottom && box->scroll_x != NULL) {
 		data = scrollbar_get_data(box->scroll_x);
 		scrollbar_destroy(box->scroll_x);
 		free(data);
 		box->scroll_x = NULL;
 	}
 
-	if (!right && box->scroll_y != NULL) {
+	nếu (!right && box->scroll_y != NULL) {
 		data = scrollbar_get_data(box->scroll_y);
 		scrollbar_destroy(box->scroll_y);
 		free(data);
 		box->scroll_y = NULL;
 	}
 
-	if (!bottom && !right) {
-		return NSERROR_OK;
+	nếu (!bottom && !right) {
+		trả_về NSERROR_OK;
 	}
 
 	visible_width = box->width + box->padding[RIGHT] + box->padding[LEFT];
@@ -289,11 +289,11 @@ box_handle_scrollbars(struct content *c,
 			box->descendant_y1 + box->padding[BOTTOM] :
 			visible_height;
 
-	if (right) {
-		if (box->scroll_y == NULL) {
+	nếu (right) {
+		nếu (box->scroll_y == NULL) {
 			data = malloc(sizeof(struct html_scrollbar_data));
-			if (data == NULL) {
-				return NSERROR_NOMEM;
+			nếu (data == NULL) {
+				trả_về NSERROR_NOMEM;
 			}
 			data->c = c;
 			data->box = box;
@@ -304,21 +304,21 @@ box_handle_scrollbars(struct content *c,
 					       data,
 					       html_overflow_scroll_callback,
 					       &(box->scroll_y));
-			if (res != NSERROR_OK) {
-				return res;
+			nếu (res != NSERROR_OK) {
+				trả_về res;
 			}
-		} else  {
+		} không_thì  {
 			scrollbar_set_extents(box->scroll_y,
 					      visible_height,
 					      visible_height,
 					      full_height);
 		}
 	}
-	if (bottom) {
-		if (box->scroll_x == NULL) {
+	nếu (bottom) {
+		nếu (box->scroll_x == NULL) {
 			data = malloc(sizeof(struct html_scrollbar_data));
-			if (data == NULL) {
-				return NSERROR_OK;
+			nếu (data == NULL) {
+				trả_về NSERROR_OK;
 			}
 			data->c = c;
 			data->box = box;
@@ -329,10 +329,10 @@ box_handle_scrollbars(struct content *c,
 					       data,
 					       html_overflow_scroll_callback,
 					       &box->scroll_x);
-			if (res != NSERROR_OK) {
-				return res;
+			nếu (res != NSERROR_OK) {
+				trả_về res;
 			}
-		} else {
+		} không_thì {
 			scrollbar_set_extents(box->scroll_x,
 					visible_width -
 					(right ? SCROLLBAR_WIDTH : 0),
@@ -340,11 +340,11 @@ box_handle_scrollbars(struct content *c,
 		}
 	}
 
-	if (right && bottom) {
+	nếu (right && bottom) {
 		scrollbar_make_pair(box->scroll_x, box->scroll_y);
 	}
 
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 

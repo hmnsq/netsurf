@@ -161,7 +161,7 @@ struct prot_space_data {
 	 * space. When 0, it means the default port for given scheme,
 	 * i.e. 80 (http), 443 (https).
 	 */
-	unsigned int port;
+	unsigned số_nguyên port;
 	/** Protection realm */
 	char *realm;
 
@@ -182,7 +182,7 @@ struct prot_space_data {
  */
 struct url_internal_data {
 	char *title;		/**< Resource title */
-	unsigned int visits;	/**< Visit count */
+	unsigned số_nguyên visits;	/**< Visit count */
 	time_t last_visit;	/**< Last visit time */
 	content_type type;	/**< Type of resource */
 };
@@ -194,11 +194,11 @@ struct url_internal_data {
 struct path_data {
 	nsurl *url;		/**< Full URL */
 	lwc_string *scheme;	/**< URL scheme for data */
-	unsigned int port;	/**< Port number for data. When 0, it means
+	unsigned số_nguyên port;	/**< Port number for data. When 0, it means
 				 * the default port for given scheme, i.e.
 				 * 80 (http), 443 (https). */
 	char *segment;		/**< Path segment for this node */
-	unsigned int frag_cnt;	/**< Number of entries in path_data::fragment */
+	unsigned số_nguyên frag_cnt;	/**< Number of entries in path_data::fragment */
 	char **fragment;	/**< Array of fragments */
 	bool persistent;	/**< This entry should persist */
 
@@ -265,7 +265,7 @@ struct host_part {
 struct search_node {
 	const struct host_part *data;	/**< Host tree entry */
 
-	unsigned int level;		/**< Node level */
+	unsigned số_nguyên level;		/**< Node level */
 
 	struct search_node *left;	/**< Left subtree */
 	struct search_node *right;	/**< Right subtree */
@@ -292,7 +292,7 @@ static struct search_node *search_trees[NUM_SEARCH_TREES] = {
 /** Current cookie database file version */
 #define COOKIE_FILE_VERSION 102
 /** loaded cookie file version */
-static int loaded_cookie_file_version;
+static số_nguyên loaded_cookie_file_version;
 
 /** Minimum URL database file version */
 #define MIN_URL_FILE_VERSION 106
@@ -326,16 +326,16 @@ static struct bloom_filter *url_bloom;
  */
 static nserror urldb_write_timet(FILE *fp, time_t val)
 {
-	int use;
+	số_nguyên use;
 	char op[32];
 
 	use = nsc_sntimet(op, 32, &val);
-	if (use == 0) {
-		fprintf(fp, "%i\n", (int)val);
-	} else {
+	nếu (use == 0) {
+		fprintf(fp, "%i\n", (số_nguyên)val);
+	} không_thì {
 		fprintf(fp, "%.*s\n", use, op);
 	}
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 /**
@@ -354,55 +354,55 @@ urldb_write_paths(const struct path_data *parent,
 		  const char *host,
 		  FILE *fp,
 		  char **path,
-		  int *path_alloc,
-		  int *path_used,
+		  số_nguyên *path_alloc,
+		  số_nguyên *path_used,
 		  time_t expiry)
 {
 	const struct path_data *p = parent;
-	int i;
+	số_nguyên i;
 
 	do {
-		int seglen = p->segment != NULL ? strlen(p->segment) : 0;
-		int len = *path_used + seglen + 1;
+		số_nguyên seglen = p->segment != NULL ? strlen(p->segment) : 0;
+		số_nguyên len = *path_used + seglen + 1;
 
-		if (*path_alloc < len) {
+		nếu (*path_alloc < len) {
 			char *temp;
 			temp = realloc(*path,
 				       (len > 64) ? len : *path_alloc + 64);
-			if (!temp) {
-				return;
+			nếu (!temp) {
+				trả_về;
 			}
 			*path = temp;
 			*path_alloc = (len > 64) ? len : *path_alloc + 64;
 		}
 
-		if (p->segment != NULL) {
+		nếu (p->segment != NULL) {
 			memcpy(*path + *path_used - 1, p->segment, seglen);
 		}
 
-		if (p->children != NULL) {
+		nếu (p->children != NULL) {
 			(*path)[*path_used + seglen - 1] = '/';
 			(*path)[*path_used + seglen] = '\0';
-		} else {
+		} không_thì {
 			(*path)[*path_used + seglen - 1] = '\0';
 			len -= 1;
 		}
 
 		*path_used = len;
 
-		if (p->children != NULL) {
+		nếu (p->children != NULL) {
 			/* Drill down into children */
 			p = p->children;
-		} else {
+		} không_thì {
 			/* leaf node */
-			if (p->persistent ||
+			nếu (p->persistent ||
 			    ((p->urld.last_visit > expiry) &&
 			     (p->urld.visits > 0))) {
 				fprintf(fp, "%s\n", lwc_string_data(p->scheme));
 
-				if (p->port) {
+				nếu (p->port) {
 					fprintf(fp,"%d\n", p->port);
-				} else {
+				} không_thì {
 					fprintf(fp, "\n");
 				}
 
@@ -417,35 +417,35 @@ urldb_write_paths(const struct path_data *parent,
 				urldb_write_timet(fp, p->urld.last_visit);
 
 				/* entry type */
-				fprintf(fp, "%i\n", (int)p->urld.type);
+				fprintf(fp, "%i\n", (số_nguyên)p->urld.type);
 
 				fprintf(fp, "\n");
 
-				if (p->urld.title) {
+				nếu (p->urld.title) {
 					uint8_t *s = (uint8_t *) p->urld.title;
 
-					for (i = 0; s[i] != '\0'; i++)
-						if (s[i] < 32)
+					cho (i = 0; s[i] != '\0'; i++)
+						nếu (s[i] < 32)
 							s[i] = ' ';
-					for (--i; ((i > 0) && (s[i] == ' '));
+					cho (--i; ((i > 0) && (s[i] == ' '));
 					     i--)
 						s[i] = '\0';
 					fprintf(fp, "%s\n", p->urld.title);
-				} else {
+				} không_thì {
 					fprintf(fp, "\n");
 				}
 			}
 
 			/* Now, find next node to process. */
-			while (p != parent) {
-				int seglen = p->segment != NULL
+			trong_khi (p != parent) {
+				số_nguyên seglen = p->segment != NULL
 					? strlen(p->segment) : 0;
 
 				/* Remove our segment from the path */
 				*path_used -= seglen;
 				(*path)[*path_used - 1] = '\0';
 
-				if (p->next != NULL) {
+				nếu (p->next != NULL) {
 					/* Have a sibling, process that */
 					p = p->next;
 					break;
@@ -459,7 +459,7 @@ urldb_write_paths(const struct path_data *parent,
 				p = p->parent;
 			}
 		}
-	} while (p != parent);
+	} trong_khi (p != parent);
 }
 
 
@@ -473,25 +473,25 @@ urldb_write_paths(const struct path_data *parent,
 static void
 urldb_count_urls(const struct path_data *root,
 		 time_t expiry,
-		 unsigned int *count)
+		 unsigned số_nguyên *count)
 {
 	const struct path_data *p = root;
 
 	do {
-		if (p->children != NULL) {
+		nếu (p->children != NULL) {
 			/* Drill down into children */
 			p = p->children;
-		} else {
+		} không_thì {
 			/* No more children, increment count if required */
-			if (p->persistent ||
+			nếu (p->persistent ||
 			    ((p->urld.last_visit > expiry) &&
 			     (p->urld.visits > 0))) {
 				(*count)++;
 			}
 
 			/* Now, find next node to process. */
-			while (p != root) {
-				if (p->next != NULL) {
+			trong_khi (p != root) {
+				nếu (p->next != NULL) {
 					/* Have a sibling, process that */
 					p = p->next;
 					break;
@@ -501,7 +501,7 @@ urldb_count_urls(const struct path_data *root,
 				p = p->parent;
 			}
 		}
-	} while (p != root);
+	} trong_khi (p != root);
 }
 
 
@@ -515,52 +515,52 @@ static void urldb_save_search_tree(struct search_node *parent, FILE *fp)
 {
 	char host[256];
 	const struct host_part *h;
-	unsigned int path_count = 0;
+	unsigned số_nguyên path_count = 0;
 	char *path, *p, *end;
-	int path_alloc = 64, path_used = 1;
+	số_nguyên path_alloc = 64, path_used = 1;
 	time_t expiry, hsts_expiry = 0;
-	int hsts_include_subdomains = 0;
+	số_nguyên hsts_include_subdomains = 0;
 
 	expiry = time(NULL) - ((60 * 60 * 24) * nsoption_int(expire_url));
 
-	if (parent == &empty)
-		return;
+	nếu (parent == &empty)
+		trả_về;
 
 	urldb_save_search_tree(parent->left, fp);
 
 	path = malloc(path_alloc);
-	if (!path)
-		return;
+	nếu (!path)
+		trả_về;
 
 	path[0] = '\0';
 
-	for (h = parent->data, p = host, end = host + sizeof host;
+	cho (h = parent->data, p = host, end = host + sizeof host;
 	     h && h != &db_root && p < end; h = h->parent) {
-		int written = snprintf(p, end - p, "%s%s", h->part,
+		số_nguyên written = snprintf(p, end - p, "%s%s", h->part,
 				       (h->parent && h->parent->parent) ? "." : "");
-		if (written < 0) {
+		nếu (written < 0) {
 			free(path);
-			return;
+			trả_về;
 		}
 		p += written;
 	}
 
 	h = parent->data;
-	if (h && h->hsts.expires > expiry) {
+	nếu (h && h->hsts.expires > expiry) {
 		hsts_expiry = h->hsts.expires;
 		hsts_include_subdomains = h->hsts.include_sub_domains;
 	}
 
 	urldb_count_urls(&parent->data->paths, expiry, &path_count);
 
-	if (path_count > 0) {
+	nếu (path_count > 0) {
 		fprintf(fp, "%s %i ", host, hsts_include_subdomains);
 		urldb_write_timet(fp, hsts_expiry);
 		fprintf(fp, "%i\n", path_count);
 
 		urldb_write_paths(&parent->data->paths, host, fp,
 				  &path, &path_alloc, &path_used, expiry);
-	} else if (hsts_expiry) {
+	} không_thì nếu (hsts_expiry) {
 		fprintf(fp, "%s %i ", host, hsts_include_subdomains);
 		urldb_write_timet(fp, hsts_expiry);
 		fprintf(fp, "0\n");
@@ -589,10 +589,10 @@ urldb_iterate_entries_path(const struct path_data *parent,
 	const struct cookie_data *c;
 
 	do {
-		if (p->children != NULL) {
+		nếu (p->children != NULL) {
 			/* Drill down into children */
 			p = p->children;
-		} else {
+		} không_thì {
 			/* All leaf nodes in the path tree should have an URL or
 			 * cookies attached to them. If this is not the case, it
 			 * indicates that there's a bug in the file loader/URL
@@ -600,25 +600,25 @@ urldb_iterate_entries_path(const struct path_data *parent,
 			assert(url_callback || cookie_callback);
 
 			/** \todo handle fragments? */
-			if (url_callback) {
+			nếu (url_callback) {
 				const struct url_internal_data *u = &p->urld;
 
 				assert(p->url);
 
-				if (!url_callback(p->url,
+				nếu (!url_callback(p->url,
 						  (const struct url_data *) u))
-					return false;
-			} else {
+					trả_về false;
+			} không_thì {
 				c = (const struct cookie_data *)p->cookies;
-				for (; c != NULL; c = c->next) {
-					if (!cookie_callback(c))
-						return false;
+				cho (; c != NULL; c = c->next) {
+					nếu (!cookie_callback(c))
+						trả_về false;
 				}
 			}
 
 			/* Now, find next node to process. */
-			while (p != parent) {
-				if (p->next != NULL) {
+			trong_khi (p != parent) {
+				nếu (p->next != NULL) {
 					/* Have a sibling, process that */
 					p = p->next;
 					break;
@@ -628,9 +628,9 @@ urldb_iterate_entries_path(const struct path_data *parent,
 				p = p->parent;
 			}
 		}
-	} while (p != parent);
+	} trong_khi (p != parent);
 
-	return true;
+	trả_về true;
 }
 
 
@@ -653,7 +653,7 @@ static bool urldb__host_is_ip_address(const char *host)
 #ifndef NO_IPV6
 	struct in6_addr ipv6;
 	char ipv6_addr[64];
-	unsigned int ipv6_addr_len;
+	unsigned số_nguyên ipv6_addr_len;
 #endif
 	/**
 	 * @todo FIXME Some parts of urldb.c make confusions between hosts
@@ -674,9 +674,9 @@ static bool urldb__host_is_ip_address(const char *host)
 	 */
 
 	slash = strchr(host, '/');
-	if (slash == NULL) {
+	nếu (slash == NULL) {
 		sane_host = host;
-	} else {
+	} không_thì {
 		char *c = strdup(host);
 		c[slash - host] = '\0';
 		sane_host = c;
@@ -685,54 +685,54 @@ static bool urldb__host_is_ip_address(const char *host)
 		      host);
 	}
 
-	if (strspn(sane_host, "0123456789abcdefABCDEF[].:") < host_len)
+	nếu (strspn(sane_host, "0123456789abcdefABCDEF[].:") < host_len)
 		goto out_false;
 
-	if (inet_aton(sane_host, &ipv4) != 0) {
+	nếu (inet_aton(sane_host, &ipv4) != 0) {
 		/* This can only be a sane IPv4 address if it contains 3 dots.
 		 * Helpfully, inet_aton is happy to treat "a", "a.b", "a.b.c",
 		 * and "a.b.c.d" as valid IPv4 address strings where we only
 		 * support the full, dotted-quad, form.
 		 */
-		int num_dots = 0;
+		số_nguyên num_dots = 0;
 		size_t index;
 
-		for (index = 0; index < host_len; index++) {
-			if (sane_host[index] == '.')
+		cho (index = 0; index < host_len; index++) {
+			nếu (sane_host[index] == '.')
 				num_dots++;
 		}
 
-		if (num_dots == 3)
+		nếu (num_dots == 3)
 			goto out_true;
-		else
+		không_thì
 			goto out_false;
 	}
 
 #ifndef NO_IPV6
-	if ((host_len < 6) ||
+	nếu ((host_len < 6) ||
 	    (sane_host[0] != '[') ||
 	    (sane_host[host_len - 1] != ']')) {
 		goto out_false;
 	}
 
 	ipv6_addr_len = host_len - 2;
-	if (ipv6_addr_len >= sizeof(ipv6_addr)) {
+	nếu (ipv6_addr_len >= sizeof(ipv6_addr)) {
 		ipv6_addr_len = sizeof(ipv6_addr) - 1;
 	}
 	strncpy(ipv6_addr, sane_host + 1, ipv6_addr_len);
 	ipv6_addr[ipv6_addr_len] = '\0';
 
-	if (inet_pton(AF_INET6, ipv6_addr, &ipv6) == 1)
+	nếu (inet_pton(AF_INET6, ipv6_addr, &ipv6) == 1)
 		goto out_true;
 #endif
 
 out_false:
-	if (slash != NULL) free((void *)sane_host);
-	return false;
+	nếu (slash != NULL) free((void *)sane_host);
+	trả_về false;
 
 out_true:
-	if (slash != NULL) free((void *)sane_host);
-	return true;
+	nếu (slash != NULL) free((void *)sane_host);
+	trả_về true;
 }
 
 
@@ -743,43 +743,43 @@ out_true:
  * \param b prefix
  * \return 0 if match, non-zero, otherwise
  */
-static int urldb_search_match_prefix(const struct host_part *a, const char *b)
+static số_nguyên urldb_search_match_prefix(const struct host_part *a, const char *b)
 {
 	const char *end, *dot;
-	int plen, ret;
+	số_nguyên plen, ret;
 
 	assert(a && a != &db_root && b);
 
-	if (urldb__host_is_ip_address(b)) {
+	nếu (urldb__host_is_ip_address(b)) {
 		/* IP address */
-		return strncasecmp(a->part, b, strlen(b));
+		trả_về strncasecmp(a->part, b, strlen(b));
 	}
 
 	end = b + strlen(b) + 1;
 
-	while (b < end && a && a != &db_root) {
+	trong_khi (b < end && a && a != &db_root) {
 		dot = strchr(b, '.');
-		if (!dot) {
+		nếu (!dot) {
 			/* last segment */
 			dot = end - 1;
 		}
 
 		/* Compare strings (length limited) */
-		if ((ret = strncasecmp(a->part, b, dot - b)) != 0)
+		nếu ((ret = strncasecmp(a->part, b, dot - b)) != 0)
 			/* didn't match => return difference */
-			return ret;
+			trả_về ret;
 
 		/* The strings matched */
-		if (dot < end - 1) {
+		nếu (dot < end - 1) {
 			/* Consider segment lengths only in the case
 			 * where the prefix contains segments */
 			plen = strlen(a->part);
-			if (plen > dot - b) {
+			nếu (plen > dot - b) {
 				/* len(a) > len(b) */
-				return 1;
-			} else if (plen < dot - b) {
+				trả_về 1;
+			} không_thì nếu (plen < dot - b) {
 				/* len(a) < len(b) */
-				return -1;
+				trả_về -1;
 			}
 		}
 
@@ -791,16 +791,16 @@ static int urldb_search_match_prefix(const struct host_part *a, const char *b)
 	 *    a) The path lengths differ
 	 * or b) The hosts are identical
 	 */
-	if (a && a != &db_root && b >= end) {
+	nếu (a && a != &db_root && b >= end) {
 		/* len(a) > len(b) => prefix matches */
-		return 0;
-	} else if ((!a || a == &db_root) && b < end) {
+		trả_về 0;
+	} không_thì nếu ((!a || a == &db_root) && b < end) {
 		/* len(a) < len(b) => prefix does not match */
-		return -1;
+		trả_về -1;
 	}
 
 	/* Identical */
-	return 0;
+	trả_về 0;
 }
 
 
@@ -817,50 +817,50 @@ urldb_iterate_partial_host(struct search_node *root,
 		const char *prefix,
 		bool (*callback)(nsurl *url, const struct url_data *data))
 {
-	int c;
+	số_nguyên c;
 
 	assert(root && prefix && callback);
 
-	if (root == &empty)
-		return true;
+	nếu (root == &empty)
+		trả_về true;
 
 	c = urldb_search_match_prefix(root->data, prefix);
 
-	if (c > 0) {
+	nếu (c > 0) {
 		/* No match => look in left subtree */
-		return urldb_iterate_partial_host(root->left,
+		trả_về urldb_iterate_partial_host(root->left,
 						  prefix,
 						  callback);
-	} else if (c < 0) {
+	} không_thì nếu (c < 0) {
 		/* No match => look in right subtree */
-		return urldb_iterate_partial_host(root->right,
+		trả_về urldb_iterate_partial_host(root->right,
 						  prefix,
 						  callback);
-	} else {
+	} không_thì {
 		/* Match => iterate over l/r subtrees & process this node */
-		if (!urldb_iterate_partial_host(root->left,
+		nếu (!urldb_iterate_partial_host(root->left,
 						prefix,
 						callback)) {
-			return false;
+			trả_về false;
 		}
 
-		if (root->data->paths.children) {
+		nếu (root->data->paths.children) {
 			/* and extract all paths attached to this host */
-			if (!urldb_iterate_entries_path(&root->data->paths,
+			nếu (!urldb_iterate_entries_path(&root->data->paths,
 							callback,
 							NULL)) {
-				return false;
+				trả_về false;
 			}
 		}
 
-		if (!urldb_iterate_partial_host(root->right,
+		nếu (!urldb_iterate_partial_host(root->right,
 						prefix,
 						callback)) {
-			return false;
+			trả_về false;
 		}
 	}
 
-	return true;
+	trả_về true;
 }
 
 
@@ -912,42 +912,42 @@ urldb_iterate_partial_path(const struct path_data *parent,
 
 	do {
 		slash = strchr(prefix, '/');
-		if (!slash) {
+		nếu (!slash) {
 			slash = end;
 		}
 
-		if (slash == prefix && *prefix == '/') {
+		nếu (slash == prefix && *prefix == '/') {
 			/* Ignore "//" */
 			prefix++;
 			continue;
 		}
 
-		if (strncasecmp(p->segment, prefix, slash - prefix) == 0) {
+		nếu (strncasecmp(p->segment, prefix, slash - prefix) == 0) {
 			/* prefix matches so far */
-			if (slash == end) {
+			nếu (slash == end) {
 				/* we've run out of prefix, so all
 				 * paths below this one match */
-				if (!urldb_iterate_entries_path(p,
+				nếu (!urldb_iterate_entries_path(p,
 								callback,
 								NULL)) {
-					return false;
+					trả_về false;
 				}
 
 				/* Progress to next sibling */
 				p = p->next;
-			} else {
+			} không_thì {
 				/* Skip over this segment */
 				prefix = slash + 1;
 
 				p = p->children;
 			}
-		} else {
+		} không_thì {
 			/* Doesn't match this segment, try next sibling */
 			p = p->next;
 		}
-	} while (p != NULL);
+	} trong_khi (p != NULL);
 
-	return true;
+	trả_về true;
 }
 
 
@@ -964,34 +964,34 @@ urldb_iterate_entries_host(struct search_node *parent,
 		bool (*url_callback)(nsurl *url, const struct url_data *data),
 		bool (*cookie_callback)(const struct cookie_data *data))
 {
-	if (parent == &empty) {
-		return true;
+	nếu (parent == &empty) {
+		trả_về true;
 	}
 
-	if (!urldb_iterate_entries_host(parent->left,
+	nếu (!urldb_iterate_entries_host(parent->left,
 					url_callback,
 					cookie_callback)) {
-		return false;
+		trả_về false;
 	}
 
-	if ((parent->data->paths.children) ||
+	nếu ((parent->data->paths.children) ||
 	    ((cookie_callback) &&
 	     (parent->data->paths.cookies))) {
 		/* We have paths (or domain cookies), so iterate them */
-		if (!urldb_iterate_entries_path(&parent->data->paths,
+		nếu (!urldb_iterate_entries_path(&parent->data->paths,
 						url_callback,
 						cookie_callback)) {
-			return false;
+			trả_về false;
 		}
 	}
 
-	if (!urldb_iterate_entries_host(parent->right,
+	nếu (!urldb_iterate_entries_host(parent->right,
 					url_callback,
 					cookie_callback)) {
-		return false;
+		trả_về false;
 	}
 
-	return true;
+	trả_về true;
 }
 
 
@@ -1010,24 +1010,24 @@ urldb_add_host_node(const char *part, struct host_part *parent)
 	assert(part && parent);
 
 	d = calloc(1, sizeof(struct host_part));
-	if (!d) {
-		return NULL;
+	nếu (!d) {
+		trả_về NULL;
 	}
 
 	d->part = strdup(part);
-	if (!d->part) {
+	nếu (!d->part) {
 		free(d);
-		return NULL;
+		trả_về NULL;
 	}
 
 	d->next = parent->children;
-	if (parent->children) {
+	nếu (parent->children) {
 		parent->children->prev = d;
 	}
 	d->parent = parent;
 	parent->children = d;
 
-	return d;
+	trả_về d;
 }
 
 
@@ -1038,9 +1038,9 @@ urldb_add_host_node(const char *part, struct host_part *parent)
  * \param b second value
  * \return 0 for equal else positive or negative value on comparison
  */
-static int urldb_add_path_fragment_cmp(const void *a, const void *b)
+static số_nguyên urldb_add_path_fragment_cmp(const void *a, const void *b)
 {
-	return strcasecmp(*((const char **) a), *((const char **) b));
+	trả_về strcasecmp(*((const char **) a), *((const char **) b));
 }
 
 
@@ -1061,20 +1061,20 @@ urldb_add_path_fragment(struct path_data *segment, lwc_string *fragment)
 	/* If no fragment, this function is a NOP
 	 * This may seem strange, but it makes the rest
 	 * of the code cleaner */
-	if (!fragment)
-		return segment;
+	nếu (!fragment)
+		trả_về segment;
 
 	temp = realloc(segment->fragment,
 		       (segment->frag_cnt + 1) * sizeof(char *));
-	if (!temp)
-		return NULL;
+	nếu (!temp)
+		trả_về NULL;
 
 	segment->fragment = temp;
 	segment->fragment[segment->frag_cnt] =
 		strdup(lwc_string_data(fragment));
-	if (!segment->fragment[segment->frag_cnt]) {
+	nếu (!segment->fragment[segment->frag_cnt]) {
 		/* Don't free temp - it's now our buffer */
-		return NULL;
+		trả_về NULL;
 	}
 
 	segment->frag_cnt++;
@@ -1086,7 +1086,7 @@ urldb_add_path_fragment(struct path_data *segment, lwc_string *fragment)
 	      sizeof (char *),
 	      urldb_add_path_fragment_cmp);
 
-	return segment;
+	trả_về segment;
 }
 
 
@@ -1102,7 +1102,7 @@ urldb_add_path_fragment(struct path_data *segment, lwc_string *fragment)
  */
 static struct path_data *
 urldb_add_path_node(lwc_string *scheme,
-		    unsigned int port,
+		    unsigned số_nguyên port,
 		    const char *segment,
 		    lwc_string *fragment,
 		    struct path_data *parent)
@@ -1112,46 +1112,46 @@ urldb_add_path_node(lwc_string *scheme,
 	assert(scheme && segment && parent);
 
 	d = calloc(1, sizeof(struct path_data));
-	if (!d)
-		return NULL;
+	nếu (!d)
+		trả_về NULL;
 
 	d->scheme = lwc_string_ref(scheme);
 
 	d->port = port;
 
 	d->segment = strdup(segment);
-	if (!d->segment) {
+	nếu (!d->segment) {
 		lwc_string_unref(d->scheme);
 		free(d);
-		return NULL;
+		trả_về NULL;
 	}
 
-	if (fragment) {
-		if (!urldb_add_path_fragment(d, fragment)) {
+	nếu (fragment) {
+		nếu (!urldb_add_path_fragment(d, fragment)) {
 			free(d->segment);
 			lwc_string_unref(d->scheme);
 			free(d);
-			return NULL;
+			trả_về NULL;
 		}
 	}
 
-	for (e = parent->children; e; e = e->next) {
-		if (strcmp(e->segment, d->segment) > 0)
+	cho (e = parent->children; e; e = e->next) {
+		nếu (strcmp(e->segment, d->segment) > 0)
 			break;
 	}
 
-	if (e) {
+	nếu (e) {
 		d->prev = e->prev;
 		d->next = e;
-		if (e->prev)
+		nếu (e->prev)
 			e->prev->next = d;
-		else
+		không_thì
 			parent->children = d;
 		e->prev = d;
-	} else if (!parent->children) {
+	} không_thì nếu (!parent->children) {
 		d->prev = d->next = NULL;
 		parent->children = parent->last = d;
-	} else {
+	} không_thì {
 		d->next = NULL;
 		d->prev = parent->last;
 		parent->last->next = d;
@@ -1159,7 +1159,7 @@ urldb_add_path_node(lwc_string *scheme,
 	}
 	d->parent = parent;
 
-	return d;
+	trả_về d;
 }
 
 
@@ -1173,12 +1173,12 @@ static struct search_node **urldb_get_search_tree_direct(const char *host)
 {
 	assert(host);
 
-	if (urldb__host_is_ip_address(host)) {
-		return &search_trees[ST_IP];
-	} else if (ascii_is_alpha(*host)) {
-		return &search_trees[ST_DN + ascii_to_lower(*host) - 'a'];
+	nếu (urldb__host_is_ip_address(host)) {
+		trả_về &search_trees[ST_IP];
+	} không_thì nếu (ascii_is_alpha(*host)) {
+		trả_về &search_trees[ST_DN + ascii_to_lower(*host) - 'a'];
 	}
-	return &search_trees[ST_EE];
+	trả_về &search_trees[ST_EE];
 }
 
 
@@ -1190,7 +1190,7 @@ static struct search_node **urldb_get_search_tree_direct(const char *host)
  */
 static struct search_node *urldb_get_search_tree(const char *host)
 {
-	return *urldb_get_search_tree_direct(host);
+	trả_về *urldb_get_search_tree_direct(host);
 }
 
 
@@ -1201,41 +1201,41 @@ static struct search_node *urldb_get_search_tree(const char *host)
  * \param b string to compare
  * \return 0 if match, non-zero, otherwise
  */
-static int urldb_search_match_string(const struct host_part *a, const char *b)
+static số_nguyên urldb_search_match_string(const struct host_part *a, const char *b)
 {
 	const char *end, *dot;
-	int plen, ret;
+	số_nguyên plen, ret;
 
 	assert(a && a != &db_root && b);
 
-	if (urldb__host_is_ip_address(b)) {
+	nếu (urldb__host_is_ip_address(b)) {
 		/* IP address */
-		return strcasecmp(a->part, b);
+		trả_về strcasecmp(a->part, b);
 	}
 
 	end = b + strlen(b) + 1;
 
-	while (b < end && a && a != &db_root) {
+	trong_khi (b < end && a && a != &db_root) {
 		dot = strchr(b, '.');
-		if (!dot) {
+		nếu (!dot) {
 			/* last segment */
 			dot = end - 1;
 		}
 
 		/* Compare strings (length limited) */
-		if ((ret = strncasecmp(a->part, b, dot - b)) != 0)
+		nếu ((ret = strncasecmp(a->part, b, dot - b)) != 0)
 			/* didn't match => return difference */
-			return ret;
+			trả_về ret;
 
 		/* The strings matched, now check that the lengths do, too */
 		plen = strlen(a->part);
 
-		if (plen > dot - b) {
+		nếu (plen > dot - b) {
 			/* len(a) > len(b) */
-			return 1;
-		} else if (plen < dot - b) {
+			trả_về 1;
+		} không_thì nếu (plen < dot - b) {
 			/* len(a) < len(b) */
-			return -1;
+			trả_về -1;
 		}
 
 		b = dot + 1;
@@ -1246,16 +1246,16 @@ static int urldb_search_match_string(const struct host_part *a, const char *b)
 	 *    a) The path lengths differ
 	 * or b) The hosts are identical
 	 */
-	if (a && a != &db_root && b >= end) {
+	nếu (a && a != &db_root && b >= end) {
 		/* len(a) > len(b) */
-		return 1;
-	} else if ((!a || a == &db_root) && b < end) {
+		trả_về 1;
+	} không_thì nếu ((!a || a == &db_root) && b < end) {
 		/* len(a) < len(b) */
-		return -1;
+		trả_về -1;
 	}
 
 	/* Identical */
-	return 0;
+	trả_về 0;
 }
 
 
@@ -1269,23 +1269,23 @@ static int urldb_search_match_string(const struct host_part *a, const char *b)
 static const struct host_part *
 urldb_search_find(struct search_node *root, const char *host)
 {
-	int c;
+	số_nguyên c;
 
 	assert(root && host);
 
-	if (root == &empty) {
-		return NULL;
+	nếu (root == &empty) {
+		trả_về NULL;
 	}
 
 	c = urldb_search_match_string(root->data, host);
 
-	if (c > 0) {
-		return urldb_search_find(root->left, host);
-	} else if (c < 0) {
-		return urldb_search_find(root->right, host);
+	nếu (c > 0) {
+		trả_về urldb_search_find(root->left, host);
+	} không_thì nếu (c < 0) {
+		trả_về urldb_search_find(root->right, host);
 	}
 
-	return root->data;
+	trả_về root->data;
 }
 
 
@@ -1311,7 +1311,7 @@ urldb_match_path(const struct path_data *parent,
 	assert(parent != NULL);
 	assert(parent->segment == NULL);
 
-	if (path[0] != '/') {
+	nếu (path[0] != '/') {
 		NSLOG(netsurf, INFO, "path is %s", path);
 	}
 
@@ -1320,32 +1320,32 @@ urldb_match_path(const struct path_data *parent,
 	/* Start with children, as parent has no segment */
 	p = parent->children;
 
-	while (p != NULL) {
+	trong_khi (p != NULL) {
 		slash = strchr(path + 1, '/');
-		if (!slash) {
+		nếu (!slash) {
 			slash = path + strlen(path);
 		}
 
-		if (strncmp(p->segment, path + 1, slash - path - 1) == 0 &&
+		nếu (strncmp(p->segment, path + 1, slash - path - 1) == 0 &&
 		    lwc_string_isequal(p->scheme, scheme, &match) == lwc_error_ok &&
 		    match == true &&
 		    p->port == port) {
-			if (*slash == '\0') {
+			nếu (*slash == '\0') {
 				/* Complete match */
-				return (struct path_data *) p;
+				trả_về (struct path_data *) p;
 			}
 
 			/* Match so far, go down tree */
 			p = p->children;
 
 			path = slash;
-		} else {
+		} không_thì {
 			/* No match, try next sibling */
 			p = p->next;
 		}
 	}
 
-	return NULL;
+	trả_về NULL;
 }
 
 
@@ -1364,60 +1364,60 @@ static struct path_data *urldb_find_url(nsurl *url)
 	const char *host_str;
 	lwc_string *scheme, *host, *port;
 	size_t len = 0;
-	unsigned int port_int;
+	unsigned số_nguyên port_int;
 	bool match;
 
 	assert(url);
 
-	if (url_bloom != NULL) {
-		if (bloom_search_hash(url_bloom, nsurl_hash(url)) == false) {
-			return NULL;
+	nếu (url_bloom != NULL) {
+		nếu (bloom_search_hash(url_bloom, nsurl_hash(url)) == false) {
+			trả_về NULL;
 		}
 	}
 
 	scheme = nsurl_get_component(url, NSURL_SCHEME);
-	if (scheme == NULL)
-		return NULL;
+	nếu (scheme == NULL)
+		trả_về NULL;
 
-	if (lwc_string_isequal(scheme, corestring_lwc_mailto, &match) ==
+	nếu (lwc_string_isequal(scheme, corestring_lwc_mailto, &match) ==
 	    lwc_error_ok && match == true) {
 		lwc_string_unref(scheme);
-		return NULL;
+		trả_về NULL;
 	}
 
 	host = nsurl_get_component(url, NSURL_HOST);
-	if (host != NULL) {
+	nếu (host != NULL) {
 		host_str = lwc_string_data(host);
 		lwc_string_unref(host);
 
-	} else if (lwc_string_isequal(scheme, corestring_lwc_file, &match) ==
+	} không_thì nếu (lwc_string_isequal(scheme, corestring_lwc_file, &match) ==
 		   lwc_error_ok && match == true) {
 		host_str = "localhost";
 
-	} else {
+	} không_thì {
 		lwc_string_unref(scheme);
-		return NULL;
+		trả_về NULL;
 	}
 
 	tree = urldb_get_search_tree(host_str);
 	h = urldb_search_find(tree, host_str);
-	if (!h) {
+	nếu (!h) {
 		lwc_string_unref(scheme);
-		return NULL;
+		trả_về NULL;
 	}
 
 	/* generate plq (path, leaf, query) */
-	if (nsurl_get(url, NSURL_PATH | NSURL_QUERY, &plq, &len) != NSERROR_OK) {
+	nếu (nsurl_get(url, NSURL_PATH | NSURL_QUERY, &plq, &len) != NSERROR_OK) {
 		lwc_string_unref(scheme);
-		return NULL;
+		trả_về NULL;
 	}
 
 	/* Get port */
 	port = nsurl_get_component(url, NSURL_PORT);
-	if (port != NULL) {
+	nếu (port != NULL) {
 		port_int = atoi(lwc_string_data(port));
 		lwc_string_unref(port);
-	} else {
+	} không_thì {
 		port_int = 0;
 	}
 
@@ -1426,7 +1426,7 @@ static struct path_data *urldb_find_url(nsurl *url)
 	free(plq);
 	lwc_string_unref(scheme);
 
-	return p;
+	trả_về p;
 }
 
 
@@ -1438,26 +1438,26 @@ static struct path_data *urldb_find_url(nsurl *url)
 static void urldb_dump_paths(struct path_data *parent)
 {
 	const struct path_data *p = parent;
-	unsigned int i;
+	unsigned số_nguyên i;
 
 	do {
-		if (p->segment != NULL) {
+		nếu (p->segment != NULL) {
 			NSLOG(netsurf, INFO, "\t%s : %u",
 			      lwc_string_data(p->scheme), p->port);
 
 			NSLOG(netsurf, INFO, "\t\t'%s'", p->segment);
 
-			for (i = 0; i != p->frag_cnt; i++) {
+			cho (i = 0; i != p->frag_cnt; i++) {
 				NSLOG(netsurf, INFO, "\t\t\t#%s",
 				      p->fragment[i]);
 			}
 		}
 
-		if (p->children != NULL) {
+		nếu (p->children != NULL) {
 			p = p->children;
-		} else {
-			while (p != parent) {
-				if (p->next != NULL) {
+		} không_thì {
+			trong_khi (p != parent) {
+				nếu (p->next != NULL) {
 					p = p->next;
 					break;
 				}
@@ -1465,7 +1465,7 @@ static void urldb_dump_paths(struct path_data *parent)
 				p = p->parent;
 			}
 		}
-	} while (p != parent);
+	} trong_khi (p != parent);
 }
 
 
@@ -1478,7 +1478,7 @@ static void urldb_dump_hosts(struct host_part *parent)
 {
 	struct host_part *h;
 
-	if (parent->part) {
+	nếu (parent->part) {
 		NSLOG(netsurf, INFO, "%s", parent->part);
 
 		NSLOG(netsurf, INFO, "\t%s invalid SSL certs",
@@ -1489,7 +1489,7 @@ static void urldb_dump_hosts(struct host_part *parent)
 	urldb_dump_paths(&parent->paths);
 
 	/* and recurse */
-	for (h = parent->children; h; h = h->next) {
+	cho (h = parent->children; h; h = h->next) {
 		urldb_dump_hosts(h);
 	}
 }
@@ -1501,36 +1501,36 @@ static void urldb_dump_hosts(struct host_part *parent)
  * \param parent Parent node of tree to dump
  * \param depth Tree depth
  */
-static void urldb_dump_search(struct search_node *parent, int depth)
+static void urldb_dump_search(struct search_node *parent, số_nguyên depth)
 {
 	const struct host_part *h;
-	int i; /* index into string */
+	số_nguyên i; /* index into string */
 	char s[1024];
-	int r;
-	int sl = sizeof(s) - 2;
+	số_nguyên r;
+	số_nguyên sl = sizeof(s) - 2;
 
-	if (parent == &empty)
-		return;
+	nếu (parent == &empty)
+		trả_về;
 
 	urldb_dump_search(parent->left, depth + 1);
 
-	for (i = 0; i != depth; i++) {
+	cho (i = 0; i != depth; i++) {
 		s[i] = ' ';
 	}
 
-	for (h = parent->data; h; h = h->parent) {
-		if (h->part) {
+	cho (h = parent->data; h; h = h->parent) {
+		nếu (h->part) {
 			r = snprintf(&s[i], sl - i, "%s", h->part);
-			if (r < 0) {
+			nếu (r < 0) {
 				break;
 			}
-			if ((i + r) >= sl) {
+			nếu ((i + r) >= sl) {
 				break;
 			}
 			i += r;
 		}
 
-		if (h->parent && h->parent->parent) {
+		nếu (h->parent && h->parent->parent) {
 			s[i]='.';
 			i++;
 		}
@@ -1550,19 +1550,19 @@ static void urldb_dump_search(struct search_node *parent, int depth)
  * \param b second host part
  * \return 0 if match, non-zero, otherwise
  */
-static int
+static số_nguyên
 urldb_search_match_host(const struct host_part *a, const struct host_part *b)
 {
-	int ret;
+	số_nguyên ret;
 
 	assert(a && b);
 
 	/* traverse up tree to root, comparing parts as we go. */
-	for (; a && a != &db_root && b && b != &db_root;
+	cho (; a && a != &db_root && b && b != &db_root;
 	     a = a->parent, b = b->parent) {
-		if ((ret = strcasecmp(a->part, b->part)) != 0) {
+		nếu ((ret = strcasecmp(a->part, b->part)) != 0) {
 			/* They differ => return the difference here */
-			return ret;
+			trả_về ret;
 		}
 	}
 
@@ -1570,16 +1570,16 @@ urldb_search_match_host(const struct host_part *a, const struct host_part *b)
 	 *    a) The path lengths differ
 	 * or b) The hosts are identical
 	 */
-	if (a && a != &db_root && (!b || b == &db_root)) {
+	nếu (a && a != &db_root && (!b || b == &db_root)) {
 		/* len(a) > len(b) */
-		return 1;
-	} else if ((!a || a == &db_root) && b && b != &db_root) {
+		trả_về 1;
+	} không_thì nếu ((!a || a == &db_root) && b && b != &db_root) {
 		/* len(a) < len(b) */
-		return -1;
+		trả_về -1;
 	}
 
 	/* identical */
-	return 0;
+	trả_về 0;
 }
 
 
@@ -1593,7 +1593,7 @@ static struct search_node *urldb_search_skew(struct search_node *root)
 {
 	assert(root);
 
-	if (root->left->level == root->level) {
+	nếu (root->left->level == root->level) {
 		struct search_node *temp;
 
 		temp = root->left;
@@ -1602,7 +1602,7 @@ static struct search_node *urldb_search_skew(struct search_node *root)
 		root = temp;
 	}
 
-	return root;
+	trả_về root;
 }
 
 
@@ -1616,7 +1616,7 @@ static struct search_node *urldb_search_split(struct search_node *root)
 {
 	assert(root);
 
-	if (root->right->right->level == root->level) {
+	nếu (root->right->right->level == root->level) {
 		struct search_node *temp;
 
 		temp = root->right;
@@ -1627,7 +1627,7 @@ static struct search_node *urldb_search_split(struct search_node *root)
 		root->level++;
 	}
 
-	return root;
+	trả_về root;
 }
 
 
@@ -1643,28 +1643,28 @@ urldb_search_insert_internal(struct search_node *root, struct search_node *n)
 {
 	assert(root && n);
 
-	if (root == &empty) {
+	nếu (root == &empty) {
 		root = n;
-	} else {
-		int c = urldb_search_match_host(root->data, n->data);
+	} không_thì {
+		số_nguyên c = urldb_search_match_host(root->data, n->data);
 
-		if (c > 0) {
+		nếu (c > 0) {
 			root->left = urldb_search_insert_internal(
 				root->left, n);
-		} else if (c < 0) {
+		} không_thì nếu (c < 0) {
 			root->right = urldb_search_insert_internal(
 				root->right, n);
-		} else {
+		} không_thì {
 			/* exact match */
 			free(n);
-			return root;
+			trả_về root;
 		}
 
 		root = urldb_search_skew(root);
 		root = urldb_search_split(root);
 	}
 
-	return root;
+	trả_về root;
 }
 
 
@@ -1683,8 +1683,8 @@ urldb_search_insert(struct search_node *root, const struct host_part *data)
 	assert(root && data);
 
 	n = malloc(sizeof(struct search_node));
-	if (!n)
-		return NULL;
+	nếu (!n)
+		trả_về NULL;
 
 	n->level = 1;
 	n->data = data;
@@ -1692,7 +1692,7 @@ urldb_search_insert(struct search_node *root, const struct host_part *data)
 
 	root = urldb_search_insert_internal(root, n);
 
-	return root;
+	trả_về root;
 }
 
 
@@ -1711,65 +1711,65 @@ urldb_parse_avpair(struct cookie_internal_data *c,
 		   char *v,
 		   bool was_quoted)
 {
-	int vlen;
+	số_nguyên vlen;
 
 	assert(c && n && v);
 
 	/* Strip whitespace from start of name */
-	for (; *n; n++) {
-		if (*n != ' ' && *n != '\t')
+	cho (; *n; n++) {
+		nếu (*n != ' ' && *n != '\t')
 			break;
 	}
 
 	/* Strip whitespace from end of name */
-	for (vlen = strlen(n); vlen; vlen--) {
-		if (n[vlen] == ' ' || n[vlen] == '\t')
+	cho (vlen = strlen(n); vlen; vlen--) {
+		nếu (n[vlen] == ' ' || n[vlen] == '\t')
 			n[vlen] = '\0';
-		else
+		không_thì
 			break;
 	}
 
 	/* Strip whitespace from start of value */
-	for (; *v; v++) {
-		if (*v != ' ' && *v != '\t')
+	cho (; *v; v++) {
+		nếu (*v != ' ' && *v != '\t')
 			break;
 	}
 
 	/* Strip whitespace from end of value */
-	for (vlen = strlen(v); vlen; vlen--) {
-		if (v[vlen] == ' ' || v[vlen] == '\t')
+	cho (vlen = strlen(v); vlen; vlen--) {
+		nếu (v[vlen] == ' ' || v[vlen] == '\t')
 			v[vlen] = '\0';
-		else
+		không_thì
 			break;
 	}
 
-	if (!c->comment && strcasecmp(n, "Comment") == 0) {
+	nếu (!c->comment && strcasecmp(n, "Comment") == 0) {
 		c->comment = strdup(v);
-		if (!c->comment)
-			return false;
-	} else if (!c->domain && strcasecmp(n, "Domain") == 0) {
-		if (v[0] == '.') {
+		nếu (!c->comment)
+			trả_về false;
+	} không_thì nếu (!c->domain && strcasecmp(n, "Domain") == 0) {
+		nếu (v[0] == '.') {
 			/* Domain must start with a dot */
 			c->domain_from_set = true;
 			c->domain = strdup(v);
-			if (!c->domain)
-				return false;
+			nếu (!c->domain)
+				trả_về false;
 		}
-	} else if (strcasecmp(n, "Max-Age") == 0) {
-		int temp = atoi(v);
-		if (temp == 0)
+	} không_thì nếu (strcasecmp(n, "Max-Age") == 0) {
+		số_nguyên temp = atoi(v);
+		nếu (temp == 0)
 			/* Special case - 0 means delete */
 			c->expires = 0;
-		else
+		không_thì
 			c->expires = time(NULL) + temp;
-	} else if (!c->path && strcasecmp(n, "Path") == 0) {
+	} không_thì nếu (!c->path && strcasecmp(n, "Path") == 0) {
 		c->path_from_set = true;
 		c->path = strdup(v);
-		if (!c->path)
-			return false;
-	} else if (strcasecmp(n, "Version") == 0) {
+		nếu (!c->path)
+			trả_về false;
+	} không_thì nếu (strcasecmp(n, "Version") == 0) {
 		c->version = atoi(v);
-	} else if (strcasecmp(n, "Expires") == 0) {
+	} không_thì nếu (strcasecmp(n, "Expires") == 0) {
 		char *datenoday;
 		time_t expires;
 		nserror res;
@@ -1777,14 +1777,14 @@ urldb_parse_avpair(struct cookie_internal_data *c,
 		/* Strip dayname from date (these are hugely variable
 		 * and liable to break the parser.  They also serve no
 		 * useful purpose) */
-		for (datenoday = v;
+		cho (datenoday = v;
 		     *datenoday && !ascii_is_digit(*datenoday);
 		     datenoday++) {
 			/* do nothing */
 		}
 
 		res = nsc_strntimet(datenoday, strlen(datenoday), &expires);
-		if (res != NSERROR_OK) {
+		nếu (res != NSERROR_OK) {
 			/* assume we have an unrepresentable date =>
 			 * force it to the maximum possible value of a
 			 * 32bit time_t (this may break in 2038. We'll
@@ -1792,20 +1792,20 @@ urldb_parse_avpair(struct cookie_internal_data *c,
 			expires = (time_t)0x7fffffff;
 		}
 		c->expires = expires;
-	} else if (strcasecmp(n, "Secure") == 0) {
+	} không_thì nếu (strcasecmp(n, "Secure") == 0) {
 		c->secure = true;
-	} else if (strcasecmp(n, "HttpOnly") == 0) {
+	} không_thì nếu (strcasecmp(n, "HttpOnly") == 0) {
 		c->http_only = true;
-	} else if (!c->name) {
+	} không_thì nếu (!c->name) {
 		c->name = strdup(n);
 		c->value = strdup(v);
 		c->value_was_quoted = was_quoted;
-		if (!c->name || !c->value) {
-			return false;
+		nếu (!c->name || !c->value) {
+			trả_về false;
 		}
 	}
 
-	return true;
+	trả_về true;
 }
 
 
@@ -1850,18 +1850,18 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 	assert(url && cookie && *cookie);
 
 	c = calloc(1, sizeof(struct cookie_internal_data));
-	if (c == NULL)
-		return NULL;
+	nếu (c == NULL)
+		trả_về NULL;
 
 	c->expires = -1;
 
 	name[0] = '\0';
 	value[0] = '\0';
 
-	for (cur = *cookie; *cur; cur++) {
-		if (*cur == '\r' && *(cur + 1) == '\n') {
+	cho (cur = *cookie; *cur; cur++) {
+		nếu (*cur == '\r' && *(cur + 1) == '\n') {
 			/* End of header */
-			if (quoted) {
+			nếu (quoted) {
 				/* Unmatched quote encountered */
 
 				/* Match Firefox 2.0.0.11 */
@@ -1870,32 +1870,32 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 			}
 
 			break;
-		} else if (*cur == '\r') {
+		} không_thì nếu (*cur == '\r') {
 			/* Spurious linefeed */
 			continue;
-		} else if (*cur == '\n') {
+		} không_thì nếu (*cur == '\n') {
 			/* Spurious newline */
 			continue;
 		}
 
-		if (in_value && !had_value_data) {
-			if (*cur == ' ' || *cur == '\t') {
+		nếu (in_value && !had_value_data) {
+			nếu (*cur == ' ' || *cur == '\t') {
 				/* Strip leading whitespace from value */
 				continue;
-			} else {
+			} không_thì {
 				had_value_data = true;
 
 				/* Value is taken verbatim if first non-space
 				 * character is not a " */
-				if (*cur != '"') {
+				nếu (*cur != '"') {
 					value_verbatim = true;
 				}
 			}
 		}
 
-		if (in_value && !value_verbatim && (*cur == '"')) {
+		nếu (in_value && !value_verbatim && (*cur == '"')) {
 			/* Only non-verbatim values may be quoted */
-			if (cur == *cookie || *(cur - 1) != '\\') {
+			nếu (cur == *cookie || *(cur - 1) != '\\') {
 				/* Only unescaped quotes count */
 				was_quoted = quoted;
 				quoted = !quoted;
@@ -1904,13 +1904,13 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 			}
 		}
 
-		if (!quoted && !in_value && *cur == '=') {
+		nếu (!quoted && !in_value && *cur == '=') {
 			/* First equals => attr-value separator */
 			in_value = true;
 			continue;
 		}
 
-		if (!quoted && (was_quoted || *cur == ';')) {
+		nếu (!quoted && (was_quoted || *cur == ';')) {
 			/* Semicolon or after quoted value
 			 * => end of current avpair */
 
@@ -1918,10 +1918,10 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 			*n = '\0';
 			*v = '\0';
 
-			if (!urldb_parse_avpair(c, name, value, was_quoted)) {
+			nếu (!urldb_parse_avpair(c, name, value, was_quoted)) {
 				/* Memory exhausted */
 				urldb_free_cookie(c);
-				return NULL;
+				trả_về NULL;
 			}
 
 			/* And reset to start */
@@ -1934,7 +1934,7 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 
 			/* Now, if the current input is anything other than a
 			 * semicolon, we must be sure to reprocess it */
-			if (*cur != ';') {
+			nếu (*cur != ';') {
 				cur--;
 			}
 
@@ -1970,22 +1970,22 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 		 * of these is particularly likely and if they do occur, the
 		 * website is more broken than we can be bothered to handle.
 		 */
-		if (!quoted && *cur == ',') {
+		nếu (!quoted && *cur == ',') {
 			/* Find semi-colon, if any */
 			const char *p;
 			const char *semi = strchr(cur + 1, ';');
-			if (!semi)
+			nếu (!semi)
 				semi = cur + strlen(cur) - 2 /* CRLF */;
 
 			/* Look for equals sign between comma and semi */
-			for (p = cur + 1; p < semi; p++)
-				if (*p == '=')
+			cho (p = cur + 1; p < semi; p++)
+				nếu (*p == '=')
 					break;
 
-			if (p == semi) {
+			nếu (p == semi) {
 				/* none found => comma internal to value */
 				/* do nothing */
-			} else {
+			} không_thì {
 				/* found one => comma marks end of cookie */
 				cur++;
 				break;
@@ -1994,11 +1994,11 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 
 		/* Accumulate into buffers, always leaving space for a NUL */
 		/** \todo is silently truncating overlong names/values wise? */
-		if (!in_value) {
-			if (n < name + (sizeof(name) - 1))
+		nếu (!in_value) {
+			nếu (n < name + (sizeof(name) - 1))
 				*n++ = *cur;
-		} else {
-			if (v < value + (sizeof(value) - 1))
+		} không_thì {
+			nếu (v < value + (sizeof(value) - 1))
 				*v++ = *cur;
 		}
 	}
@@ -2007,57 +2007,57 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 	*n = '\0';
 	*v = '\0';
 
-	if (!urldb_parse_avpair(c, name, value, was_quoted)) {
+	nếu (!urldb_parse_avpair(c, name, value, was_quoted)) {
 		/* Memory exhausted */
 		urldb_free_cookie(c);
-		return NULL;
+		trả_về NULL;
 	}
 
 	/* Now fix-up default values */
-	if (c->domain == NULL) {
+	nếu (c->domain == NULL) {
 		lwc_string *host = nsurl_get_component(url, NSURL_HOST);
-		if (host == NULL) {
+		nếu (host == NULL) {
 			urldb_free_cookie(c);
-			return NULL;
+			trả_về NULL;
 		}
 		c->domain = strdup(lwc_string_data(host));
 		lwc_string_unref(host);
 	}
 
-	if (c->path == NULL) {
+	nếu (c->path == NULL) {
 		const char *path_data;
 		char *path, *slash;
 		lwc_string *path_lwc;
 
 		path_lwc = nsurl_get_component(url, NSURL_PATH);
-		if (path_lwc == NULL) {
+		nếu (path_lwc == NULL) {
 			urldb_free_cookie(c);
-			return NULL;
+			trả_về NULL;
 		}
 		path_data = lwc_string_data(path_lwc);
 
 		/* Strip leafname and trailing slash (4.3.1) */
 		slash = strrchr(path_data, '/');
-		if (slash != NULL) {
+		nếu (slash != NULL) {
 			/* Special case: retain first slash in path */
-			if (slash == path_data)
+			nếu (slash == path_data)
 				slash++;
 
 			slash = strndup(path_data, slash - path_data);
-			if (slash == NULL) {
+			nếu (slash == NULL) {
 				lwc_string_unref(path_lwc);
 				urldb_free_cookie(c);
-				return NULL;
+				trả_về NULL;
 			}
 
 			path = slash;
 			lwc_string_unref(path_lwc);
-		} else {
+		} không_thì {
 			path = strdup(lwc_string_data(path_lwc));
 			lwc_string_unref(path_lwc);
-			if (path == NULL) {
+			nếu (path == NULL) {
 				urldb_free_cookie(c);
-				return NULL;
+				trả_về NULL;
 			}
 		}
 
@@ -2067,7 +2067,7 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
 	/* Write back current position */
 	*cookie = cur;
 
-	return c;
+	trả_về c;
 }
 
 
@@ -2084,7 +2084,7 @@ urldb_parse_cookie(nsurl *url, const char **cookie)
  */
 static struct path_data *
 urldb_add_path(lwc_string *scheme,
-	       unsigned int port,
+	       unsigned số_nguyên port,
 	       const struct host_part *host,
 	       char *path_query,
 	       lwc_string *fragment,
@@ -2101,17 +2101,17 @@ urldb_add_path(lwc_string *scheme,
 
 	/* skip leading '/' */
 	segment = buf;
-	if (*segment == '/')
+	nếu (*segment == '/')
 		segment++;
 
 	/* Process path segments */
 	do {
 		slash = strchr(segment, '/');
-		if (!slash) {
+		nếu (!slash) {
 			/* last segment */
 			/* look for existing entry */
-			for (e = d->children; e; e = e->next)
-				if (strcmp(segment, e->segment) == 0 &&
+			cho (e = d->children; e; e = e->next)
+				nếu (strcmp(segment, e->segment) == 0 &&
 				    lwc_string_isequal(scheme,
 						       e->scheme, &match) ==
 				    lwc_error_ok &&
@@ -2128,8 +2128,8 @@ urldb_add_path(lwc_string *scheme,
 		*slash = '\0';
 
 		/* look for existing entry */
-		for (e = d->children; e; e = e->next)
-			if (strcmp(segment, e->segment) == 0 &&
+		cho (e = d->children; e; e = e->next)
+			nếu (strcmp(segment, e->segment) == 0 &&
 			    lwc_string_isequal(scheme, e->scheme,
 					       &match) == lwc_error_ok &&
 			    match == true &&
@@ -2137,21 +2137,21 @@ urldb_add_path(lwc_string *scheme,
 				break;
 
 		d = e ? e : urldb_add_path_node(scheme, port, segment, NULL, d);
-		if (!d)
+		nếu (!d)
 			break;
 
 		segment = slash + 1;
-	} while (1);
+	} trong_khi (1);
 
 	free(path_query);
 
-	if (d && !d->url) {
+	nếu (d && !d->url) {
 		/* Insert defragmented URL */
-		if (nsurl_defragment(url, &d->url) != NSERROR_OK)
-			return NULL;
+		nếu (nsurl_defragment(url, &d->url) != NSERROR_OK)
+			trả_về NULL;
 	}
 
-	return d;
+	trả_về d;
 }
 
 
@@ -2171,26 +2171,26 @@ static struct host_part *urldb_add_host(const char *host)
 
 	assert(host);
 
-	if (urldb__host_is_ip_address(host)) {
+	nếu (urldb__host_is_ip_address(host)) {
 		/* Host is an IP, so simply add as TLD */
 
 		/* Check for existing entry */
-		for (e = d->children; e; e = e->next)
-			if (strcasecmp(host, e->part) == 0)
+		cho (e = d->children; e; e = e->next)
+			nếu (strcasecmp(host, e->part) == 0)
 				/* found => return it */
-				return e;
+				trả_về e;
 
 		d = urldb_add_host_node(host, d);
 
 		s = urldb_search_insert(search_trees[ST_IP], d);
-		if (!s) {
+		nếu (!s) {
 			/* failed */
 			d = NULL;
-		} else {
+		} không_thì {
 			search_trees[ST_IP] = s;
 		}
 
-		return d;
+		trả_về d;
 	}
 
 	/* Copy host string, so we can corrupt it */
@@ -2200,29 +2200,29 @@ static struct host_part *urldb_add_host(const char *host)
 	/* Process FQDN segments backwards */
 	do {
 		part = strrchr(buf, '.');
-		if (!part) {
+		nếu (!part) {
 			/* last segment */
 			/* Check for existing entry */
-			for (e = d->children; e; e = e->next)
-				if (strcasecmp(buf, e->part) == 0)
+			cho (e = d->children; e; e = e->next)
+				nếu (strcasecmp(buf, e->part) == 0)
 					break;
 
-			if (e) {
+			nếu (e) {
 				d = e;
-			} else {
+			} không_thì {
 				d = urldb_add_host_node(buf, d);
 			}
 
 			/* And insert into search tree */
-			if (d) {
+			nếu (d) {
 				struct search_node **r;
 
 				r = urldb_get_search_tree_direct(buf);
 				s = urldb_search_insert(*r, d);
-				if (!s) {
+				nếu (!s) {
 					/* failed */
 					d = NULL;
-				} else {
+				} không_thì {
 					*r = s;
 				}
 			}
@@ -2230,18 +2230,18 @@ static struct host_part *urldb_add_host(const char *host)
 		}
 
 		/* Check for existing entry */
-		for (e = d->children; e; e = e->next)
-			if (strcasecmp(part + 1, e->part) == 0)
+		cho (e = d->children; e; e = e->next)
+			nếu (strcasecmp(part + 1, e->part) == 0)
 				break;
 
 		d = e ? e : urldb_add_host_node(part + 1, d);
-		if (!d)
+		nếu (!d)
 			break;
 
 		*part = '\0';
-	} while (1);
+	} trong_khi (1);
 
-	return d;
+	trả_về d;
 }
 
 
@@ -2265,20 +2265,20 @@ urldb_insert_cookie(struct cookie_internal_data *c,
 
 	assert(c);
 
-	if (c->domain[0] == '.') {
+	nếu (c->domain[0] == '.') {
 		h = urldb_search_find(
 			urldb_get_search_tree(&(c->domain[1])),
 			c->domain + 1);
-		if (!h) {
+		nếu (!h) {
 			h = urldb_add_host(c->domain + 1);
-			if (!h) {
+			nếu (!h) {
 				urldb_free_cookie(c);
-				return false;
+				trả_về false;
 			}
 		}
 
 		p = (struct path_data *) &h->paths;
-	} else {
+	} không_thì {
 		/* Need to have a URL and scheme, if it's not a domain cookie */
 		assert(url != NULL);
 		assert(scheme != NULL);
@@ -2287,58 +2287,58 @@ urldb_insert_cookie(struct cookie_internal_data *c,
 			urldb_get_search_tree(c->domain),
 			c->domain);
 
-		if (!h) {
+		nếu (!h) {
 			h = urldb_add_host(c->domain);
-			if (!h) {
+			nếu (!h) {
 				urldb_free_cookie(c);
-				return false;
+				trả_về false;
 			}
 		}
 
 		/* find path */
 		p = urldb_add_path(scheme, 0, h,
 				   strdup(c->path), NULL, url);
-		if (!p) {
+		nếu (!p) {
 			urldb_free_cookie(c);
-			return false;
+			trả_về false;
 		}
 	}
 
 	/* add cookie */
-	for (d = p->cookies; d; d = d->next) {
-		if (!strcmp(d->domain, c->domain) &&
+	cho (d = p->cookies; d; d = d->next) {
+		nếu (!strcmp(d->domain, c->domain) &&
 		    !strcmp(d->path, c->path) &&
 		    !strcmp(d->name, c->name))
 			break;
 	}
 
-	if (d) {
-		if (c->expires != -1 && c->expires < now) {
+	nếu (d) {
+		nếu (c->expires != -1 && c->expires < now) {
 			/* remove cookie */
-			if (d->next)
+			nếu (d->next)
 				d->next->prev = d->prev;
-			else
+			không_thì
 				p->cookies_end = d->prev;
-			if (d->prev)
+			nếu (d->prev)
 				d->prev->next = d->next;
-			else
+			không_thì
 				p->cookies = d->next;
 
 			cookie_manager_remove((struct cookie_data *)d);
 
 			urldb_free_cookie(d);
 			urldb_free_cookie(c);
-		} else {
+		} không_thì {
 			/* replace d with c */
 			c->prev = d->prev;
 			c->next = d->next;
-			if (c->next)
+			nếu (c->next)
 				c->next->prev = c;
-			else
+			không_thì
 				p->cookies_end = c;
-			if (c->prev)
+			nếu (c->prev)
 				c->prev->next = c;
-			else
+			không_thì
 				p->cookies = c;
 
 			cookie_manager_remove((struct cookie_data *)d);
@@ -2346,19 +2346,19 @@ urldb_insert_cookie(struct cookie_internal_data *c,
 
 			cookie_manager_add((struct cookie_data *)c);
 		}
-	} else {
+	} không_thì {
 		c->prev = p->cookies_end;
 		c->next = NULL;
-		if (p->cookies_end)
+		nếu (p->cookies_end)
 			p->cookies_end->next = c;
-		else
+		không_thì
 			p->cookies = c;
 		p->cookies_end = c;
 
 		cookie_manager_add((struct cookie_data *)c);
 	}
 
-	return true;
+	trả_về true;
 }
 
 /* Combined (A)BNF for the Cookie: request header:
@@ -2415,8 +2415,8 @@ urldb_insert_cookie(struct cookie_internal_data *c,
  */
 static bool
 concat_netscape_cookie(struct cookie_internal_data *c,
-		    int *used,
-		    int *alloc,
+		    số_nguyên *used,
+		    số_nguyên *alloc,
 		    char **buf)
 {
 	/*
@@ -2431,8 +2431,8 @@ concat_netscape_cookie(struct cookie_internal_data *c,
 	 *   We use semicolons for all separators, including between
 	 *   cookie-values. This simplifies things and is backwards compatible.
 	 */
-	int max_len;
-	int outl; /* output length */
+	số_nguyên max_len;
+	số_nguyên outl; /* output length */
 
 	assert(c && used && alloc && buf && *buf);
 
@@ -2444,10 +2444,10 @@ concat_netscape_cookie(struct cookie_internal_data *c,
 		strlen(c->value) + 2 +
 		(c->path_from_set ? 8 + strlen(c->path) + 2 : 0) +
 		(c->domain_from_set ? 10 + strlen(c->domain) + 2 : 0);
-	if (max_len >= *alloc) {
+	nếu (max_len >= *alloc) {
 		char *temp = realloc(*buf, max_len);
-		if (!temp) {
-			return false;
+		nếu (!temp) {
+			trả_về false;
 		}
 		*buf = temp;
 		*alloc = max_len;
@@ -2455,9 +2455,9 @@ concat_netscape_cookie(struct cookie_internal_data *c,
 
 	/* Original Netscape cookie */
 	outl = snprintf(*buf + *used - 1, *alloc - *used, "; %s=", c->name);
-	if (outl >= (*alloc - *used)) {
+	nếu (outl >= (*alloc - *used)) {
 		/* output truncated */
-		return false;
+		trả_về false;
 	}
 	*used += outl;
 
@@ -2466,22 +2466,22 @@ concat_netscape_cookie(struct cookie_internal_data *c,
 	 *
 	 * However, other browsers preserve quoting, so we should, too
 	 */
-	if (c->value_was_quoted) {
+	nếu (c->value_was_quoted) {
 		outl = snprintf(*buf + *used - 1,
 				*alloc - *used,
 				"\"%s\"", c->value);
-		if (outl >= (*alloc - *used)) {
+		nếu (outl >= (*alloc - *used)) {
 			/* output truncated */
-			return false;
+			trả_về false;
 		}
 		*used += outl;
-	} else {
+	} không_thì {
 		/** \todo should we %XX-encode [;HT,SP] ? */
 		/** \todo Should we strip escaping backslashes? */
 		outl = snprintf(*buf + *used - 1,*alloc - *used, "%s", c->value);
-		if (outl >= (*alloc - *used)) {
+		nếu (outl >= (*alloc - *used)) {
 			/* output truncated */
-			return false;
+			trả_về false;
 		}
 		*used += outl;
 	}
@@ -2489,7 +2489,7 @@ concat_netscape_cookie(struct cookie_internal_data *c,
 	/* We don't send path/domain information -- that's what the
 	 * Netscape spec suggests we should do, anyway. */
 
-	return true;
+	trả_về true;
 }
 
 
@@ -2504,8 +2504,8 @@ concat_netscape_cookie(struct cookie_internal_data *c,
  */
 static bool
 concat_rfc2965_cookie(struct cookie_internal_data *c,
-		      int *used,
-		      int *alloc,
+		      số_nguyên *used,
+		      số_nguyên *alloc,
 		      char **buf)
 {
 	/*
@@ -2521,8 +2521,8 @@ concat_rfc2965_cookie(struct cookie_internal_data *c,
 	 *   cookie-values. This simplifies things and is backwards compatible.
 	 */
 	const char * const separators = "()<>@,;:\\\"/[]?={} \t";
-	int max_len;
-	int outl; /* output length */
+	số_nguyên max_len;
+	số_nguyên outl; /* output length */
 
 	assert(c && used && alloc && buf && *buf);
 
@@ -2537,10 +2537,10 @@ concat_rfc2965_cookie(struct cookie_internal_data *c,
 		(c->domain_from_set ?
 		 10 + strlen(c->domain) + 2 : 0);
 
-	if (max_len >= *alloc) {
+	nếu (max_len >= *alloc) {
 		char *temp = realloc(*buf, max_len);
-		if (!temp) {
-			return false;
+		nếu (!temp) {
+			trả_về false;
 		}
 		*buf = temp;
 		*alloc = max_len;
@@ -2550,70 +2550,70 @@ concat_rfc2965_cookie(struct cookie_internal_data *c,
 	outl = snprintf(*buf + *used - 1,
 			*alloc - *used,
 			"; %s=", c->name);
-	if (outl >= (*alloc - *used)) {
+	nếu (outl >= (*alloc - *used)) {
 		/* output truncated */
-		return false;
+		trả_về false;
 	}
 	*used += outl;
 
 	/* Value needs quoting if it contains any separator or if
 	 * it needs preserving from the Set-Cookie header */
-	if (c->value_was_quoted ||
+	nếu (c->value_was_quoted ||
 	    strpbrk(c->value, separators) != NULL) {
 		outl = snprintf(*buf + *used - 1,
 				*alloc - *used,
 				"\"%s\"", c->value);
 
-	} else {
+	} không_thì {
 		outl = snprintf(*buf + *used - 1,
 				*alloc - *used,
 				"%s", c->value);
 	}
-	if (outl >= (*alloc - *used)) {
+	nếu (outl >= (*alloc - *used)) {
 		/* output truncated */
-		return false;
+		trả_về false;
 	}
 	*used += outl;
 
-	if (c->path_from_set) {
+	nếu (c->path_from_set) {
 		/* Path, quoted if necessary */
 
-		if (strpbrk(c->path, separators) != NULL) {
+		nếu (strpbrk(c->path, separators) != NULL) {
 			outl = snprintf(*buf + *used - 1,
 					*alloc - *used,
 					"; $Path=\"%s\"", c->path);
 
-		} else {
+		} không_thì {
 			outl = snprintf(*buf + *used - 1,
 				       *alloc - *used,
 				       "; $Path=%s", c->path);
 		}
-		if (outl >= (*alloc - *used)) {
+		nếu (outl >= (*alloc - *used)) {
 			/* output truncated */
-			return false;
+			trả_về false;
 		}
 		*used += outl;
 	}
 
-	if (c->domain_from_set) {
+	nếu (c->domain_from_set) {
 		/* Domain, quoted if necessary */
-		if (strpbrk(c->domain, separators) != NULL) {
+		nếu (strpbrk(c->domain, separators) != NULL) {
 			outl = snprintf(*buf + *used - 1,
 					*alloc - *used,
 					"; $Domain=\"%s\"", c->domain);
-		} else {
+		} không_thì {
 			outl = snprintf(*buf + *used - 1,
 					*alloc - *used,
 					"; $Domain=%s", c->domain);
 		}
-		if (outl >= (*alloc - *used)) {
+		nếu (outl >= (*alloc - *used)) {
 			/* output truncated */
-			return false;
+			trả_về false;
 		}
 		*used += outl;
 	}
 
-	return true;
+	trả_về true;
 }
 
 
@@ -2621,29 +2621,29 @@ concat_rfc2965_cookie(struct cookie_internal_data *c,
  * build output cookie string in netscape format
  */
 static char *
-get_netscape_cookie(struct cookie_internal_data **matched_cookies, int count)
+get_netscape_cookie(struct cookie_internal_data **matched_cookies, số_nguyên count)
 {
-	int ret_alloc = 4096, ret_used = 1;
+	số_nguyên ret_alloc = 4096, ret_used = 1;
 	char *ret;
-	int midx; /* index into matched cookies */
+	số_nguyên midx; /* index into matched cookies */
 
 	ret = malloc(ret_alloc);
-	if (ret == NULL) {
-		return NULL;
+	nếu (ret == NULL) {
+		trả_về NULL;
 	}
 	ret[0] = '\0';
 
-	for (midx = 0; midx < count; midx++) {
-		if (!concat_netscape_cookie(matched_cookies[midx],
+	cho (midx = 0; midx < count; midx++) {
+		nếu (!concat_netscape_cookie(matched_cookies[midx],
 					    &ret_used, &ret_alloc, &ret)) {
 			free(ret);
-			return NULL;
+			trả_về NULL;
 		}
 	}
 
-	if (ret_used <= 2) {
+	nếu (ret_used <= 2) {
 		free(ret);
-		return NULL;
+		trả_về NULL;
 	}
 
 	/* Old-style cookies => no version & skip "; " */
@@ -2652,11 +2652,11 @@ get_netscape_cookie(struct cookie_internal_data **matched_cookies, int count)
 
 	/* shrink the output buffer to the required size */
 	char *temp = realloc(ret, ret_used);
-	if (temp != NULL) {
+	nếu (temp != NULL) {
 		ret = temp;
 	}
 
-	return ret;
+	trả_về ret;
 }
 
 
@@ -2665,44 +2665,44 @@ get_netscape_cookie(struct cookie_internal_data **matched_cookies, int count)
  */
 static char *
 get_rfc2965_cookie(struct cookie_internal_data **matched_cookies,
-		   int count,
-		   int version)
+		   số_nguyên count,
+		   số_nguyên version)
 {
-	int ret_alloc = 4096; /* return string allocation */
-	int ret_used = 1; /* return sting buffer used */
+	số_nguyên ret_alloc = 4096; /* return string allocation */
+	số_nguyên ret_used = 1; /* return sting buffer used */
 	char *ret; /* return string buffer */
-	int midx; /* index into matched cookies */
-	int outl;
+	số_nguyên midx; /* index into matched cookies */
+	số_nguyên outl;
 
 	ret = malloc(ret_alloc);
-	if (ret == NULL) {
-		return NULL;
+	nếu (ret == NULL) {
+		trả_về NULL;
 	}
 	ret[0] = '\0';
 
 	outl = snprintf(ret,ret_alloc - ret_used, "$Version=%d", version);
-	if (outl >= ret_alloc - ret_used) {
+	nếu (outl >= ret_alloc - ret_used) {
 		/* overflow */
 		free(ret);
-		return NULL;
+		trả_về NULL;
 	}
 	ret_used += outl;
 
-	for (midx = 0; midx < count; midx++) {
-		if (!concat_rfc2965_cookie(matched_cookies[midx],
+	cho (midx = 0; midx < count; midx++) {
+		nếu (!concat_rfc2965_cookie(matched_cookies[midx],
 					   &ret_used, &ret_alloc, &ret)) {
 			free(ret);
-			return NULL;
+			trả_về NULL;
 		}
 	}
 
 	/* shrink the output buffer to the required size */
 	char *temp = realloc(ret, ret_used);
-	if (temp != NULL) {
+	nếu (temp != NULL) {
 		ret = temp;
 	}
 
-	return ret;
+	trả_về ret;
 }
 
 
@@ -2726,33 +2726,33 @@ urldb_delete_cookie_paths(const char *domain,
 	assert(parent);
 
 	do {
-		for (c = p->cookies; c; c = c->next) {
-			if (strcmp(c->domain, domain) == 0 &&
+		cho (c = p->cookies; c; c = c->next) {
+			nếu (strcmp(c->domain, domain) == 0 &&
 			    strcmp(c->path, path) == 0 &&
 			    strcmp(c->name, name) == 0) {
-				if (c->prev) {
+				nếu (c->prev) {
 					c->prev->next = c->next;
-				} else {
+				} không_thì {
 					p->cookies = c->next;
 				}
 
-				if (c->next) {
+				nếu (c->next) {
 					c->next->prev = c->prev;
-				} else {
+				} không_thì {
 					p->cookies_end = c->prev;
 				}
 
 				urldb_free_cookie(c);
 
-				return;
+				trả_về;
 			}
 		}
 
-		if (p->children) {
+		nếu (p->children) {
 			p = p->children;
-		} else {
-			while (p != parent) {
-				if (p->next != NULL) {
+		} không_thì {
+			trong_khi (p != parent) {
+				nếu (p->next != NULL) {
 					p = p->next;
 					break;
 				}
@@ -2760,7 +2760,7 @@ urldb_delete_cookie_paths(const char *domain,
 				p = p->parent;
 			}
 		}
-	} while (p != parent);
+	} trong_khi (p != parent);
 }
 
 
@@ -2783,7 +2783,7 @@ urldb_delete_cookie_hosts(const char *domain,
 
 	urldb_delete_cookie_paths(domain, path, name, &parent->paths);
 
-	for (h = parent->children; h; h = h->next) {
+	cho (h = parent->children; h; h = h->next) {
 		urldb_delete_cookie_hosts(domain, path, name, h);
 	}
 }
@@ -2803,11 +2803,11 @@ static void urldb_save_cookie_paths(FILE *fp, struct path_data *parent)
 	assert(fp && parent);
 
 	do {
-		if (p->cookies != NULL) {
+		nếu (p->cookies != NULL) {
 			struct cookie_internal_data *c;
 
-			for (c = p->cookies; c != NULL; c = c->next) {
-				if (c->expires == -1 || c->expires < now) {
+			cho (c = p->cookies; c != NULL; c = c->next) {
+				nếu (c->expires == -1 || c->expires < now) {
 					/* Skip expired & session cookies */
 					continue;
 				}
@@ -2819,7 +2819,7 @@ static void urldb_save_cookie_paths(FILE *fp, struct path_data *parent)
 					c->domain_from_set, c->path,
 					c->path_from_set, c->secure,
 					c->http_only,
-					(int)c->expires, (int)c->last_used,
+					(số_nguyên)c->expires, (số_nguyên)c->last_used,
 					c->no_destroy, c->name, c->value,
 					c->value_was_quoted,
 					p->scheme ? lwc_string_data(p->scheme) :
@@ -2830,11 +2830,11 @@ static void urldb_save_cookie_paths(FILE *fp, struct path_data *parent)
 			}
 		}
 
-		if (p->children != NULL) {
+		nếu (p->children != NULL) {
 			p = p->children;
-		} else {
-			while (p != parent) {
-				if (p->next != NULL) {
+		} không_thì {
+			trong_khi (p != parent) {
+				nếu (p->next != NULL) {
 					p = p->next;
 					break;
 				}
@@ -2842,7 +2842,7 @@ static void urldb_save_cookie_paths(FILE *fp, struct path_data *parent)
 				p = p->parent;
 			}
 		}
-	} while (p != parent);
+	} trong_khi (p != parent);
 }
 
 
@@ -2859,7 +2859,7 @@ static void urldb_save_cookie_hosts(FILE *fp, struct host_part *parent)
 
 	urldb_save_cookie_paths(fp, &parent->paths);
 
-	for (h = parent->children; h; h = h->next)
+	cho (h = parent->children; h; h = h->next)
 		urldb_save_cookie_hosts(fp, h);
 }
 
@@ -2889,22 +2889,22 @@ static void urldb_destroy_cookie(struct cookie_internal_data *c)
 static void urldb_destroy_path_node_content(struct path_data *node)
 {
 	struct cookie_internal_data *a, *b;
-	unsigned int i;
+	unsigned số_nguyên i;
 
-	if (node->url != NULL) {
+	nếu (node->url != NULL) {
 		nsurl_unref(node->url);
 	}
 
 	lwc_string_unref(node->scheme);
 
 	free(node->segment);
-	for (i = 0; i < node->frag_cnt; i++)
+	cho (i = 0; i < node->frag_cnt; i++)
 		free(node->fragment[i]);
 	free(node->fragment);
 
 	free(node->urld.title);
 
-	for (a = node->cookies; a; a = b) {
+	cho (a = node->cookies; a; a = b) {
 		b = a->next;
 		urldb_destroy_cookie(a);
 	}
@@ -2936,13 +2936,13 @@ static void urldb_destroy_path_tree(struct path_data *root)
 	struct path_data *p = root;
 
 	do {
-		if (p->children != NULL) {
+		nếu (p->children != NULL) {
 			p = p->children;
-		} else {
+		} không_thì {
 			struct path_data *q = p;
 
-			while (p != root) {
-				if (p->next != NULL) {
+			trong_khi (p != root) {
+				nếu (p->next != NULL) {
 					p = p->next;
 					break;
 				}
@@ -2958,7 +2958,7 @@ static void urldb_destroy_path_tree(struct path_data *root)
 			urldb_destroy_path_node_content(q);
 			free(q);
 		}
-	} while (p != root);
+	} trong_khi (p != root);
 }
 
 
@@ -2974,13 +2974,13 @@ static void urldb_destroy_host_tree(struct host_part *root)
 	struct prot_space_data *s, *t;
 
 	/* Destroy children */
-	for (a = root->children; a; a = b) {
+	cho (a = root->children; a; a = b) {
 		b = a->next;
 		urldb_destroy_host_tree(a);
 	}
 
 	/* Now clean up paths */
-	for (p = root->paths.children; p; p = q) {
+	cho (p = root->paths.children; p; p = q) {
 		q = p->next;
 		urldb_destroy_path_tree(p);
 	}
@@ -2989,7 +2989,7 @@ static void urldb_destroy_host_tree(struct host_part *root)
 	urldb_destroy_path_node_content(&root->paths);
 
 	/* Proctection space data */
-	for (s = root->prot_space; s; s = t) {
+	cho (s = root->prot_space; s; s = t) {
 		t = s->next;
 		urldb_destroy_prot_space(s);
 	}
@@ -3008,9 +3008,9 @@ static void urldb_destroy_host_tree(struct host_part *root)
 static void urldb_destroy_search_tree(struct search_node *root)
 {
 	/* Destroy children */
-	if (root->left != &empty)
+	nếu (root->left != &empty)
 		urldb_destroy_search_tree(root->left);
-	if (root->right != &empty)
+	nếu (root->right != &empty)
 		urldb_destroy_search_tree(root->right);
 
 	/* And destroy ourselves */
@@ -3025,25 +3025,25 @@ static void urldb_destroy_search_tree(struct search_node *root)
 void urldb_destroy(void)
 {
 	struct host_part *a, *b;
-	int i;
+	số_nguyên i;
 
 	/* Clean up search trees */
-	for (i = 0; i < NUM_SEARCH_TREES; i++) {
-		if (search_trees[i] != &empty) {
+	cho (i = 0; i < NUM_SEARCH_TREES; i++) {
+		nếu (search_trees[i] != &empty) {
 			urldb_destroy_search_tree(search_trees[i]);
 			search_trees[i] = &empty;
 		}
 	}
 
 	/* And database */
-	for (a = db_root.children; a; a = b) {
+	cho (a = db_root.children; a; a = b) {
 		b = a->next;
 		urldb_destroy_host_tree(a);
 	}
 	memset(&db_root, 0, sizeof(db_root));
 
 	/* And the bloom filter */
-	if (url_bloom != NULL) {
+	nếu (url_bloom != NULL) {
 		bloom_destroy(url_bloom);
 		url_bloom = NULL;
 	}
@@ -3057,123 +3057,123 @@ nserror urldb_load(const char *filename)
 	char s[MAXIMUM_URL_LENGTH];
 	char host[256];
 	struct host_part *h;
-	int urls;
-	int i;
-	int version;
-	int length;
+	số_nguyên urls;
+	số_nguyên i;
+	số_nguyên version;
+	số_nguyên length;
 	FILE *fp;
 
 	assert(filename);
 
 	NSLOG(netsurf, INFO, "Loading URL file %s", filename);
 
-	if (url_bloom == NULL)
+	nếu (url_bloom == NULL)
 		url_bloom = bloom_create(BLOOM_SIZE);
 
 	fp = fopen(filename, "r");
-	if (!fp) {
+	nếu (!fp) {
 		NSLOG(netsurf, INFO, "Failed to open file '%s' for reading",
 		      filename);
-		return NSERROR_NOT_FOUND;
+		trả_về NSERROR_NOT_FOUND;
 	}
 
-	if (!fgets(s, MAXIMUM_URL_LENGTH, fp)) {
+	nếu (!fgets(s, MAXIMUM_URL_LENGTH, fp)) {
 		fclose(fp);
-		return NSERROR_NEED_DATA;
+		trả_về NSERROR_NEED_DATA;
 	}
 
 	version = atoi(s);
-	if (version < MIN_URL_FILE_VERSION) {
+	nếu (version < MIN_URL_FILE_VERSION) {
 		NSLOG(netsurf, INFO, "Unsupported URL file version.");
 		fclose(fp);
-		return NSERROR_INVALID;
+		trả_về NSERROR_INVALID;
 	}
-	if (version > URL_FILE_VERSION) {
+	nếu (version > URL_FILE_VERSION) {
 		NSLOG(netsurf, INFO, "Unknown URL file version.");
 		fclose(fp);
-		return NSERROR_INVALID;
+		trả_về NSERROR_INVALID;
 	}
 
-	while (fgets(host, sizeof host, fp)) {
+	trong_khi (fgets(host, sizeof host, fp)) {
 		time_t hsts_expiry = 0;
-		int hsts_include_sub_domains = 0;
+		số_nguyên hsts_include_sub_domains = 0;
 
 		/* get the hostname */
 		length = strlen(host) - 1;
 		host[length] = '\0';
 
 		/* skip data that has ended up with a host of '' */
-		if (length == 0) {
-			if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+		nếu (length == 0) {
+			nếu (!fgets(s, MAXIMUM_URL_LENGTH, fp))
 				break;
 			urls = atoi(s);
 			/* Eight fields/url */
-			for (i = 0; i < (8 * urls); i++) {
-				if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+			cho (i = 0; i < (8 * urls); i++) {
+				nếu (!fgets(s, MAXIMUM_URL_LENGTH, fp))
 					break;
 			}
 			continue;
 		}
 
-		if (version >= 107) {
+		nếu (version >= 107) {
 			char *p = host;
-			while (*p && *p != ' ') p++;
-			while (*p && *p == ' ') { *p = '\0'; p++; }
+			trong_khi (*p && *p != ' ') p++;
+			trong_khi (*p && *p == ' ') { *p = '\0'; p++; }
 			hsts_include_sub_domains = (*p == '1');
-			while (*p && *p != ' ') p++;
-			while (*p && *p == ' ') p++;
+			trong_khi (*p && *p != ' ') p++;
+			trong_khi (*p && *p == ' ') p++;
 			nsc_snptimet(p, strlen(p), &hsts_expiry);
 		}
 
 		h = urldb_add_host(host);
-		if (!h) {
+		nếu (!h) {
 			NSLOG(netsurf, INFO, "Failed adding host: '%s'", host);
 			fclose(fp);
-			return NSERROR_NOMEM;
+			trả_về NSERROR_NOMEM;
 		}
 		h->hsts.expires = hsts_expiry;
 		h->hsts.include_sub_domains = hsts_include_sub_domains;
 
 		/* read number of URLs */
-		if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+		nếu (!fgets(s, MAXIMUM_URL_LENGTH, fp))
 			break;
 		urls = atoi(s);
 
 		/* no URLs => try next host */
-		if (urls == 0) {
+		nếu (urls == 0) {
 			NSLOG(netsurf, INFO, "No URLs for '%s'", host);
 			continue;
 		}
 
 		/* load the non-corrupt data */
-		for (i = 0; i < urls; i++) {
+		cho (i = 0; i < urls; i++) {
 			struct path_data *p = NULL;
 			char scheme[64], ports[10];
 			char url[64 + 3 + 256 + 6 + 4096 + 1 + 1];
-			unsigned int port;
+			unsigned số_nguyên port;
 			bool is_file = false;
 			nsurl *nsurl;
 			lwc_string *scheme_lwc, *fragment_lwc;
 			char *path_query;
 			size_t len;
 
-			if (!fgets(scheme, sizeof scheme, fp))
+			nếu (!fgets(scheme, sizeof scheme, fp))
 				break;
 			length = strlen(scheme) - 1;
 			scheme[length] = '\0';
 
-			if (!fgets(ports, sizeof ports, fp))
+			nếu (!fgets(ports, sizeof ports, fp))
 				break;
 			length = strlen(ports) - 1;
 			ports[length] = '\0';
 			port = atoi(ports);
 
-			if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+			nếu (!fgets(s, MAXIMUM_URL_LENGTH, fp))
 				break;
 			length = strlen(s) - 1;
 			s[length] = '\0';
 
-			if (!strcasecmp(host, "localhost") &&
+			nếu (!strcasecmp(host, "localhost") &&
 			    !strcasecmp(scheme, "file"))
 				is_file = true;
 
@@ -3190,25 +3190,25 @@ nserror urldb_load(const char *filename)
 			 *       swiftly.
 			 *       Need a nsurl_save too.
 			 */
-			if (nsurl_create(url, &nsurl) != NSERROR_OK) {
+			nếu (nsurl_create(url, &nsurl) != NSERROR_OK) {
 				NSLOG(netsurf, INFO, "Failed inserting '%s'",
 				      url);
 				fclose(fp);
-				return NSERROR_NOMEM;
+				trả_về NSERROR_NOMEM;
 			}
 
-			if (url_bloom != NULL) {
+			nếu (url_bloom != NULL) {
 				uint32_t hash = nsurl_hash(nsurl);
 				bloom_insert_hash(url_bloom, hash);
 			}
 
 			/* Copy and merge path/query strings */
-			if (nsurl_get(nsurl, NSURL_PATH | NSURL_QUERY,
+			nếu (nsurl_get(nsurl, NSURL_PATH | NSURL_QUERY,
 				      &path_query, &len) != NSERROR_OK) {
 				NSLOG(netsurf, INFO, "Failed inserting '%s'",
 				      url);
 				fclose(fp);
-				return NSERROR_NOMEM;
+				trả_về NSERROR_NOMEM;
 			}
 
 			scheme_lwc = nsurl_get_component(nsurl, NSURL_SCHEME);
@@ -3216,45 +3216,45 @@ nserror urldb_load(const char *filename)
 							   NSURL_FRAGMENT);
 			p = urldb_add_path(scheme_lwc, port, h, path_query,
 					   fragment_lwc, nsurl);
-			if (!p) {
+			nếu (!p) {
 				NSLOG(netsurf, INFO, "Failed inserting '%s'",
 				      url);
 				fclose(fp);
-				return NSERROR_NOMEM;
+				trả_về NSERROR_NOMEM;
 			}
 			nsurl_unref(nsurl);
 			lwc_string_unref(scheme_lwc);
 			lwc_string_unref(fragment_lwc);
 
-			if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+			nếu (!fgets(s, MAXIMUM_URL_LENGTH, fp))
 				break;
-			if (p)
-				p->urld.visits = (unsigned int)atoi(s);
+			nếu (p)
+				p->urld.visits = (unsigned số_nguyên)atoi(s);
 
 			/* entry last use time */
-			if (!fgets(s, MAXIMUM_URL_LENGTH, fp)) {
+			nếu (!fgets(s, MAXIMUM_URL_LENGTH, fp)) {
 				break;
 			}
-			if (p) {
+			nếu (p) {
 				nsc_snptimet(s, strlen(s) - 1, &p->urld.last_visit);
 			}
 
-			if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+			nếu (!fgets(s, MAXIMUM_URL_LENGTH, fp))
 				break;
-			if (p)
+			nếu (p)
 				p->urld.type = (content_type)atoi(s);
 
-			if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+			nếu (!fgets(s, MAXIMUM_URL_LENGTH, fp))
 				break;
 
 
-			if (!fgets(s, MAXIMUM_URL_LENGTH, fp))
+			nếu (!fgets(s, MAXIMUM_URL_LENGTH, fp))
 				break;
 			length = strlen(s) - 1;
-			if (p && length > 0) {
+			nếu (p && length > 0) {
 				s[length] = '\0';
 				p->urld.title = malloc(length + 1);
-				if (p->urld.title)
+				nếu (p->urld.title)
 					memcpy(p->urld.title, s, length + 1);
 			}
 		}
@@ -3264,34 +3264,34 @@ nserror urldb_load(const char *filename)
 	NSLOG(netsurf, INFO, "Successfully loaded URL file");
 #undef MAXIMUM_URL_LENGTH
 
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 /* exported interface documented in netsurf/url_db.h */
 nserror urldb_save(const char *filename)
 {
 	FILE *fp;
-	int i;
+	số_nguyên i;
 
 	assert(filename);
 
 	fp = fopen(filename, "w");
-	if (!fp) {
+	nếu (!fp) {
 		NSLOG(netsurf, INFO, "Failed to open file '%s' for writing",
 		      filename);
-		return NSERROR_SAVE_FAILED;
+		trả_về NSERROR_SAVE_FAILED;
 	}
 
 	/* file format version number */
 	fprintf(fp, "%d\n", URL_FILE_VERSION);
 
-	for (i = 0; i != NUM_SEARCH_TREES; i++) {
+	cho (i = 0; i != NUM_SEARCH_TREES; i++) {
 		urldb_save_search_tree(search_trees[i], fp);
 	}
 
 	fclose(fp);
 
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 
@@ -3303,13 +3303,13 @@ nserror urldb_set_url_persistence(nsurl *url, bool persist)
 	assert(url);
 
 	p = urldb_find_url(url);
-	if (!p) {
-		return NSERROR_NOT_FOUND;
+	nếu (!p) {
+		trả_về NSERROR_NOT_FOUND;
 	}
 
 	p->persistent = persist;
 
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 
@@ -3326,53 +3326,53 @@ bool urldb_add_url(nsurl *url)
 	char *path_query = NULL;
 	size_t len;
 	bool match;
-	unsigned int port_int;
+	unsigned số_nguyên port_int;
 
 	assert(url);
 
-	if (url_bloom == NULL)
+	nếu (url_bloom == NULL)
 		url_bloom = bloom_create(BLOOM_SIZE);
 
-	if (url_bloom != NULL) {
+	nếu (url_bloom != NULL) {
 		uint32_t hash = nsurl_hash(url);
 		bloom_insert_hash(url_bloom, hash);
 	}
 
 	/* Copy and merge path/query strings */
-	if (nsurl_get(url, NSURL_PATH | NSURL_QUERY, &path_query, &len) !=
+	nếu (nsurl_get(url, NSURL_PATH | NSURL_QUERY, &path_query, &len) !=
 	    NSERROR_OK) {
-		return false;
+		trả_về false;
 	}
 	assert(path_query != NULL);
 
 	scheme = nsurl_get_component(url, NSURL_SCHEME);
-	if (scheme == NULL) {
+	nếu (scheme == NULL) {
 		free(path_query);
-		return false;
+		trả_về false;
 	}
 
 	host = nsurl_get_component(url, NSURL_HOST);
-	if (host != NULL) {
+	nếu (host != NULL) {
 		host_str = lwc_string_data(host);
 		lwc_string_unref(host);
 
-	} else if (lwc_string_isequal(scheme, corestring_lwc_file, &match) ==
+	} không_thì nếu (lwc_string_isequal(scheme, corestring_lwc_file, &match) ==
 		   lwc_error_ok && match == true) {
 		host_str = "localhost";
 
-	} else {
+	} không_thì {
 		lwc_string_unref(scheme);
 		free(path_query);
-		return false;
+		trả_về false;
 	}
 
 	fragment = nsurl_get_component(url, NSURL_FRAGMENT);
 
 	port = nsurl_get_component(url, NSURL_PORT);
-	if (port != NULL) {
+	nếu (port != NULL) {
 		port_int = atoi(lwc_string_data(port));
 		lwc_string_unref(port);
-	} else {
+	} không_thì {
 		port_int = 0;
 	}
 
@@ -3380,21 +3380,21 @@ bool urldb_add_url(nsurl *url)
 	h = urldb_add_host(host_str);
 
 	/* Get path entry */
-	if (h != NULL) {
+	nếu (h != NULL) {
 		p = urldb_add_path(scheme,
 				   port_int,
 				   h,
 				   path_query,
 				   fragment,
 				   url);
-	} else {
+	} không_thì {
 		p = NULL;
 	}
 
 	lwc_string_unref(scheme);
 	lwc_string_unref(fragment);
 
-	return (p != NULL);
+	trả_về (p != NULL);
 }
 
 
@@ -3407,24 +3407,24 @@ nserror urldb_set_url_title(nsurl *url, const char *title)
 	assert(url);
 
 	p = urldb_find_url(url);
-	if (p == NULL) {
-		return NSERROR_NOT_FOUND;
+	nếu (p == NULL) {
+		trả_về NSERROR_NOT_FOUND;
 	}
 
 	/* copy the parameter if necessary */
-	if (title != NULL) {
+	nếu (title != NULL) {
 		temp = strdup(title);
-		if (temp == NULL) {
-			return NSERROR_NOMEM;
+		nếu (temp == NULL) {
+			trả_về NSERROR_NOMEM;
 		}
-	} else {
+	} không_thì {
 		temp = NULL;
 	}
 
 	free(p->urld.title);
 	p->urld.title = temp;
 
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 
@@ -3436,13 +3436,13 @@ nserror urldb_set_url_content_type(nsurl *url, content_type type)
 	assert(url);
 
 	p = urldb_find_url(url);
-	if (!p) {
-		return NSERROR_NOT_FOUND;
+	nếu (!p) {
+		trả_về NSERROR_NOT_FOUND;
 	}
 
 	p->urld.type = type;
 
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 
@@ -3454,14 +3454,14 @@ nserror urldb_update_url_visit_data(nsurl *url)
 	assert(url);
 
 	p = urldb_find_url(url);
-	if (!p) {
-		return NSERROR_NOT_FOUND;
+	nếu (!p) {
+		trả_về NSERROR_NOT_FOUND;
 	}
 
 	p->urld.last_visit = time(NULL);
 	p->urld.visits++;
 
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 
@@ -3473,8 +3473,8 @@ void urldb_reset_url_visit_data(nsurl *url)
 	assert(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return;
+	nếu (!p)
+		trả_về;
 
 	p->urld.last_visit = (time_t)0;
 	p->urld.visits = 0;
@@ -3490,12 +3490,12 @@ const struct url_data *urldb_get_url_data(nsurl *url)
 	assert(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return NULL;
+	nếu (!p)
+		trả_về NULL;
 
 	u = &p->urld;
 
-	return (const struct url_data *) u;
+	trả_về (const struct url_data *) u;
 }
 
 
@@ -3507,10 +3507,10 @@ nsurl *urldb_get_url(nsurl *url)
 	assert(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return NULL;
+	nếu (!p)
+		trả_về NULL;
 
-	return p->url;
+	trả_về p->url;
 }
 
 
@@ -3530,17 +3530,17 @@ void urldb_set_auth_details(nsurl *url, const char *realm, const char *auth)
 
 	p = urldb_find_url(url);
 
-	if (!p)
-		return;
+	nếu (!p)
+		trả_về;
 
 	/* Search for host_part */
-	for (pi = p; pi->parent != NULL; pi = pi->parent)
+	cho (pi = p; pi->parent != NULL; pi = pi->parent)
 		;
 	h = (struct host_part *)pi;
 
 	/* Search if given URL belongs to a protection space we already know of. */
-	for (space = h->prot_space; space; space = space->next) {
-		if (!strcmp(space->realm, realm) &&
+	cho (space = h->prot_space; space; space = space->next) {
+		nếu (!strcmp(space->realm, realm) &&
 		    lwc_string_isequal(space->scheme, p->scheme,
 				       &match) == lwc_error_ok &&
 		    match == true &&
@@ -3548,21 +3548,21 @@ void urldb_set_auth_details(nsurl *url, const char *realm, const char *auth)
 			break;
 	}
 
-	if (space != NULL) {
+	nếu (space != NULL) {
 		/* Overrule existing auth. */
 		free(space->auth);
 		space->auth = strdup(auth);
-	} else {
+	} không_thì {
 		/* Create a new protection space. */
 		space = space_alloc = malloc(sizeof(struct prot_space_data));
 		realm_alloc = strdup(realm);
 		auth_alloc = strdup(auth);
 
-		if (!space_alloc || !realm_alloc || !auth_alloc) {
+		nếu (!space_alloc || !realm_alloc || !auth_alloc) {
 			free(space_alloc);
 			free(realm_alloc);
 			free(auth_alloc);
-			return;
+			trả_về;
 		}
 
 		space->scheme = lwc_string_ref(p->scheme);
@@ -3588,42 +3588,42 @@ const char *urldb_get_auth_details(nsurl *url, const char *realm)
 	urldb_add_url(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return NULL;
+	nếu (!p)
+		trả_về NULL;
 
 	/* Check for any auth details attached to the path_data node or any of
 	 * its parents.
 	 */
-	for (p_cur = p; p_cur != NULL; p_top = p_cur, p_cur = p_cur->parent) {
-		if (p_cur->prot_space) {
-			return p_cur->prot_space->auth;
+	cho (p_cur = p; p_cur != NULL; p_top = p_cur, p_cur = p_cur->parent) {
+		nếu (p_cur->prot_space) {
+			trả_về p_cur->prot_space->auth;
 		}
 	}
 
 	/* Only when we have a realm (and canonical root of given URL), we can
 	 * uniquely locate the protection space.
 	 */
-	if (realm != NULL) {
+	nếu (realm != NULL) {
 		const struct host_part *h = (const struct host_part *)p_top;
 		const struct prot_space_data *space;
 		bool match;
 
 		/* Search for a possible matching protection space. */
-		for (space = h->prot_space; space != NULL;
+		cho (space = h->prot_space; space != NULL;
 		     space = space->next) {
-			if (!strcmp(space->realm, realm) &&
+			nếu (!strcmp(space->realm, realm) &&
 			    lwc_string_isequal(space->scheme,
 					       p->scheme, &match) ==
 			    lwc_error_ok &&
 			    match == true &&
 			    space->port == p->port) {
 				p->prot_space = space;
-				return p->prot_space->auth;
+				trả_về p->prot_space->auth;
 			}
 		}
 	}
 
-	return NULL;
+	trả_về NULL;
 }
 
 
@@ -3639,10 +3639,10 @@ void urldb_set_cert_permissions(nsurl *url, bool permit)
 	urldb_add_url(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return;
+	nếu (!p)
+		trả_về;
 
-	for (; p && p->parent; p = p->parent)
+	cho (; p && p->parent; p = p->parent)
 		/* do nothing */;
 	assert(p);
 
@@ -3661,16 +3661,16 @@ bool urldb_get_cert_permissions(nsurl *url)
 	assert(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return false;
+	nếu (!p)
+		trả_về false;
 
-	for (; p && p->parent; p = p->parent)
+	cho (; p && p->parent; p = p->parent)
 		/* do nothing */;
 	assert(p);
 
 	h = (const struct host_part *)p;
 
-	return h->permit_invalid_certs;
+	trả_về h->permit_invalid_certs;
 }
 
 
@@ -3688,60 +3688,60 @@ bool urldb_set_hsts_policy(struct nsurl *url, const char *header)
 	assert(url);
 
 	host = nsurl_get_component(url, NSURL_HOST);
-	if (host != NULL) {
-		if (urldb__host_is_ip_address(lwc_string_data(host))) {
+	nếu (host != NULL) {
+		nếu (urldb__host_is_ip_address(lwc_string_data(host))) {
 			/* Host is IP: ignore */
 			lwc_string_unref(host);
-			return true;
-		} else if (lwc_string_length(host) == 0) {
+			trả_về true;
+		} không_thì nếu (lwc_string_length(host) == 0) {
 			/* Host is blank: ignore */
 			lwc_string_unref(host);
-			return true;
+			trả_về true;
 		}
 
 		lwc_string_unref(host);
-	} else {
+	} không_thì {
 		/* No host part: ignore */
-		return true;
+		trả_về true;
 	}
 
 	/* add url, in case it's missing */
 	urldb_add_url(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return false;
+	nếu (!p)
+		trả_về false;
 
-	for (; p && p->parent; p = p->parent)
+	cho (; p && p->parent; p = p->parent)
 		/* do nothing */;
 	assert(p);
 
 	h = (struct host_part *)p;
-	if (h->permit_invalid_certs) {
+	nếu (h->permit_invalid_certs) {
 		/* Transport is tainted: ignore */
-		return true;
+		trả_về true;
 	}
 
 	error = http_parse_strict_transport_security(header, &sts);
-	if (error != NSERROR_OK) {
+	nếu (error != NSERROR_OK) {
 		/* Parse failed: ignore */
-		return true;
+		trả_về true;
 	}
 
 	h->hsts.include_sub_domains =
 		http_strict_transport_security_include_subdomains(sts);
 
 	max_age = http_strict_transport_security_max_age(sts);
-	if (max_age == 0) {
+	nếu (max_age == 0) {
 		h->hsts.expires = 0;
 		h->hsts.include_sub_domains = false;
-	} else if ((time_t) (now + max_age) > h->hsts.expires) {
+	} không_thì nếu ((time_t) (now + max_age) > h->hsts.expires) {
 		h->hsts.expires = now + max_age;
 	}
 
 	http_strict_transport_security_destroy(sts);
 
-	return true;
+	trả_về true;
 }
 
 
@@ -3756,21 +3756,21 @@ bool urldb_get_hsts_enabled(struct nsurl *url)
 	assert(url);
 
 	host = nsurl_get_component(url, NSURL_HOST);
-	if (host != NULL) {
-		if (urldb__host_is_ip_address(lwc_string_data(host))) {
+	nếu (host != NULL) {
+		nếu (urldb__host_is_ip_address(lwc_string_data(host))) {
 			/* Host is IP: not enabled */
 			lwc_string_unref(host);
-			return false;
-		} else if (lwc_string_length(host) == 0) {
+			trả_về false;
+		} không_thì nếu (lwc_string_length(host) == 0) {
 			/* Host is blank: not enabled */
 			lwc_string_unref(host);
-			return false;
+			trả_về false;
 		}
 
 		lwc_string_unref(host);
-	} else {
+	} không_thì {
 		/* No host part: not enabled */
-		return false;
+		trả_về false;
 	}
 
 	/* The URL must exist in the db in order to find HSTS policy, since
@@ -3779,30 +3779,30 @@ bool urldb_get_hsts_enabled(struct nsurl *url)
 	urldb_add_url(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return false;
+	nếu (!p)
+		trả_về false;
 
-	for (; p && p->parent; p = p->parent)
+	cho (; p && p->parent; p = p->parent)
 		/* do nothing */;
 	assert(p);
 
 	h = (const struct host_part *)p;
 
 	/* Consult record for this host */
-	if (h->hsts.expires > now) {
+	nếu (h->hsts.expires > now) {
 		/* Not expired */
-		return true;
+		trả_về true;
 	}
 
 	/* Consult parent domains */
-	for (h = h->parent; h && h != &db_root; h = h->parent) {
-		if (h->hsts.expires > now && h->hsts.include_sub_domains) {
+	cho (h = h->parent; h && h != &db_root; h = h->parent) {
+		nếu (h->hsts.expires > now && h->hsts.include_sub_domains) {
 			/* Not expired and subdomains included */
-			return true;
+			trả_về true;
 		}
 	}
 
-	return false;
+	trả_về false;
 }
 
 
@@ -3821,53 +3821,53 @@ urldb_iterate_partial(const char *prefix,
 
 	/* strip scheme */
 	scheme_sep = strstr(prefix, "://");
-	if (scheme_sep)
+	nếu (scheme_sep)
 		prefix = scheme_sep + 3;
 
 	slash = strchr(prefix, '/');
 	tree = urldb_get_search_tree(prefix);
 
-	if (slash) {
+	nếu (slash) {
 		/* if there's a slash in the input, then we can
 		 * assume that we're looking for a path */
 		snprintf(host, sizeof host, "%.*s",
-			 (int) (slash - prefix), prefix);
+			 (số_nguyên) (slash - prefix), prefix);
 
 		h = urldb_search_find(tree, host);
-		if (!h) {
-			int len = slash - prefix;
+		nếu (!h) {
+			số_nguyên len = slash - prefix;
 
-			if (len <= 3 || strncasecmp(host, "www.", 4) != 0) {
+			nếu (len <= 3 || strncasecmp(host, "www.", 4) != 0) {
 				snprintf(buf, sizeof buf, "www.%s", host);
 				h = urldb_search_find(
 					search_trees[ST_DN + 'w' - 'a'],
 					buf);
-				if (!h)
-					return;
-			} else
-				return;
+				nếu (!h)
+					trả_về;
+			} không_thì
+				trả_về;
 		}
 
-		if (h->paths.children) {
+		nếu (h->paths.children) {
 			/* Have paths, iterate them */
 			urldb_iterate_partial_path(&h->paths, slash + 1,
 						   callback);
 		}
 
-	} else {
-		int len = strlen(prefix);
+	} không_thì {
+		số_nguyên len = strlen(prefix);
 
 		/* looking for hosts */
-		if (!urldb_iterate_partial_host(tree, prefix, callback))
-			return;
+		nếu (!urldb_iterate_partial_host(tree, prefix, callback))
+			trả_về;
 
-		if (len <= 3 || strncasecmp(prefix, "www.", 4) != 0) {
+		nếu (len <= 3 || strncasecmp(prefix, "www.", 4) != 0) {
 			/* now look for www.prefix */
 			snprintf(buf, sizeof buf, "www.%s", prefix);
-			if(!urldb_iterate_partial_host(
+			nếu(!urldb_iterate_partial_host(
 				   search_trees[ST_DN + 'w' - 'a'],
 				   buf, callback))
-				return;
+				trả_về;
 		}
 	}
 }
@@ -3877,12 +3877,12 @@ urldb_iterate_partial(const char *prefix,
 void
 urldb_iterate_entries(bool (*callback)(nsurl *url, const struct url_data *data))
 {
-	int i;
+	số_nguyên i;
 
 	assert(callback);
 
-	for (i = 0; i < NUM_SEARCH_TREES; i++) {
-		if (!urldb_iterate_entries_host(search_trees[i],
+	cho (i = 0; i < NUM_SEARCH_TREES; i++) {
+		nếu (!urldb_iterate_entries_host(search_trees[i],
 						callback,
 						NULL)) {
 			break;
@@ -3894,12 +3894,12 @@ urldb_iterate_entries(bool (*callback)(nsurl *url, const struct url_data *data))
 /* exported interface documented in content/urldb.h */
 void urldb_iterate_cookies(bool (*callback)(const struct cookie_data *data))
 {
-	int i;
+	số_nguyên i;
 
 	assert(callback);
 
-	for (i = 0; i < NUM_SEARCH_TREES; i++) {
-		if (!urldb_iterate_entries_host(search_trees[i],
+	cho (i = 0; i < NUM_SEARCH_TREES; i++) {
+		nếu (!urldb_iterate_entries_host(search_trees[i],
 						NULL, callback))
 			break;
 	}
@@ -3917,42 +3917,42 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 	assert(url && header);
 
 	/* Get defragmented URL, as 'urlt' */
-	if (nsurl_defragment(url, &urlt) != NSERROR_OK)
-		return NULL;
+	nếu (nsurl_defragment(url, &urlt) != NSERROR_OK)
+		trả_về NULL;
 
 	scheme = nsurl_get_component(url, NSURL_SCHEME);
-	if (scheme == NULL) {
+	nếu (scheme == NULL) {
 		nsurl_unref(urlt);
-		return false;
+		trả_về false;
 	}
 
 	path = nsurl_get_component(url, NSURL_PATH);
-	if (path == NULL) {
+	nếu (path == NULL) {
 		lwc_string_unref(scheme);
 		nsurl_unref(urlt);
-		return false;
+		trả_về false;
 	}
 
 	host = nsurl_get_component(url, NSURL_HOST);
-	if (host == NULL) {
+	nếu (host == NULL) {
 		lwc_string_unref(path);
 		lwc_string_unref(scheme);
 		nsurl_unref(urlt);
-		return false;
+		trả_về false;
 	}
 
-	if (referer) {
+	nếu (referer) {
 		lwc_string *rhost;
 
 		/* Ensure that url's host name domain matches
 		 * referer's (4.3.5) */
 		rhost = nsurl_get_component(referer, NSURL_HOST);
-		if (rhost == NULL) {
+		nếu (rhost == NULL) {
 			goto error;
 		}
 
 		/* Domain match host names */
-		if (lwc_string_isequal(host, rhost, &match) == lwc_error_ok &&
+		nếu (lwc_string_isequal(host, rhost, &match) == lwc_error_ok &&
 		    match == false) {
 			const char *hptr;
 			const char *rptr;
@@ -3961,7 +3961,7 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 			const char *rhost_data = lwc_string_data(rhost);
 
 			/* Ensure neither host nor rhost are IP addresses */
-			if (urldb__host_is_ip_address(host_data) ||
+			nếu (urldb__host_is_ip_address(host_data) ||
 			    urldb__host_is_ip_address(rhost_data)) {
 				/* IP address, so no partial match */
 				lwc_string_unref(rhost);
@@ -3993,8 +3993,8 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 			rptr = rhost_data + lwc_string_length(rhost) - 1;
 
 			/* 1 */
-			while (hptr >= host_data && rptr >= rhost_data) {
-				if (*hptr != *rptr)
+			trong_khi (hptr >= host_data && rptr >= rhost_data) {
+				nếu (*hptr != *rptr)
 					break;
 				hptr--;
 				rptr--;
@@ -4005,11 +4005,11 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 			hptr++;
 
 			/* 2 */
-			while (*hptr != '\0' && *hptr != '.')
+			trong_khi (*hptr != '\0' && *hptr != '.')
 				hptr++;
 
 			/* 3 */
-			if (*hptr == '\0' ||
+			nếu (*hptr == '\0' ||
 			    (dot = strchr(hptr + 1, '.')) == NULL ||
 			    *(dot + 1) == '\0') {
 				lwc_string_unref(rhost);
@@ -4031,7 +4031,7 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 #endif
 
 		c = urldb_parse_cookie(url, &cur);
-		if (!c) {
+		nếu (!c) {
 			/* failed => stop parsing */
 			goto error;
 		}
@@ -4039,14 +4039,14 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 		/* validate cookie */
 
 		/* 4.2.2:i Cookie must have NAME and VALUE */
-		if (!c->name || !c->value) {
+		nếu (!c->name || !c->value) {
 			urldb_free_cookie(c);
 			goto error;
 		}
 
 		/* 4.3.2:i Cookie path must be a prefix of URL path */
 		len = strlen(c->path);
-		if (len > lwc_string_length(path) ||
+		nếu (len > lwc_string_length(path) ||
 		    strncmp(c->path, lwc_string_data(path),
 			    len) != 0) {
 			urldb_free_cookie(c);
@@ -4056,20 +4056,20 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 #ifdef WITH_NSPSL
 		/* check domain is not a public suffix */
 		dot = c->domain;
-		if (*dot == '.') {
+		nếu (*dot == '.') {
 			dot++;
 		}
 		suffix = nspsl_getpublicsuffix(dot);
-		if (suffix == NULL) {
+		nếu (suffix == NULL) {
 			NSLOG(netsurf, INFO,
 			      "domain %s was a public suffix domain", dot);
 			urldb_free_cookie(c);
 			goto error;
 		}
-#else
+#không_thì
 		/* 4.3.2:ii Cookie domain must contain embedded dots */
 		dot = strchr(c->domain + 1, '.');
-		if (!dot || *(dot + 1) == '\0') {
+		nếu (!dot || *(dot + 1) == '\0') {
 			/* no embedded dots */
 			urldb_free_cookie(c);
 			goto error;
@@ -4077,8 +4077,8 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 #endif
 
 		/* Domain match fetch host with cookie domain */
-		if (strcasecmp(lwc_string_data(host), c->domain) != 0) {
-			int hlen, dlen;
+		nếu (strcasecmp(lwc_string_data(host), c->domain) != 0) {
+			số_nguyên hlen, dlen;
 			char *domain = c->domain;
 
 			/* c->domain must be a domain cookie here because:
@@ -4096,7 +4096,7 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 			assert(c->domain[0] == '.');
 
 			/* 4.3.2:iii */
-			if (urldb__host_is_ip_address(lwc_string_data(host))) {
+			nếu (urldb__host_is_ip_address(lwc_string_data(host))) {
 				/* IP address, so no partial match */
 				urldb_free_cookie(c);
 				goto error;
@@ -4105,20 +4105,20 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 			hlen = lwc_string_length(host);
 			dlen = strlen(c->domain);
 
-			if (hlen <= dlen && hlen != dlen - 1) {
+			nếu (hlen <= dlen && hlen != dlen - 1) {
 				/* Partial match not possible */
 				urldb_free_cookie(c);
 				goto error;
 			}
 
-			if (hlen == dlen - 1) {
+			nếu (hlen == dlen - 1) {
 				/* Relax matching to allow
 				 * host a.com to match .a.com */
 				domain++;
 				dlen--;
 			}
 
-			if (strcasecmp(lwc_string_data(host) + (hlen - dlen),
+			nếu (strcasecmp(lwc_string_data(host) + (hlen - dlen),
 				       domain)) {
 				urldb_free_cookie(c);
 				goto error;
@@ -4148,16 +4148,16 @@ bool urldb_set_cookie(const char *header, nsurl *url, nsurl *referer)
 		}
 
 		/* Now insert into database */
-		if (!urldb_insert_cookie(c, scheme, urlt))
+		nếu (!urldb_insert_cookie(c, scheme, urlt))
 			goto error;
-	} while (cur < end);
+	} trong_khi (cur < end);
 
 	lwc_string_unref(host);
 	lwc_string_unref(path);
 	lwc_string_unref(scheme);
 	nsurl_unref(urlt);
 
-	return true;
+	trả_về true;
 
 error:
 	lwc_string_unref(host);
@@ -4165,7 +4165,7 @@ error:
 	lwc_string_unref(scheme);
 	nsurl_unref(urlt);
 
-	return false;
+	trả_về false;
 }
 
 
@@ -4176,9 +4176,9 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 	const struct host_part *h;
 	lwc_string *path_lwc;
 	struct cookie_internal_data *c;
-	int count = 0, version = COOKIE_RFC2965;
+	số_nguyên count = 0, version = COOKIE_RFC2965;
 	struct cookie_internal_data **matched_cookies;
-	int matched_cookies_size = 20;
+	số_nguyên matched_cookies_size = 20;
 	const char *path;
 	char *ret;
 	lwc_string *scheme;
@@ -4193,59 +4193,59 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 	urldb_add_url(url);
 
 	p = urldb_find_url(url);
-	if (!p)
-		return NULL;
+	nếu (!p)
+		trả_về NULL;
 
 	scheme = p->scheme;
 
 	matched_cookies = malloc(matched_cookies_size *
 				 sizeof(struct cookie_internal_data *));
-	if (!matched_cookies)
-		return NULL;
+	nếu (!matched_cookies)
+		trả_về NULL;
 
 #define GROW_MATCHED_COOKIES						\
 	do {								\
-		if (count == matched_cookies_size) {			\
+		nếu (count == matched_cookies_size) {			\
 			struct cookie_internal_data **temp;		\
 			temp = realloc(matched_cookies,			\
 				       (matched_cookies_size + 20) *	\
 				       sizeof(struct cookie_internal_data *)); \
 									\
-			if (temp == NULL) {				\
+			nếu (temp == NULL) {				\
 				free(matched_cookies);			\
-				return NULL;				\
+				trả_về NULL;				\
 			}						\
 									\
 			matched_cookies = temp;				\
 			matched_cookies_size += 20;			\
 		}							\
-	} while(0)
+	} trong_khi(0)
 
 	path_lwc = nsurl_get_component(url, NSURL_PATH);
-	if (path_lwc == NULL) {
+	nếu (path_lwc == NULL) {
 		free(matched_cookies);
-		return NULL;
+		trả_về NULL;
 	}
 	path = lwc_string_data(path_lwc);
 	lwc_string_unref(path_lwc);
 
 	now = time(NULL);
 
-	if (*(p->segment) != '\0') {
+	nếu (*(p->segment) != '\0') {
 		/* Match exact path, unless directory, when prefix matching
 		 * will handle this case for us. */
-		for (q = p->parent->children; q; q = q->next) {
-			if (strcmp(q->segment, p->segment))
+		cho (q = p->parent->children; q; q = q->next) {
+			nếu (strcmp(q->segment, p->segment))
 				continue;
 
 			/* Consider all cookies associated with
 			 * this exact path */
-			for (c = q->cookies; c; c = c->next) {
-				if (c->expires != -1 && c->expires < now)
+			cho (c = q->cookies; c; c = c->next) {
+				nếu (c->expires != -1 && c->expires < now)
 					/* cookie has expired => ignore */
 					continue;
 
-				if (c->secure && lwc_string_isequal(
+				nếu (c->secure && lwc_string_isequal(
 					    q->scheme,
 					    corestring_lwc_https,
 					    &match) &&
@@ -4254,7 +4254,7 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 					 * ignore */
 					continue;
 
-				if (c->http_only && !include_http_only)
+				nếu (c->http_only && !include_http_only)
 					/* Ignore HttpOnly */
 					continue;
 
@@ -4262,7 +4262,7 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 
 				GROW_MATCHED_COOKIES;
 
-				if (c->version < (unsigned int)version)
+				nếu (c->version < (unsigned số_nguyên)version)
 					version = c->version;
 
 				c->last_used = now;
@@ -4273,19 +4273,19 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 	}
 
 	/* Now consider cookies whose paths prefix-match ours */
-	for (p = p->parent; p; p = p->parent) {
+	cho (p = p->parent; p; p = p->parent) {
 		/* Find directory's path entry(ies) */
 		/* There are potentially multiple due to differing schemes */
-		for (q = p->children; q; q = q->next) {
-			if (*(q->segment) != '\0')
+		cho (q = p->children; q; q = q->next) {
+			nếu (*(q->segment) != '\0')
 				continue;
 
-			for (c = q->cookies; c; c = c->next) {
-				if (c->expires != -1 && c->expires < now)
+			cho (c = q->cookies; c; c = c->next) {
+				nếu (c->expires != -1 && c->expires < now)
 					/* cookie has expired => ignore */
 					continue;
 
-				if (c->secure && lwc_string_isequal(
+				nếu (c->secure && lwc_string_isequal(
 					    q->scheme,
 					    corestring_lwc_https,
 					    &match) &&
@@ -4298,7 +4298,7 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 
 				GROW_MATCHED_COOKIES;
 
-				if (c->version < (unsigned int) version)
+				nếu (c->version < (unsigned số_nguyên) version)
 					version = c->version;
 
 				c->last_used = now;
@@ -4307,7 +4307,7 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 			}
 		}
 
-		if (!p->parent) {
+		nếu (!p->parent) {
 			/* No parent, so bail here. This can't go in
 			 * the loop exit condition as we also want to
 			 * process the top-level node.
@@ -4320,17 +4320,17 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 		}
 
 		/* Consider p itself - may be the result of Path=/foo */
-		for (c = p->cookies; c; c = c->next) {
-			if (c->expires != -1 && c->expires < now)
+		cho (c = p->cookies; c; c = c->next) {
+			nếu (c->expires != -1 && c->expires < now)
 				/* cookie has expired => ignore */
 				continue;
 
 			/* Ensure cookie path is a prefix of the resource */
-			if (strncmp(c->path, path, strlen(c->path)) != 0)
+			nếu (strncmp(c->path, path, strlen(c->path)) != 0)
 				/* paths don't match => ignore */
 				continue;
 
-			if (c->secure && lwc_string_isequal(p->scheme,
+			nếu (c->secure && lwc_string_isequal(p->scheme,
 							    corestring_lwc_https,
 							    &match) &&
 			    match == false)
@@ -4342,7 +4342,7 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 
 			GROW_MATCHED_COOKIES;
 
-			if (c->version < (unsigned int) version)
+			nếu (c->version < (unsigned số_nguyên) version)
 				version = c->version;
 
 			c->last_used = now;
@@ -4353,19 +4353,19 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 	}
 
 	/* Finally consider domain cookies for hosts which domain match ours */
-	for (h = (const struct host_part *)p; h && h != &db_root;
+	cho (h = (const struct host_part *)p; h && h != &db_root;
 	     h = h->parent) {
-		for (c = h->paths.cookies; c; c = c->next) {
-			if (c->expires != -1 && c->expires < now)
+		cho (c = h->paths.cookies; c; c = c->next) {
+			nếu (c->expires != -1 && c->expires < now)
 				/* cookie has expired => ignore */
 				continue;
 
 			/* Ensure cookie path is a prefix of the resource */
-			if (strncmp(c->path, path, strlen(c->path)) != 0)
+			nếu (strncmp(c->path, path, strlen(c->path)) != 0)
 				/* paths don't match => ignore */
 				continue;
 
-			if (c->secure && lwc_string_isequal(scheme,
+			nếu (c->secure && lwc_string_isequal(scheme,
 							    corestring_lwc_https,
 							    &match) &&
 			    match == false)
@@ -4376,7 +4376,7 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 
 			GROW_MATCHED_COOKIES;
 
-			if (c->version < (unsigned int)version)
+			nếu (c->version < (unsigned số_nguyên)version)
 				version = c->version;
 
 			c->last_used = now;
@@ -4386,20 +4386,20 @@ char *urldb_get_cookie(nsurl *url, bool include_http_only)
 	}
 #undef GROW_MATCHED_COOKIES
 
-	if (count == 0) {
+	nếu (count == 0) {
 		/* No cookies found */
 		free(matched_cookies);
-		return NULL;
+		trả_về NULL;
 	}
 
-	if (version == COOKIE_NETSCAPE) {
+	nếu (version == COOKIE_NETSCAPE) {
 		ret = get_netscape_cookie(matched_cookies, count);
-	} else {
+	} không_thì {
 		ret = get_rfc2965_cookie(matched_cookies, count, version);
 	}
 	free(matched_cookies);
 
-	return ret;
+	trả_về ret;
 }
 
 
@@ -4420,13 +4420,13 @@ nserror urldb_load_cookies(const char *filename)
 	assert(filename);
 
 	fp = fopen(filename, "r");
-	if (!fp)
-		return NSERROR_NOT_FOUND;
+	nếu (!fp)
+		trả_về NSERROR_NOT_FOUND;
 
 #define FIND_T {				\
-		for (; *p && *p != '\t'; p++)	\
+		cho (; *p && *p != '\t'; p++)	\
 			; /* do nothing */	\
-		if (p >= end) {			\
+		nếu (p >= end) {			\
 			NSLOG(netsurf, INFO, "Overran input");	\
 			continue;		\
 		}				\
@@ -4434,24 +4434,24 @@ nserror urldb_load_cookies(const char *filename)
 	}
 
 #define SKIP_T {				\
-		for (; *p && *p == '\t'; p++)	\
+		cho (; *p && *p == '\t'; p++)	\
 			; /* do nothing */	\
-		if (p >= end) {			\
+		nếu (p >= end) {			\
 			NSLOG(netsurf, INFO, "Overran input");	\
 			continue;		\
 		}				\
 	}
 
-	while (fgets(s, sizeof s, fp)) {
+	trong_khi (fgets(s, sizeof s, fp)) {
 		char *p = s, *end = 0,
 			*domain, *path, *name, *value, *scheme, *url,
 			*comment;
-		int version, domain_specified, path_specified,
+		số_nguyên version, domain_specified, path_specified,
 			secure, http_only, no_destroy, value_quoted;
 		time_t expires, last_used;
 		struct cookie_internal_data *c;
 
-		if(s[0] == 0 || s[0] == '#')
+		nếu(s[0] == 0 || s[0] == '#')
 			/* Skip blank lines or comments */
 			continue;
 
@@ -4461,10 +4461,10 @@ nserror urldb_load_cookies(const char *filename)
 		/* Look for file version first
 		 * (all input is ignored until this is read)
 		 */
-		if (strncasecmp(s, "Version:", 8) == 0) {
+		nếu (strncasecmp(s, "Version:", 8) == 0) {
 			FIND_T; SKIP_T; loaded_cookie_file_version = atoi(p);
 
-			if (loaded_cookie_file_version <
+			nếu (loaded_cookie_file_version <
 			    MIN_COOKIE_FILE_VERSION) {
 				NSLOG(netsurf, INFO,
 				      "Unsupported Cookie file version");
@@ -4472,7 +4472,7 @@ nserror urldb_load_cookies(const char *filename)
 			}
 
 			continue;
-		} else if (loaded_cookie_file_version == 0) {
+		} không_thì nếu (loaded_cookie_file_version == 0) {
 			/* Haven't yet seen version; skip this input */
 			continue;
 		}
@@ -4486,10 +4486,10 @@ nserror urldb_load_cookies(const char *filename)
 		SKIP_T; path = p; FIND_T;
 		SKIP_T; path_specified = atoi(p); FIND_T;
 		SKIP_T; secure = atoi(p); FIND_T;
-		if (loaded_cookie_file_version > 101) {
+		nếu (loaded_cookie_file_version > 101) {
 			/* Introduced in version 1.02 */
 			SKIP_T; http_only = atoi(p); FIND_T;
-		} else {
+		} không_thì {
 			http_only = 0;
 		}
 		SKIP_T; expires = (time_t)atoi(p); FIND_T;
@@ -4497,10 +4497,10 @@ nserror urldb_load_cookies(const char *filename)
 		SKIP_T; no_destroy = atoi(p); FIND_T;
 		SKIP_T; name = p; FIND_T;
 		SKIP_T; value = p; FIND_T;
-		if (loaded_cookie_file_version > 100) {
+		nếu (loaded_cookie_file_version > 100) {
 			/* Introduced in version 1.01 */
 			SKIP_T;	value_quoted = atoi(p); FIND_T;
-		} else {
+		} không_thì {
 			value_quoted = 0;
 		}
 		SKIP_T; scheme = p; FIND_T;
@@ -4508,7 +4508,7 @@ nserror urldb_load_cookies(const char *filename)
 
 		/* Comment may have no content, so don't
 		 * use macros as they'll break */
-		for (; *p && *p == '\t'; p++)
+		cho (; *p && *p == '\t'; p++)
 			; /* do nothing */
 		comment = p;
 
@@ -4516,7 +4516,7 @@ nserror urldb_load_cookies(const char *filename)
 
 		/* Now create cookie */
 		c = malloc(sizeof(struct cookie_internal_data));
-		if (!c)
+		nếu (!c)
 			break;
 
 		c->name = strdup(name);
@@ -4534,19 +4534,19 @@ nserror urldb_load_cookies(const char *filename)
 		c->version = version;
 		c->no_destroy = no_destroy;
 
-		if (!(c->name && c->value && c->comment &&
+		nếu (!(c->name && c->value && c->comment &&
 		      c->domain && c->path)) {
 			urldb_free_cookie(c);
 			break;
 		}
 
-		if (c->domain[0] != '.') {
+		nếu (c->domain[0] != '.') {
 			lwc_string *scheme_lwc = NULL;
 			nsurl *url_nsurl = NULL;
 
 			assert(scheme[0] != 'u');
 
-			if (nsurl_create(url, &url_nsurl) != NSERROR_OK) {
+			nếu (nsurl_create(url, &url_nsurl) != NSERROR_OK) {
 				urldb_free_cookie(c);
 				break;
 			}
@@ -4554,7 +4554,7 @@ nserror urldb_load_cookies(const char *filename)
 							 NSURL_SCHEME);
 
 			/* And insert it into database */
-			if (!urldb_insert_cookie(c, scheme_lwc, url_nsurl)) {
+			nếu (!urldb_insert_cookie(c, scheme_lwc, url_nsurl)) {
 				/* Cookie freed for us */
 				nsurl_unref(url_nsurl);
 				lwc_string_unref(scheme_lwc);
@@ -4563,8 +4563,8 @@ nserror urldb_load_cookies(const char *filename)
 			nsurl_unref(url_nsurl);
 			lwc_string_unref(scheme_lwc);
 
-		} else {
-			if (!urldb_insert_cookie(c, NULL, NULL)) {
+		} không_thì {
+			nếu (!urldb_insert_cookie(c, NULL, NULL)) {
 				/* Cookie freed for us */
 				break;
 			}
@@ -4576,7 +4576,7 @@ nserror urldb_load_cookies(const char *filename)
 
 	fclose(fp);
 
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 
@@ -4584,14 +4584,14 @@ nserror urldb_load_cookies(const char *filename)
 nserror urldb_save_cookies(const char *filename)
 {
 	FILE *fp;
-	int cookie_file_version = max(loaded_cookie_file_version,
+	số_nguyên cookie_file_version = max(loaded_cookie_file_version,
 				      COOKIE_FILE_VERSION);
 
 	assert(filename);
 
 	fp = fopen(filename, "w");
-	if (!fp)
-		return NSERROR_NOT_FOUND;
+	nếu (!fp)
+		trả_về NSERROR_NOT_FOUND;
 
 	fprintf(fp, "# NetSurf cookies file.\n"
 		"#\n"
@@ -4611,18 +4611,18 @@ nserror urldb_save_cookies(const char *filename)
 
 	fclose(fp);
 
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 
 /* exported interface documented in netsurf/url_db.h */
 void urldb_dump(void)
 {
-	int i;
+	số_nguyên i;
 
 	urldb_dump_hosts(&db_root);
 
-	for (i = 0; i != NUM_SEARCH_TREES; i++) {
+	cho (i = 0; i != NUM_SEARCH_TREES; i++) {
 		urldb_dump_search(search_trees[i], 0);
 	}
 }

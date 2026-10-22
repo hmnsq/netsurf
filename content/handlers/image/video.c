@@ -42,7 +42,7 @@ static gboolean nsvideo_bus_call(GstBus *bus, GstMessage *msg,
 		break;
 	}
 
-	return TRUE;
+	trả_về TRUE;
 }
 
 static void nsvideo_need_data_event(GstElement *playbin, guint size,
@@ -77,26 +77,26 @@ static nserror nsvideo_create(const content_handler *handler,
 	GstBus *bus;
 
 	video = calloc(1, sizeof(nsvideo_content));
-	if (video == NULL)
-		return NSERROR_NOMEM;
+	nếu (video == NULL)
+		trả_về NSERROR_NOMEM;
 
 	error = content__init(&video->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
+	nếu (error != NSERROR_OK) {
 		free(video);
-		return error;
+		trả_về error;
 	}
 
 	error = llcache_handle_force_stream(llcache);
-	if (error != NSERROR_OK) {
+	nếu (error != NSERROR_OK) {
 		free(video);
-		return error;
+		trả_về error;
 	}
 
 	video->playbin = gst_element_factory_make("playbin2", NULL);
-	if (video->playbin == NULL) {
+	nếu (video->playbin == NULL) {
 		free(video);
-		return NSERROR_NOMEM;
+		trả_về NSERROR_NOMEM;
 	}
 
 	bus = gst_pipeline_get_bus(GST_PIPELINE(video->playbin));
@@ -113,11 +113,11 @@ static nserror nsvideo_create(const content_handler *handler,
 	
 	*c = (struct content *) video;
 
-	return NSERROR_OK;
+	trả_về NSERROR_OK;
 }
 
 static bool nsvideo_process_data(struct content *c, const char *data, 
-		unsigned int size)
+		unsigned số_nguyên size)
 {
 	nsvideo_content *video = (nsvideo_content *) c;
 	GstBuffer *buffer;
@@ -130,7 +130,7 @@ static bool nsvideo_process_data(struct content *c, const char *data,
 	/* Send data to appsrc */
 	g_signal_emit_by_name(video->appsrc, "push-buffer", buffer, &ret);
 
-	return ret == GST_FLOW_OK;
+	trả_về ret == GST_FLOW_OK;
 }
 
 static bool nsvideo_convert(struct content *c)
@@ -143,7 +143,7 @@ static bool nsvideo_convert(struct content *c)
 
 	/* Appsink will flag DONE on receipt of first frame */
 
-	return ret == GST_FLOW_OK;
+	trả_về ret == GST_FLOW_OK;
 }
 
 static void nsvideo_destroy(struct content *c)
@@ -158,25 +158,25 @@ static bool nsvideo_redraw(struct content *c, struct content_redraw_data *data,
 		const struct rect *clip, const struct redraw_context *ctx)
 {
 	/** \todo Implement */
-	return true;
+	trả_về true;
 }
 
 static nserror nsvideo_clone(const struct content *old, struct content **newc)
 {
 	/** \todo Implement */
-	return NSERROR_CLONE_FAILED;
+	trả_về NSERROR_CLONE_FAILED;
 }
 
 static content_type nsvideo_type(void)
 {
 	/** \todo Lies */
-	return CONTENT_IMAGE;
+	trả_về CONTENT_IMAGE;
 }
 
 static void *nsvideo_get_internal(const struct content *c, void *context)
 {
 	/** \todo Return pointer to bitmap containing current frame, if any? */
-	return NULL;
+	trả_về NULL;
 }
 
 static const content_handler nsvideo_content_handler = {
