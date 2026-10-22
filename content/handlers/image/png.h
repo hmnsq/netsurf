@@ -20,6 +20,6 @@
 #ifndef _NETSURF_RISCOS_PNG_H_
 #define _NETSURF_RISCOS_PNG_H_
 
-nserror nspng_init(void);
+nserror nspng_init(فراغ);
 
 #endif
