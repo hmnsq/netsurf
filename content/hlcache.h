@@ -47,7 +47,7 @@ typedef struct hlcache_event {
 
 struct hlcache_parameters {
 	/** How frequently the background cache clean process is run (ms) */
-	unsigned int bg_clean_time;
+	unsigned 정수 bg_clean_time;
 
 	struct llcache_parameters llcache;
 };

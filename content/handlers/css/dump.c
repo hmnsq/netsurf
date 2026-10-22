@@ -49,9 +49,9 @@ static void dump_css_fixed(FILE *stream, css_fixed f)
  */
 static void dump_css_number(FILE *stream, css_fixed val)
 {
-	if (INTTOFIX(FIXTOINT(val)) == val)
+	만약 (INTTOFIX(FIXTOINT(val)) == val)
 		fprintf(stream, "%"PRId32, FIXTOINT(val));
-	else
+	아니면
 		dump_css_fixed(stream, val);
 }
 
@@ -194,18 +194,18 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 
 	/* background-image */
 	val = css_computed_background_image(style, &url);
-	if (val == CSS_BACKGROUND_IMAGE_IMAGE && url != NULL) {
+	만약 (val == CSS_BACKGROUND_IMAGE_IMAGE && url != NULL) {
 		fprintf(stream, "background-image: url('%.*s') ",
-				(int) lwc_string_length(url),
+				(정수) lwc_string_length(url),
 				lwc_string_data(url));
-	} else if (val == CSS_BACKGROUND_IMAGE_NONE) {
+	} 아니면 만약 (val == CSS_BACKGROUND_IMAGE_NONE) {
 		fprintf(stream, "background-image: none ");
 	}
 
 	/* background-position */
 	val = css_computed_background_position(style, &len1, &unit1,
 			&len2, &unit2);
-	if (val == CSS_BACKGROUND_POSITION_SET) {
+	만약 (val == CSS_BACKGROUND_POSITION_SET) {
 		fprintf(stream, "background-position: ");
 		dump_css_unit(stream, len1, unit1);
 		fprintf(stream, " ");
@@ -248,7 +248,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 
 	/* border-spacing */
 	val = css_computed_border_spacing(style, &len1, &unit1, &len2, &unit2);
-	if (val == CSS_BORDER_SPACING_SET) {
+	만약 (val == CSS_BORDER_SPACING_SET) {
 		fprintf(stream, "border-spacing: ");
 		dump_css_unit(stream, len1, unit1);
 		fprintf(stream, " ");
@@ -584,27 +584,27 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	case CSS_CLIP_RECT:
 		fprintf(stream, "clip: rect( ");
 
-		if (rect.top_auto)
+		만약 (rect.top_auto)
 			fprintf(stream, "auto");
-		else
+		아니면
 			dump_css_unit(stream, rect.top, rect.tunit);
 		fprintf(stream, ", ");
 
-		if (rect.right_auto)
+		만약 (rect.right_auto)
 			fprintf(stream, "auto");
-		else
+		아니면
 			dump_css_unit(stream, rect.right, rect.runit);
 		fprintf(stream, ", ");
 
-		if (rect.bottom_auto)
+		만약 (rect.bottom_auto)
 			fprintf(stream, "auto");
-		else
+		아니면
 			dump_css_unit(stream, rect.bottom, rect.bunit);
 		fprintf(stream, ", ");
 
-		if (rect.left_auto)
+		만약 (rect.left_auto)
 			fprintf(stream, "auto");
-		else
+		아니면
 			dump_css_unit(stream, rect.left, rect.lunit);
 		fprintf(stream, ") ");
 		break;
@@ -614,7 +614,7 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 
 	/* color */
 	val = css_computed_color(style, &color);
-	if (val == CSS_COLOR_COLOR) {
+	만약 (val == CSS_COLOR_COLOR) {
 		fprintf(stream, "color: #%08"PRIx32" ", color);
 	}
 
@@ -630,45 +630,45 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	case CSS_CONTENT_SET:
 		fprintf(stream, "content:");
 
-		while (content->type != CSS_COMPUTED_CONTENT_NONE) {
+		동안 (content->type != CSS_COMPUTED_CONTENT_NONE) {
 			fprintf(stream, " ");
 
 			switch (content->type) {
 			case CSS_COMPUTED_CONTENT_STRING:
 				fprintf(stream,	"\"%.*s\"",
-						(int) lwc_string_length(
+						(정수) lwc_string_length(
 						content->data.string),
 						lwc_string_data(
 						content->data.string));
 				break;
 			case CSS_COMPUTED_CONTENT_URI:
 				fprintf(stream,	"uri(\"%.*s\")",
-						(int) lwc_string_length(
+						(정수) lwc_string_length(
 						content->data.uri),
 						lwc_string_data(
 						content->data.uri));
 				break;
 			case CSS_COMPUTED_CONTENT_COUNTER:
 				fprintf(stream, "counter(%.*s)",
-						(int) lwc_string_length(
+						(정수) lwc_string_length(
 						content->data.counter.name),
 						lwc_string_data(
 						content->data.counter.name));
 				break;
 			case CSS_COMPUTED_CONTENT_COUNTERS:
 				fprintf(stream, "counters(%.*s, \"%.*s\")",
-						(int) lwc_string_length(
+						(정수) lwc_string_length(
 						content->data.counters.name),
 						lwc_string_data(
 						content->data.counters.name),
-						(int) lwc_string_length(
+						(정수) lwc_string_length(
 						content->data.counters.sep),
 						lwc_string_data(
 						content->data.counters.sep));
 				break;
 			case CSS_COMPUTED_CONTENT_ATTR:
 				fprintf(stream, "attr(%.*s)",
-						(int) lwc_string_length(
+						(정수) lwc_string_length(
 						content->data.attr),
 						lwc_string_data(
 						content->data.attr));
@@ -698,14 +698,14 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 
 	/* counter-increment */
 	val = css_computed_counter_increment(style, &counter);
-	if ((val == CSS_COUNTER_INCREMENT_NONE) || (counter == NULL)) {
+	만약 ((val == CSS_COUNTER_INCREMENT_NONE) || (counter == NULL)) {
 		fprintf(stream, "counter-increment: none ");
-	} else {
+	} 아니면 {
 		fprintf(stream, "counter-increment:");
 
-		while (counter->name != NULL) {
+		동안 (counter->name != NULL) {
 			fprintf(stream, " %.*s ",
-					(int) lwc_string_length(counter->name),
+					(정수) lwc_string_length(counter->name),
 					lwc_string_data(counter->name));
 
 			dump_css_fixed(stream, counter->value);
@@ -718,14 +718,14 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 
 	/* counter-reset */
 	val = css_computed_counter_reset(style, &counter);
-	if ((val == CSS_COUNTER_RESET_NONE) || (counter == NULL)) {
+	만약 ((val == CSS_COUNTER_RESET_NONE) || (counter == NULL)) {
 		fprintf(stream, "counter-reset: none ");
-	} else {
+	} 아니면 {
 		fprintf(stream, "counter-reset:");
 
-		while (counter->name != NULL) {
+		동안 (counter->name != NULL) {
 			fprintf(stream, " %.*s ",
-					(int) lwc_string_length(counter->name),
+					(정수) lwc_string_length(counter->name),
 					lwc_string_data(counter->name));
 
 			dump_css_fixed(stream, counter->value);
@@ -740,10 +740,10 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 	val = css_computed_cursor(style, &string_list);
 	fprintf(stream, "cursor:");
 
-	if (string_list != NULL) {
-		while (*string_list != NULL) {
+	만약 (string_list != NULL) {
+		동안 (*string_list != NULL) {
 			fprintf(stream, " url\"%.*s\")",
-					(int) lwc_string_length(*string_list),
+					(정수) lwc_string_length(*string_list),
 					lwc_string_data(*string_list));
 
 			string_list++;
@@ -910,13 +910,13 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 
 	/* font-family */
 	val = css_computed_font_family(style, &string_list);
-	if (val != CSS_FONT_FAMILY_INHERIT) {
+	만약 (val != CSS_FONT_FAMILY_INHERIT) {
 		fprintf(stream, "font-family:");
 
-		if (string_list != NULL) {
-			while (*string_list != NULL) {
+		만약 (string_list != NULL) {
+			동안 (*string_list != NULL) {
 				fprintf(stream, " \"%.*s\"",
-					(int) lwc_string_length(*string_list),
+					(정수) lwc_string_length(*string_list),
 					lwc_string_data(*string_list));
 
 				string_list++;
@@ -1134,11 +1134,11 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 
 	/* list-style-image */
 	val = css_computed_list_style_image(style, &url);
-	if (url != NULL) {
+	만약 (url != NULL) {
 		fprintf(stream, "list-style-image: url('%.*s') ",
-				(int) lwc_string_length(url),
+				(정수) lwc_string_length(url),
 				lwc_string_data(url));
-	} else if (val == CSS_LIST_STYLE_IMAGE_NONE) {
+	} 아니면 만약 (val == CSS_LIST_STYLE_IMAGE_NONE) {
 		fprintf(stream, "list-style-image: none ");
 	}
 
@@ -1536,19 +1536,19 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 
 	/* quotes */
 	val = css_computed_quotes(style, &string_list);
-	if (val == CSS_QUOTES_STRING && string_list != NULL) {
+	만약 (val == CSS_QUOTES_STRING && string_list != NULL) {
 		fprintf(stream, "quotes:");
 
-		while (*string_list != NULL) {
+		동안 (*string_list != NULL) {
 			fprintf(stream, " \"%.*s\"",
-				(int) lwc_string_length(*string_list),
+				(정수) lwc_string_length(*string_list),
 				lwc_string_data(*string_list));
 
 			string_list++;
 		}
 
 		fprintf(stream, " ");
-	} else {
+	} 아니면 {
 		switch (val) {
 		case CSS_QUOTES_NONE:
 			fprintf(stream, "quotes: none ");
@@ -1621,21 +1621,21 @@ void nscss_dump_computed_style(FILE *stream, const css_computed_style *style)
 
 	/* text-decoration */
 	val = css_computed_text_decoration(style);
-	if (val == CSS_TEXT_DECORATION_NONE) {
+	만약 (val == CSS_TEXT_DECORATION_NONE) {
 		fprintf(stream, "text-decoration: none ");
-	} else {
+	} 아니면 {
 		fprintf(stream, "text-decoration:");
 
-		if (val & CSS_TEXT_DECORATION_BLINK) {
+		만약 (val & CSS_TEXT_DECORATION_BLINK) {
 			fprintf(stream, " blink");
 		}
-		if (val & CSS_TEXT_DECORATION_LINE_THROUGH) {
+		만약 (val & CSS_TEXT_DECORATION_LINE_THROUGH) {
 			fprintf(stream, " line-through");
 		}
-		if (val & CSS_TEXT_DECORATION_OVERLINE) {
+		만약 (val & CSS_TEXT_DECORATION_OVERLINE) {
 			fprintf(stream, " overline");
 		}
-		if (val & CSS_TEXT_DECORATION_UNDERLINE) {
+		만약 (val & CSS_TEXT_DECORATION_UNDERLINE) {
 			fprintf(stream, " underline");
 		}
 

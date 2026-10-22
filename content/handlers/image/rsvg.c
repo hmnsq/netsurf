@@ -71,13 +71,13 @@ static nserror rsvg_create_svg_data(rsvg_content *c)
 	c->ct = NULL;
 	c->bitmap = NULL;
 
-	if ((c->rsvgh = rsvg_handle_new()) == NULL) {
+	만약 ((c->rsvgh = rsvg_handle_new()) == NULL) {
 		NSLOG(netsurf, INFO, "rsvg_handle_new() returned NULL.");
 		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return NSERROR_NOMEM;
+		반환 NSERROR_NOMEM;
 	}
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 
@@ -90,43 +90,43 @@ static nserror rsvg_create(const content_handler *handler,
 	nserror error;
 
 	svg = calloc(1, sizeof(rsvg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	만약 (svg == NULL)
+		반환 NSERROR_NOMEM;
 
 	error = content__init(&svg->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
+	만약 (error != NSERROR_OK) {
 		free(svg);
-		return error;
+		반환 error;
 	}
 
 	error = rsvg_create_svg_data(svg);
-	if (error != NSERROR_OK) {
+	만약 (error != NSERROR_OK) {
 		free(svg);
-		return error;
+		반환 error;
 	}
 
 	*c = (struct content *) svg;
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 
 static bool rsvg_process_data(struct content *c, const char *data,
-			unsigned int size)
+			unsigned 정수 size)
 {
 	rsvg_content *d = (rsvg_content *) c;
 	GError *err = NULL;
 
-	if (rsvg_handle_write(d->rsvgh, (const guchar *)data, (gsize)size,
+	만약 (rsvg_handle_write(d->rsvgh, (const guchar *)data, (gsize)size,
 				&err) == FALSE) {
 		NSLOG(netsurf, INFO,
 		      "rsvg_handle_write returned an error: %s", err->message);
 		content_broadcast_error(c, NSERROR_SVG_ERROR, NULL);
-		return false;
+		반환 false;
 	}
 
-	return true;
+	반환 true;
 }
 
 static bool rsvg_convert(struct content *c)
@@ -135,11 +135,11 @@ static bool rsvg_convert(struct content *c)
 	RsvgDimensionData rsvgsize;
 	GError *err = NULL;
 
-	if (rsvg_handle_close(d->rsvgh, &err) == FALSE) {
+	만약 (rsvg_handle_close(d->rsvgh, &err) == FALSE) {
 		NSLOG(netsurf, INFO,
 		      "rsvg_handle_close returned an error: %s", err->message);
 		content_broadcast_error(c, NSERROR_SVG_ERROR, NULL);
-		return false;
+		반환 false;
 	}
 
 	assert(err == NULL);
@@ -152,15 +152,15 @@ static bool rsvg_convert(struct content *c)
 	c->width = rsvgsize.width;
 	c->height = rsvgsize.height;
 
-	if ((d->bitmap = guit->bitmap->create(c->width, c->height,
+	만약 ((d->bitmap = guit->bitmap->create(c->width, c->height,
 			BITMAP_NONE)) == NULL) {
 		NSLOG(netsurf, INFO,
 		      "Failed to create bitmap for rsvg render.");
 		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
+		반환 false;
 	}
 
-	if ((d->cs = cairo_image_surface_create_for_data(
+	만약 ((d->cs = cairo_image_surface_create_for_data(
 			(unsigned char *)guit->bitmap->get_buffer(d->bitmap),
 			CAIRO_FORMAT_ARGB32,
 			c->width, c->height,
@@ -168,14 +168,14 @@ static bool rsvg_convert(struct content *c)
 		NSLOG(netsurf, INFO,
 		      "Failed to create Cairo image surface for rsvg render.");
 		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
+		반환 false;
 	}
 
-	if ((d->ct = cairo_create(d->cs)) == NULL) {
+	만약 ((d->ct = cairo_create(d->cs)) == NULL) {
 		NSLOG(netsurf, INFO,
 		      "Failed to create Cairo drawing context for rsvg render.");
 		content_broadcast_error(c, NSERROR_NOMEM, NULL);
-		return false;
+		반환 false;
 	}
 
 	rsvg_handle_render_cairo(d->rsvgh, d->ct);
@@ -189,7 +189,7 @@ static bool rsvg_convert(struct content *c)
 	/* Done: update status bar */
 	content_set_status(c, "");
 
-	return true;
+	반환 true;
 }
 
 static bool rsvg_redraw(struct content *c, struct content_redraw_data *data,
@@ -200,12 +200,12 @@ static bool rsvg_redraw(struct content *c, struct content_redraw_data *data,
 
 	assert(rsvgcontent->bitmap != NULL);
 
-	if (data->repeat_x)
+	만약 (data->repeat_x)
 		flags |= BITMAPF_REPEAT_X;
-	if (data->repeat_y)
+	만약 (data->repeat_y)
 		flags |= BITMAPF_REPEAT_Y;
 
-	return (ctx->plot->bitmap(ctx,
+	반환 (ctx->plot->bitmap(ctx,
 				  rsvgcontent->bitmap,
 				  data->x, data->y,
 				  data->width, data->height,
@@ -217,12 +217,12 @@ static void rsvg_destroy(struct content *c)
 {
 	rsvg_content *d = (rsvg_content *) c;
 
-	if (d->bitmap != NULL) guit->bitmap->destroy(d->bitmap);
-	if (d->rsvgh != NULL) g_object_unref(d->rsvgh);
-	if (d->ct != NULL) cairo_destroy(d->ct);
-	if (d->cs != NULL) cairo_surface_destroy(d->cs);
+	만약 (d->bitmap != NULL) guit->bitmap->destroy(d->bitmap);
+	만약 (d->rsvgh != NULL) g_object_unref(d->rsvgh);
+	만약 (d->ct != NULL) cairo_destroy(d->ct);
+	만약 (d->cs != NULL) cairo_surface_destroy(d->cs);
 
-	return;
+	반환;
 }
 
 static nserror rsvg_clone(const struct content *old, struct content **newc)
@@ -233,53 +233,53 @@ static nserror rsvg_clone(const struct content *old, struct content **newc)
 	size_t size;
 
 	svg = calloc(1, sizeof(rsvg_content));
-	if (svg == NULL)
-		return NSERROR_NOMEM;
+	만약 (svg == NULL)
+		반환 NSERROR_NOMEM;
 
 	error = content__clone(old, &svg->base);
-	if (error != NSERROR_OK) {
+	만약 (error != NSERROR_OK) {
 		content_destroy(&svg->base);
-		return error;
+		반환 error;
 	}
 
 	/* Simply replay create/process/convert */
 	error = rsvg_create_svg_data(svg);
-	if (error != NSERROR_OK) {
+	만약 (error != NSERROR_OK) {
 		content_destroy(&svg->base);
-		return error;
+		반환 error;
 	}
 
 	data = content__get_source_data(&svg->base, &size);
-	if (size > 0) {
-		if (rsvg_process_data(&svg->base, (const char *)data, size) == false) {
+	만약 (size > 0) {
+		만약 (rsvg_process_data(&svg->base, (const char *)data, size) == false) {
 			content_destroy(&svg->base);
-			return NSERROR_NOMEM;
+			반환 NSERROR_NOMEM;
 		}
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
+	만약 (old->status == CONTENT_STATUS_READY ||
 			old->status == CONTENT_STATUS_DONE) {
-		if (rsvg_convert(&svg->base) == false) {
+		만약 (rsvg_convert(&svg->base) == false) {
 			content_destroy(&svg->base);
-			return NSERROR_CLONE_FAILED;
+			반환 NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*newc = (struct content *) svg;
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 static void *rsvg_get_internal(const struct content *c, void *context)
 {
 	rsvg_content *d = (rsvg_content *) c;
 
-	return d->bitmap;
+	반환 d->bitmap;
 }
 
 static content_type rsvg_content_type(void)
 {
-	return CONTENT_IMAGE;
+	반환 CONTENT_IMAGE;
 }
 
 
@@ -287,11 +287,11 @@ static bool rsvg_content_is_opaque(struct content *c)
 {
 	rsvg_content *d = (rsvg_content *) c;
 
-	if (d->bitmap != NULL) {
-		return guit->bitmap->get_opaque(d->bitmap);
+	만약 (d->bitmap != NULL) {
+		반환 guit->bitmap->get_opaque(d->bitmap);
 	}
 
-	return false;
+	반환 false;
 }
 
 

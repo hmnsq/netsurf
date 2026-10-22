@@ -54,29 +54,29 @@ get_authentication_description(struct nsurl *url,
 	const char *key;
 
 	res = nsurl_get(url, NSURL_HOST, &url_s, &url_l);
-	if (res != NSERROR_OK) {
-		return res;
+	만약 (res != NSERROR_OK) {
+		반환 res;
 	}
 
-	if ((*username == 0) && (*password == 0)) {
+	만약 ((*username == 0) && (*password == 0)) {
 		key = "LoginDescription";
-	} else {
+	} 아니면 {
 		key = "LoginAgain";
 	}
 
 	str = messages_get_buff(key, url_s, realm);
-	if (str != NULL) {
+	만약 (str != NULL) {
 		NSLOG(netsurf, INFO,
 		      "key:%s url:%s realm:%s str:%s",
 		      key, url_s, realm, str);
 		*out_str = str;
-	} else {
+	} 아니면 {
 		res = NSERROR_NOMEM;
 	}
 
 	free(url_s);
 
-	return res;
+	반환 res;
 }
 
 
@@ -101,31 +101,31 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 
 	/* extract parameters from multipart post data */
 	curmd = fetch_about_get_multipart(ctx);
-	while (curmd != NULL) {
-		if (strcmp(curmd->name, "siteurl") == 0) {
+	동안 (curmd != NULL) {
+		만약 (strcmp(curmd->name, "siteurl") == 0) {
 			res = nsurl_create(curmd->value, &siteurl);
-			if (res != NSERROR_OK) {
-				return fetch_about_srverror(ctx);
+			만약 (res != NSERROR_OK) {
+				반환 fetch_about_srverror(ctx);
 			}
-		} else if (strcmp(curmd->name, "realm") == 0) {
+		} 아니면 만약 (strcmp(curmd->name, "realm") == 0) {
 			realm = curmd->value;
-		} else if (strcmp(curmd->name, "username") == 0) {
+		} 아니면 만약 (strcmp(curmd->name, "username") == 0) {
 			username = curmd->value;
-		} else if (strcmp(curmd->name, "password") == 0) {
+		} 아니면 만약 (strcmp(curmd->name, "password") == 0) {
 			password = curmd->value;
 		}
 		curmd = curmd->next;
 	}
 
-	if (siteurl == NULL) {
-		return fetch_about_srverror(ctx);
+	만약 (siteurl == NULL) {
+		반환 fetch_about_srverror(ctx);
 	}
 
 	/* content is going to return ok */
 	fetch_about_set_http_code(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8")) {
+	만약 (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8")) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
@@ -139,14 +139,14 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 			"<body class=\"ns-even-bg ns-even-fg ns-border\" id =\"authentication\">\n"
 			"<h1 class=\"ns-border\">%s</h1>\n",
 			title, title);
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<form method=\"post\""
 			 " enctype=\"multipart/form-data\">");
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
@@ -155,16 +155,16 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 					     username,
 					     password,
 					     &description);
-	if (res == NSERROR_OK) {
+	만약 (res == NSERROR_OK) {
 		res = fetch_about_ssenddataf(ctx, "<p>%s</p>", description);
 		free(description);
-		if (res != NSERROR_OK) {
+		만약 (res != NSERROR_OK) {
 			goto fetch_about_query_auth_handler_aborted;
 		}
 	}
 
 	res = fetch_about_ssenddataf(ctx, "<table>");
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
@@ -175,7 +175,7 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 			 "name=\"username\" value=\"%s\"></td>"
 			 "</tr>",
 			 messages_get("Username"), username);
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
@@ -186,12 +186,12 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 			 "name=\"password\" value=\"%s\"></td>"
 			 "</tr>",
 			 messages_get("Password"), password);
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</table>");
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
@@ -204,31 +204,31 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 			 "</div>",
 			 messages_get("Login"),
 			 messages_get("Cancel"));
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
 	res = nsurl_get(siteurl, NSURL_COMPLETE, &url_s, &url_l);
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		url_s = strdup("");
 	}
 	res = fetch_about_ssenddataf(ctx,
 			 "<input type=\"hidden\" name=\"siteurl\" value=\"%s\">",
 			 url_s);
 	free(url_s);
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<input type=\"hidden\" name=\"realm\" value=\"%s\">",
 			 realm);
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</form></body>\n</html>\n");
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		goto fetch_about_query_auth_handler_aborted;
 	}
 
@@ -236,11 +236,11 @@ bool fetch_about_query_auth_handler(struct fetch_about_context *ctx)
 
 	nsurl_unref(siteurl);
 
-	return true;
+	반환 true;
 
 fetch_about_query_auth_handler_aborted:
 
 	nsurl_unref(siteurl);
 
-	return false;
+	반환 false;
 }

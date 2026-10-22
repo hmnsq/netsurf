@@ -35,10 +35,10 @@
 bool fetch_about_imagecache_handler(struct fetch_about_context *ctx)
 {
 	char buffer[2048]; /* output buffer */
-	int code = 200;
-	int slen;
-	unsigned int cent_loop = 0;
-	int elen = 0; /* entry length */
+	정수 code = 200;
+	정수 slen;
+	unsigned 정수 cent_loop = 0;
+	정수 elen = 0; /* entry length */
 	nserror res;
 	bool even = false;
 
@@ -46,7 +46,7 @@ bool fetch_about_imagecache_handler(struct fetch_about_context *ctx)
 	fetch_about_set_http_code(ctx, code);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html"))
+	만약 (fetch_about_send_header(ctx, "Content-Type: text/html"))
 		goto fetch_about_imagecache_handler_aborted;
 
 	/* page head */
@@ -58,7 +58,7 @@ bool fetch_about_imagecache_handler(struct fetch_about_context *ctx)
 		"</head>\n"
 		"<body id =\"cachelist\" class=\"ns-even-bg ns-even-fg ns-border\">\n"
 		"<h1 class=\"ns-border\">Image Cache Status</h1>\n");
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		goto fetch_about_imagecache_handler_aborted;
 	}
 
@@ -73,12 +73,12 @@ bool fetch_about_imagecache_handler(struct fetch_about_context *ctx)
 		"(%pj%%/%pk%%/%pl%%/%pm%%)"
 		"<img width=200 height=100 src=\"about:chart?type=pie&width=200&height=100&labels=hit,miss,fail&values=%k,%l,%m\" />"
 		"</p>\n");
-	if (slen >= (int) (sizeof(buffer))) {
+	만약 (slen >= (정수) (sizeof(buffer))) {
 		goto fetch_about_imagecache_handler_aborted; /* overflow */
 	}
 
 	res = fetch_about_senddata(ctx, (const uint8_t *)buffer, slen);
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		goto fetch_about_imagecache_handler_aborted;
 	}
 
@@ -94,12 +94,12 @@ bool fetch_about_imagecache_handler(struct fetch_about_context *ctx)
 				"</p>\n"
 		"<p>Bitmap of size %w had most (%x) conversions</p>\n"
 		"<h2 class=\"ns-border\">Current contents</h2>\n");
-	if (slen >= (int) (sizeof(buffer))) {
+	만약 (slen >= (정수) (sizeof(buffer))) {
 		goto fetch_about_imagecache_handler_aborted; /* overflow */
 	}
 
 	res = fetch_about_senddata(ctx, (const uint8_t *)buffer, slen);
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		goto fetch_about_imagecache_handler_aborted;
 	}
 
@@ -115,13 +115,13 @@ bool fetch_about_imagecache_handler(struct fetch_about_context *ctx)
 			"<span>Bitmap Size</span>"
 			"<span>Source</span>"
 			"</strong>\n");
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		goto fetch_about_imagecache_handler_aborted;
 	}
 
 	slen = 0;
 	do {
-		if (even) {
+		만약 (even) {
 			elen = image_cache_snentryf(buffer + slen,
 						   sizeof buffer - slen,
 					cent_loop,
@@ -135,7 +135,7 @@ bool fetch_about_imagecache_handler(struct fetch_about_context *ctx)
 					"<span class=\"ns-border\">%s</span>"
 					"<span class=\"ns-border\">%o</span>"
 					"</a>\n");
-		} else {
+		} 아니면 {
 			elen = image_cache_snentryf(buffer + slen,
 						   sizeof buffer - slen,
 					cent_loop,
@@ -150,39 +150,39 @@ bool fetch_about_imagecache_handler(struct fetch_about_context *ctx)
 					"<span class=\"ns-border\">%o</span>"
 					"</a>\n");
 		}
-		if (elen <= 0)
+		만약 (elen <= 0)
 			break; /* last option */
 
-		if (elen >= (int) (sizeof buffer - slen)) {
+		만약 (elen >= (정수) (sizeof buffer - slen)) {
 			/* last entry would not fit in buffer, submit buffer */
 			res = fetch_about_senddata(ctx,
 						   (const uint8_t *)buffer,
 						   slen);
-			if (res != NSERROR_OK) {
+			만약 (res != NSERROR_OK) {
 				goto fetch_about_imagecache_handler_aborted;
 			}
 
 			slen = 0;
-		} else {
+		} 아니면 {
 			/* normal addition */
 			slen += elen;
 			cent_loop++;
 			even = !even;
 		}
-	} while (elen > 0);
+	} 동안 (elen > 0);
 
 	slen += snprintf(buffer + slen, sizeof buffer - slen,
 			 "</p>\n</body>\n</html>\n");
 
 	res = fetch_about_senddata(ctx, (const uint8_t *)buffer, slen);
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		goto fetch_about_imagecache_handler_aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	반환 true;
 
 fetch_about_imagecache_handler_aborted:
-	return false;
+	반환 false;
 }

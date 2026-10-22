@@ -58,7 +58,7 @@ plot_font_generic_family(enum css_font_family_e css)
 		break;
 	}
 
-	return plot;
+	반환 plot;
 }
 
 /**
@@ -67,9 +67,9 @@ plot_font_generic_family(enum css_font_family_e css)
  * \param css  CSS font weight
  * \return Plot weight
  */
-static int plot_font_weight(enum css_font_weight_e css)
+static 정수 plot_font_weight(enum css_font_weight_e css)
 {
-	int weight;
+	정수 weight;
 
 	switch (css) {
 	case CSS_FONT_WEIGHT_100:
@@ -104,7 +104,7 @@ static int plot_font_weight(enum css_font_weight_e css)
 		break;
 	}
 
-	return weight;
+	반환 weight;
 }
 
 /**
@@ -119,15 +119,15 @@ static plot_font_flags_t plot_font_flags(enum css_font_style_e style,
 {
 	plot_font_flags_t flags = FONTF_NONE;
 
-	if (style == CSS_FONT_STYLE_ITALIC)
+	만약 (style == CSS_FONT_STYLE_ITALIC)
 		flags |= FONTF_ITALIC;
-	else if (style == CSS_FONT_STYLE_OBLIQUE)
+	아니면 만약 (style == CSS_FONT_STYLE_OBLIQUE)
 		flags |= FONTF_OBLIQUE;
 
-	if (variant == CSS_FONT_VARIANT_SMALL_CAPS)
+	만약 (variant == CSS_FONT_VARIANT_SMALL_CAPS)
 		flags |= FONTF_SMALLCAPS;
 
-	return flags;
+	반환 flags;
 }
 
 
@@ -152,7 +152,7 @@ void font_plot_style_from_css(
 				      INTTOFIX(PLOT_STYLE_SCALE)));
 
 	/* Clamp font size to configured minimum */
-	if (fstyle->size < (nsoption_int(font_min_size) * PLOT_STYLE_SCALE) / 10)
+	만약 (fstyle->size < (nsoption_int(font_min_size) * PLOT_STYLE_SCALE) / 10)
 		fstyle->size = (nsoption_int(font_min_size) * PLOT_STYLE_SCALE) / 10;
 
 	fstyle->weight = plot_font_weight(css_computed_font_weight(css));

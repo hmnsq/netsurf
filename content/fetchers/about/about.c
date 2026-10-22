@@ -89,7 +89,7 @@ static struct fetch_about_context *ring = NULL;
  */
 struct about_handlers {
 	const char *name; /**< name to match in url */
-	int name_len;
+	정수 name_len;
 	lwc_string *lname; /**< Interned name */
 	fetch_about_handler handler; /**< handler for the url */
 	bool hidden; /**< If entry should be hidden in listing */
@@ -107,7 +107,7 @@ fetch_about_send_callback(const fetch_msg *msg, struct fetch_about_context *ctx)
 	fetch_send_callback(msg, ctx->fetchh);
 	ctx->locked = false;
 
-	return ctx->aborted;
+	반환 ctx->aborted;
 }
 
 /* exported interface documented in about/private.h */
@@ -116,7 +116,7 @@ fetch_about_send_finished(struct fetch_about_context *ctx)
 {
 	fetch_msg msg;
 	msg.type = FETCH_FINISHED;
-	return fetch_about_send_callback(&msg, ctx);
+	반환 fetch_about_send_callback(&msg, ctx);
 }
 
 /* exported interface documented in about/private.h */
@@ -124,7 +124,7 @@ bool fetch_about_set_http_code(struct fetch_about_context *ctx, long code)
 {
 	fetch_set_http_code(ctx->fetchh, code);
 
-	return ctx->aborted;
+	반환 ctx->aborted;
 }
 
 /* exported interface documented in about/private.h */
@@ -145,7 +145,7 @@ fetch_about_send_header(struct fetch_about_context *ctx, const char *fmt, ...)
 	msg.data.header_or_data.buf = (const uint8_t *) header;
 	msg.data.header_or_data.len = strlen(header);
 
-	return fetch_about_send_callback(&msg, ctx);
+	반환 fetch_about_send_callback(&msg, ctx);
 }
 
 /* exported interface documented in about/private.h */
@@ -158,11 +158,11 @@ fetch_about_senddata(struct fetch_about_context *ctx, const uint8_t *data, size_
 	msg.data.header_or_data.buf = data;
 	msg.data.header_or_data.len = data_len;
 
-	if (fetch_about_send_callback(&msg, ctx)) {
-		return NSERROR_INVALID;
+	만약 (fetch_about_send_callback(&msg, ctx)) {
+		반환 NSERROR_INVALID;
 	}
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 /* exported interface documented in about/private.h */
@@ -173,7 +173,7 @@ fetch_about_ssenddataf(struct fetch_about_context *ctx, const char *fmt, ...)
 	char *dbuff;
 	fetch_msg msg;
 	va_list ap;
-	int slen;
+	정수 slen;
 
 	va_start(ap, fmt);
 
@@ -181,21 +181,21 @@ fetch_about_ssenddataf(struct fetch_about_context *ctx, const char *fmt, ...)
 
 	va_end(ap);
 
-	if (slen < (int)sizeof(buffer)) {
+	만약 (slen < (정수)sizeof(buffer)) {
 		msg.type = FETCH_DATA;
 		msg.data.header_or_data.buf = (const uint8_t *) buffer;
 		msg.data.header_or_data.len = slen;
 
-		if (fetch_about_send_callback(&msg, ctx)) {
-			return NSERROR_INVALID;
+		만약 (fetch_about_send_callback(&msg, ctx)) {
+			반환 NSERROR_INVALID;
 		}
 
-		return NSERROR_OK;
+		반환 NSERROR_OK;
 	}
 
 	dbuff = malloc(slen + 1);
-	if (dbuff == NULL) {
-		return NSERROR_NOSPACE;
+	만약 (dbuff == NULL) {
+		반환 NSERROR_NOSPACE;
 	}
 
 	va_start(ap, fmt);
@@ -208,20 +208,20 @@ fetch_about_ssenddataf(struct fetch_about_context *ctx, const char *fmt, ...)
 	msg.data.header_or_data.buf = (const uint8_t *)dbuff;
 	msg.data.header_or_data.len = slen;
 
-	if (fetch_about_send_callback(&msg, ctx)) {
+	만약 (fetch_about_send_callback(&msg, ctx)) {
 		free(dbuff);
-		return NSERROR_INVALID;
+		반환 NSERROR_INVALID;
 	}
 
 	free(dbuff);
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 
 /* exported interface documented in about/private.h */
 nsurl *fetch_about_get_url(struct fetch_about_context *ctx)
 {
-	return ctx->url;
+	반환 ctx->url;
 }
 
 
@@ -229,7 +229,7 @@ nsurl *fetch_about_get_url(struct fetch_about_context *ctx)
 const struct fetch_multipart_data *
 fetch_about_get_multipart(struct fetch_about_context *ctx)
 {
-	return ctx->multipart;
+	반환 ctx->multipart;
 }
 
 
@@ -241,19 +241,19 @@ bool fetch_about_srverror(struct fetch_about_context *ctx)
 	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_INTERNAL_SERVER_ERROR);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/plain"))
-		return false;
+	만약 (fetch_about_send_header(ctx, "Content-Type: text/plain"))
+		반환 false;
 
 	res = fetch_about_ssenddataf(ctx, "%s 500 %s",
 				     messages_get("FetchErrorCode"),
 				     messages_get("HTTP500"));
-	if (res != NSERROR_OK) {
-		return false;
+	만약 (res != NSERROR_OK) {
+		반환 false;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	반환 true;
 }
 
 
@@ -268,7 +268,7 @@ bool fetch_about_redirect(struct fetch_about_context *ctx, const char *target)
 	msg.type = FETCH_REDIRECT;
 	msg.data.redirect = target;
 
-	return fetch_about_send_callback(&msg, ctx);
+	반환 fetch_about_send_callback(&msg, ctx);
 }
 
 /**
@@ -279,7 +279,7 @@ bool fetch_about_redirect(struct fetch_about_context *ctx, const char *target)
  */
 static bool fetch_about_credits_handler(struct fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:credits.html");
+	반환 fetch_about_redirect(ctx, "resource:credits.html");
 }
 
 
@@ -291,7 +291,7 @@ static bool fetch_about_credits_handler(struct fetch_about_context *ctx)
  */
 static bool fetch_about_licence_handler(struct fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:licence.html");
+	반환 fetch_about_redirect(ctx, "resource:licence.html");
 }
 
 
@@ -303,7 +303,7 @@ static bool fetch_about_licence_handler(struct fetch_about_context *ctx)
  */
 static bool fetch_about_logo_handler(struct fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:netsurf.png");
+	반환 fetch_about_redirect(ctx, "resource:netsurf.png");
 }
 
 
@@ -315,7 +315,7 @@ static bool fetch_about_logo_handler(struct fetch_about_context *ctx)
  */
 static bool fetch_about_welcome_handler(struct fetch_about_context *ctx)
 {
-	return fetch_about_redirect(ctx, "resource:welcome.html");
+	반환 fetch_about_redirect(ctx, "resource:welcome.html");
 }
 
 
@@ -478,13 +478,13 @@ struct about_handlers about_handler_list[] = {
 static bool fetch_about_about_handler(struct fetch_about_context *ctx)
 {
 	nserror res;
-	unsigned int abt_loop = 0;
+	unsigned 정수 abt_loop = 0;
 
 	/* content is going to return ok */
 	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_OK);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
+	만약 (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
 		goto fetch_about_config_handler_aborted;
 
 	res = fetch_about_ssenddataf(ctx,
@@ -496,36 +496,36 @@ static bool fetch_about_about_handler(struct fetch_about_context *ctx)
 			"<body class=\"ns-even-bg ns-even-fg ns-border\">\n"
 			"<h1 class =\"ns-border\">List of NetSurf pages</h1>\n"
 			"<ul>\n");
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		goto fetch_about_config_handler_aborted;
 	}
 
-	for (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
+	위해 (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
 
 		/* Skip over hidden entries */
-		if (about_handler_list[abt_loop].hidden)
+		만약 (about_handler_list[abt_loop].hidden)
 			continue;
 
 		res = fetch_about_ssenddataf(ctx,
 			       "<li><a href=\"about:%s\">about:%s</a></li>\n",
 			       about_handler_list[abt_loop].name,
 			       about_handler_list[abt_loop].name);
-		if (res != NSERROR_OK) {
+		만약 (res != NSERROR_OK) {
 			goto fetch_about_config_handler_aborted;
 		}
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</ul>\n</body>\n</html>\n");
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		goto fetch_about_config_handler_aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	반환 true;
 
 fetch_about_config_handler_aborted:
-	return false;
+	반환 false;
 }
 
 static bool
@@ -538,9 +538,9 @@ fetch_about_404_handler(struct fetch_about_context *ctx)
 	fetch_set_http_code(ctx->fetchh, HTTP_RESPONSE_NOT_FOUND);
 
 	/* content type */
-	if (fetch_about_send_header(ctx,
+	만약 (fetch_about_send_header(ctx,
 			"Content-Type: text/html; charset=utf-8")) {
-		return false;
+		반환 false;
 	}
 
 	title = messages_get("HTTP404");
@@ -556,13 +556,13 @@ fetch_about_404_handler(struct fetch_about_context *ctx)
 		"</body>\n</html>\n",
 		title, title, messages_get("FetchErrorCode"), 404,
 		messages_get("FetchFile"),nsurl_access(ctx->url));
-	if (res != NSERROR_OK) {
-		return false;
+	만약 (res != NSERROR_OK) {
+		반환 false;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	반환 true;
 }
 
 /**
@@ -570,22 +570,22 @@ fetch_about_404_handler(struct fetch_about_context *ctx)
  */
 static bool fetch_about_initialise(lwc_string *scheme)
 {
-	unsigned int abt_loop = 0;
+	unsigned 정수 abt_loop = 0;
 	lwc_error error;
 
-	for (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
+	위해 (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
 		error = lwc_intern_string(about_handler_list[abt_loop].name,
 					about_handler_list[abt_loop].name_len,
 					&about_handler_list[abt_loop].lname);
-		if (error != lwc_error_ok) {
-			while (abt_loop-- != 0) {
+		만약 (error != lwc_error_ok) {
+			동안 (abt_loop-- != 0) {
 				lwc_string_unref(about_handler_list[abt_loop].lname);
 			}
-			return false;
+			반환 false;
 		}
 	}
 
-	return true;
+	반환 true;
 }
 
 
@@ -594,8 +594,8 @@ static bool fetch_about_initialise(lwc_string *scheme)
  */
 static void fetch_about_finalise(lwc_string *scheme)
 {
-	unsigned int abt_loop = 0;
-	for (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
+	unsigned 정수 abt_loop = 0;
+	위해 (abt_loop = 0; abt_loop < about_handler_list_len; abt_loop++) {
 		lwc_string_unref(about_handler_list[abt_loop].lname);
 	}
 }
@@ -603,7 +603,7 @@ static void fetch_about_finalise(lwc_string *scheme)
 
 static bool fetch_about_can_fetch(const nsurl *url)
 {
-	return true;
+	반환 true;
 }
 
 
@@ -625,20 +625,20 @@ fetch_about_setup(struct fetch *fetchh,
 		  const char **headers)
 {
 	struct fetch_about_context *ctx;
-	unsigned int handler_loop;
+	unsigned 정수 handler_loop;
 	lwc_string *path;
 	bool match;
 
 	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL)
-		return NULL;
+	만약 (ctx == NULL)
+		반환 NULL;
 
 	path = nsurl_get_component(url, NSURL_PATH);
 
-	for (handler_loop = 0;
+	위해 (handler_loop = 0;
 	     handler_loop < about_handler_list_len;
 	     handler_loop++) {
-		if (lwc_string_isequal(path,
+		만약 (lwc_string_isequal(path,
 				       about_handler_list[handler_loop].lname,
 				       &match) == lwc_error_ok && match) {
 			ctx->handler = about_handler_list[handler_loop].handler;
@@ -654,7 +654,7 @@ fetch_about_setup(struct fetch *fetchh,
 
 	RING_INSERT(ring, ctx);
 
-	return ctx;
+	반환 ctx;
 }
 
 
@@ -674,7 +674,7 @@ static void fetch_about_free(void *ctx)
  */
 static bool fetch_about_start(void *ctx)
 {
-	return true;
+	반환 true;
 }
 
 
@@ -701,7 +701,7 @@ static void fetch_about_poll(lwc_string *scheme)
 	struct fetch_about_context *c, *save_ring = NULL;
 
 	/* Iterate over ring, processing each pending fetch */
-	while (ring != NULL) {
+	동안 (ring != NULL) {
 		/* Take the first entry from the ring */
 		c = ring;
 		RING_REMOVE(ring, c);
@@ -712,17 +712,17 @@ static void fetch_about_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
+		만약 (c->locked == true) {
 			RING_INSERT(save_ring, c);
 			continue;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false) {
+		만약 (c->aborted == false) {
 			/* about fetches can be processed in one go */
-			if (c->handler == NULL) {
+			만약 (c->handler == NULL) {
 				fetch_about_404_handler(c);
-			} else {
+			} 아니면 {
 				c->handler(c);
 			}
 		}
@@ -753,5 +753,5 @@ nserror fetch_about_register(void)
 		.finalise = fetch_about_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	반환 fetcher_add(scheme, &fetcher_ops);
 }

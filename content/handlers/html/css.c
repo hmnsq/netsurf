@@ -56,25 +56,25 @@ static nserror css_error_to_nserror(css_error error)
 {
 	switch (error) {
 	case CSS_OK:
-		return NSERROR_OK;
+		반환 NSERROR_OK;
 
 	case CSS_NOMEM:
-		return NSERROR_NOMEM;
+		반환 NSERROR_NOMEM;
 
 	case CSS_BADPARM:
-		return NSERROR_BAD_PARAMETER;
+		반환 NSERROR_BAD_PARAMETER;
 
 	case CSS_INVALID:
-		return NSERROR_INVALID;
+		반환 NSERROR_INVALID;
 
 	case CSS_FILENOTFOUND:
-		return NSERROR_NOT_FOUND;
+		반환 NSERROR_NOT_FOUND;
 
 	case CSS_NEEDDATA:
-		return NSERROR_NEED_DATA;
+		반환 NSERROR_NEED_DATA;
 
 	case CSS_BADCHARSET:
-		return NSERROR_BAD_ENCODING;
+		반환 NSERROR_BAD_ENCODING;
 
 	case CSS_EOF:
 	case CSS_IMPORTS_PENDING:
@@ -82,7 +82,7 @@ static nserror css_error_to_nserror(css_error error)
 	default:
 		break;
 	}
-	return NSERROR_CSS;
+	반환 NSERROR_CSS;
 }
 
 
@@ -95,14 +95,14 @@ html_convert_css_callback(hlcache_handle *css,
 			  void *pw)
 {
 	html_content *parent = pw;
-	unsigned int i;
+	unsigned 정수 i;
 	struct html_stylesheet *s;
 
 	/* Find sheet */
-	for (i = 0, s = parent->stylesheets;
+	위해 (i = 0, s = parent->stylesheets;
 	     i != parent->stylesheet_count;
 	     i++, s++) {
-		if (s->sheet == css)
+		만약 (s->sheet == css)
 			break;
 	}
 
@@ -130,17 +130,17 @@ html_convert_css_callback(hlcache_handle *css,
 
 	case CONTENT_MSG_POINTER:
 		/* Really don't want this to continue after the switch */
-		return NSERROR_OK;
+		반환 NSERROR_OK;
 
 	default:
 		break;
 	}
 
-	if (html_can_begin_conversion(parent)) {
+	만약 (html_can_begin_conversion(parent)) {
 		html_begin_conversion(parent);
 	}
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 
@@ -161,15 +161,15 @@ html_stylesheet_from_domnode(html_content *c,
 	child.quirks = c->base.quirks;
 
 	exc = dom_node_get_text_content(node, &style);
-	if ((exc != DOM_NO_ERR) || (style == NULL)) {
+	만약 ((exc != DOM_NO_ERR) || (style == NULL)) {
 		NSLOG(netsurf, INFO, "No text content");
-		return NSERROR_OK;
+		반환 NSERROR_OK;
 	}
 
 	error = html_css_fetcher_add_item(style, c->base_url, &key);
-	if (error != NSERROR_OK) {
+	만약 (error != NSERROR_OK) {
 		dom_string_unref(style);
-		return error;
+		반환 error;
 	}
 
 	dom_string_unref(style);
@@ -177,17 +177,17 @@ html_stylesheet_from_domnode(html_content *c,
 	snprintf(urlbuf, sizeof(urlbuf), "x-ns-css:%"PRIu32"", key);
 
 	error = nsurl_create(urlbuf, &url);
-	if (error != NSERROR_OK) {
-		return error;
+	만약 (error != NSERROR_OK) {
+		반환 error;
 	}
 
 	error = hlcache_handle_retrieve(url, 0,
 			content_get_url(&c->base), NULL,
 			html_convert_css_callback, c, &child, CONTENT_CSS,
 			sheet);
-	if (error != NSERROR_OK) {
+	만약 (error != NSERROR_OK) {
 		nsurl_unref(url);
-		return error;
+		반환 error;
 	}
 
 	nsurl_unref(url);
@@ -195,7 +195,7 @@ html_stylesheet_from_domnode(html_content *c,
 	c->base.active++;
 	NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 
@@ -215,23 +215,23 @@ html_create_style_element(html_content *c, dom_node *style)
 
 	/* type='text/css', or not present (invalid but common) */
 	exc = dom_element_get_attribute(style, corestring_dom_type, &val);
-	if (exc == DOM_NO_ERR && val != NULL) {
-		if (!dom_string_caseless_lwc_isequal(val,
+	만약 (exc == DOM_NO_ERR && val != NULL) {
+		만약 (!dom_string_caseless_lwc_isequal(val,
 				corestring_lwc_text_css)) {
 			dom_string_unref(val);
-			return NULL;
+			반환 NULL;
 		}
 		dom_string_unref(val);
 	}
 
 	/* media contains 'screen' or 'all' or not present */
 	exc = dom_element_get_attribute(style, corestring_dom_media, &val);
-	if (exc == DOM_NO_ERR && val != NULL) {
-		if (strcasestr(dom_string_data(val), "screen") == NULL &&
+	만약 (exc == DOM_NO_ERR && val != NULL) {
+		만약 (strcasestr(dom_string_data(val), "screen") == NULL &&
 				strcasestr(dom_string_data(val),
 						"all") == NULL) {
 			dom_string_unref(val);
-			return NULL;
+			반환 NULL;
 		}
 		dom_string_unref(val);
 	}
@@ -240,10 +240,10 @@ html_create_style_element(html_content *c, dom_node *style)
 	stylesheets = realloc(c->stylesheets,
 			      sizeof(struct html_stylesheet) *
 			      (c->stylesheet_count + 1));
-	if (stylesheets == NULL) {
+	만약 (stylesheets == NULL) {
 
 		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return false;
+		반환 false;
 
 	}
 	c->stylesheets = stylesheets;
@@ -254,7 +254,7 @@ html_create_style_element(html_content *c, dom_node *style)
 	c->stylesheets[c->stylesheet_count].unused = false;
 	c->stylesheet_count++;
 
-	return c->stylesheets + (c->stylesheet_count - 1);
+	반환 c->stylesheets + (c->stylesheet_count - 1);
 }
 
 
@@ -265,17 +265,17 @@ html_css_process_modified_style(html_content *c, struct html_stylesheet *s)
 	nserror error;
 
 	error = html_stylesheet_from_domnode(c, s->node, &sheet);
-	if (error != NSERROR_OK) {
+	만약 (error != NSERROR_OK) {
 		NSLOG(netsurf, INFO, "Failed to update sheet");
 		content_broadcast_error(&c->base, error, NULL);
-		return false;
+		반환 false;
 	}
 
-	if (sheet != NULL) {
+	만약 (sheet != NULL) {
 		NSLOG(netsurf, INFO, "Updating sheet %p with %p", s->sheet,
 		      sheet);
 
-		if (s->sheet != NULL) {
+		만약 (s->sheet != NULL) {
 			switch (content_get_status(s->sheet)) {
 			case CONTENT_STATUS_DONE:
 				break;
@@ -292,7 +292,7 @@ html_css_process_modified_style(html_content *c, struct html_stylesheet *s)
 
 	s->modified = false;
 
-	return true;
+	반환 true;
 }
 
 
@@ -303,17 +303,17 @@ static void html_css_process_modified_styles(void *pw)
 {
 	html_content *c = pw;
 	struct html_stylesheet *s;
-	unsigned int i;
+	unsigned 정수 i;
 	bool all_done = true;
 
-	for (i = 0, s = c->stylesheets; i != c->stylesheet_count; i++, s++) {
-		if (c->stylesheets[i].modified) {
+	위해 (i = 0, s = c->stylesheets; i != c->stylesheet_count; i++, s++) {
+		만약 (c->stylesheets[i].modified) {
 			all_done &= html_css_process_modified_style(c, s);
 		}
 	}
 
 	/* If we failed to process any sheet, schedule a retry */
-	if (all_done == false) {
+	만약 (all_done == false) {
 		guit->misc->schedule(1000, html_css_process_modified_styles, c);
 	}
 }
@@ -322,54 +322,54 @@ static void html_css_process_modified_styles(void *pw)
 /* exported function documented in html/css.h */
 bool html_css_update_style(html_content *c, dom_node *style)
 {
-	unsigned int i;
+	unsigned 정수 i;
 	struct html_stylesheet *s;
 
 	/* Find sheet */
-	for (i = 0, s = c->stylesheets;	i != c->stylesheet_count; i++, s++) {
-		if (s->node == style)
+	위해 (i = 0, s = c->stylesheets;	i != c->stylesheet_count; i++, s++) {
+		만약 (s->node == style)
 			break;
 	}
-	if (i == c->stylesheet_count) {
+	만약 (i == c->stylesheet_count) {
 		s = html_create_style_element(c, style);
 	}
-	if (s == NULL) {
+	만약 (s == NULL) {
 		NSLOG(netsurf, INFO,
 		      "Could not find or create inline stylesheet for %p",
 		      style);
-		return false;
+		반환 false;
 	}
 
 	s->modified = true;
 
 	guit->misc->schedule(0, html_css_process_modified_styles, c);
 
-	return true;
+	반환 true;
 }
 
 
 /* exported function documented in html/css.h */
 bool html_css_process_style(html_content *c, dom_node *node)
 {
-	unsigned int i;
+	unsigned 정수 i;
 	dom_string *val;
 	dom_exception exc;
 	struct html_stylesheet *s;
 
 	/* Find sheet */
-	for (i = 0, s = c->stylesheets;	i != c->stylesheet_count; i++, s++) {
-		if (s->node == node)
+	위해 (i = 0, s = c->stylesheets;	i != c->stylesheet_count; i++, s++) {
+		만약 (s->node == node)
 			break;
 	}
 
 		/* Should already exist */
-	if (i == c->stylesheet_count) {
-		return false;
+	만약 (i == c->stylesheet_count) {
+		반환 false;
 	}
 
 	exc = dom_element_get_attribute(node, corestring_dom_media, &val);
-	if (exc == DOM_NO_ERR && val != NULL) {
-		if (strcasestr(dom_string_data(val), "screen") == NULL &&
+	만약 (exc == DOM_NO_ERR && val != NULL) {
+		만약 (strcasestr(dom_string_data(val), "screen") == NULL &&
 				strcasestr(dom_string_data(val),
 						"all") == NULL) {
 			s->unused = true;
@@ -377,7 +377,7 @@ bool html_css_process_style(html_content *c, dom_node *node)
 		dom_string_unref(val);
 	}
 
-	return true;
+	반환 true;
 }
 
 
@@ -393,56 +393,56 @@ bool html_css_process_link(html_content *htmlc, dom_node *node)
 
 	/* rel=<space separated list, including 'stylesheet'> */
 	exc = dom_element_get_attribute(node, corestring_dom_rel, &rel);
-	if (exc != DOM_NO_ERR || rel == NULL)
-		return true;
+	만약 (exc != DOM_NO_ERR || rel == NULL)
+		반환 true;
 
-	if (strcasestr(dom_string_data(rel), "stylesheet") == NULL) {
+	만약 (strcasestr(dom_string_data(rel), "stylesheet") == NULL) {
 		dom_string_unref(rel);
-		return true;
-	} else if (strcasestr(dom_string_data(rel), "alternate") != NULL) {
+		반환 true;
+	} 아니면 만약 (strcasestr(dom_string_data(rel), "alternate") != NULL) {
 		/* Ignore alternate stylesheets */
 		dom_string_unref(rel);
-		return true;
+		반환 true;
 	}
 	dom_string_unref(rel);
 
-	if (nsoption_bool(author_level_css) == false) {
-		return true;
+	만약 (nsoption_bool(author_level_css) == false) {
+		반환 true;
 	}
 
 	/* type='text/css' or not present */
 	exc = dom_element_get_attribute(node, corestring_dom_type, &type_attr);
-	if (exc == DOM_NO_ERR && type_attr != NULL) {
-		if (!dom_string_caseless_lwc_isequal(type_attr,
+	만약 (exc == DOM_NO_ERR && type_attr != NULL) {
+		만약 (!dom_string_caseless_lwc_isequal(type_attr,
 				corestring_lwc_text_css)) {
 			dom_string_unref(type_attr);
-			return true;
+			반환 true;
 		}
 		dom_string_unref(type_attr);
 	}
 
 	/* media contains 'screen' or 'all' or not present */
 	exc = dom_element_get_attribute(node, corestring_dom_media, &media);
-	if (exc == DOM_NO_ERR && media != NULL) {
-		if (strcasestr(dom_string_data(media), "screen") == NULL &&
+	만약 (exc == DOM_NO_ERR && media != NULL) {
+		만약 (strcasestr(dom_string_data(media), "screen") == NULL &&
 		    strcasestr(dom_string_data(media), "all") == NULL) {
 			dom_string_unref(media);
-			return true;
+			반환 true;
 		}
 		dom_string_unref(media);
 	}
 
 	/* href='...' */
 	exc = dom_element_get_attribute(node, corestring_dom_href, &href);
-	if (exc != DOM_NO_ERR || href == NULL)
-		return true;
+	만약 (exc != DOM_NO_ERR || href == NULL)
+		반환 true;
 
 	/* TODO: only the first preferred stylesheets (ie.
 	 * those with a title attribute) should be loaded
 	 * (see HTML4 14.3) */
 
 	ns_error = nsurl_join(htmlc->base_url, dom_string_data(href), &joined);
-	if (ns_error != NSERROR_OK) {
+	만약 (ns_error != NSERROR_OK) {
 		dom_string_unref(href);
 		goto no_memory;
 	}
@@ -455,7 +455,7 @@ bool html_css_process_link(html_content *htmlc, dom_node *node)
 	stylesheets = realloc(htmlc->stylesheets,
 			      sizeof(struct html_stylesheet) *
 			      (htmlc->stylesheet_count + 1));
-	if (stylesheets == NULL) {
+	만약 (stylesheets == NULL) {
 		nsurl_unref(joined);
 		ns_error = NSERROR_NOMEM;
 		goto no_memory;
@@ -478,7 +478,7 @@ bool html_css_process_link(html_content *htmlc, dom_node *node)
 
 	nsurl_unref(joined);
 
-	if (ns_error != NSERROR_OK)
+	만약 (ns_error != NSERROR_OK)
 		goto no_memory;
 
 	htmlc->stylesheet_count++;
@@ -486,16 +486,16 @@ bool html_css_process_link(html_content *htmlc, dom_node *node)
 	htmlc->base.active++;
 	NSLOG(netsurf, INFO, "%d fetches active", htmlc->base.active);
 
-	return true;
+	반환 true;
 
 no_memory:
 	content_broadcast_error(&htmlc->base, ns_error, NULL);
-	return false;
+	반환 false;
 }
 
 
 /* exported interface documented in html/html.h */
-struct html_stylesheet *html_get_stylesheets(hlcache_handle *h, unsigned int *n)
+struct html_stylesheet *html_get_stylesheets(hlcache_handle *h, unsigned 정수 *n)
 {
 	html_content *c = (html_content *) hlcache_handle_get_content(h);
 
@@ -504,7 +504,7 @@ struct html_stylesheet *html_get_stylesheets(hlcache_handle *h, unsigned int *n)
 
 	*n = c->stylesheet_count;
 
-	return c->stylesheets;
+	반환 c->stylesheets;
 }
 
 
@@ -512,39 +512,39 @@ struct html_stylesheet *html_get_stylesheets(hlcache_handle *h, unsigned int *n)
 bool html_css_saw_insecure_stylesheets(html_content *html)
 {
 	struct html_stylesheet *s;
-	unsigned int i;
+	unsigned 정수 i;
 
-	for (i = 0, s = html->stylesheets; i < html->stylesheet_count;
+	위해 (i = 0, s = html->stylesheets; i < html->stylesheet_count;
 	     i++, s++) {
-		if (s->sheet != NULL) {
-			if (content_saw_insecure_objects(s->sheet)) {
-				return true;
+		만약 (s->sheet != NULL) {
+			만약 (content_saw_insecure_objects(s->sheet)) {
+				반환 true;
 			}
 		}
 	}
 
-	return false;
+	반환 false;
 }
 
 
 /* exported function documented in html/css.h */
 nserror html_css_free_stylesheets(html_content *html)
 {
-	unsigned int i;
+	unsigned 정수 i;
 
 	guit->misc->schedule(-1, html_css_process_modified_styles, html);
 
-	for (i = 0; i != html->stylesheet_count; i++) {
-		if (html->stylesheets[i].sheet != NULL) {
+	위해 (i = 0; i != html->stylesheet_count; i++) {
+		만약 (html->stylesheets[i].sheet != NULL) {
 			hlcache_handle_release(html->stylesheets[i].sheet);
 		}
-		if (html->stylesheets[i].node != NULL) {
+		만약 (html->stylesheets[i].node != NULL) {
 			dom_node_unref(html->stylesheets[i].node);
 		}
 	}
 	free(html->stylesheets);
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 
@@ -556,7 +556,7 @@ nserror html_css_quirks_stylesheets(html_content *c)
 
 	assert(c->stylesheets != NULL);
 
-	if (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL) {
+	만약 (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL) {
 		child.charset = c->encoding;
 		child.quirks = c->base.quirks;
 
@@ -565,15 +565,15 @@ nserror html_css_quirks_stylesheets(html_content *c)
 				html_convert_css_callback, c, &child,
 				CONTENT_CSS,
 				&c->stylesheets[STYLESHEET_QUIRKS].sheet);
-		if (ns_error != NSERROR_OK) {
-			return ns_error;
+		만약 (ns_error != NSERROR_OK) {
+			반환 ns_error;
 		}
 
 		c->base.active++;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 	}
 
-	return ns_error;
+	반환 ns_error;
 }
 
 
@@ -583,8 +583,8 @@ nserror html_css_new_stylesheets(html_content *c)
 	nserror ns_error;
 	hlcache_child_context child;
 
-	if (c->stylesheets != NULL) {
-		return NSERROR_OK; /* already initialised */
+	만약 (c->stylesheets != NULL) {
+		반환 NSERROR_OK; /* already initialised */
 	}
 
 	/* stylesheet 0 is the base style sheet,
@@ -593,8 +593,8 @@ nserror html_css_new_stylesheets(html_content *c)
 	 * stylesheet 3 is the user stylesheet */
 	c->stylesheets = calloc(STYLESHEET_START,
 			sizeof(struct html_stylesheet));
-	if (c->stylesheets == NULL) {
-		return NSERROR_NOMEM;
+	만약 (c->stylesheets == NULL) {
+		반환 NSERROR_NOMEM;
 	}
 
 	c->stylesheets[STYLESHEET_BASE].sheet = NULL;
@@ -610,22 +610,22 @@ nserror html_css_new_stylesheets(html_content *c)
 			content_get_url(&c->base), NULL,
 			html_convert_css_callback, c, &child, CONTENT_CSS,
 			&c->stylesheets[STYLESHEET_BASE].sheet);
-	if (ns_error != NSERROR_OK) {
-		return ns_error;
+	만약 (ns_error != NSERROR_OK) {
+		반환 ns_error;
 	}
 
 	c->base.active++;
 	NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
 
-	if (nsoption_bool(block_advertisements)) {
+	만약 (nsoption_bool(block_advertisements)) {
 		ns_error = hlcache_handle_retrieve(html_adblock_stylesheet_url,
 				0, content_get_url(&c->base), NULL,
 				html_convert_css_callback,
 				c, &child, CONTENT_CSS,
 				&c->stylesheets[STYLESHEET_ADBLOCK].sheet);
-		if (ns_error != NSERROR_OK) {
-			return ns_error;
+		만약 (ns_error != NSERROR_OK) {
+			반환 ns_error;
 		}
 
 		c->base.active++;
@@ -637,14 +637,14 @@ nserror html_css_new_stylesheets(html_content *c)
 			content_get_url(&c->base), NULL,
 			html_convert_css_callback, c, &child, CONTENT_CSS,
 			&c->stylesheets[STYLESHEET_USER].sheet);
-	if (ns_error != NSERROR_OK) {
-		return ns_error;
+	만약 (ns_error != NSERROR_OK) {
+		반환 ns_error;
 	}
 
 	c->base.active++;
 	NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
 
-	return ns_error;
+	반환 ns_error;
 }
 
 
@@ -657,18 +657,18 @@ html_css_new_selection_context(html_content *c, css_select_ctx **ret_select_ctx)
 	css_select_ctx *select_ctx;
 
 	/* check that the base stylesheet loaded; layout fails without it */
-	if (c->stylesheets[STYLESHEET_BASE].sheet == NULL) {
-		return NSERROR_CSS_BASE;
+	만약 (c->stylesheets[STYLESHEET_BASE].sheet == NULL) {
+		반환 NSERROR_CSS_BASE;
 	}
 
 	/* Create selection context */
 	css_ret = css_select_ctx_create(&select_ctx);
-	if (css_ret != CSS_OK) {
-		return css_error_to_nserror(css_ret);
+	만약 (css_ret != CSS_OK) {
+		반환 css_error_to_nserror(css_ret);
 	}
 
 	/* Add sheets to it */
-	for (i = STYLESHEET_BASE; i != c->stylesheet_count; i++) {
+	위해 (i = STYLESHEET_BASE; i != c->stylesheet_count; i++) {
 		const struct html_stylesheet *hsheet = &c->stylesheets[i];
 		css_stylesheet *sheet = NULL;
 		css_origin origin = CSS_ORIGIN_AUTHOR;
@@ -677,21 +677,21 @@ html_css_new_selection_context(html_content *c, css_select_ctx **ret_select_ctx)
 		/* TODO: We should probably pass the sheet in anyway, and let
 		 *       libcss handle the filtering.
 		 */
-		if (hsheet->unused) {
+		만약 (hsheet->unused) {
 			continue;
 		}
 
-		if (i < STYLESHEET_USER) {
+		만약 (i < STYLESHEET_USER) {
 			origin = CSS_ORIGIN_UA;
-		} else if (i < STYLESHEET_START) {
+		} 아니면 만약 (i < STYLESHEET_START) {
 			origin = CSS_ORIGIN_USER;
 		}
 
-		if (hsheet->sheet != NULL) {
+		만약 (hsheet->sheet != NULL) {
 			sheet = nscss_get_stylesheet(hsheet->sheet);
 		}
 
-		if (sheet != NULL) {
+		만약 (sheet != NULL) {
 			/* TODO: Pass the sheet's full media query, instead of
 			 *       "screen".
 			 */
@@ -699,16 +699,16 @@ html_css_new_selection_context(html_content *c, css_select_ctx **ret_select_ctx)
 							      sheet,
 							      origin,
 							      "screen");
-			if (css_ret != CSS_OK) {
+			만약 (css_ret != CSS_OK) {
 				css_select_ctx_destroy(select_ctx);
-				return css_error_to_nserror(css_ret);
+				반환 css_error_to_nserror(css_ret);
 			}
 		}
 	}
 
 	/* return new selection context to caller */
 	*ret_select_ctx = select_ctx;
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 
@@ -718,50 +718,50 @@ nserror html_css_init(void)
 	nserror error;
 
 	error = html_css_fetcher_register();
-	if (error != NSERROR_OK)
-		return error;
+	만약 (error != NSERROR_OK)
+		반환 error;
 
 	error = nsurl_create("resource:default.css",
 			&html_default_stylesheet_url);
-	if (error != NSERROR_OK)
-		return error;
+	만약 (error != NSERROR_OK)
+		반환 error;
 
 	error = nsurl_create("resource:adblock.css",
 			&html_adblock_stylesheet_url);
-	if (error != NSERROR_OK)
-		return error;
+	만약 (error != NSERROR_OK)
+		반환 error;
 
 	error = nsurl_create("resource:quirks.css",
 			&html_quirks_stylesheet_url);
-	if (error != NSERROR_OK)
-		return error;
+	만약 (error != NSERROR_OK)
+		반환 error;
 
 	error = nsurl_create("resource:user.css",
 			&html_user_stylesheet_url);
 
-	return error;
+	반환 error;
 }
 
 
 /* exported function documented in html/css.h */
 void html_css_fini(void)
 {
-	if (html_user_stylesheet_url != NULL) {
+	만약 (html_user_stylesheet_url != NULL) {
 		nsurl_unref(html_user_stylesheet_url);
 		html_user_stylesheet_url = NULL;
 	}
 
-	if (html_quirks_stylesheet_url != NULL) {
+	만약 (html_quirks_stylesheet_url != NULL) {
 		nsurl_unref(html_quirks_stylesheet_url);
 		html_quirks_stylesheet_url = NULL;
 	}
 
-	if (html_adblock_stylesheet_url != NULL) {
+	만약 (html_adblock_stylesheet_url != NULL) {
 		nsurl_unref(html_adblock_stylesheet_url);
 		html_adblock_stylesheet_url = NULL;
 	}
 
-	if (html_default_stylesheet_url != NULL) {
+	만약 (html_default_stylesheet_url != NULL) {
 		nsurl_unref(html_default_stylesheet_url);
 		html_default_stylesheet_url = NULL;
 	}

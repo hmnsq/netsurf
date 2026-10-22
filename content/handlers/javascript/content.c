@@ -49,19 +49,19 @@ static nserror javascript_create(const content_handler *handler,
 	nserror error;
 
 	script = calloc(1, sizeof(javascript_content));
-	if (script == NULL)
-		return NSERROR_NOMEM;
+	만약 (script == NULL)
+		반환 NSERROR_NOMEM;
 
 	error = content__init(&script->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
+	만약 (error != NSERROR_OK) {
 		free(script);
-		return error;
+		반환 error;
 	}
 
 	*c = (struct content *) script;
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 static bool javascript_convert(struct content *c)
@@ -69,7 +69,7 @@ static bool javascript_convert(struct content *c)
 	content_set_ready(c);
 	content_set_done(c);
 
-	return true;
+	반환 true;
 }
 
 static nserror 
@@ -79,18 +79,18 @@ javascript_clone(const struct content *old, struct content **newc)
 	nserror error;
 
 	script = calloc(1, sizeof(javascript_content));
-	if (script == NULL)
-		return NSERROR_NOMEM;
+	만약 (script == NULL)
+		반환 NSERROR_NOMEM;
 
 	error = content__clone(old, &script->base);
-	if (error != NSERROR_OK) {
+	만약 (error != NSERROR_OK) {
 		content_destroy(&script->base);
-		return error;
+		반환 error;
 	}
 
 	*newc = (struct content *) script;
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 static void javascript_destroy(struct content *c)
@@ -99,7 +99,7 @@ static void javascript_destroy(struct content *c)
 
 static content_type javascript_content_type(void)
 {
-	return CONTENT_JS;
+	반환 CONTENT_JS;
 }
 
 

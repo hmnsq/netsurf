@@ -51,12 +51,12 @@ bool fetch_about_nscolours_handler(struct fetch_about_context *ctx)
 	fetch_about_set_http_code(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/css; charset=utf-8")) {
+	만약 (fetch_about_send_header(ctx, "Content-Type: text/css; charset=utf-8")) {
 		goto aborted;
 	}
 
 	res = nscolour_get_stylesheet(&stylesheet);
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		goto aborted;
 	}
 
@@ -67,15 +67,15 @@ bool fetch_about_nscolours_handler(struct fetch_about_context *ctx)
 			"%s",
 			colour_rb_swap(nscolours[NSCOLOUR_WIN_ODD_BG]),
 			stylesheet);
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		goto aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
-	return true;
+	반환 true;
 
 aborted:
 
-	return false;
+	반환 false;
 }

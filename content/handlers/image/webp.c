@@ -62,8 +62,8 @@ webp_create(const content_handler *handler,
 	nserror res;
 
 	webp_c = calloc(1, sizeof(struct content));
-	if (webp_c == NULL) {
-		return NSERROR_NOMEM;
+	만약 (webp_c == NULL) {
+		반환 NSERROR_NOMEM;
 	}
 
 	res = content__init(webp_c,
@@ -73,14 +73,14 @@ webp_create(const content_handler *handler,
 			    llcache,
 			    fallback_charset,
 			    quirks);
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		free(webp_c);
-		return res;
+		반환 res;
 	}
 
 	*c = webp_c;
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 /**
@@ -93,7 +93,7 @@ webp_cache_convert(struct content *c)
 	size_t source_size; /* length of webp source data */
 	VP8StatusCode webpres;
 	WebPBitstreamFeatures webpfeatures;
-	unsigned int bmap_flags;
+	unsigned 정수 bmap_flags;
 	uint8_t *pixels = NULL;
 	uint8_t *decoded;
 	size_t rowstride;
@@ -106,17 +106,17 @@ webp_cache_convert(struct content *c)
 
 	webpres = WebPGetFeatures(source_data, source_size, &webpfeatures);
 
-	if (webpres != VP8_STATUS_OK) {
-		return NULL;
+	만약 (webpres != VP8_STATUS_OK) {
+		반환 NULL;
 	}
 
-	if (webpfeatures.has_alpha == 0) {
+	만약 (webpfeatures.has_alpha == 0) {
 		bmap_flags = BITMAP_OPAQUE;
 		/* Image has no alpha. Premultiplied alpha makes no difference.
 		 * Optimisation: Avoid unnecessary conversion by copying format.
 		 */
 		webp_fmt.pma = bitmap_fmt.pma;
-	} else {
+	} 아니면 {
 		bmap_flags = BITMAP_NONE;
 	}
 
@@ -124,16 +124,16 @@ webp_cache_convert(struct content *c)
 	bitmap = guit->bitmap->create(webpfeatures.width,
 				      webpfeatures.height,
 				      bmap_flags);
-	if (bitmap == NULL) {
+	만약 (bitmap == NULL) {
 		/* empty bitmap could not be created */
-		return NULL;
+		반환 NULL;
 	}
 
 	pixels = guit->bitmap->get_buffer(bitmap);
-	if (pixels == NULL) {
+	만약 (pixels == NULL) {
 		/* bitmap with no buffer available */
 		guit->bitmap->destroy(bitmap);
-		return NULL;
+		반환 NULL;
 	}
 
 	rowstride = guit->bitmap->get_rowstride(bitmap);
@@ -158,16 +158,16 @@ webp_cache_convert(struct content *c)
 				rowstride * webpfeatures.height, rowstride);
 		break;
 	}
-	if (decoded == NULL) {
+	만약 (decoded == NULL) {
 		/* decode failed */
 		guit->bitmap->destroy(bitmap);
-		return NULL;
+		반환 NULL;
 	}
 
 	bitmap_format_to_client(bitmap, &webp_fmt);
 	guit->bitmap->modified(bitmap);
 
-	return bitmap;
+	반환 bitmap;
 }
 
 /**
@@ -182,18 +182,18 @@ webp_cache_convert(struct content *c)
  */
 static bool webp_convert(struct content *c)
 {
-	int res;
+	정수 res;
 	const uint8_t* data;
 	size_t data_size;
-	int width;
-	int height;
+	정수 width;
+	정수 height;
 
 	data = content__get_source_data(c, &data_size);
 
 	res = WebPGetInfo(data, data_size, &width, &height);
-	if (res == 0) {
+	만약 (res == 0) {
 		NSLOG(netsurf, INFO, "WebPGetInfo failed:%p", c);
-		return false;
+		반환 false;
 	}
 
 	c->width = width;
@@ -205,7 +205,7 @@ static bool webp_convert(struct content *c)
 	content_set_ready(c);
 	content_set_done(c);
 
-	return true;
+	반환 true;
 }
 
 /**
@@ -217,28 +217,28 @@ static nserror webp_clone(const struct content *old, struct content **new_c)
 	nserror res;
 
 	webp_c = calloc(1, sizeof(struct content));
-	if (webp_c == NULL) {
-		return NSERROR_NOMEM;
+	만약 (webp_c == NULL) {
+		반환 NSERROR_NOMEM;
 	}
 
 	res = content__clone(old, webp_c);
-	if (res != NSERROR_OK) {
+	만약 (res != NSERROR_OK) {
 		content_destroy(webp_c);
-		return res;
+		반환 res;
 	}
 
 	/* re-convert if the content is ready */
-	if ((old->status == CONTENT_STATUS_READY) ||
+	만약 ((old->status == CONTENT_STATUS_READY) ||
 	    (old->status == CONTENT_STATUS_DONE)) {
-		if (webp_convert(webp_c) == false) {
+		만약 (webp_convert(webp_c) == false) {
 			content_destroy(webp_c);
-			return NSERROR_CLONE_FAILED;
+			반환 NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*new_c = webp_c;
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 static const content_handler webp_content_handler = {

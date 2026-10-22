@@ -112,7 +112,7 @@ static inline bool fetch_resource_send_callback(const fetch_msg *msg,
 	fetch_send_callback(msg, ctx->fetchh);
 	ctx->locked = false;
 
-	return ctx->aborted;
+	반환 ctx->aborted;
 }
 
 static bool fetch_resource_send_header(struct fetch_resource_context *ctx,
@@ -121,21 +121,21 @@ static bool fetch_resource_send_header(struct fetch_resource_context *ctx,
 	fetch_msg msg;
 	char header[64];
 	va_list ap;
-	int len;
+	정수 len;
 
 	va_start(ap, fmt);
 	len = vsnprintf(header, sizeof header, fmt, ap);
 	va_end(ap);
 
-	if (len >= (int)sizeof(header) || len < 0) {
-		return false;
+	만약 (len >= (정수)sizeof(header) || len < 0) {
+		반환 false;
 	}
 
 	msg.type = FETCH_HEADER;
 	msg.data.header_or_data.buf = (const uint8_t *) header;
 	msg.data.header_or_data.len = len;
 
-	return fetch_resource_send_callback(&msg, ctx);
+	반환 fetch_resource_send_callback(&msg, ctx);
 }
 
 
@@ -154,7 +154,7 @@ static bool fetch_resource_redirect_handler(struct fetch_resource_context *ctx)
 	msg.data.redirect = nsurl_access(ctx->entry->redirect_url);
 	fetch_resource_send_callback(&msg, ctx);
 
-	return true;
+	반환 true;
 }
 
 /* resource handler that returns data directly */
@@ -163,11 +163,11 @@ static bool fetch_resource_data_handler(struct fetch_resource_context *ctx)
 	fetch_msg msg;
 
 	/* Check if we can just return not modified */
-	if (ctx->etag != 0 && ctx->etag == DIRECT_ETAG_VALUE) {
+	만약 (ctx->etag != 0 && ctx->etag == DIRECT_ETAG_VALUE) {
 		fetch_set_http_code(ctx->fetchh, 304);
 		msg.type = FETCH_NOTMODIFIED;
 		fetch_resource_send_callback(&msg, ctx);
-		return true;
+		반환 true;
 	}
 
 	/* fetch is going to be successful */
@@ -179,25 +179,25 @@ static bool fetch_resource_data_handler(struct fetch_resource_context *ctx)
 	 */
 
 	/* content type */
-	if (fetch_resource_send_header(ctx, "Content-Type: %s",
+	만약 (fetch_resource_send_header(ctx, "Content-Type: %s",
 				       guit->fetch->filetype(lwc_string_data(ctx->entry->path)))) {
 		goto fetch_resource_data_aborted;
 	}
 
 	/* content length */
-	if (fetch_resource_send_header(ctx, "Content-Length: %" PRIsizet,
+	만약 (fetch_resource_send_header(ctx, "Content-Length: %" PRIsizet,
 				       ctx->entry->data_len)) {
 		goto fetch_resource_data_aborted;
 	}
 
 	/* create etag */
-	if (fetch_resource_send_header(ctx, "ETag: \"%10" PRId64 "\"",
+	만약 (fetch_resource_send_header(ctx, "ETag: \"%10" PRId64 "\"",
 				       (int64_t) DIRECT_ETAG_VALUE)) {
 		goto fetch_resource_data_aborted;
 	}
 
 	/* create max-age of 1 year */
-	if (fetch_resource_send_header(ctx,
+	만약 (fetch_resource_send_header(ctx,
 			"Cache-Control: max-age=31536000")) {
 		goto fetch_resource_data_aborted;
 	}
@@ -207,20 +207,20 @@ static bool fetch_resource_data_handler(struct fetch_resource_context *ctx)
 	msg.data.header_or_data.len = ctx->entry->data_len;
 	fetch_resource_send_callback(&msg, ctx);
 
-	if (ctx->aborted == false) {
+	만약 (ctx->aborted == false) {
 		msg.type = FETCH_FINISHED;
 		fetch_resource_send_callback(&msg, ctx);
 	}
 
 fetch_resource_data_aborted:
 
-	return true;
+	반환 true;
 }
 
 static bool fetch_resource_notfound_handler(struct fetch_resource_context *ctx)
 {
 	fetch_msg msg;
-	int code = 404;
+	정수 code = 404;
 	char buffer[1024];
 	const char *title;
 	char key[8];
@@ -229,7 +229,7 @@ static bool fetch_resource_notfound_handler(struct fetch_resource_context *ctx)
 	fetch_set_http_code(ctx->fetchh, code);
 
 	/* content type */
-	if (fetch_resource_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
+	만약 (fetch_resource_send_header(ctx, "Content-Type: text/html; charset=utf-8"))
 		goto fetch_resource_notfound_handler_aborted;
 
 	snprintf(key, sizeof key, "HTTP%03d", code);
@@ -253,14 +253,14 @@ static bool fetch_resource_notfound_handler(struct fetch_resource_context *ctx)
 	msg.type = FETCH_DATA;
 	msg.data.header_or_data.buf = (const uint8_t *) buffer;
 	msg.data.header_or_data.len = strlen(buffer);
-	if (fetch_resource_send_callback(&msg, ctx))
+	만약 (fetch_resource_send_callback(&msg, ctx))
 		goto fetch_resource_notfound_handler_aborted;
 
 	msg.type = FETCH_FINISHED;
 	fetch_resource_send_callback(&msg, ctx);
 
 fetch_resource_notfound_handler_aborted:
-	return false;
+	반환 false;
 }
 
 
@@ -274,13 +274,13 @@ static bool fetch_resource_initialise(lwc_string *scheme)
 
 	fetch_resource_path_count = 0;
 
-	for (i = 0; i < NOF_ELEMENTS(fetch_resource_paths); i++) {
+	위해 (i = 0; i < NOF_ELEMENTS(fetch_resource_paths); i++) {
 		e = &fetch_resource_map[fetch_resource_path_count];
 
-		if (lwc_intern_string(fetch_resource_paths[i],
+		만약 (lwc_intern_string(fetch_resource_paths[i],
 				strlen(fetch_resource_paths[i]),
 				&e->path) != lwc_error_ok) {
-			while (i > 0) {
+			동안 (i > 0) {
 				i--;
 				lwc_string_unref(fetch_resource_map[i].path);
 				nsurl_unref(fetch_resource_map[i].redirect_url);
@@ -292,15 +292,15 @@ static bool fetch_resource_initialise(lwc_string *scheme)
 		res = guit->fetch->get_resource_data(lwc_string_data(e->path),
 						     &e->data,
 						     &e->data_len);
-		if (res == NSERROR_OK) {
+		만약 (res == NSERROR_OK) {
 			NSLOG(netsurf, INFO, "direct data for %s",
 			      fetch_resource_paths[i]);
 			fetch_resource_path_count++;
-		} else {
+		} 아니면 {
 			e->redirect_url = guit->fetch->get_resource_url(fetch_resource_paths[i]);
-			if (e->redirect_url == NULL) {
+			만약 (e->redirect_url == NULL) {
 				lwc_string_unref(e->path);
-			} else {
+			} 아니면 {
 				NSLOG(netsurf, INFO, "redirect url for %s",
 				      fetch_resource_paths[i]);
 				fetch_resource_path_count++;
@@ -308,7 +308,7 @@ static bool fetch_resource_initialise(lwc_string *scheme)
 		}
 	}
 
-	return true;
+	반환 true;
 }
 
 /** callback to finalise the resource fetcher. */
@@ -316,11 +316,11 @@ static void fetch_resource_finalise(lwc_string *scheme)
 {
 	uint32_t i;
 
-	for (i = 0; i < fetch_resource_path_count; i++) {
+	위해 (i = 0; i < fetch_resource_path_count; i++) {
 		lwc_string_unref(fetch_resource_map[i].path);
-		if (fetch_resource_map[i].data != NULL) {
+		만약 (fetch_resource_map[i].data != NULL) {
 			guit->fetch->release_resource_data(fetch_resource_map[i].data);
-		} else {
+		} 아니면 {
 			nsurl_unref(fetch_resource_map[i].redirect_url);
 		}
 	}
@@ -328,7 +328,7 @@ static void fetch_resource_finalise(lwc_string *scheme)
 
 static bool fetch_resource_can_fetch(const nsurl *url)
 {
-	return true;
+	반환 true;
 }
 
 /**
@@ -349,25 +349,25 @@ fetch_resource_setup(struct fetch *fetchh,
 	uint32_t i;
 
 	ctx = calloc(1, sizeof(*ctx));
-	if (ctx == NULL) {
-		return NULL;
+	만약 (ctx == NULL) {
+		반환 NULL;
 	}
 
 	ctx->handler = fetch_resource_notfound_handler;
 
-	if ((path = nsurl_get_component(url, NSURL_PATH)) != NULL) {
+	만약 ((path = nsurl_get_component(url, NSURL_PATH)) != NULL) {
 		bool match;
 
 		/* Ensure requested path is valid */
-		for (i = 0; i < fetch_resource_path_count; i++) {
-			if (lwc_string_isequal(path,
+		위해 (i = 0; i < fetch_resource_path_count; i++) {
+			만약 (lwc_string_isequal(path,
 					fetch_resource_map[i].path,
 					&match) == lwc_error_ok && match) {
 				/* found a url match, select handler */
 				ctx->entry = &fetch_resource_map[i];
-				if (ctx->entry->data != NULL) {
+				만약 (ctx->entry->data != NULL) {
 					ctx->handler = fetch_resource_data_handler;
-				} else {
+				} 아니면 {
 					ctx->handler = fetch_resource_redirect_handler;
 				}
 				break;
@@ -380,8 +380,8 @@ fetch_resource_setup(struct fetch *fetchh,
 	ctx->url = nsurl_ref(url);
 
 	/* Scan request headers looking for If-None-Match */
-	for (i = 0; headers[i] != NULL; i++) {
-		if (strncasecmp(headers[i], "If-None-Match:",
+	위해 (i = 0; headers[i] != NULL; i++) {
+		만약 (strncasecmp(headers[i], "If-None-Match:",
 				SLEN("If-None-Match:")) != 0) {
 			continue;
 		}
@@ -390,13 +390,13 @@ fetch_resource_setup(struct fetch *fetchh,
 		const char *d = headers[i] + SLEN("If-None-Match:");
 
 		/* Scan to first digit, if any */
-		while (*d != '\0' && (*d < '0' || '9' < *d))
+		동안 (*d != '\0' && (*d < '0' || '9' < *d))
 			d++;
 
 		/* Convert to time_t */
-		if (*d != '\0') {
+		만약 (*d != '\0') {
 			ret = nsc_snptimet(d, strlen(d), &ctx->etag);
-			if (ret != NSERROR_OK) {
+			만약 (ret != NSERROR_OK) {
 				NSLOG(fetch, WARNING,
 						"Bad If-None-Match value");
 			}
@@ -407,14 +407,14 @@ fetch_resource_setup(struct fetch *fetchh,
 
 	RING_INSERT(ring, ctx);
 
-	return ctx;
+	반환 ctx;
 }
 
 /** callback to free a resource fetch */
 static void fetch_resource_free(void *ctx)
 {
 	struct fetch_resource_context *c = ctx;
-	if (c->url != NULL)
+	만약 (c->url != NULL)
 		nsurl_unref(c->url);
 	free(ctx);
 }
@@ -422,7 +422,7 @@ static void fetch_resource_free(void *ctx)
 /** callback to start a resource fetch */
 static bool fetch_resource_start(void *ctx)
 {
-	return true;
+	반환 true;
 }
 
 /** callback to abort a resource fetch */
@@ -443,7 +443,7 @@ static void fetch_resource_poll(lwc_string *scheme)
 {
 	struct fetch_resource_context *c, *save_ring = NULL;
 
-	while (ring != NULL) {
+	동안 (ring != NULL) {
 		/* Take the first entry from the ring */
 		c = ring;
 		RING_REMOVE(ring, c);
@@ -454,13 +454,13 @@ static void fetch_resource_poll(lwc_string *scheme)
 		 * the interested party causes fetch_poll() to be called
 		 * again.
 		 */
-		if (c->locked == true) {
+		만약 (c->locked == true) {
 			RING_INSERT(save_ring, c);
 			continue;
 		}
 
 		/* Only process non-aborted fetches */
-		if (c->aborted == false) {
+		만약 (c->aborted == false) {
 			/* resource fetches can be processed in one go */
 			c->handler(c);
 		}
@@ -490,5 +490,5 @@ nserror fetch_resource_register(void)
 		.finalise = fetch_resource_finalise
 	};
 
-	return fetcher_add(scheme, &fetcher_ops);
+	반환 fetcher_add(scheme, &fetcher_ops);
 }

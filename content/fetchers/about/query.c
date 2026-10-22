@@ -42,19 +42,19 @@ get_query_description(struct nsurl *url,
 
 	/* get the host in question */
 	res = nsurl_get(url, NSURL_HOST, &url_s, &url_l);
-	if (res != NSERROR_OK) {
-		return res;
+	만약 (res != NSERROR_OK) {
+		반환 res;
 	}
 
 	/* obtain the description with the url substituted */
 	str = messages_get_buff(key, url_s);
-	if (str == NULL) {
+	만약 (str == NULL) {
 		res = NSERROR_NOMEM;
-	} else {
+	} 아니면 {
 		*out_str = str;
 	}
 
 	free(url_s);
 
-	return res;
+	반환 res;
 }

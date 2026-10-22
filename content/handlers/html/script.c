@@ -48,48 +48,48 @@ typedef bool (script_handler_t)(struct jsthread *jsthread, const uint8_t *data, 
 
 static script_handler_t *select_script_handler(content_type ctype)
 {
-	if (ctype == CONTENT_JS) {
-		return js_exec;
+	만약 (ctype == CONTENT_JS) {
+		반환 js_exec;
 	}
-	return NULL;
+	반환 NULL;
 }
 
 
 /* exported internal interface documented in html/html_internal.h */
 nserror html_script_exec(html_content *c, bool allow_defer)
 {
-	unsigned int i;
+	unsigned 정수 i;
 	struct html_script *s;
 	script_handler_t *script_handler;
 	bool have_run_something = false;
 
-	if (c->jsthread == NULL) {
-		return NSERROR_BAD_PARAMETER;
+	만약 (c->jsthread == NULL) {
+		반환 NSERROR_BAD_PARAMETER;
 	}
 
-	for (i = 0, s = c->scripts; i != c->scripts_count; i++, s++) {
-		if (s->already_started) {
+	위해 (i = 0, s = c->scripts; i != c->scripts_count; i++, s++) {
+		만약 (s->already_started) {
 			continue;
 		}
 
-		if ((s->type == HTML_SCRIPT_ASYNC) ||
+		만약 ((s->type == HTML_SCRIPT_ASYNC) ||
 		    (allow_defer && (s->type == HTML_SCRIPT_DEFER))) {
 			/* ensure script content is present */
-			if (s->data.handle == NULL)
+			만약 (s->data.handle == NULL)
 				continue;
 
 			/* ensure script content fetch status is not an error */
-			if (content_get_status(s->data.handle) ==
+			만약 (content_get_status(s->data.handle) ==
 					CONTENT_STATUS_ERROR)
 				continue;
 
 			/* ensure script handler for content type */
 			script_handler = select_script_handler(
 					content_get_type(s->data.handle));
-			if (script_handler == NULL)
+			만약 (script_handler == NULL)
 				continue; /* unsupported type */
 
-			if (content_get_status(s->data.handle) ==
+			만약 (content_get_status(s->data.handle) ==
 					CONTENT_STATUS_DONE) {
 				/* external script is now available */
 				const uint8_t *data;
@@ -111,11 +111,11 @@ nserror html_script_exec(html_content *c, bool allow_defer)
 		}
 	}
 
-	if (have_run_something) {
-		return html_proceed_to_done(c);
+	만약 (have_run_something) {
+		반환 html_proceed_to_done(c);
 	}
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 /* create new html script entry */
@@ -128,8 +128,8 @@ html_process_new_script(html_content *c,
 	/* add space for new script entry */
 	nscript = realloc(c->scripts,
 			  sizeof(struct html_script) * (c->scripts_count + 1));
-	if (nscript == NULL) {
-		return NULL;
+	만약 (nscript == NULL) {
+		반환 NULL;
 	}
 
 	c->scripts = nscript;
@@ -149,7 +149,7 @@ html_process_new_script(html_content *c,
 
 	nscript->mimetype = dom_string_ref(mimetype); /* reference mimetype */
 
-	return nscript;
+	반환 nscript;
 }
 
 /**
@@ -161,12 +161,12 @@ convert_script_async_cb(hlcache_handle *script,
 			  void *pw)
 {
 	html_content *parent = pw;
-	unsigned int i;
+	unsigned 정수 i;
 	struct html_script *s;
 
 	/* Find script */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_ASYNC && s->data.handle == script)
+	위해 (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
+		만약 (s->type == HTML_SCRIPT_ASYNC && s->data.handle == script)
 			break;
 	}
 
@@ -206,18 +206,18 @@ convert_script_async_cb(hlcache_handle *script,
 	/* if there are no active fetches remaining begin post parse
 	 * conversion
 	 */
-	if (html_can_begin_conversion(parent)) {
+	만약 (html_can_begin_conversion(parent)) {
 		html_begin_conversion(parent);
 	}
 
 	/* if we have already started converting though, then we can handle the
 	 * scripts as they come in.
 	 */
-	else if (parent->conversion_begun) {
-		return html_script_exec(parent, false);
+	아니면 만약 (parent->conversion_begun) {
+		반환 html_script_exec(parent, false);
 	}
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 /**
@@ -229,12 +229,12 @@ convert_script_defer_cb(hlcache_handle *script,
 			  void *pw)
 {
 	html_content *parent = pw;
-	unsigned int i;
+	unsigned 정수 i;
 	struct html_script *s;
 
 	/* Find script */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_DEFER && s->data.handle == script)
+	위해 (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
+		만약 (s->type == HTML_SCRIPT_DEFER && s->data.handle == script)
 			break;
 	}
 
@@ -269,11 +269,11 @@ convert_script_defer_cb(hlcache_handle *script,
 	/* if there are no active fetches remaining begin post parse
 	 * conversion
 	 */
-	if (html_can_begin_conversion(parent)) {
+	만약 (html_can_begin_conversion(parent)) {
 		html_begin_conversion(parent);
 	}
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 /**
@@ -285,23 +285,23 @@ convert_script_sync_cb(hlcache_handle *script,
 			  void *pw)
 {
 	html_content *parent = pw;
-	unsigned int i;
+	unsigned 정수 i;
 	struct html_script *s;
 	script_handler_t *script_handler;
 	dom_hubbub_error err;
-	unsigned int active_sync_scripts = 0;
+	unsigned 정수 active_sync_scripts = 0;
 
 	/* Count sync scripts which have yet to complete (other than us) */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_SYNC &&
+	위해 (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
+		만약 (s->type == HTML_SCRIPT_SYNC &&
 		    s->data.handle != script && s->already_started == false) {
 			active_sync_scripts++;
 		}
 	}
 
 	/* Find script */
-	for (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_SYNC && s->data.handle == script)
+	위해 (i = 0, s = parent->scripts; i != parent->scripts_count; i++, s++) {
+		만약 (s->type == HTML_SCRIPT_SYNC && s->data.handle == script)
 			break;
 	}
 
@@ -318,7 +318,7 @@ convert_script_sync_cb(hlcache_handle *script,
 
 		/* attempt to execute script */
 		script_handler = select_script_handler(content_get_type(s->data.handle));
-		if (script_handler != NULL && parent->jsthread != NULL) {
+		만약 (script_handler != NULL && parent->jsthread != NULL) {
 			/* script has a handler */
 			const uint8_t *data;
 			size_t size;
@@ -328,9 +328,9 @@ convert_script_sync_cb(hlcache_handle *script,
 		}
 
 		/* continue parse */
-		if (parent->parser != NULL && active_sync_scripts == 0) {
+		만약 (parent->parser != NULL && active_sync_scripts == 0) {
 			err = dom_hubbub_parser_pause(parent->parser, false);
-			if (err != DOM_HUBBUB_OK) {
+			만약 (err != DOM_HUBBUB_OK) {
 				NSLOG(netsurf, INFO, "unpause returned 0x%x", err);
 			}
 		}
@@ -351,9 +351,9 @@ convert_script_sync_cb(hlcache_handle *script,
 		s->already_started = true;
 
 		/* continue parse */
-		if (parent->parser != NULL && active_sync_scripts == 0) {
+		만약 (parent->parser != NULL && active_sync_scripts == 0) {
 			err = dom_hubbub_parser_pause(parent->parser, false);
-			if (err != DOM_HUBBUB_OK) {
+			만약 (err != DOM_HUBBUB_OK) {
 				NSLOG(netsurf, INFO, "unpause returned 0x%x", err);
 			}
 		}
@@ -367,11 +367,11 @@ convert_script_sync_cb(hlcache_handle *script,
 	/* if there are no active fetches remaining begin post parse
 	 * conversion
 	 */
-	if (html_can_begin_conversion(parent)) {
+	만약 (html_can_begin_conversion(parent)) {
 		html_begin_conversion(parent);
 	}
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 /**
@@ -396,9 +396,9 @@ exec_src_script(html_content *c,
 
 	/* src url */
 	ns_error = nsurl_join(c->base_url, dom_string_data(src), &joined);
-	if (ns_error != NSERROR_OK) {
+	만약 (ns_error != NSERROR_OK) {
 		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return DOM_HUBBUB_NOMEM;
+		반환 DOM_HUBBUB_NOMEM;
 	}
 
 	NSLOG(netsurf, INFO, "script %i '%s'", c->scripts_count,
@@ -423,33 +423,33 @@ exec_src_script(html_content *c,
 	 * value. Note setting the values to "false" still makes them true!
 	 */
 	exc = dom_element_has_attribute(node, corestring_dom_async, &async);
-	if (exc != DOM_NO_ERR) {
-		return DOM_HUBBUB_OK; /* dom error */
+	만약 (exc != DOM_NO_ERR) {
+		반환 DOM_HUBBUB_OK; /* dom error */
 	}
 
-	if (c->parse_completed) {
+	만약 (c->parse_completed) {
 		/* After parse completed, all scripts are essentially async */
 		async = true;
 		defer = false;
 	}
 
-	if (async) {
+	만약 (async) {
 		/* asyncronous script */
 		script_type = HTML_SCRIPT_ASYNC;
 		script_cb = convert_script_async_cb;
 
-	} else {
+	} 아니면 {
 		exc = dom_element_has_attribute(node,
 						corestring_dom_defer, &defer);
-		if (exc != DOM_NO_ERR) {
-			return DOM_HUBBUB_OK; /* dom error */
+		만약 (exc != DOM_NO_ERR) {
+			반환 DOM_HUBBUB_OK; /* dom error */
 		}
 
-		if (defer) {
+		만약 (defer) {
 			/* defered script */
 			script_type = HTML_SCRIPT_DEFER;
 			script_cb = convert_script_defer_cb;
-		} else {
+		} 아니면 {
 			/* syncronous script */
 			script_type = HTML_SCRIPT_SYNC;
 			script_cb = convert_script_sync_cb;
@@ -457,10 +457,10 @@ exec_src_script(html_content *c,
 	}
 
 	nscript = html_process_new_script(c, mimetype, script_type);
-	if (nscript == NULL) {
+	만약 (nscript == NULL) {
 		nsurl_unref(joined);
 		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return DOM_HUBBUB_NOMEM;
+		반환 DOM_HUBBUB_NOMEM;
 	}
 
 	/* set up child fetch encoding and quirks */
@@ -480,14 +480,14 @@ exec_src_script(html_content *c,
 
 	nsurl_unref(joined);
 
-	if (ns_error != NSERROR_OK) {
+	만약 (ns_error != NSERROR_OK) {
 		/* @todo Deal with fetch error better. currently assume
 		 * fetch never became active
 		 */
 		/* mark duff script fetch as already started */
 		nscript->already_started = true;
 		NSLOG(netsurf, INFO, "Fetch failed with error %d", ns_error);
-	} else {
+	} 아니면 {
 		/* update base content active fetch count */
 		c->base.active++;
 		NSLOG(netsurf, INFO, "%d fetches active", c->base.active);
@@ -508,7 +508,7 @@ exec_src_script(html_content *c,
 		}
 	}
 
-	return ret;
+	반환 ret;
 }
 
 static dom_hubbub_error
@@ -522,16 +522,16 @@ exec_inline_script(html_content *c, dom_node *node, dom_string *mimetype)
 
 	/* does not appear to be a src so script is inline content */
 	exc = dom_node_get_text_content(node, &script);
-	if ((exc != DOM_NO_ERR) || (script == NULL)) {
-		return DOM_HUBBUB_OK; /* no contents, skip */
+	만약 ((exc != DOM_NO_ERR) || (script == NULL)) {
+		반환 DOM_HUBBUB_OK; /* no contents, skip */
 	}
 
 	nscript = html_process_new_script(c, mimetype, HTML_SCRIPT_INLINE);
-	if (nscript == NULL) {
+	만약 (nscript == NULL) {
 		dom_string_unref(script);
 
 		content_broadcast_error(&c->base, NSERROR_NOMEM, NULL);
-		return DOM_HUBBUB_NOMEM;
+		반환 DOM_HUBBUB_NOMEM;
 
 	}
 
@@ -540,20 +540,20 @@ exec_inline_script(html_content *c, dom_node *node, dom_string *mimetype)
 
 	/* ensure script handler for content type */
 	exc = dom_string_intern(mimetype, &lwcmimetype);
-	if (exc != DOM_NO_ERR) {
-		return DOM_HUBBUB_DOM;
+	만약 (exc != DOM_NO_ERR) {
+		반환 DOM_HUBBUB_DOM;
 	}
 
 	script_handler = select_script_handler(content_factory_type_from_mime_type(lwcmimetype));
 	lwc_string_unref(lwcmimetype);
 
-	if (script_handler != NULL) {
+	만약 (script_handler != NULL) {
 		script_handler(c->jsthread,
 			       (const uint8_t *)dom_string_data(script),
 			       dom_string_byte_length(script),
 			       "?inline script?");
 	}
-	return DOM_HUBBUB_OK;
+	반환 DOM_HUBBUB_OK;
 }
 
 
@@ -574,15 +574,15 @@ html_process_script(void *ctx, dom_node *node)
 	/* We should only ever be here if scripting was enabled for this
 	 * content so it's correct to make a javascript context if there
 	 * isn't one already. */
-	if (c->jsthread == NULL) {
+	만약 (c->jsthread == NULL) {
 		union content_msg_data msg_data;
 
 		msg_data.jsthread = &c->jsthread;
 		content_broadcast(&c->base, CONTENT_MSG_GETTHREAD, &msg_data);
 		NSLOG(netsurf, INFO, "javascript context %p ", c->jsthread);
-		if (c->jsthread == NULL) {
+		만약 (c->jsthread == NULL) {
 			/* no context and it could not be created, abort */
-			return DOM_HUBBUB_OK;
+			반환 DOM_HUBBUB_OK;
 		}
 	}
 
@@ -590,61 +590,61 @@ html_process_script(void *ctx, dom_node *node)
 	      node);
 
 	exc = dom_element_get_attribute(node, corestring_dom_type, &mimetype);
-	if (exc != DOM_NO_ERR || mimetype == NULL) {
+	만약 (exc != DOM_NO_ERR || mimetype == NULL) {
 		mimetype = dom_string_ref(corestring_dom_text_javascript);
 	}
 
 	exc = dom_element_get_attribute(node, corestring_dom_src, &src);
-	if (exc != DOM_NO_ERR || src == NULL) {
+	만약 (exc != DOM_NO_ERR || src == NULL) {
 		err = exec_inline_script(c, node, mimetype);
-	} else {
+	} 아니면 {
 		err = exec_src_script(c, node, mimetype, src);
 		dom_string_unref(src);
 	}
 
 	dom_string_unref(mimetype);
 
-	return err;
+	반환 err;
 }
 
 /* exported internal interface documented in html/html_internal.h */
 bool html_saw_insecure_scripts(html_content *htmlc)
 {
 	struct html_script *s;
-	unsigned int i;
+	unsigned 정수 i;
 
-	for (i = 0, s = htmlc->scripts; i != htmlc->scripts_count; i++, s++) {
-		if (s->type == HTML_SCRIPT_INLINE) {
+	위해 (i = 0, s = htmlc->scripts; i != htmlc->scripts_count; i++, s++) {
+		만약 (s->type == HTML_SCRIPT_INLINE) {
 			/* Inline scripts are no less secure than their
 			 * containing HTML content
 			 */
 			continue;
 		}
-		if (s->data.handle == NULL) {
+		만약 (s->data.handle == NULL) {
 			/* We've not begun loading this? */
 			continue;
 		}
-		if (content_saw_insecure_objects(s->data.handle)) {
-			return true;
+		만약 (content_saw_insecure_objects(s->data.handle)) {
+			반환 true;
 		}
 	}
 
-	return false;
+	반환 false;
 }
 
 /* exported internal interface documented in html/html_internal.h */
 nserror html_script_free(html_content *html)
 {
-	unsigned int i;
+	unsigned 정수 i;
 
-	for (i = 0; i != html->scripts_count; i++) {
-		if (html->scripts[i].mimetype != NULL) {
+	위해 (i = 0; i != html->scripts_count; i++) {
+		만약 (html->scripts[i].mimetype != NULL) {
 			dom_string_unref(html->scripts[i].mimetype);
 		}
 
 		switch (html->scripts[i].type) {
 		case HTML_SCRIPT_INLINE:
-			if (html->scripts[i].data.string != NULL) {
+			만약 (html->scripts[i].data.string != NULL) {
 				dom_string_unref(html->scripts[i].data.string);
 			}
 			break;
@@ -653,7 +653,7 @@ nserror html_script_free(html_content *html)
 		case HTML_SCRIPT_ASYNC:
 			/* fallthrough */
 		case HTML_SCRIPT_DEFER:
-			if (html->scripts[i].data.handle != NULL) {
+			만약 (html->scripts[i].data.handle != NULL) {
 				hlcache_handle_release(html->scripts[i].data.handle);
 			}
 			break;
@@ -661,5 +661,5 @@ nserror html_script_free(html_content *html)
 	}
 	free(html->scripts);
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }

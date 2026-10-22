@@ -65,8 +65,8 @@ struct form_textarea_data {
 };
 
 struct image_input_coords {
-	int x;
-	int y;
+	정수 x;
+	정수 y;
 };
 
 /** Form control. */
@@ -88,20 +88,20 @@ struct form_control {
 
 	struct box *box;		/**< Box for control */
 
-	unsigned int length;		/**< Number of characters in control */
-	unsigned int maxlength;		/**< Maximum characters permitted */
+	unsigned 정수 length;		/**< Number of characters in control */
+	unsigned 정수 maxlength;		/**< Maximum characters permitted */
 
 	bool selected;			/**< Whether control is selected */
 
 	union {
 		struct {
-			int mx, my;
+			정수 mx, my;
 		} image;
 		struct {
-			int num_items;
+			정수 num_items;
 			struct form_option *items, *last_item;
 			bool multiple;
-			int num_selected;
+			정수 num_selected;
 			/** Currently selected item, if num_selected == 1. */
 			struct form_option *current;
 			struct form_select_menu *menu;
@@ -150,7 +150,7 @@ struct form {
  * \param height	height of redraw rectangle
  */
 typedef void(*select_menu_redraw_callback)(void *client_data,
-		int x, int y, int width, int height);
+		정수 x, 정수 y, 정수 width, 정수 height);
 
 /**
  * Create a struct form.
@@ -257,7 +257,7 @@ void form_free_select_menu(struct form_control *control);
  * \param ctx      current redraw context
  * \return         true on success, false otherwise
  */
-bool form_redraw_select_menu(struct form_control *control, int x, int y,
+bool form_redraw_select_menu(struct form_control *control, 정수 x, 정수 y,
 		float scale, const struct rect *clip,
 		const struct redraw_context *ctx);
 
@@ -285,7 +285,7 @@ bool form_clip_inside_select_menu(struct form_control *control, float scale,
  * \return text for the browser status bar or NULL if the menu has to be closed
  */
 const char *form_select_mouse_action(struct form_control *control,
-		enum browser_mouse_state mouse, int x, int y);
+		enum browser_mouse_state mouse, 정수 x, 정수 y);
 
 
 /**
@@ -297,7 +297,7 @@ const char *form_select_mouse_action(struct form_control *control,
  * \param y Y coordinate of drag end
  */
 void form_select_mouse_drag_end(struct form_control *control,
-		enum browser_mouse_state mouse, int x, int y);
+		enum browser_mouse_state mouse, 정수 x, 정수 y);
 
 
 /**
@@ -308,14 +308,14 @@ void form_select_mouse_drag_end(struct form_control *control,
  * \param height	gets updated to menu height
  */
 void form_select_get_dimensions(struct form_control *control,
-		int *width, int *height);
+		정수 *width, 정수 *height);
 
 
 /**
  * Callback for the core select menu.
  */
 void form_select_menu_callback(void *client_data,
-		int x, int y, int width, int height);
+		정수 x, 정수 y, 정수 width, 정수 height);
 
 
 /**

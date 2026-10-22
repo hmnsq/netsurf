@@ -74,13 +74,13 @@ enum box_walk_dir {
 static bool
 box_contains_point(const css_unit_ctx *unit_len_ctx,
 		   const struct box *box,
-		   int x,
-		   int y,
+		   정수 x,
+		   정수 y,
 		   bool *physically)
 {
 	css_computed_clip_rect css_rect;
 
-	if (box->style != NULL &&
+	만약 (box->style != NULL &&
 	    css_computed_position(box->style) == CSS_POSITION_ABSOLUTE &&
 	    css_computed_clip(box->style, &css_rect) == CSS_CLIP_RECT) {
 		/* We have an absolutly positioned box with a clip rect */
@@ -94,28 +94,28 @@ box_contains_point(const css_unit_ctx *unit_len_ctx,
 				 box->border[BOTTOM].width +
 				 box->padding[BOTTOM]
 		};
-		if (x >= r.x0 && x < r.x1 && y >= r.y0 && y < r.y1) {
+		만약 (x >= r.x0 && x < r.x1 && y >= r.y0 && y < r.y1) {
 			*physically = true;
-		} else {
+		} 아니면 {
 			*physically = false;
 		}
 
 		/* Adjust rect to css clip region */
-		if (css_rect.left_auto == false) {
+		만약 (css_rect.left_auto == false) {
 			r.x0 += FIXTOINT(css_unit_len2device_px(
 						box->style,
 						unit_len_ctx,
 						css_rect.left,
 						css_rect.lunit));
 		}
-		if (css_rect.top_auto == false) {
+		만약 (css_rect.top_auto == false) {
 			r.y0 += FIXTOINT(css_unit_len2device_px(
 						box->style,
 						unit_len_ctx,
 						css_rect.top,
 						css_rect.tunit));
 		}
-		if (css_rect.right_auto == false) {
+		만약 (css_rect.right_auto == false) {
 			r.x1 = box->border[LEFT].width +
 				FIXTOINT(css_unit_len2device_px(
 						box->style,
@@ -123,7 +123,7 @@ box_contains_point(const css_unit_ctx *unit_len_ctx,
 						css_rect.right,
 						css_rect.runit));
 		}
-		if (css_rect.bottom_auto == false) {
+		만약 (css_rect.bottom_auto == false) {
 			r.y1 = box->border[TOP].width +
 				FIXTOINT(css_unit_len2device_px(
 						box->style,
@@ -133,24 +133,24 @@ box_contains_point(const css_unit_ctx *unit_len_ctx,
 		}
 
 		/* Test if point is in clipped box */
-		if (x >= r.x0 && x < r.x1 && y >= r.y0 && y < r.y1) {
+		만약 (x >= r.x0 && x < r.x1 && y >= r.y0 && y < r.y1) {
 			/* inside clip area */
-			return true;
+			반환 true;
 		}
 
 		/* Not inside clip area */
-		return false;
+		반환 false;
 	}
-	if (x >= -box->border[LEFT].width &&
+	만약 (x >= -box->border[LEFT].width &&
 	    x < box->padding[LEFT] + box->width +
 	    box->padding[RIGHT] + box->border[RIGHT].width &&
 	    y >= -box->border[TOP].width &&
 	    y < box->padding[TOP] + box->height +
 	    box->padding[BOTTOM] + box->border[BOTTOM].width) {
 		*physically = true;
-		return true;
+		반환 true;
 	}
-	if (box->list_marker && box->list_marker->x - box->x <= x +
+	만약 (box->list_marker && box->list_marker->x - box->x <= x +
 	    box->list_marker->border[LEFT].width &&
 	    x < box->list_marker->x - box->x +
 	    box->list_marker->padding[LEFT] +
@@ -165,25 +165,25 @@ box_contains_point(const css_unit_ctx *unit_len_ctx,
 	    box->list_marker->border[BOTTOM].width +
 	    box->list_marker->padding[BOTTOM]) {
 		*physically = true;
-		return true;
+		반환 true;
 	}
-	if ((box->style && css_computed_overflow_x(box->style) ==
+	만약 ((box->style && css_computed_overflow_x(box->style) ==
 	     CSS_OVERFLOW_VISIBLE) || !box->style) {
-		if (box->descendant_x0 <= x &&
+		만약 (box->descendant_x0 <= x &&
 		    x < box->descendant_x1) {
 			*physically = false;
-			return true;
+			반환 true;
 		}
 	}
-	if ((box->style && css_computed_overflow_y(box->style) ==
+	만약 ((box->style && css_computed_overflow_y(box->style) ==
 	     CSS_OVERFLOW_VISIBLE) || !box->style) {
-		if (box->descendant_y0 <= y &&
+		만약 (box->descendant_y0 <= y &&
 		    y < box->descendant_y1) {
 			*physically = false;
-			return true;
+			반환 true;
 		}
 	}
-	return false;
+	반환 false;
 }
 
 
@@ -198,18 +198,18 @@ box_contains_point(const css_unit_ctx *unit_len_ctx,
  * If no box can be found in given direction, NULL is returned.
  */
 static inline struct box *
-box_move_xy(struct box *b, enum box_walk_dir dir, int *x, int *y)
+box_move_xy(struct box *b, enum box_walk_dir dir, 정수 *x, 정수 *y)
 {
 	struct box *rb = NULL;
 
 	switch (dir) {
 	case BOX_WALK_CHILDREN:
 		b = b->children;
-		if (b == NULL)
+		만약 (b == NULL)
 			break;
 		*x += b->x;
 		*y += b->y;
-		if (!box_is_float(b)) {
+		만약 (!box_is_float(b)) {
 			rb = b;
 			break;
 		}
@@ -220,11 +220,11 @@ box_move_xy(struct box *b, enum box_walk_dir dir, int *x, int *y)
 			*x -= b->x;
 			*y -= b->y;
 			b = b->next;
-			if (b == NULL)
+			만약 (b == NULL)
 				break;
 			*x += b->x;
 			*y += b->y;
-		} while (box_is_float(b));
+		} 동안 (box_is_float(b));
 		rb = b;
 		break;
 
@@ -236,7 +236,7 @@ box_move_xy(struct box *b, enum box_walk_dir dir, int *x, int *y)
 
 	case BOX_WALK_FLOAT_CHILDREN:
 		b = b->float_children;
-		if (b == NULL)
+		만약 (b == NULL)
 			break;
 		*x += b->x;
 		*y += b->y;
@@ -247,7 +247,7 @@ box_move_xy(struct box *b, enum box_walk_dir dir, int *x, int *y)
 		*x -= b->x;
 		*y -= b->y;
 		b = b->next_float;
-		if (b == NULL)
+		만약 (b == NULL)
 			break;
 		*x += b->x;
 		*y += b->y;
@@ -264,7 +264,7 @@ box_move_xy(struct box *b, enum box_walk_dir dir, int *x, int *y)
 		assert(0 && "Bad box walk type.");
 	}
 
-	return rb;
+	반환 rb;
 }
 
 
@@ -280,48 +280,48 @@ box_move_xy(struct box *b, enum box_walk_dir dir, int *x, int *y)
  * children, floating boxes are skipped.
  */
 static inline struct box *
-box_next_xy(struct box *b, int *x, int *y, bool skip_children)
+box_next_xy(struct box *b, 정수 *x, 정수 *y, bool skip_children)
 {
 	struct box *n;
-	int tx, ty;
+	정수 tx, ty;
 
 	assert(b != NULL);
 
-	if (skip_children) {
+	만약 (skip_children) {
 		/* Caller is not interested in any kind of children */
 		goto skip_children;
 	}
 
 	tx = *x; ty = *y;
 	n = box_move_xy(b, BOX_WALK_FLOAT_CHILDREN, &tx, &ty);
-	if (n) {
+	만약 (n) {
 		/* Next node is float child */
 		*x = tx;
 		*y = ty;
-		return n;
+		반환 n;
 	}
  done_float_children:
 
 	tx = *x; ty = *y;
 	n = box_move_xy(b, BOX_WALK_CHILDREN, &tx, &ty);
-	if (n) {
+	만약 (n) {
 		/* Next node is child */
 		*x = tx;
 		*y = ty;
-		return n;
+		반환 n;
 	}
 
  skip_children:
 	tx = *x; ty = *y;
 	n = box_move_xy(b, BOX_WALK_NEXT_FLOAT_SIBLING, &tx, &ty);
-	if (n) {
+	만약 (n) {
 		/* Go to next float sibling */
 		*x = tx;
 		*y = ty;
-		return n;
+		반환 n;
 	}
 
-	if (box_is_float(b)) {
+	만약 (box_is_float(b)) {
 		/* Done floats, but the float container may have children,
 		 * or siblings, or ansestors with siblings.  Change to
 		 * float container and move past handling its float children.
@@ -331,42 +331,42 @@ box_next_xy(struct box *b, int *x, int *y, bool skip_children)
 	}
 
 	/* Go to next sibling, or nearest ancestor with next sibling. */
-	while (b) {
-		while (!b->next && b->parent) {
+	동안 (b) {
+		동안 (!b->next && b->parent) {
 			b = box_move_xy(b, BOX_WALK_PARENT, x, y);
-			if (box_is_float(b)) {
+			만약 (box_is_float(b)) {
 				/* Go on to next float, if there is one */
 				goto skip_children;
 			}
 		}
-		if (!b->next) {
+		만약 (!b->next) {
 			/* No more boxes */
-			return NULL;
+			반환 NULL;
 		}
 
 		tx = *x; ty = *y;
 		n = box_move_xy(b, BOX_WALK_NEXT_SIBLING, &tx, &ty);
-		if (n) {
+		만약 (n) {
 			/* Go to non-float (ancestor) sibling */
 			*x = tx;
 			*y = ty;
-			return n;
+			반환 n;
 
-		} else if (b->parent) {
+		} 아니면 만약 (b->parent) {
 			b = box_move_xy(b, BOX_WALK_PARENT, x, y);
-			if (box_is_float(b)) {
+			만약 (box_is_float(b)) {
 				/* Go on to next float, if there is one */
 				goto skip_children;
 			}
 
-		} else {
+		} 아니면 {
 			/* No more boxes */
-			return NULL;
+			반환 NULL;
 		}
 	}
 
 	assert(b != NULL);
-	return NULL;
+	반환 NULL;
 }
 
 
@@ -394,44 +394,44 @@ box_next_xy(struct box *b, int *x, int *y, bool skip_children)
  */
 static bool
 box_nearer_text_box(struct box *box,
-		    int bx, int by,
-		    int x, int y,
-		    int dir,
+		    정수 bx, 정수 by,
+		    정수 x, 정수 y,
+		    정수 dir,
 		    struct box **nearest,
-		    int *tx, int *ty,
-		    int *nr_xd, int *nr_yd)
+		    정수 *tx, 정수 *ty,
+		    정수 *nr_xd, 정수 *nr_yd)
 {
-	int w = box->padding[LEFT] + box->width + box->padding[RIGHT];
-	int h = box->padding[TOP] + box->height + box->padding[BOTTOM];
-	int y1 = by + h;
-	int x1 = bx + w;
-	int yd = INT_MAX;
-	int xd = INT_MAX;
+	정수 w = box->padding[LEFT] + box->width + box->padding[RIGHT];
+	정수 h = box->padding[TOP] + box->height + box->padding[BOTTOM];
+	정수 y1 = by + h;
+	정수 x1 = bx + w;
+	정수 yd = INT_MAX;
+	정수 xd = INT_MAX;
 
-	if (x >= bx && x1 > x && y >= by && y1 > y) {
+	만약 (x >= bx && x1 > x && y >= by && y1 > y) {
 		*nearest = box;
 		*tx = bx;
 		*ty = by;
-		return true;
+		반환 true;
 	}
 
-	if (box->parent->list_marker != box) {
-		if (dir < 0) {
+	만약 (box->parent->list_marker != box) {
+		만약 (dir < 0) {
 			/* consider only those children (partly) above-left */
-			if (by <= y && bx < x) {
+			만약 (by <= y && bx < x) {
 				yd = y <= y1 ? 0 : y - y1;
 				xd = x <= x1 ? 0 : x - x1;
 			}
-		} else {
+		} 아니면 {
 			/* consider only those children (partly) below-right */
-			if (y1 > y && x1 > x) {
+			만약 (y1 > y && x1 > x) {
 				yd = y > by ? 0 : by - y;
 				xd = x > bx ? 0 : bx - x;
 			}
 		}
 
 		/* give y displacement precedence over x */
-		if (yd < *nr_yd || (yd == *nr_yd && xd <= *nr_xd)) {
+		만약 (yd < *nr_yd || (yd == *nr_yd && xd <= *nr_xd)) {
 			*nr_yd = yd;
 			*nr_xd = xd;
 			*nearest = box;
@@ -439,7 +439,7 @@ box_nearer_text_box(struct box *box,
 			*ty = by;
 		}
 	}
-	return false;
+	반환 false;
 }
 
 
@@ -470,91 +470,91 @@ box_nearer_text_box(struct box *box,
  */
 static bool
 box_nearest_text_box(struct box *box,
-		     int bx, int by,
-		     int fx, int fy,
-		     int x, int y,
-		     int dir,
+		     정수 bx, 정수 by,
+		     정수 fx, 정수 fy,
+		     정수 x, 정수 y,
+		     정수 dir,
 		     struct box **nearest,
-		     int *tx, int *ty,
-		     int *nr_xd, int *nr_yd)
+		     정수 *tx, 정수 *ty,
+		     정수 *nr_xd, 정수 *nr_yd)
 {
 	struct box *child = box->children;
-	int c_bx, c_by;
-	int c_fx, c_fy;
+	정수 c_bx, c_by;
+	정수 c_fx, c_fy;
 	bool in_box = false;
 
-	if (*nearest == NULL) {
+	만약 (*nearest == NULL) {
 		*nr_xd = INT_MAX / 2; /* displacement of 'nearest so far' */
 		*nr_yd = INT_MAX / 2;
 	}
-	if (box->type == BOX_INLINE_CONTAINER) {
-		int bw = box->padding[LEFT] + box->width + box->padding[RIGHT];
-		int bh = box->padding[TOP] + box->height + box->padding[BOTTOM];
-		int b_y1 = by + bh;
-		int b_x1 = bx + bw;
-		if (x >= bx && b_x1 > x && y >= by && b_y1 > y) {
+	만약 (box->type == BOX_INLINE_CONTAINER) {
+		정수 bw = box->padding[LEFT] + box->width + box->padding[RIGHT];
+		정수 bh = box->padding[TOP] + box->height + box->padding[BOTTOM];
+		정수 b_y1 = by + bh;
+		정수 b_x1 = bx + bw;
+		만약 (x >= bx && b_x1 > x && y >= by && b_y1 > y) {
 			in_box = true;
 		}
 	}
 
-	while (child) {
-		if (child->type == BOX_FLOAT_LEFT ||
+	동안 (child) {
+		만약 (child->type == BOX_FLOAT_LEFT ||
 		    child->type == BOX_FLOAT_RIGHT) {
 			c_bx = fx + child->x -
 				scrollbar_get_offset(child->scroll_x);
 			c_by = fy + child->y -
 				scrollbar_get_offset(child->scroll_y);
-		} else {
+		} 아니면 {
 			c_bx = bx + child->x -
 				scrollbar_get_offset(child->scroll_x);
 			c_by = by + child->y -
 				scrollbar_get_offset(child->scroll_y);
 		}
-		if (child->float_children) {
+		만약 (child->float_children) {
 			c_fx = c_bx;
 			c_fy = c_by;
-		} else {
+		} 아니면 {
 			c_fx = fx;
 			c_fy = fy;
 		}
-		if (in_box && child->text && !child->object) {
-			if (box_nearer_text_box(child,
+		만약 (in_box && child->text && !child->object) {
+			만약 (box_nearer_text_box(child,
 						c_bx, c_by, x, y, dir, nearest,
 						tx, ty, nr_xd, nr_yd))
-				return true;
-		} else {
-			if (child->list_marker) {
-				if (box_nearer_text_box(
+				반환 true;
+		} 아니면 {
+			만약 (child->list_marker) {
+				만약 (box_nearer_text_box(
 						child->list_marker,
 						c_bx + child->list_marker->x,
 						c_by + child->list_marker->y,
 						x, y, dir, nearest,
 						tx, ty, nr_xd, nr_yd))
-					return true;
+					반환 true;
 			}
-			if (box_nearest_text_box(child, c_bx, c_by,
+			만약 (box_nearest_text_box(child, c_bx, c_by,
 						 c_fx, c_fy,
 						 x, y, dir, nearest, tx, ty,
 						 nr_xd, nr_yd))
-				return true;
+				반환 true;
 		}
 		child = child->next;
 	}
 
-	return false;
+	반환 false;
 }
 
 
 /* Exported function documented in html/box.h */
-void box_coords(struct box *box, int *x, int *y)
+void box_coords(struct box *box, 정수 *x, 정수 *y)
 {
 	*x = box->x;
 	*y = box->y;
-	while (box->parent) {
-		if (box_is_float(box)) {
+	동안 (box->parent) {
+		만약 (box_is_float(box)) {
 			assert(box->float_container);
 			box = box->float_container;
-		} else {
+		} 아니면 {
 			box = box->parent;
 		}
 		*x += box->x - scrollbar_get_offset(box->scroll_x);
@@ -566,7 +566,7 @@ void box_coords(struct box *box, int *x, int *y)
 /* Exported function documented in html/box.h */
 void box_bounds(struct box *box, struct rect *r)
 {
-	int width, height;
+	정수 width, height;
 
 	box_coords(box, &r->x0, &r->y0);
 
@@ -582,8 +582,8 @@ void box_bounds(struct box *box, struct rect *r)
 struct box *
 box_at_point(const css_unit_ctx *unit_len_ctx,
 	     struct box *box,
-	     const int x, const int y,
-	     int *box_x, int *box_y)
+	     const 정수 x, const 정수 y,
+	     정수 *box_x, 정수 *box_y)
 {
 	bool skip_children;
 	bool physically;
@@ -591,22 +591,22 @@ box_at_point(const css_unit_ctx *unit_len_ctx,
 	assert(box);
 
 	skip_children = false;
-	while ((box = box_next_xy(box, box_x, box_y, skip_children))) {
-		if (box_contains_point(unit_len_ctx, box, x - *box_x, y - *box_y,
+	동안 ((box = box_next_xy(box, box_x, box_y, skip_children))) {
+		만약 (box_contains_point(unit_len_ctx, box, x - *box_x, y - *box_y,
 				       &physically)) {
 			*box_x -= scrollbar_get_offset(box->scroll_x);
 			*box_y -= scrollbar_get_offset(box->scroll_y);
 
-			if (physically)
-				return box;
+			만약 (physically)
+				반환 box;
 
 			skip_children = false;
-		} else {
+		} 아니면 {
 			skip_children = true;
 		}
 	}
 
-	return NULL;
+	반환 NULL;
 }
 
 
@@ -616,19 +616,19 @@ struct box *box_find_by_id(struct box *box, lwc_string *id)
 	struct box *a, *b;
 	bool m;
 
-	if (box->id != NULL &&
+	만약 (box->id != NULL &&
 	    lwc_string_isequal(id, box->id, &m) == lwc_error_ok &&
 	    m == true) {
-		return box;
+		반환 box;
 	}
 
-	for (a = box->children; a; a = a->next) {
-		if ((b = box_find_by_id(a, id)) != NULL) {
-			return b;
+	위해 (a = box->children; a; a = a->next) {
+		만약 ((b = box_find_by_id(a, id)) != NULL) {
+			반환 b;
 		}
 	}
 
-	return NULL;
+	반환 NULL;
 }
 
 
@@ -636,29 +636,29 @@ struct box *box_find_by_id(struct box *box, lwc_string *id)
 bool box_visible(struct box *box)
 {
 	/* visibility: hidden */
-	if (box->style &&
+	만약 (box->style &&
 	    css_computed_visibility(box->style) == CSS_VISIBILITY_HIDDEN) {
-		return false;
+		반환 false;
 	}
 
-	return true;
+	반환 true;
 }
 
 
 /* Exported function documented in html/box.h */
-void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style)
+void box_dump(FILE *stream, struct box *box, unsigned 정수 depth, bool style)
 {
-	unsigned int i;
+	unsigned 정수 i;
 	struct box *c, *prev;
 
-	for (i = 0; i != depth; i++) {
+	위해 (i = 0; i != depth; i++) {
 		fprintf(stream, "  ");
 	}
 
 	fprintf(stream, "%p ", box);
 	fprintf(stream, "x%i y%i w%i h%i ",
 		box->x, box->y, box->width, box->height);
-	if (box->max_width != UNKNOWN_MAX_WIDTH) {
+	만약 (box->max_width != UNKNOWN_MAX_WIDTH) {
 		fprintf(stream, "min%i max%i ", box->min_width, box->max_width);
 	}
 	fprintf(stream, "desc(%i %i %i %i) ",
@@ -737,41 +737,41 @@ void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style)
 		fprintf(stream, "Unknown box type ");
 	}
 
-	if (box->text)
+	만약 (box->text)
 		fprintf(stream, "%li '%.*s' ", (unsigned long) box->byte_offset,
-			(int) box->length, box->text);
-	if (box->space)
+			(정수) box->length, box->text);
+	만약 (box->space)
 		fprintf(stream, "space ");
-	if (box->object) {
+	만약 (box->object) {
 		fprintf(stream, "(object '%s') ",
 			nsurl_access(hlcache_handle_get_url(box->object)));
 	}
-	if (box->iframe) {
+	만약 (box->iframe) {
 		fprintf(stream, "(iframe) ");
 	}
-	if (box->gadget)
+	만약 (box->gadget)
 		fprintf(stream, "(gadget) ");
-	if (style && box->style)
+	만약 (style && box->style)
 		nscss_dump_computed_style(stream, box->style);
-	if (box->href)
+	만약 (box->href)
 		fprintf(stream, " -> '%s'", nsurl_access(box->href));
-	if (box->target)
+	만약 (box->target)
 		fprintf(stream, " |%s|", box->target);
-	if (box->title)
+	만약 (box->title)
 		fprintf(stream, " [%s]", box->title);
-	if (box->id)
+	만약 (box->id)
 		fprintf(stream, " ID:%s", lwc_string_data(box->id));
-	if (box->type == BOX_INLINE || box->type == BOX_INLINE_END)
+	만약 (box->type == BOX_INLINE || box->type == BOX_INLINE_END)
 		fprintf(stream, " inline_end %p", box->inline_end);
-	if (box->float_children)
+	만약 (box->float_children)
 		fprintf(stream, " float_children %p", box->float_children);
-	if (box->next_float)
+	만약 (box->next_float)
 		fprintf(stream, " next_float %p", box->next_float);
-	if (box->float_container)
+	만약 (box->float_container)
 		fprintf(stream, " float_container %p", box->float_container);
-	if (box->col) {
+	만약 (box->col) {
 		fprintf(stream, " (columns");
-		for (i = 0; i != box->columns; i++) {
+		위해 (i = 0; i != box->columns; i++) {
 			fprintf(stream, " (%s %s %i %i %i)",
 				((const char *[]) {
 					"UNKNOWN",
@@ -790,33 +790,33 @@ void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style)
 		}
 		fprintf(stream, ")");
 	}
-	if (box->node != NULL) {
+	만약 (box->node != NULL) {
 		dom_string *name;
-		if (dom_node_get_node_name(box->node, &name) == DOM_NO_ERR) {
+		만약 (dom_node_get_node_name(box->node, &name) == DOM_NO_ERR) {
 			fprintf(stream, " <%s>", dom_string_data(name));
 			dom_string_unref(name);
 		}
 	}
 	fprintf(stream, "\n");
 
-	if (box->list_marker) {
-		for (i = 0; i != depth; i++)
+	만약 (box->list_marker) {
+		위해 (i = 0; i != depth; i++)
 			fprintf(stream, "  ");
 		fprintf(stream, "list_marker:\n");
 		box_dump(stream, box->list_marker, depth + 1, style);
 	}
 
-	for (c = box->children; c && c->next; c = c->next)
+	위해 (c = box->children; c && c->next; c = c->next)
 		;
-	if (box->last != c)
+	만약 (box->last != c)
 		fprintf(stream, "warning: box->last %p (should be %p) "
 			"(box %p)\n", box->last, c, box);
-	for (prev = 0, c = box->children; c; prev = c, c = c->next) {
-		if (c->parent != box)
+	위해 (prev = 0, c = box->children; c; prev = c, c = c->next) {
+		만약 (c->parent != box)
 			fprintf(stream, "warning: box->parent %p (should be "
 				"%p) (box on next line)\n",
 				c->parent, box);
-		if (c->prev != prev)
+		만약 (c->prev != prev)
 			fprintf(stream, "warning: box->prev %p (should be "
 				"%p) (box on next line)\n",
 				c->prev, prev);
@@ -828,7 +828,7 @@ void box_dump(FILE *stream, struct box *box, unsigned int depth, bool style)
 /* exported interface documented in html/box.h */
 bool box_vscrollbar_present(const struct box * const box)
 {
-	return box->padding[TOP] +
+	반환 box->padding[TOP] +
 		box->height +
 		box->padding[BOTTOM] +
 		box->border[BOTTOM].width < box->descendant_y1;
@@ -838,7 +838,7 @@ bool box_vscrollbar_present(const struct box * const box)
 /* exported interface documented in html/box.h */
 bool box_hscrollbar_present(const struct box * const box)
 {
-	return box->padding[LEFT] +
+	반환 box->padding[LEFT] +
 		box->width +
 		box->padding[RIGHT] +
 		box->border[RIGHT].width < box->descendant_x1;
@@ -848,19 +848,19 @@ bool box_hscrollbar_present(const struct box * const box)
 /* Exported function documented in html/box.h */
 struct box *
 box_pick_text_box(struct html_content *html,
-		  int x, int y,
-		  int dir,
-		  int *dx, int *dy)
+		  정수 x, 정수 y,
+		  정수 dir,
+		  정수 *dx, 정수 *dy)
 {
 	struct box *text_box = NULL;
 	struct box *box;
-	int nr_xd, nr_yd;
-	int bx, by;
-	int fx, fy;
-	int tx, ty;
+	정수 nr_xd, nr_yd;
+	정수 bx, by;
+	정수 fx, fy;
+	정수 tx, ty;
 
-	if (html == NULL)
-		return NULL;
+	만약 (html == NULL)
+		반환 NULL;
 
 	box = html->layout;
 	bx = box->margin[LEFT];
@@ -868,25 +868,25 @@ box_pick_text_box(struct html_content *html,
 	fx = bx;
 	fy = by;
 
-	if (!box_nearest_text_box(box, bx, by, fx, fy, x, y,
+	만약 (!box_nearest_text_box(box, bx, by, fx, fy, x, y,
 				  dir, &text_box, &tx, &ty, &nr_xd, &nr_yd)) {
-		if (text_box && text_box->text && !text_box->object) {
-			int w = (text_box->padding[LEFT] +
+		만약 (text_box && text_box->text && !text_box->object) {
+			정수 w = (text_box->padding[LEFT] +
 				 text_box->width +
 				 text_box->padding[RIGHT]);
-			int h = (text_box->padding[TOP] +
+			정수 h = (text_box->padding[TOP] +
 				 text_box->height +
 				 text_box->padding[BOTTOM]);
-			int x1, y1;
+			정수 x1, y1;
 
 			y1 = ty + h;
 			x1 = tx + w;
 
 			/* ensure point lies within the text box */
-			if (x < tx) x = tx;
-			if (y < ty) y = ty;
-			if (y > y1) y = y1;
-			if (x > x1) x = x1;
+			만약 (x < tx) x = tx;
+			만약 (y < ty) y = ty;
+			만약 (y > y1) y = y1;
+			만약 (x > x1) x = x1;
 		}
 	}
 
@@ -894,5 +894,5 @@ box_pick_text_box(struct html_content *html,
 	*dx = x - tx;
 	*dy = y - ty;
 
-	return text_box;
+	반환 text_box;
 }

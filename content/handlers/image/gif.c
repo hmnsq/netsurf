@@ -76,7 +76,7 @@ static inline nserror gif__nsgif_error_to_ns(nsgif_error gif_res)
 		break;
 	}
 
-	return err;
+	반환 err;
 }
 
 /**
@@ -86,9 +86,9 @@ static inline nserror gif__nsgif_error_to_ns(nsgif_error gif_res)
  * \param  height  width of image in pixels
  * \return an opaque struct bitmap, or NULL on memory exhaustion
  */
-static void *gif_bitmap_create(int width, int height)
+static void *gif_bitmap_create(정수 width, 정수 height)
 {
-	return guit->bitmap->create(width, height, BITMAP_NONE);
+	반환 guit->bitmap->create(width, height, BITMAP_NONE);
 }
 
 /**
@@ -96,16 +96,16 @@ static void *gif_bitmap_create(int width, int height)
  */
 static nsgif_bitmap_fmt_t nsgif__get_bitmap_format(void)
 {
-	ns_static_assert((int)BITMAP_LAYOUT_R8G8B8A8 == (int)NSGIF_BITMAP_FMT_R8G8B8A8);
-	ns_static_assert((int)BITMAP_LAYOUT_B8G8R8A8 == (int)NSGIF_BITMAP_FMT_B8G8R8A8);
-	ns_static_assert((int)BITMAP_LAYOUT_A8R8G8B8 == (int)NSGIF_BITMAP_FMT_A8R8G8B8);
-	ns_static_assert((int)BITMAP_LAYOUT_A8B8G8R8 == (int)NSGIF_BITMAP_FMT_A8B8G8R8);
-	ns_static_assert((int)BITMAP_LAYOUT_RGBA8888 == (int)NSGIF_BITMAP_FMT_RGBA8888);
-	ns_static_assert((int)BITMAP_LAYOUT_BGRA8888 == (int)NSGIF_BITMAP_FMT_BGRA8888);
-	ns_static_assert((int)BITMAP_LAYOUT_ARGB8888 == (int)NSGIF_BITMAP_FMT_ARGB8888);
-	ns_static_assert((int)BITMAP_LAYOUT_ABGR8888 == (int)NSGIF_BITMAP_FMT_ABGR8888);
+	ns_static_assert((정수)BITMAP_LAYOUT_R8G8B8A8 == (정수)NSGIF_BITMAP_FMT_R8G8B8A8);
+	ns_static_assert((정수)BITMAP_LAYOUT_B8G8R8A8 == (정수)NSGIF_BITMAP_FMT_B8G8R8A8);
+	ns_static_assert((정수)BITMAP_LAYOUT_A8R8G8B8 == (정수)NSGIF_BITMAP_FMT_A8R8G8B8);
+	ns_static_assert((정수)BITMAP_LAYOUT_A8B8G8R8 == (정수)NSGIF_BITMAP_FMT_A8B8G8R8);
+	ns_static_assert((정수)BITMAP_LAYOUT_RGBA8888 == (정수)NSGIF_BITMAP_FMT_RGBA8888);
+	ns_static_assert((정수)BITMAP_LAYOUT_BGRA8888 == (정수)NSGIF_BITMAP_FMT_BGRA8888);
+	ns_static_assert((정수)BITMAP_LAYOUT_ARGB8888 == (정수)NSGIF_BITMAP_FMT_ARGB8888);
+	ns_static_assert((정수)BITMAP_LAYOUT_ABGR8888 == (정수)NSGIF_BITMAP_FMT_ABGR8888);
 
-	return (nsgif_bitmap_fmt_t)bitmap_fmt.layout;
+	반환 (nsgif_bitmap_fmt_t)bitmap_fmt.layout;
 }
 
 static nserror gif_create_gif_data(gif_content *c)
@@ -122,13 +122,13 @@ static nserror gif_create_gif_data(gif_content *c)
 
 	gif_res = nsgif_create(&gif_bitmap_callbacks,
 			nsgif__get_bitmap_format(), &c->gif);
-	if (gif_res != NSGIF_OK) {
+	만약 (gif_res != NSGIF_OK) {
 		nserror err = gif__nsgif_error_to_ns(gif_res);
 		content_broadcast_error(&c->base, err, NULL);
-		return err;
+		반환 err;
 	}
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 static nserror gif_create(const content_handler *handler,
@@ -140,25 +140,25 @@ static nserror gif_create(const content_handler *handler,
 	nserror error;
 
 	result = calloc(1, sizeof(gif_content));
-	if (result == NULL)
-		return NSERROR_NOMEM;
+	만약 (result == NULL)
+		반환 NSERROR_NOMEM;
 
 	error = content__init(&result->base, handler, imime_type, params,
 			llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
+	만약 (error != NSERROR_OK) {
 		free(result);
-		return error;
+		반환 error;
 	}
 
 	error = gif_create_gif_data(result);
-	if (error != NSERROR_OK) {
+	만약 (error != NSERROR_OK) {
 		free(result);
-		return error;
+		반환 error;
 	}
 
 	*c = (struct content *) result;
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 /**
@@ -181,18 +181,18 @@ static nserror gif__animate(gif_content *gif, bool redraw)
 	uint32_t f;
 
 	gif_res = nsgif_frame_prepare(gif->gif, &rect, &delay, &f);
-	if (gif_res != NSGIF_OK) {
-		return gif__nsgif_error_to_ns(gif_res);
+	만약 (gif_res != NSGIF_OK) {
+		반환 gif__nsgif_error_to_ns(gif_res);
 	}
 
 	gif->current_frame = f;
 
 	/* Continue animating if we should */
-	if (nsoption_bool(animate_images) && delay != NSGIF_INFINITE) {
+	만약 (nsoption_bool(animate_images) && delay != NSGIF_INFINITE) {
 		guit->misc->schedule(delay * 10, gif_animate_cb, gif);
 	}
 
-	if (redraw) {
+	만약 (redraw) {
 		union content_msg_data data;
 
 		/* area within gif to redraw */
@@ -204,7 +204,7 @@ static nserror gif__animate(gif_content *gif, bool redraw)
 		content_broadcast(&gif->base, CONTENT_MSG_REDRAW, &data);
 	}
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 static void gif_animate_cb(void *p)
@@ -229,7 +229,7 @@ static bool gif_convert(struct content *c)
 
 	/* Initialise the GIF */
 	gif_err = nsgif_data_scan(gif->gif, size, data);
-	if (gif_err != NSGIF_OK) {
+	만약 (gif_err != NSGIF_OK) {
 		NSLOG(netsurf, INFO, "nsgif scan: %s", nsgif_strerror(gif_err));
 		/* Not fatal unless we have no frames. */
 	}
@@ -240,14 +240,14 @@ static bool gif_convert(struct content *c)
 	assert(gif_info != NULL);
 
 	/* Abort on bad GIFs */
-	if (gif_info->frame_count == 0) {
+	만약 (gif_info->frame_count == 0) {
 		err = gif__nsgif_error_to_ns(gif_err);
 		content_broadcast_error(c, err, "GIF with no frames.");
-		return false;
-	} else if (gif_info->width == 0 || gif_info->height == 0) {
+		반환 false;
+	} 아니면 만약 (gif_info->width == 0 || gif_info->height == 0) {
 		err = gif__nsgif_error_to_ns(gif_err);
 		content_broadcast_error(c, err, "Zero size image.");
-		return false;
+		반환 false;
 	}
 
 	/* Store our content width, height and calculate size */
@@ -259,15 +259,15 @@ static bool gif_convert(struct content *c)
 	title = messages_get_buff("GIFTitle",
 			nsurl_access_leaf(llcache_handle_get_url(c->llcache)),
 			c->width, c->height);
-	if (title != NULL) {
+	만약 (title != NULL) {
 		content__set_title(c, title);
 		free(title);
 	}
 
 	err = gif__animate(gif, false);
-	if (err != NSERROR_OK) {
+	만약 (err != NSERROR_OK) {
 		content_broadcast_error(c, NSERROR_GIF_ERROR, NULL);
-		return false;
+		반환 false;
 	}
 
 	/* Exit as a success */
@@ -276,7 +276,7 @@ static bool gif_convert(struct content *c)
 
 	/* Done: update status bar */
 	content_set_status(c, "");
-	return true;
+	반환 true;
 }
 
 /**
@@ -289,11 +289,11 @@ static nsgif_error gif_get_frame(gif_content *gif,
 		nsgif_bitmap_t **bitmap)
 {
 	uint32_t current_frame = gif->current_frame;
-	if (!nsoption_bool(animate_images)) {
+	만약 (!nsoption_bool(animate_images)) {
 		current_frame = 0;
 	}
 
-	return nsgif_frame_decode(gif->gif, current_frame, bitmap);
+	반환 nsgif_frame_decode(gif->gif, current_frame, bitmap);
 }
 
 static bool gif_redraw(struct content *c, struct content_redraw_data *data,
@@ -302,11 +302,11 @@ static bool gif_redraw(struct content *c, struct content_redraw_data *data,
 	gif_content *gif = (gif_content *) c;
 	nsgif_bitmap_t *bitmap;
 
-	if (gif_get_frame(gif, &bitmap) != NSGIF_OK) {
-		return false;
+	만약 (gif_get_frame(gif, &bitmap) != NSGIF_OK) {
+		반환 false;
 	}
 
-	return image_bitmap_plot(bitmap, data, clip, ctx);
+	반환 image_bitmap_plot(bitmap, data, clip, ctx);
 }
 
 static void gif_destroy(struct content *c)
@@ -324,33 +324,33 @@ static nserror gif_clone(const struct content *old, struct content **newc)
 	nserror error;
 
 	gif = calloc(1, sizeof(gif_content));
-	if (gif == NULL)
-		return NSERROR_NOMEM;
+	만약 (gif == NULL)
+		반환 NSERROR_NOMEM;
 
 	error = content__clone(old, &gif->base);
-	if (error != NSERROR_OK) {
+	만약 (error != NSERROR_OK) {
 		content_destroy(&gif->base);
-		return error;
+		반환 error;
 	}
 
 	/* Simply replay creation and conversion of content */
 	error = gif_create_gif_data(gif);
-	if (error != NSERROR_OK) {
+	만약 (error != NSERROR_OK) {
 		content_destroy(&gif->base);
-		return error;
+		반환 error;
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
+	만약 (old->status == CONTENT_STATUS_READY ||
 			old->status == CONTENT_STATUS_DONE) {
-		if (gif_convert(&gif->base) == false) {
+		만약 (gif_convert(&gif->base) == false) {
 			content_destroy(&gif->base);
-			return NSERROR_CLONE_FAILED;
+			반환 NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*newc = (struct content *) gif;
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 static void gif_add_user(struct content *c)
@@ -359,11 +359,11 @@ static void gif_add_user(struct content *c)
 
 	/* Ensure this content has already been converted.
 	 * If it hasn't, the animation will start at the conversion phase instead. */
-	if (gif->gif == NULL) return;
+	만약 (gif->gif == NULL) 반환;
 
-	if (content_count_users(c) == 1) {
+	만약 (content_count_users(c) == 1) {
 		/* First user, and content already converted, so start the animation. */
-		if (nsgif_reset(gif->gif) == NSGIF_OK) {
+		만약 (nsgif_reset(gif->gif) == NSGIF_OK) {
 			gif__animate(gif, true);
 		}
 	}
@@ -371,7 +371,7 @@ static void gif_add_user(struct content *c)
 
 static void gif_remove_user(struct content *c)
 {
-	if (content_count_users(c) == 1) {
+	만약 (content_count_users(c) == 1) {
 		/* Last user is about to be removed from this content, so stop the animation. */
 		guit->misc->schedule(-1, gif_animate_cb, c);
 	}
@@ -383,16 +383,16 @@ static nsgif_bitmap_t *gif_get_bitmap(
 	gif_content *gif = (gif_content *) c;
 	nsgif_bitmap_t *bitmap;
 
-	if (gif_get_frame(gif, &bitmap) != NSGIF_OK) {
-		return NULL;
+	만약 (gif_get_frame(gif, &bitmap) != NSGIF_OK) {
+		반환 NULL;
 	}
 
-	return bitmap;
+	반환 bitmap;
 }
 
 static content_type gif_content_type(void)
 {
-	return CONTENT_IMAGE;
+	반환 CONTENT_IMAGE;
 }
 
 static bool gif_content_is_opaque(struct content *c)
@@ -400,11 +400,11 @@ static bool gif_content_is_opaque(struct content *c)
 	gif_content *gif = (gif_content *) c;
 	nsgif_bitmap_t *bitmap;
 
-	if (gif_get_frame(gif, &bitmap) != NSGIF_OK) {
-		return false;
+	만약 (gif_get_frame(gif, &bitmap) != NSGIF_OK) {
+		반환 false;
 	}
 
-	return guit->bitmap->get_opaque(bitmap);
+	반환 guit->bitmap->get_opaque(bitmap);
 }
 
 static const content_handler gif_content_handler = {

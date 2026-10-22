@@ -70,22 +70,22 @@ static void content_convert(struct content *c)
 	assert(c->status == CONTENT_STATUS_LOADING ||
 	       c->status == CONTENT_STATUS_ERROR);
 
-	if (c->status != CONTENT_STATUS_LOADING)
-		return;
+	만약 (c->status != CONTENT_STATUS_LOADING)
+		반환;
 
-	if (c->locked == true)
-		return;
+	만약 (c->locked == true)
+		반환;
 
 	NSLOG(netsurf, INFO, "content "URL_FMT_SPC" (%p)",
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)), c);
 
-	if (c->handler->data_complete != NULL) {
+	만약 (c->handler->data_complete != NULL) {
 		c->locked = true;
-		if (c->handler->data_complete(c) == false) {
+		만약 (c->handler->data_complete(c) == false) {
 			content_set_error(c);
 		}
 		/* Conversion to the READY state will unlock the content */
-	} else {
+	} 아니면 {
 		content_set_ready(c);
 		content_set_done(c);
 	}
@@ -116,8 +116,8 @@ content_llcache_callback(llcache_handle *llcache,
 		/* Will never happen: handled in hlcache */
 		break;
 	case LLCACHE_EVENT_HAD_DATA:
-		if (c->handler->process_data != NULL) {
-			if (c->handler->process_data(c,
+		만약 (c->handler->process_data != NULL) {
+			만약 (c->handler->process_data(c,
 						     (const char *) event->data.data.buf,
 						     event->data.data.len) == false) {
 				llcache_handle_abort(c->llcache);
@@ -159,7 +159,7 @@ content_llcache_callback(llcache_handle *llcache,
 		break;
 	}
 
-	return error;
+	반환 error;
 }
 
 
@@ -170,14 +170,14 @@ content_llcache_callback(llcache_handle *llcache,
  */
 static void content_update_status(struct content *c)
 {
-	if (c->status == CONTENT_STATUS_LOADING ||
+	만약 (c->status == CONTENT_STATUS_LOADING ||
 	    c->status == CONTENT_STATUS_READY) {
 		/* Not done yet */
 		snprintf(c->status_message, sizeof (c->status_message),
 			 "%s%s%s", messages_get("Fetching"),
 			 c->sub_status[0] != '\0' ? ", " : " ",
 			 c->sub_status);
-	} else {
+	} 아니면 {
 		snprintf(c->status_message, sizeof (c->status_message),
 			 "%s (%.1fs)", messages_get("Done"),
 			 (float) c->time / 1000);
@@ -202,15 +202,15 @@ content__init(struct content *c,
 	      nsurl_access_log(llcache_handle_get_url(llcache)), c);
 
 	user_sentinel = calloc(1, sizeof(struct content_user));
-	if (user_sentinel == NULL) {
-		return NSERROR_NOMEM;
+	만약 (user_sentinel == NULL) {
+		반환 NSERROR_NOMEM;
 	}
 
-	if (fallback_charset != NULL) {
+	만약 (fallback_charset != NULL) {
 		c->fallback_charset = strdup(fallback_charset);
-		if (c->fallback_charset == NULL) {
+		만약 (c->fallback_charset == NULL) {
 			free(user_sentinel);
-			return NSERROR_NOMEM;
+			반환 NSERROR_NOMEM;
 		}
 	}
 
@@ -245,12 +245,12 @@ content__init(struct content *c,
 	/* Finally, claim low-level cache events */
 	error = llcache_handle_change_callback(llcache,
 					       content_llcache_callback, c);
-	if (error != NSERROR_OK) {
+	만약 (error != NSERROR_OK) {
 		lwc_string_unref(c->mime_type);
-		return error;
+		반환 error;
 	}
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 
@@ -259,10 +259,10 @@ bool content_can_reformat(hlcache_handle *h)
 {
 	struct content *c = hlcache_handle_get_content(h);
 
-	if (c == NULL)
-		return false;
+	만약 (c == NULL)
+		반환 false;
 
-	return (c->handler->reformat != NULL);
+	반환 (c->handler->reformat != NULL);
 }
 
 
@@ -271,7 +271,7 @@ void content_set_status(struct content *c, const char *status_message)
 {
 	size_t len = strlen(status_message);
 
-	if (len >= sizeof(c->sub_status)) {
+	만약 (len >= sizeof(c->sub_status)) {
 		len = sizeof(c->sub_status) - 1;
 	}
 	memcpy(c->sub_status, status_message, len);
@@ -319,7 +319,7 @@ void content_set_error(struct content *c)
 
 /* exported interface documented in content/content.h */
 void content_reformat(hlcache_handle *h, bool background,
-		      int width, int height)
+		      정수 width, 정수 height)
 {
 	content__reformat(hlcache_handle_get_content(h), background,
 			  width, height);
@@ -328,7 +328,7 @@ void content_reformat(hlcache_handle *h, bool background,
 
 /* exported interface documented in content/protected.h */
 void
-content__reformat(struct content *c, bool background, int width, int height)
+content__reformat(struct content *c, bool background, 정수 width, 정수 height)
 {
 	union content_msg_data data;
 	assert(c != 0);
@@ -338,7 +338,7 @@ content__reformat(struct content *c, bool background, int width, int height)
 
 	c->available_width = width;
 	c->available_height = height;
-	if (c->handler->reformat != NULL) {
+	만약 (c->handler->reformat != NULL) {
 
 		c->locked = true;
 		c->handler->reformat(c, width, height);
@@ -360,7 +360,7 @@ void content_destroy(struct content *c)
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)));
 	assert(c->locked == false);
 
-	if (c->handler->destroy != NULL)
+	만약 (c->handler->destroy != NULL)
 		c->handler->destroy(c);
 
 	llcache_handle_release(c->llcache);
@@ -370,22 +370,22 @@ void content_destroy(struct content *c)
 
 	/* release metadata links */
 	link = c->links;
-	while (link != NULL) {
+	동안 (link != NULL) {
 		link = content__free_rfc5988_link(link);
 	}
 
 	/* free the user list */
-	if (c->user_list != NULL) {
+	만약 (c->user_list != NULL) {
 		free(c->user_list);
 	}
 
 	/* free the title */
-	if (c->title != NULL) {
+	만약 (c->title != NULL) {
 		free(c->title);
 	}
 
 	/* free the fallback characterset */
-	if (c->fallback_charset != NULL) {
+	만약 (c->fallback_charset != NULL) {
 		free(c->fallback_charset);
 	}
 
@@ -398,21 +398,21 @@ void
 content_mouse_track(hlcache_handle *h,
 		    struct browser_window *bw,
 		    browser_mouse_state mouse,
-		    int x, int y)
+		    정수 x, 정수 y)
 {
 	struct content *c = hlcache_handle_get_content(h);
 	assert(c != NULL);
 
-	if (c->handler->mouse_track != NULL) {
+	만약 (c->handler->mouse_track != NULL) {
 		c->handler->mouse_track(c, bw, mouse, x, y);
-	} else {
+	} 아니면 {
 		union content_msg_data msg_data;
 		msg_data.pointer = BROWSER_POINTER_AUTO;
 		content_broadcast(c, CONTENT_MSG_POINTER, &msg_data);
 	}
 
 
-	return;
+	반환;
 }
 
 
@@ -421,15 +421,15 @@ void
 content_mouse_action(hlcache_handle *h,
 		     struct browser_window *bw,
 		     browser_mouse_state mouse,
-		     int x, int y)
+		     정수 x, 정수 y)
 {
 	struct content *c = hlcache_handle_get_content(h);
 	assert(c != NULL);
 
-	if (c->handler->mouse_action != NULL)
+	만약 (c->handler->mouse_action != NULL)
 		c->handler->mouse_action(c, bw, mouse, x, y);
 
-	return;
+	반환;
 }
 
 
@@ -439,16 +439,16 @@ bool content_keypress(struct hlcache_handle *h, uint32_t key)
 	struct content *c = hlcache_handle_get_content(h);
 	assert(c != NULL);
 
-	if (c->handler->keypress != NULL)
-		return c->handler->keypress(c, key);
+	만약 (c->handler->keypress != NULL)
+		반환 c->handler->keypress(c, key);
 
-	return false;
+	반환 false;
 }
 
 
 /* exported interface documented in content/content.h */
 void content_request_redraw(struct hlcache_handle *h,
-			    int x, int y, int width, int height)
+			    정수 x, 정수 y, 정수 width, 정수 height)
 {
 	content__request_redraw(hlcache_handle_get_content(h),
 				x, y, width, height);
@@ -457,12 +457,12 @@ void content_request_redraw(struct hlcache_handle *h,
 
 /* exported interface, documented in content/protected.h */
 void content__request_redraw(struct content *c,
-			     int x, int y, int width, int height)
+			     정수 x, 정수 y, 정수 width, 정수 height)
 {
 	union content_msg_data data;
 
-	if (c == NULL)
-		return;
+	만약 (c == NULL)
+		반환;
 
 	data.redraw.x = x;
 	data.redraw.y = y;
@@ -480,19 +480,19 @@ bool content_exec(struct hlcache_handle *h, const char *src, size_t srclen)
 
 	assert(c != NULL);
 
-	if (c->locked) {
+	만약 (c->locked) {
 		/* Not safe to do stuff */
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, content locked");
-		return false;
+		반환 false;
 	}
 
-	if (c->handler->exec == NULL) {
+	만약 (c->handler->exec == NULL) {
 		/* Can't exec something on this content */
 		NSLOG(netsurf, DEEPDEBUG, "Unable to exec, no exec function");
-		return false;
+		반환 false;
 	}
 
-	return c->handler->exec(c, src, srclen);
+	반환 c->handler->exec(c, src, srclen);
 }
 
 
@@ -505,7 +505,7 @@ bool content_saw_insecure_objects(struct hlcache_handle *h)
 	bool match;
 
 	/* Is this an internal scheme? If so, we trust here and stop */
-	if ((lwc_string_isequal(scheme, corestring_lwc_about,
+	만약 ((lwc_string_isequal(scheme, corestring_lwc_about,
 				&match) == lwc_error_ok &&
 	     (match == true)) ||
 	    (lwc_string_isequal(scheme, corestring_lwc_data,
@@ -524,32 +524,32 @@ bool content_saw_insecure_objects(struct hlcache_handle *h)
 	     (match == true))) {
 		/* No insecurity to find */
 		lwc_string_unref(scheme);
-		return false;
+		반환 false;
 	}
 
 	/* Okay, not internal, am *I* secure? */
-	if ((lwc_string_isequal(scheme, corestring_lwc_https,
+	만약 ((lwc_string_isequal(scheme, corestring_lwc_https,
 				&match) == lwc_error_ok)
 	    && (match == false)) {
 		/* I did see something insecure -- ME! */
 		lwc_string_unref(scheme);
-		return true;
+		반환 true;
 	}
 
 	lwc_string_unref(scheme);
 	/* I am supposed to be secure, but was I overridden */
-	if (urldb_get_cert_permissions(url)) {
+	만약 (urldb_get_cert_permissions(url)) {
 		/* I was https:// but I was overridden, that's no good */
-		return true;
+		반환 true;
 	}
 
 	/* Otherwise try and chain through the handler */
-	if (c != NULL && c->handler->saw_insecure_objects != NULL) {
-		return c->handler->saw_insecure_objects(c);
+	만약 (c != NULL && c->handler->saw_insecure_objects != NULL) {
+		반환 c->handler->saw_insecure_objects(c);
 	}
 
 	/* If we can't see insecure objects, we can't see them */
-	return false;
+	반환 false;
 }
 
 
@@ -564,24 +564,24 @@ content_redraw(hlcache_handle *h,
 
 	assert(c != NULL);
 
-	if (c->locked) {
+	만약 (c->locked) {
 		/* not safe to attempt redraw */
-		return true;
+		반환 true;
 	}
 
 	/* ensure we have a redrawable content */
-	if (c->handler->redraw == NULL) {
-		return true;
+	만약 (c->handler->redraw == NULL) {
+		반환 true;
 	}
 
-	return c->handler->redraw(c, data, clip, ctx);
+	반환 c->handler->redraw(c, data, clip, ctx);
 }
 
 
 /* exported interface, documented in content/content.h */
 bool
 content_scaled_redraw(struct hlcache_handle *h,
-		      int width, int height,
+		      정수 width, 정수 height,
 		      const struct redraw_context *ctx)
 {
 	struct content *c = hlcache_handle_get_content(h);
@@ -593,18 +593,18 @@ content_scaled_redraw(struct hlcache_handle *h,
 	assert(c != NULL);
 
 	/* ensure it is safe to attempt redraw */
-	if (c->locked) {
-		return true;
+	만약 (c->locked) {
+		반환 true;
 	}
 
 	/* ensure we have a redrawable content */
-	if (c->handler->redraw == NULL) {
-		return true;
+	만약 (c->handler->redraw == NULL) {
+		반환 true;
 	}
 
 	NSLOG(netsurf, INFO, "Content %p %dx%d ctx:%p", c, width, height, ctx);
 
-	if (ctx->plot->option_knockout) {
+	만약 (ctx->plot->option_knockout) {
 		knockout_plot_start(ctx, &new_ctx);
 	}
 
@@ -632,20 +632,20 @@ content_scaled_redraw(struct hlcache_handle *h,
 	data.repeat_y = false;
 
 	/* Find the scale factor to use if the content has a width */
-	if (c->width) {
+	만약 (c->width) {
 		data.scale = (float)width / (float)c->width;
-	} else {
+	} 아니면 {
 		data.scale = 1.0;
 	}
 
 	/* Render the content */
 	plot_ok &= c->handler->redraw(c, &data, &clip, &new_ctx);
 
-	if (ctx->plot->option_knockout) {
+	만약 (ctx->plot->option_knockout) {
 		knockout_plot_end(ctx);
 	}
 
-	return plot_ok;
+	반환 plot_ok;
 }
 
 
@@ -665,17 +665,17 @@ content_add_user(struct content *c,
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)),
 	      c, callback, pw);
 	user = malloc(sizeof(struct content_user));
-	if (!user)
-		return false;
+	만약 (!user)
+		반환 false;
 	user->callback = callback;
 	user->pw = pw;
 	user->next = c->user_list->next;
 	c->user_list->next = user;
 
-	if (c->handler->add_user != NULL)
+	만약 (c->handler->add_user != NULL)
 		c->handler->add_user(c);
 
-	return true;
+	반환 true;
 }
 
 
@@ -695,17 +695,17 @@ content_remove_user(struct content *c,
 	      c, callback, pw);
 
 	/* user_list starts with a sentinel */
-	for (user = c->user_list; user->next != 0 &&
+	위해 (user = c->user_list; user->next != 0 &&
 		     !(user->next->callback == callback &&
 		       user->next->pw == pw); user = user->next)
 		;
-	if (user->next == 0) {
+	만약 (user->next == 0) {
 		NSLOG(netsurf, INFO, "user not found in list");
 		assert(0);
-		return;
+		반환;
 	}
 
-	if (c->handler->remove_user != NULL)
+	만약 (c->handler->remove_user != NULL)
 		c->handler->remove_user(c);
 
 	next = user->next;
@@ -722,29 +722,29 @@ uint32_t content_count_users(struct content *c)
 
 	assert(c != NULL);
 
-	for (user = c->user_list; user != NULL; user = user->next)
+	위해 (user = c->user_list; user != NULL; user = user->next)
 		counter += 1;
 
 	assert(counter > 0);
 
-	return counter - 1; /* Subtract 1 for the sentinel */
+	반환 counter - 1; /* Subtract 1 for the sentinel */
 }
 
 
 /* exported interface documented in content/content.h */
 bool content_matches_quirks(struct content *c, bool quirks)
 {
-	if (c->handler->matches_quirks == NULL)
-		return true;
+	만약 (c->handler->matches_quirks == NULL)
+		반환 true;
 
-	return c->handler->matches_quirks(c, quirks);
+	반환 c->handler->matches_quirks(c, quirks);
 }
 
 
 /* exported interface documented in content/content.h */
 bool content_is_shareable(struct content *c)
 {
-	return c->handler->no_share == false;
+	반환 c->handler->no_share == false;
 }
 
 
@@ -756,9 +756,9 @@ void content_broadcast(struct content *c, content_msg msg,
 	assert(c);
 
 	NSLOG(netsurf, DEEPDEBUG, "%p -> msg:%d", c, msg);
-	for (user = c->user_list->next; user != 0; user = next) {
+	위해 (user = c->user_list->next; user != 0; user = next) {
 		next = user->next;  /* user may be destroyed during callback */
-		if (user->callback != 0)
+		만약 (user->callback != 0)
 			user->callback(c, msg, data, user->pw);
 	}
 }
@@ -776,9 +776,9 @@ content_broadcast_error(struct content *c, nserror errorcode, const char *msg)
 	data.errordata.errorcode = errorcode;
 	data.errordata.errormsg = msg;
 
-	for (user = c->user_list->next; user != 0; user = next) {
+	위해 (user = c->user_list->next; user != 0; user = next) {
 		next = user->next;  /* user may be destroyed during callback */
-		if (user->callback != 0) {
+		만약 (user->callback != 0) {
 			user->callback(c, CONTENT_MSG_ERROR,
 				       &data, user->pw);
 		}
@@ -800,12 +800,12 @@ content_open(hlcache_handle *h,
 	assert(c != 0);
 	NSLOG(netsurf, INFO, "content %p %s", c,
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)));
-	if (c->handler->open != NULL) {
+	만약 (c->handler->open != NULL) {
 		res = c->handler->open(c, bw, page, params);
-	} else {
+	} 아니면 {
 		res = NSERROR_OK;
 	}
-	return res;
+	반환 res;
 }
 
 
@@ -816,30 +816,30 @@ nserror content_close(hlcache_handle *h)
 	nserror res;
 
 	c = hlcache_handle_get_content(h);
-	if (c == NULL) {
-		return NSERROR_BAD_PARAMETER;
+	만약 (c == NULL) {
+		반환 NSERROR_BAD_PARAMETER;
 	}
 
-	if ((c->status != CONTENT_STATUS_READY) &&
+	만약 ((c->status != CONTENT_STATUS_READY) &&
 	    (c->status != CONTENT_STATUS_DONE)) {
 		/* status is not read or done so nothing to do */
-		return NSERROR_INVALID;
+		반환 NSERROR_INVALID;
 	}
 
 	NSLOG(netsurf, INFO, "content %p %s", c,
 	      nsurl_access_log(llcache_handle_get_url(c->llcache)));
 
-	if (c->textsearch.context != NULL) {
+	만약 (c->textsearch.context != NULL) {
 		content_textsearch_destroy(c->textsearch.context);
 		c->textsearch.context = NULL;
 	}
 
-	if (c->handler->close != NULL) {
+	만약 (c->handler->close != NULL) {
 		res = c->handler->close(c);
-	} else {
+	} 아니면 {
 		res = NSERROR_OK;
 	}
-	return res;
+	반환 res;
 }
 
 
@@ -849,7 +849,7 @@ void content_clear_selection(hlcache_handle *h)
 	struct content *c = hlcache_handle_get_content(h);
 	assert(c != 0);
 
-	if (c->handler->get_selection != NULL)
+	만약 (c->handler->get_selection != NULL)
 		c->handler->clear_selection(c);
 }
 
@@ -860,60 +860,60 @@ char * content_get_selection(hlcache_handle *h)
 	struct content *c = hlcache_handle_get_content(h);
 	assert(c != 0);
 
-	if (c->handler->get_selection != NULL)
-		return c->handler->get_selection(c);
-	else
-		return NULL;
+	만약 (c->handler->get_selection != NULL)
+		반환 c->handler->get_selection(c);
+	아니면
+		반환 NULL;
 }
 
 
 /* exported interface documented in content/content.h */
 nserror
 content_get_contextual_content(struct hlcache_handle *h,
-			       int x, int y,
+			       정수 x, 정수 y,
 			       struct browser_window_features *data)
 {
 	struct content *c = hlcache_handle_get_content(h);
 	assert(c != 0);
 
-	if (c->handler->get_contextual_content != NULL) {
-		return c->handler->get_contextual_content(c, x, y, data);
+	만약 (c->handler->get_contextual_content != NULL) {
+		반환 c->handler->get_contextual_content(c, x, y, data);
 	}
 
 	data->object = h;
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 
 /* exported interface, documented in content/content.h */
 bool
 content_scroll_at_point(struct hlcache_handle *h,
-			int x, int y,
-			int scrx, int scry)
+			정수 x, 정수 y,
+			정수 scrx, 정수 scry)
 {
 	struct content *c = hlcache_handle_get_content(h);
 	assert(c != 0);
 
-	if (c->handler->scroll_at_point != NULL)
-		return c->handler->scroll_at_point(c, x, y, scrx, scry);
+	만약 (c->handler->scroll_at_point != NULL)
+		반환 c->handler->scroll_at_point(c, x, y, scrx, scry);
 
-	return false;
+	반환 false;
 }
 
 
 /* exported interface, documented in content/content.h */
 bool
 content_drop_file_at_point(struct hlcache_handle *h,
-			   int x, int y,
+			   정수 x, 정수 y,
 			   char *file)
 {
 	struct content *c = hlcache_handle_get_content(h);
 	assert(c != 0);
 
-	if (c->handler->drop_file_at_point != NULL)
-		return c->handler->drop_file_at_point(c, x, y, file);
+	만약 (c->handler->drop_file_at_point != NULL)
+		반환 c->handler->drop_file_at_point(c, x, y, file);
 
-	return false;
+	반환 false;
 }
 
 
@@ -924,11 +924,11 @@ content_debug_dump(struct hlcache_handle *h, FILE *f, enum content_debug op)
 	struct content *c = hlcache_handle_get_content(h);
 	assert(c != 0);
 
-	if (c->handler->debug_dump == NULL) {
-		return NSERROR_NOT_IMPLEMENTED;
+	만약 (c->handler->debug_dump == NULL) {
+		반환 NSERROR_NOT_IMPLEMENTED;
 	}
 
-	return c->handler->debug_dump(c, f, op);
+	반환 c->handler->debug_dump(c, f, op);
 }
 
 
@@ -937,15 +937,15 @@ nserror content_debug(struct hlcache_handle *h, enum content_debug op)
 {
 	struct content *c = hlcache_handle_get_content(h);
 
-	if (c == NULL) {
-		return NSERROR_BAD_PARAMETER;
+	만약 (c == NULL) {
+		반환 NSERROR_BAD_PARAMETER;
 	}
 
-	if (c->handler->debug == NULL) {
-		return NSERROR_NOT_IMPLEMENTED;
+	만약 (c->handler->debug == NULL) {
+		반환 NSERROR_NOT_IMPLEMENTED;
 	}
 
-	return c->handler->debug(c, op);
+	반환 c->handler->debug(c, op);
 }
 
 
@@ -957,14 +957,14 @@ content_find_rfc5988_link(hlcache_handle *h, lwc_string *rel)
 	struct content_rfc5988_link *link = c->links;
 	bool rel_match = false;
 
-	while (link != NULL) {
-		if (lwc_string_caseless_isequal(link->rel, rel,
+	동안 (link != NULL) {
+		만약 (lwc_string_caseless_isequal(link->rel, rel,
 						&rel_match) == lwc_error_ok && rel_match) {
 			break;
 		}
 		link = link->next;
 	}
-	return link;
+	반환 link;
 }
 
 
@@ -984,7 +984,7 @@ content__free_rfc5988_link(struct content_rfc5988_link *link)
 	lwc_string_unref(link->sizes);
 	free(link);
 
-	return next;
+	반환 next;
 }
 
 
@@ -997,33 +997,33 @@ content__add_rfc5988_link(struct content *c,
 	union content_msg_data msg_data;
 
 	/* a link relation must be present for it to be a link */
-	if (link->rel == NULL) {
-		return false;
+	만약 (link->rel == NULL) {
+		반환 false;
 	}
 
 	/* a link href must be present for it to be a link */
-	if (link->href == NULL) {
-		return false;
+	만약 (link->href == NULL) {
+		반환 false;
 	}
 
 	newlink = calloc(1, sizeof(struct content_rfc5988_link));
-	if (newlink == NULL) {
-		return false;
+	만약 (newlink == NULL) {
+		반환 false;
 	}
 
 	/* copy values */
 	newlink->rel = lwc_string_ref(link->rel);
 	newlink->href = nsurl_ref(link->href);
-	if (link->hreflang != NULL) {
+	만약 (link->hreflang != NULL) {
 		newlink->hreflang = lwc_string_ref(link->hreflang);
 	}
-	if (link->type != NULL) {
+	만약 (link->type != NULL) {
 		newlink->type = lwc_string_ref(link->type);
 	}
-	if (link->media != NULL) {
+	만약 (link->media != NULL) {
 		newlink->media = lwc_string_ref(link->media);
 	}
-	if (link->sizes != NULL) {
+	만약 (link->sizes != NULL) {
 		newlink->sizes = lwc_string_ref(link->sizes);
 	}
 
@@ -1035,17 +1035,17 @@ content__add_rfc5988_link(struct content *c,
 	msg_data.rfc5988_link = newlink;
 	content_broadcast(c, CONTENT_MSG_LINK, &msg_data);
 
-	return true;
+	반환 true;
 }
 
 
 /* exported interface documented in content/content.h */
 nsurl *content_get_url(struct content *c)
 {
-	if (c == NULL)
-		return NULL;
+	만약 (c == NULL)
+		반환 NULL;
 
-	return llcache_handle_get_url(c->llcache);
+	반환 llcache_handle_get_url(c->llcache);
 }
 
 
@@ -1054,27 +1054,27 @@ content_type content_get_type(hlcache_handle *h)
 {
 	struct content *c = hlcache_handle_get_content(h);
 
-	if (c == NULL)
-		return CONTENT_NONE;
+	만약 (c == NULL)
+		반환 CONTENT_NONE;
 
-	return c->handler->type();
+	반환 c->handler->type();
 }
 
 
 /* exported interface documented in content/content.h */
 lwc_string *content_get_mime_type(hlcache_handle *h)
 {
-	return content__get_mime_type(hlcache_handle_get_content(h));
+	반환 content__get_mime_type(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
 lwc_string *content__get_mime_type(struct content *c)
 {
-	if (c == NULL)
-		return NULL;
+	만약 (c == NULL)
+		반환 NULL;
 
-	return lwc_string_ref(c->mime_type);
+	반환 lwc_string_ref(c->mime_type);
 }
 
 
@@ -1082,32 +1082,32 @@ lwc_string *content__get_mime_type(struct content *c)
 bool content__set_title(struct content *c, const char *title)
 {
 	char *new_title = strdup(title);
-	if (new_title == NULL)
-		return false;
+	만약 (new_title == NULL)
+		반환 false;
 
-	if (c->title != NULL)
+	만약 (c->title != NULL)
 		free(c->title);
 
 	c->title = new_title;
 
-	return true;
+	반환 true;
 }
 
 
 /* exported interface documented in content/content.h */
 const char *content_get_title(hlcache_handle *h)
 {
-	return content__get_title(hlcache_handle_get_content(h));
+	반환 content__get_title(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
 const char *content__get_title(struct content *c)
 {
-	if (c == NULL)
-		return NULL;
+	만약 (c == NULL)
+		반환 NULL;
 
-	return c->title != NULL ? c->title :
+	반환 c->title != NULL ? c->title :
 		nsurl_access(llcache_handle_get_url(c->llcache));
 }
 
@@ -1115,92 +1115,92 @@ const char *content__get_title(struct content *c)
 /* exported interface documented in content/content.h */
 content_status content_get_status(hlcache_handle *h)
 {
-	return content__get_status(hlcache_handle_get_content(h));
+	반환 content__get_status(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
 content_status content__get_status(struct content *c)
 {
-	if (c == NULL)
-		return CONTENT_STATUS_ERROR;
+	만약 (c == NULL)
+		반환 CONTENT_STATUS_ERROR;
 
-	return c->status;
+	반환 c->status;
 }
 
 
 /* exported interface documented in content/content.h */
 const char *content_get_status_message(hlcache_handle *h)
 {
-	return content__get_status_message(hlcache_handle_get_content(h));
+	반환 content__get_status_message(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
 const char *content__get_status_message(struct content *c)
 {
-	if (c == NULL)
-		return NULL;
+	만약 (c == NULL)
+		반환 NULL;
 
-	return c->status_message;
+	반환 c->status_message;
 }
 
 
 /* exported interface documented in content/content.h */
-int content_get_width(hlcache_handle *h)
+정수 content_get_width(hlcache_handle *h)
 {
-	return content__get_width(hlcache_handle_get_content(h));
+	반환 content__get_width(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-int content__get_width(struct content *c)
+정수 content__get_width(struct content *c)
 {
-	if (c == NULL)
-		return 0;
+	만약 (c == NULL)
+		반환 0;
 
-	return c->width;
+	반환 c->width;
 }
 
 
 /* exported interface documented in content/content.h */
-int content_get_height(hlcache_handle *h)
+정수 content_get_height(hlcache_handle *h)
 {
-	return content__get_height(hlcache_handle_get_content(h));
+	반환 content__get_height(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-int content__get_height(struct content *c)
+정수 content__get_height(struct content *c)
 {
-	if (c == NULL)
-		return 0;
+	만약 (c == NULL)
+		반환 0;
 
-	return c->height;
+	반환 c->height;
 }
 
 
 /* exported interface documented in content/content.h */
-int content_get_available_width(hlcache_handle *h)
+정수 content_get_available_width(hlcache_handle *h)
 {
-	return content__get_available_width(hlcache_handle_get_content(h));
+	반환 content__get_available_width(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
-int content__get_available_width(struct content *c)
+정수 content__get_available_width(struct content *c)
 {
-	if (c == NULL)
-		return 0;
+	만약 (c == NULL)
+		반환 0;
 
-	return c->available_width;
+	반환 c->available_width;
 }
 
 
 /* exported interface documented in content/content.h */
 const uint8_t *content_get_source_data(hlcache_handle *h, size_t *size)
 {
-	return content__get_source_data(hlcache_handle_get_content(h), size);
+	반환 content__get_source_data(hlcache_handle_get_content(h), size);
 }
 
 
@@ -1210,10 +1210,10 @@ const uint8_t *content__get_source_data(struct content *c, size_t *size)
 	assert(size != NULL);
 
 	/** \todo check if the content check should be an assert */
-	if (c == NULL)
-		return NULL;
+	만약 (c == NULL)
+		반환 NULL;
 
-	return llcache_handle_get_source_data(c->llcache, size);
+	반환 llcache_handle_get_source_data(c->llcache, size);
 }
 
 
@@ -1227,8 +1227,8 @@ void content_invalidate_reuse_data(hlcache_handle *h)
 /* exported interface documented in content/content_protected.h */
 void content__invalidate_reuse_data(struct content *c)
 {
-	if (c == NULL || c->llcache == NULL)
-		return;
+	만약 (c == NULL || c->llcache == NULL)
+		반환;
 
 	/* Invalidate low-level cache data */
 	llcache_handle_invalidate_cache_data(c->llcache);
@@ -1238,24 +1238,24 @@ void content__invalidate_reuse_data(struct content *c)
 /* exported interface documented in content/content.h */
 nsurl *content_get_refresh_url(hlcache_handle *h)
 {
-	return content__get_refresh_url(hlcache_handle_get_content(h));
+	반환 content__get_refresh_url(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
 nsurl *content__get_refresh_url(struct content *c)
 {
-	if (c == NULL)
-		return NULL;
+	만약 (c == NULL)
+		반환 NULL;
 
-	return c->refresh;
+	반환 c->refresh;
 }
 
 
 /* exported interface documented in content/content.h */
 struct bitmap *content_get_bitmap(hlcache_handle *h)
 {
-	return content__get_bitmap(hlcache_handle_get_content(h));
+	반환 content__get_bitmap(hlcache_handle_get_content(h));
 }
 
 
@@ -1264,7 +1264,7 @@ struct bitmap *content__get_bitmap(struct content *c)
 {
 	struct bitmap *bitmap = NULL;
 
-	if ((c != NULL) &&
+	만약 ((c != NULL) &&
 	    (c->handler != NULL) &&
 	    (c->handler->type != NULL) &&
 	    (c->handler->type() == CONTENT_IMAGE) &&
@@ -1272,27 +1272,27 @@ struct bitmap *content__get_bitmap(struct content *c)
 		bitmap = c->handler->get_internal(c, NULL);
 	}
 
-	return bitmap;
+	반환 bitmap;
 }
 
 
 /* exported interface documented in content/content.h */
 bool content_get_opaque(hlcache_handle *h)
 {
-	return content__get_opaque(hlcache_handle_get_content(h));
+	반환 content__get_opaque(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
 bool content__get_opaque(struct content *c)
 {
-	if ((c != NULL) &&
+	만약 ((c != NULL) &&
 	    (c->handler != NULL) &&
 	    (c->handler->is_opaque != NULL)) {
-		return c->handler->is_opaque(c);
+		반환 c->handler->is_opaque(c);
 	}
 
-	return false;
+	반환 false;
 }
 
 
@@ -1301,10 +1301,10 @@ bool content_get_quirks(hlcache_handle *h)
 {
 	struct content *c = hlcache_handle_get_content(h);
 
-	if (c == NULL)
-		return false;
+	만약 (c == NULL)
+		반환 false;
 
-	return c->quirks;
+	반환 c->quirks;
 }
 
 
@@ -1312,7 +1312,7 @@ bool content_get_quirks(hlcache_handle *h)
 const char *
 content_get_encoding(hlcache_handle *h, enum content_encoding_type op)
 {
-	return content__get_encoding(hlcache_handle_get_content(h), op);
+	반환 content__get_encoding(hlcache_handle_get_content(h), op);
 }
 
 
@@ -1322,37 +1322,37 @@ content__get_encoding(struct content *c, enum content_encoding_type op)
 {
 	const char *encoding = NULL;
 
-	if ((c != NULL) &&
+	만약 ((c != NULL) &&
 	    (c->handler != NULL) &&
 	    (c->handler->get_encoding != NULL) ) {
 		encoding = c->handler->get_encoding(c, op);
 	}
 
-	return encoding;
+	반환 encoding;
 }
 
 
 /* exported interface documented in content/content.h */
 bool content_is_locked(hlcache_handle *h)
 {
-	return content__is_locked(hlcache_handle_get_content(h));
+	반환 content__is_locked(hlcache_handle_get_content(h));
 }
 
 
 /* exported interface documented in content/content_protected.h */
 bool content__is_locked(struct content *c)
 {
-	return c->locked;
+	반환 c->locked;
 }
 
 
 /* exported interface documented in content/content.h */
 const llcache_handle *content_get_llcache_handle(struct content *c)
 {
-	if (c == NULL)
-		return NULL;
+	만약 (c == NULL)
+		반환 NULL;
 
-	return c->llcache;
+	반환 c->llcache;
 }
 
 
@@ -1363,10 +1363,10 @@ struct content *content_clone(struct content *c)
 	nserror error;
 
 	error = c->handler->clone(c, &nc);
-	if (error != NSERROR_OK)
-		return NULL;
+	만약 (error != NSERROR_OK)
+		반환 NULL;
 
-	return nc;
+	반환 nc;
 };
 
 
@@ -1376,8 +1376,8 @@ nserror content__clone(const struct content *c, struct content *nc)
 	nserror error;
 
 	error = llcache_handle_clone(c->llcache, &(nc->llcache));
-	if (error != NSERROR_OK) {
-		return error;
+	만약 (error != NSERROR_OK) {
+		반환 error;
 	}
 
 	llcache_handle_change_callback(nc->llcache,
@@ -1393,17 +1393,17 @@ nserror content__clone(const struct content *c, struct content *nc)
 	nc->available_width = c->available_width;
 	nc->quirks = c->quirks;
 
-	if (c->fallback_charset != NULL) {
+	만약 (c->fallback_charset != NULL) {
 		nc->fallback_charset = strdup(c->fallback_charset);
-		if (nc->fallback_charset == NULL) {
-			return NSERROR_NOMEM;
+		만약 (nc->fallback_charset == NULL) {
+			반환 NSERROR_NOMEM;
 		}
 	}
 
-	if (c->refresh != NULL) {
+	만약 (c->refresh != NULL) {
 		nc->refresh = nsurl_ref(c->refresh);
-		if (nc->refresh == NULL) {
-			return NSERROR_NOMEM;
+		만약 (nc->refresh == NULL) {
+			반환 NSERROR_NOMEM;
 		}
 	}
 
@@ -1411,18 +1411,18 @@ nserror content__clone(const struct content *c, struct content *nc)
 	nc->reformat_time = c->reformat_time;
 	nc->size = c->size;
 
-	if (c->title != NULL) {
+	만약 (c->title != NULL) {
 		nc->title = strdup(c->title);
-		if (nc->title == NULL) {
-			return NSERROR_NOMEM;
+		만약 (nc->title == NULL) {
+			반환 NSERROR_NOMEM;
 		}
 	}
 
 	nc->active = c->active;
 
 	nc->user_list = calloc(1, sizeof(struct content_user));
-	if (nc->user_list == NULL) {
-		return NSERROR_NOMEM;
+	만약 (nc->user_list == NULL) {
+		반환 NSERROR_NOMEM;
 	}
 
 	memcpy(&(nc->status_message), &(c->status_message), 120);
@@ -1432,7 +1432,7 @@ nserror content__clone(const struct content *c, struct content *nc)
 	nc->total_size = c->total_size;
 	nc->http_code = c->http_code;
 
-	return NSERROR_OK;
+	반환 NSERROR_OK;
 }
 
 
@@ -1441,9 +1441,9 @@ nserror content_abort(struct content *c)
 {
 	NSLOG(netsurf, INFO, "Aborting %p", c);
 
-	if (c->handler->stop != NULL)
+	만약 (c->handler->stop != NULL)
 		c->handler->stop(c);
 
 	/* And for now, abort our llcache object */
-	return llcache_handle_abort(c->llcache);
+	반환 llcache_handle_abort(c->llcache);
 }

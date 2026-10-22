@@ -131,7 +131,7 @@ typedef struct html_content {
 	dom_node *title;
 
 	/** A talloc context purely for the render box tree */
-	int *bctx;
+	정수 *bctx;
 	/** A context pointer for the box conversion, NULL if no conversion
 	 * is in progress.
 	 */
@@ -145,14 +145,14 @@ typedef struct html_content {
 	const struct gui_layout_table *font_func;
 
 	/** Number of entries in scripts */
-	unsigned int scripts_count;
+	unsigned 정수 scripts_count;
 	/** Scripts */
 	struct html_script *scripts;
 	/** javascript thread in use */
 	struct jsthread *jsthread;
 
 	/** Number of entries in stylesheet_content. */
-	unsigned int stylesheet_count;
+	unsigned 정수 stylesheet_count;
 	/** Stylesheets. Each may be NULL. */
 	struct html_stylesheet *stylesheets;
 	/**< Style selection context */
@@ -165,7 +165,7 @@ typedef struct html_content {
 	lwc_string *universal;
 
 	/** Number of entries in object_list. */
-	unsigned int num_objects;
+	unsigned 정수 num_objects;
 	/** List of objects. */
 	struct content_html_object *object_list;
 	/** Forms, in reverse order to document. */
@@ -300,8 +300,8 @@ bool html_redraw(struct content *c, struct content_redraw_data *data,
 
 
 /* in html/redraw_border.c */
-bool html_redraw_borders(struct box *box, int x_parent, int y_parent,
-		int p_width, int p_height, const struct rect *clip, float scale,
+bool html_redraw_borders(struct box *box, 정수 x_parent, 정수 y_parent,
+		정수 p_width, 정수 p_height, const struct rect *clip, float scale,
 		const struct redraw_context *ctx);
 
 
