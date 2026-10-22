@@ -24,19 +24,19 @@
  * Box tree normalisation implementation.
  */
 
-#include <assert.h>
-#include <stdbool.h>
-#include <string.h>
+#অন্তর্ভাব <assert.h>
+#অন্তর্ভাব <stdbool.h>
+#অন্তর্ভাব <string.h>
 
-#include "utils/log.h"
-#include "utils/errors.h"
-#include "css/select.h"
+#অন্তর্ভাব "utils/log.h"
+#অন্তর্ভাব "utils/errors.h"
+#অন্তর্ভাব "css/select.h"
 
-#include "html/private.h"
-#include "html/table.h"
-#include "html/box.h"
-#include "html/box_manipulate.h"
-#include "html/box_normalise.h"
+#অন্তর্ভাব "html/private.h"
+#অন্তর্ভাব "html/table.h"
+#অন্তর্ভাব "html/box.h"
+#অন্তর্ভাব "html/box_manipulate.h"
+#অন্তর্ভাব "html/box_normalise.h"
 
 /* Define to enable box normalise debug */
 #undef BOX_NORMALISE_DEBUG
@@ -44,11 +44,11 @@
 /**
  * Row spanning information for a cell
  */
-struct span_info {
+সংরচনা span_info {
 	/** Number of rows this cell spans */
-	unsigned int row_span;
+	unsigned পূর্ণাঙ্ক row_span;
 	/** Row group of cell */
-	struct box *rg;
+	সংরচনা box *rg;
 	/** The cell in this column spans all rows until the end of the table */
 	bool auto_row;
 };
@@ -56,15 +56,15 @@ struct span_info {
 /**
  * Column record for a table
  */
-struct columns {
+সংরচনা columns {
 	/** Current column index */
-	unsigned int current_column;
+	unsigned পূর্ণাঙ্ক current_column;
 	/** Number of columns in main part of table 1..max columns */
-	unsigned int num_columns;
+	unsigned পূর্ণাঙ্ক অঙ্ক_columns;
 	/** Information about columns in main table, array [0, num_columns) */
-	struct span_info *spans;
+	সংরচনা span_info *spans;
 	/** Number of rows in table */
-	unsigned int num_rows;
+	unsigned পূর্ণাঙ্ক অঙ্ক_rows;
 };
 
 
@@ -79,23 +79,23 @@ struct columns {
  * \param cell		Box for current table cell
  * \return  true on success, false on memory exhaustion
  */
-static bool
-calculate_table_row(struct columns *col_info,
-		    unsigned int col_span,
-		    unsigned int row_span,
-		    unsigned int *start_column,
-		    struct box *cell)
+স্থির bool
+calculate_table_row(সংরচনা columns *col_info,
+		    unsigned পূর্ণাঙ্ক col_span,
+		    unsigned পূর্ণাঙ্ক row_span,
+		    unsigned পূর্ণাঙ্ক *start_column,
+		    সংরচনা box *cell)
 {
-	unsigned int cell_start_col = col_info->current_column;
-	unsigned int cell_end_col;
-	unsigned int i;
-	struct span_info *spans;
-	struct box *rg = cell->parent->parent; /* Cell's row group */
+	unsigned পূর্ণাঙ্ক cell_start_col = col_info->current_column;
+	unsigned পূর্ণাঙ্ক cell_end_col;
+	unsigned পূর্ণাঙ্ক i;
+	সংরচনা span_info *spans;
+	সংরচনা box *rg = cell->parent->parent; /* Cell's row group */
 
 	/* Skip columns with cells spanning from above */
 	/* TODO: Need to ignore cells spanning from above that belong to
 	 *       different row group.  We don't have that info here. */
-	while (col_info->spans[cell_start_col].row_span != 0 &&
+	যাবত্ (col_info->spans[cell_start_col].row_span != 0 &&
 			col_info->spans[cell_start_col].rg == rg) {
 		cell_start_col++;
 	}
@@ -105,22 +105,22 @@ calculate_table_row(struct columns *col_info,
 
 	/* If this cell has a colspan of 0, then assume 1.
 	 * No other browser supports colspan=0, anyway. */
-	if (col_span == 0)
+	যদি (col_span == 0)
 		col_span = 1;
 
 	cell_end_col = cell_start_col + col_span;
 
-	if (col_info->num_columns < cell_end_col) {
+	যদি (col_info->অঙ্ক_columns < cell_end_col) {
 		/* It appears that this row has more columns than
 		 * the maximum recorded for the table so far.
 		 * Allocate more span records. */
 		spans = realloc(col_info->spans,
-				sizeof *spans * (cell_end_col + 1));
-		if (spans == NULL)
-			return false;
+				পরিমাণ *spans * (cell_end_col + 1));
+		যদি (spans == রিক্ত)
+			প্রত্যাগম false;
 
 		col_info->spans = spans;
-		col_info->num_columns = cell_end_col;
+		col_info->অঙ্ক_columns = cell_end_col;
 
 		/* Mark new final column as sentinel */
 		col_info->spans[cell_end_col].row_span = 0;
@@ -130,7 +130,7 @@ calculate_table_row(struct columns *col_info,
 	/* This cell may span multiple columns. If it also wants to span
 	 * multiple rows, temporarily assume it spans 1 row only. This will
 	 * be fixed up in box_normalise_table_spans() */
-	for (i = cell_start_col; i < cell_end_col; i++) {
+	প্রতি (i = cell_start_col; i < cell_end_col; i++) {
 		col_info->spans[i].row_span = (row_span == 0) ? 1 : row_span;
 		col_info->spans[i].auto_row = (row_span == 0);
 		col_info->spans[i].rg = rg;
@@ -141,50 +141,50 @@ calculate_table_row(struct columns *col_info,
 
 	*start_column = cell_start_col;
 
-	return true;
+	প্রত্যাগম true;
 }
 
 
-static bool
-box_normalise_table_row(struct box *row,
-			const struct box *root,
-			struct columns *col_info,
+স্থির bool
+box_normalise_table_row(সংরচনা box *row,
+			ধ্রুব সংরচনা box *মূল,
+			সংরচনা columns *col_info,
 			html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *cell = NULL;
+	সংরচনা box *child;
+	সংরচনা box *next_child;
+	সংরচনা box *cell = রিক্ত;
 	css_computed_style *style;
-	unsigned int i;
+	unsigned পূর্ণাঙ্ক i;
 	nscss_select_ctx ctx;
 
-	assert(row != NULL);
-	assert(row->type == BOX_TABLE_ROW);
+	প্রতিজ্ঞা(row != রিক্ত);
+	প্রতিজ্ঞা(row->type == BOX_TABLE_ROW);
 
-	ctx.root_style = root->style;
+	ctx.মূল_style = মূল->style;
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "row %p", row);
 #endif
 
-	for (child = row->children; child != NULL; child = next_child) {
+	প্রতি (child = row->children; child != রিক্ত; child = next_child) {
 		next_child = child->next;
 
-		switch (child->type) {
-		case BOX_TABLE_CELL:
+		বিকল্প (child->type) {
+		পক্ষ BOX_TABLE_CELL:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
+			যদি (box_normalise_block(child, মূল, c) == false)
+				প্রত্যাগম false;
 			cell = child;
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
+			ভঙ্গ;
+		পক্ষ BOX_FLEX:
+		পক্ষ BOX_BLOCK:
+		পক্ষ BOX_INLINE_CONTAINER:
+		পক্ষ BOX_TABLE:
+		পক্ষ BOX_TABLE_ROW_GROUP:
+		পক্ষ BOX_TABLE_ROW:
 			/* insert implied table cell */
-			assert(row->style != NULL);
+			প্রতিজ্ঞা(row->style != রিক্ত);
 
 			ctx.ctx = c->select_ctx;
 			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
@@ -193,25 +193,25 @@ box_normalise_table_row(struct box *row,
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					row->style);
-			if (style == NULL)
-				return false;
+			যদি (style == রিক্ত)
+				প্রত্যাগম false;
 
-			cell = box_create(NULL, style, true, row->href,
-					row->target, NULL, NULL, c->bctx);
-			if (cell == NULL) {
+			cell = box_create(রিক্ত, style, true, row->href,
+					row->target, রিক্ত, রিক্ত, c->bctx);
+			যদি (cell == রিক্ত) {
 				css_computed_style_destroy(style);
-				return false;
+				প্রত্যাগম false;
 			}
 			cell->type = BOX_TABLE_CELL;
 
-			if (child->prev == NULL)
+			যদি (child->prev == রিক্ত)
 				row->children = cell;
-			else
+			অন্যথা
 				child->prev->next = cell;
 
 			cell->prev = child->prev;
 
-			while (child != NULL && (
+			যাবত্ (child != রিক্ত && (
 					child->type == BOX_FLEX ||
 					child->type == BOX_BLOCK ||
 					child->type == BOX_INLINE_CONTAINER ||
@@ -221,48 +221,48 @@ box_normalise_table_row(struct box *row,
 				box_add_child(cell, child);
 
 				next_child = child->next;
-				child->next = NULL;
+				child->next = রিক্ত;
 				child = next_child;
 			}
 
-			assert(cell->last != NULL);
+			প্রতিজ্ঞা(cell->last != রিক্ত);
 
-			cell->last->next = NULL;
+			cell->last->next = রিক্ত;
 			cell->next = next_child = child;
-			if (cell->next != NULL)
+			যদি (cell->next != রিক্ত)
 				cell->next->prev = cell;
-			else
+			অন্যথা
 				row->last = cell;
 			cell->parent = row;
 
-			if (box_normalise_block(cell, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+			যদি (box_normalise_block(cell, মূল, c) == false)
+				প্রত্যাগম false;
+			ভঙ্গ;
+		পক্ষ BOX_INLINE:
+		পক্ষ BOX_INLINE_END:
+		পক্ষ BOX_INLINE_FLEX:
+		পক্ষ BOX_INLINE_BLOCK:
+		পক্ষ BOX_FLOAT_বাম:
+		পক্ষ BOX_FLOAT_ডান:
+		পক্ষ BOX_BR:
+		পক্ষ BOX_TEXT:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		default:
-			assert(0);
+			প্রতিজ্ঞা(0);
+			ভঙ্গ;
+		স্বভাব:
+			প্রতিজ্ঞা(0);
 		}
 
-		if (calculate_table_row(col_info, cell->columns, cell->rows,
+		যদি (calculate_table_row(col_info, cell->columns, cell->rows,
 				&cell->start_column, cell) == false)
-			return false;
+			প্রত্যাগম false;
 	}
 
 
 	/* Update row spanning details for all columns */
-	for (i = 0; i < col_info->num_columns; i++) {
-		if (col_info->spans[i].row_span != 0 &&
+	প্রতি (i = 0; i < col_info->অঙ্ক_columns; i++) {
+		যদি (col_info->spans[i].row_span != 0 &&
 				col_info->spans[i].auto_row == false) {
 			/* This cell spans rows, and is not an auto row.
 			 * Reduce number of rows left to span */
@@ -274,57 +274,57 @@ box_normalise_table_row(struct box *row,
 	col_info->current_column = 0;
 
 	/* Increment row counter */
-	col_info->num_rows++;
+	col_info->অঙ্ক_rows++;
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "row %p done", row);
 #endif
 
-	return true;
+	প্রত্যাগম true;
 }
 
 
-static bool
-box_normalise_table_row_group(struct box *row_group,
-			      const struct box *root,
-			      struct columns *col_info,
+স্থির bool
+box_normalise_table_row_group(সংরচনা box *row_group,
+			      ধ্রুব সংরচনা box *মূল,
+			      সংরচনা columns *col_info,
 			      html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *row;
+	সংরচনা box *child;
+	সংরচনা box *next_child;
+	সংরচনা box *row;
 	css_computed_style *style;
 	nscss_select_ctx ctx;
-	unsigned int group_row_count = 0;
+	unsigned পূর্ণাঙ্ক group_row_গুনতি = 0;
 
-	assert(row_group != 0);
-	assert(row_group->type == BOX_TABLE_ROW_GROUP);
+	প্রতিজ্ঞা(row_group != 0);
+	প্রতিজ্ঞা(row_group->type == BOX_TABLE_ROW_GROUP);
 
-	ctx.root_style = root->style;
+	ctx.মূল_style = মূল->style;
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "row_group %p", row_group);
 #endif
 
-	for (child = row_group->children; child != NULL; child = next_child) {
+	প্রতি (child = row_group->children; child != রিক্ত; child = next_child) {
 		next_child = child->next;
 
-		switch (child->type) {
-		case BOX_TABLE_ROW:
+		বিকল্প (child->type) {
+		পক্ষ BOX_TABLE_ROW:
 			/* ok */
-			group_row_count++;
-			if (box_normalise_table_row(child, root, col_info,
+			group_row_গুনতি++;
+			যদি (box_normalise_table_row(child, মূল, col_info,
 					c) == false)
-				return false;
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_CELL:
+				প্রত্যাগম false;
+			ভঙ্গ;
+		পক্ষ BOX_FLEX:
+		পক্ষ BOX_BLOCK:
+		পক্ষ BOX_INLINE_CONTAINER:
+		পক্ষ BOX_TABLE:
+		পক্ষ BOX_TABLE_ROW_GROUP:
+		পক্ষ BOX_TABLE_CELL:
 			/* insert implied table row */
-			assert(row_group->style != NULL);
+			প্রতিজ্ঞা(row_group->style != রিক্ত);
 
 			ctx.ctx = c->select_ctx;
 			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
@@ -333,25 +333,25 @@ box_normalise_table_row_group(struct box *row_group,
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					row_group->style);
-			if (style == NULL)
-				return false;
+			যদি (style == রিক্ত)
+				প্রত্যাগম false;
 
-			row = box_create(NULL, style, true, row_group->href,
-					row_group->target, NULL, NULL, c->bctx);
-			if (row == NULL) {
+			row = box_create(রিক্ত, style, true, row_group->href,
+					row_group->target, রিক্ত, রিক্ত, c->bctx);
+			যদি (row == রিক্ত) {
 				css_computed_style_destroy(style);
-				return false;
+				প্রত্যাগম false;
 			}
 			row->type = BOX_TABLE_ROW;
 
-			if (child->prev == NULL)
+			যদি (child->prev == রিক্ত)
 				row_group->children = row;
-			else
+			অন্যথা
 				child->prev->next = row;
 
 			row->prev = child->prev;
 
-			while (child != NULL && (
+			যাবত্ (child != রিক্ত && (
 					child->type == BOX_FLEX ||
 					child->type == BOX_BLOCK ||
 					child->type == BOX_INLINE_CONTAINER ||
@@ -361,49 +361,49 @@ box_normalise_table_row_group(struct box *row_group,
 				box_add_child(row, child);
 
 				next_child = child->next;
-				child->next = NULL;
+				child->next = রিক্ত;
 				child = next_child;
 			}
 
-			assert(row->last != NULL);
+			প্রতিজ্ঞা(row->last != রিক্ত);
 
-			row->last->next = NULL;
+			row->last->next = রিক্ত;
 			row->next = next_child = child;
-			if (row->next != NULL)
+			যদি (row->next != রিক্ত)
 				row->next->prev = row;
-			else
+			অন্যথা
 				row_group->last = row;
 			row->parent = row_group;
 
-			group_row_count++;
-			if (box_normalise_table_row(row, root, col_info,
+			group_row_গুনতি++;
+			যদি (box_normalise_table_row(row, মূল, col_info,
 					c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+				প্রত্যাগম false;
+			ভঙ্গ;
+		পক্ষ BOX_INLINE:
+		পক্ষ BOX_INLINE_END:
+		পক্ষ BOX_INLINE_FLEX:
+		পক্ষ BOX_INLINE_BLOCK:
+		পক্ষ BOX_FLOAT_বাম:
+		পক্ষ BOX_FLOAT_ডান:
+		পক্ষ BOX_BR:
+		পক্ষ BOX_TEXT:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		default:
-			assert(0);
+			প্রতিজ্ঞা(0);
+			ভঙ্গ;
+		স্বভাব:
+			প্রতিজ্ঞা(0);
 		}
 	}
 
-	if (row_group->children == NULL) {
+	যদি (row_group->children == রিক্ত) {
 #ifdef BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO,
 		      "row_group->children == 0, inserting implied row");
 #endif
 
-		assert(row_group->style != NULL);
+		প্রতিজ্ঞা(row_group->style != রিক্ত);
 
 		ctx.ctx = c->select_ctx;
 		ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
@@ -412,34 +412,34 @@ box_normalise_table_row_group(struct box *row_group,
 
 		style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 				row_group->style);
-		if (style == NULL) {
-			return false;
+		যদি (style == রিক্ত) {
+			প্রত্যাগম false;
 		}
 
-		row = box_create(NULL, style, true, row_group->href,
-				row_group->target, NULL, NULL, c->bctx);
-		if (row == NULL) {
+		row = box_create(রিক্ত, style, true, row_group->href,
+				row_group->target, রিক্ত, রিক্ত, c->bctx);
+		যদি (row == রিক্ত) {
 			css_computed_style_destroy(style);
-			return false;
+			প্রত্যাগম false;
 		}
 		row->type = BOX_TABLE_ROW;
 
 		row->parent = row_group;
 		row_group->children = row_group->last = row;
 
-		group_row_count = 1;
+		group_row_গুনতি = 1;
 
 		/* Keep table's row count in sync */
-		col_info->num_rows++;
+		col_info->অঙ্ক_rows++;
 	}
 
-	row_group->rows = group_row_count;
+	row_group->rows = group_row_গুনতি;
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "row_group %p done", row_group);
 #endif
 
-	return true;
+	প্রত্যাগম true;
 }
 
 
@@ -453,43 +453,43 @@ box_normalise_table_row_group(struct box *row_group,
  * \param c      Content containing table
  * \return True on success, false on memory exhaustion.
  */
-static bool
-box_normalise_table_spans(struct box *table,
-			  const struct box *root,
-			  struct span_info *spans,
+স্থির bool
+box_normalise_table_spans(সংরচনা box *table,
+			  ধ্রুব সংরচনা box *মূল,
+			  সংরচনা span_info *spans,
 			  html_content *c)
 {
-	struct box *table_row_group;
-	struct box *table_row;
-	struct box *table_cell;
-	unsigned int rows_left = table->rows;
-	unsigned int group_rows_left;
-	unsigned int col;
+	সংরচনা box *table_row_group;
+	সংরচনা box *table_row;
+	সংরচনা box *table_cell;
+	unsigned পূর্ণাঙ্ক rows_বাম = table->rows;
+	unsigned পূর্ণাঙ্ক group_rows_বাম;
+	unsigned পূর্ণাঙ্ক col;
 	nscss_select_ctx ctx;
 
-	ctx.root_style = root->style;
+	ctx.মূল_style = মূল->style;
 
 	/* Clear span data */
-	memset(spans, 0, table->columns * sizeof(struct span_info));
+	memset(spans, 0, table->columns * পরিমাণ(সংরচনা span_info));
 
 	/* Scan table, filling in width and height of table cells with
 	 * colspan = 0 and rowspan = 0. Also generate empty cells */
-	for (table_row_group = table->children;
-	     table_row_group != NULL;
+	প্রতি (table_row_group = table->children;
+	     table_row_group != রিক্ত;
 	     table_row_group = table_row_group->next) {
 
-		group_rows_left = table_row_group->rows;
+		group_rows_বাম = table_row_group->rows;
 
-		for (table_row = table_row_group->children;
-		     table_row != NULL;
+		প্রতি (table_row = table_row_group->children;
+		     table_row != রিক্ত;
 		     table_row = table_row->next) {
 
-			for (table_cell = table_row->children;
-			     table_cell != NULL;
+			প্রতি (table_cell = table_row->children;
+			     table_cell != রিক্ত;
 			     table_cell = table_cell->next) {
 
 				/* colspan = 0 -> colspan = 1 */
-				if (table_cell->columns == 0) {
+				যদি (table_cell->columns == 0) {
 					table_cell->columns = 1;
 				}
 
@@ -497,17 +497,17 @@ box_normalise_table_spans(struct box *table,
 				 * the number of rows left in the row
 				 * group
 				 */
-				if (table_cell->rows == 0) {
-					table_cell->rows = group_rows_left;
+				যদি (table_cell->rows == 0) {
+					table_cell->rows = group_rows_বাম;
 				}
 
 				/* limit rowspans within group */
-				if (table_cell->rows > group_rows_left) {
-					table_cell->rows = group_rows_left;
+				যদি (table_cell->rows > group_rows_বাম) {
+					table_cell->rows = group_rows_বাম;
 				}
 
 				/* Record span information */
-				for (col = table_cell->start_column;
+				প্রতি (col = table_cell->start_column;
 						col < table_cell->start_column +
 						table_cell->columns; col++) {
 					spans[col].row_span = table_cell->rows;
@@ -515,21 +515,21 @@ box_normalise_table_spans(struct box *table,
 			}
 
 			/* Reduce span count of each column */
-			for (col = 0; col < table->columns; col++) {
-				if (spans[col].row_span == 0) {
-					unsigned int start = col;
+			প্রতি (col = 0; col < table->columns; col++) {
+				যদি (spans[col].row_span == 0) {
+					unsigned পূর্ণাঙ্ক start = col;
 					css_computed_style *style;
-					struct box *cell, *prev;
+					সংরচনা box *cell, *prev;
 
 					/* If it's already zero, then we need
 					 * to generate an empty cell for the
 					 * gap in the row that spans as many
 					 * columns as remain blank.
 					 */
-					assert(table_row->style != NULL);
+					প্রতিজ্ঞা(table_row->style != রিক্ত);
 
 					/* Find width of gap */
-					while (col < table->columns &&
+					যাবত্ (col < table->columns &&
 							spans[col].row_span ==
 							0) {
 						col++;
@@ -544,17 +544,17 @@ box_normalise_table_spans(struct box *table,
 					style = nscss_get_blank_style(&ctx,
 							&c->unit_len_ctx,
 							table_row->style);
-					if (style == NULL)
-						return false;
+					যদি (style == রিক্ত)
+						প্রত্যাগম false;
 
-					cell = box_create(NULL, style, true,
+					cell = box_create(রিক্ত, style, true,
 							table_row->href,
 							table_row->target,
-							NULL, NULL, c->bctx);
-					if (cell == NULL) {
+							রিক্ত, রিক্ত, c->bctx);
+					যদি (cell == রিক্ত) {
 						css_computed_style_destroy(
 								style);
-						return false;
+						প্রত্যাগম false;
 					}
 					cell->type = BOX_TABLE_CELL;
 
@@ -563,32 +563,32 @@ box_normalise_table_spans(struct box *table,
 					cell->start_column = start;
 
 					/* Find place to insert cell */
-					for (prev = table_row->children;
-							prev != NULL;
+					প্রতি (prev = table_row->children;
+							prev != রিক্ত;
 							prev = prev->next) {
-						if (prev->start_column +
+						যদি (prev->start_column +
 							prev->columns ==
 								start)
-							break;
-						if (prev->next == NULL)
-							break;
+							ভঙ্গ;
+						যদি (prev->next == রিক্ত)
+							ভঙ্গ;
 					}
 
 					/* Insert it */
-					if (prev == NULL) {
-						if (table_row->children != NULL)
+					যদি (prev == রিক্ত) {
+						যদি (table_row->children != রিক্ত)
 							table_row->children->
 								prev = cell;
-						else
+						অন্যথা
 							table_row->last = cell;
 
 						cell->next =
 							table_row->children;
 						table_row->children = cell;
-					} else {
-						if (prev->next != NULL)
+					} অন্যথা {
+						যদি (prev->next != রিক্ত)
 							prev->next->prev = cell;
-						else
+						অন্যথা
 							table_row->last = cell;
 
 						cell->next = prev->next;
@@ -596,72 +596,72 @@ box_normalise_table_spans(struct box *table,
 						cell->prev = prev;
 					}
 					cell->parent = table_row;
-				} else {
+				} অন্যথা {
 					spans[col].row_span--;
 				}
 			}
 
-			assert(rows_left > 0);
+			প্রতিজ্ঞা(rows_বাম > 0);
 
-			rows_left--;
+			rows_বাম--;
 		}
 
-		group_rows_left--;
+		group_rows_বাম--;
 	}
 
-	return true;
+	প্রত্যাগম true;
 }
 
 
-static bool
-box_normalise_table(struct box *table, const struct box *root, html_content * c)
+স্থির bool
+box_normalise_table(সংরচনা box *table, ধ্রুব সংরচনা box *মূল, html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *row_group;
+	সংরচনা box *child;
+	সংরচনা box *next_child;
+	সংরচনা box *row_group;
 	css_computed_style *style;
-	struct columns col_info;
+	সংরচনা columns col_info;
 	nscss_select_ctx ctx;
 
-	assert(table != NULL);
-	assert(table->type == BOX_TABLE);
+	প্রতিজ্ঞা(table != রিক্ত);
+	প্রতিজ্ঞা(table->type == BOX_TABLE);
 
-	ctx.root_style = root->style;
+	ctx.মূল_style = মূল->style;
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "table %p", table);
 #endif
 
-	col_info.num_columns = 1;
+	col_info.অঙ্ক_columns = 1;
 	col_info.current_column = 0;
-	col_info.spans = malloc(2 * sizeof *col_info.spans);
-	if (col_info.spans == NULL)
-		return false;
+	col_info.spans = malloc(2 * পরিমাণ *col_info.spans);
+	যদি (col_info.spans == রিক্ত)
+		প্রত্যাগম false;
 
 	col_info.spans[0].row_span = col_info.spans[1].row_span = 0;
 	col_info.spans[0].auto_row = false;
 	col_info.spans[1].auto_row = false;
-	col_info.num_rows = 0;
+	col_info.অঙ্ক_rows = 0;
 
-	for (child = table->children; child != NULL; child = next_child) {
+	প্রতি (child = table->children; child != রিক্ত; child = next_child) {
 		next_child = child->next;
-		switch (child->type) {
-		case BOX_TABLE_ROW_GROUP:
+		বিকল্প (child->type) {
+		পক্ষ BOX_TABLE_ROW_GROUP:
 			/* ok */
-			if (box_normalise_table_row_group(child, root,
+			যদি (box_normalise_table_row_group(child, মূল,
 					&col_info, c) == false) {
-				free(col_info.spans);
-				return false;
+				মুক্ত(col_info.spans);
+				প্রত্যাগম false;
 			}
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
+			ভঙ্গ;
+		পক্ষ BOX_FLEX:
+		পক্ষ BOX_BLOCK:
+		পক্ষ BOX_INLINE_CONTAINER:
+		পক্ষ BOX_TABLE:
+		পক্ষ BOX_TABLE_ROW:
+		পক্ষ BOX_TABLE_CELL:
 			/* insert implied table row group */
-			assert(table->style != NULL);
+			প্রতিজ্ঞা(table->style != রিক্ত);
 
 			ctx.ctx = c->select_ctx;
 			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
@@ -670,29 +670,29 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					table->style);
-			if (style == NULL) {
-				free(col_info.spans);
-				return false;
+			যদি (style == রিক্ত) {
+				মুক্ত(col_info.spans);
+				প্রত্যাগম false;
 			}
 
-			row_group = box_create(NULL, style, true, table->href,
-					table->target, NULL, NULL, c->bctx);
-			if (row_group == NULL) {
+			row_group = box_create(রিক্ত, style, true, table->href,
+					table->target, রিক্ত, রিক্ত, c->bctx);
+			যদি (row_group == রিক্ত) {
 				css_computed_style_destroy(style);
-				free(col_info.spans);
-				return false;
+				মুক্ত(col_info.spans);
+				প্রত্যাগম false;
 			}
 
 			row_group->type = BOX_TABLE_ROW_GROUP;
 
-			if (child->prev == NULL)
+			যদি (child->prev == রিক্ত)
 				table->children = row_group;
-			else
+			অন্যথা
 				child->prev->next = row_group;
 
 			row_group->prev = child->prev;
 
-			while (child != NULL && (
+			যাবত্ (child != রিক্ত && (
 					child->type == BOX_FLEX ||
 					child->type == BOX_BLOCK ||
 					child->type == BOX_INLINE_CONTAINER ||
@@ -702,56 +702,56 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 				box_add_child(row_group, child);
 
 				next_child = child->next;
-				child->next = NULL;
+				child->next = রিক্ত;
 				child = next_child;
 			}
 
-			assert(row_group->last != NULL);
+			প্রতিজ্ঞা(row_group->last != রিক্ত);
 
-			row_group->last->next = NULL;
+			row_group->last->next = রিক্ত;
 			row_group->next = next_child = child;
-			if (row_group->next != NULL)
+			যদি (row_group->next != রিক্ত)
 				row_group->next->prev = row_group;
-			else
+			অন্যথা
 				table->last = row_group;
 			row_group->parent = table;
 
-			if (box_normalise_table_row_group(row_group, root,
+			যদি (box_normalise_table_row_group(row_group, মূল,
 					&col_info, c) == false) {
-				free(col_info.spans);
-				return false;
+				মুক্ত(col_info.spans);
+				প্রত্যাগম false;
 			}
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+			ভঙ্গ;
+		পক্ষ BOX_INLINE:
+		পক্ষ BOX_INLINE_END:
+		পক্ষ BOX_INLINE_FLEX:
+		পক্ষ BOX_INLINE_BLOCK:
+		পক্ষ BOX_FLOAT_বাম:
+		পক্ষ BOX_FLOAT_ডান:
+		পক্ষ BOX_BR:
+		পক্ষ BOX_TEXT:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		default:
+			প্রতিজ্ঞা(0);
+			ভঙ্গ;
+		স্বভাব:
 			fprintf(stderr, "%i\n", child->type);
-			assert(0);
+			প্রতিজ্ঞা(0);
 		}
 	}
 
-	table->columns = col_info.num_columns;
-	table->rows = col_info.num_rows;
+	table->columns = col_info.অঙ্ক_columns;
+	table->rows = col_info.অঙ্ক_rows;
 
-	if (table->children == NULL) {
-		struct box *row;
+	যদি (table->children == রিক্ত) {
+		সংরচনা box *row;
 
 #ifdef BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO,
 		      "table->children == 0, creating implied row");
 #endif
 
-		assert(table->style != NULL);
+		প্রতিজ্ঞা(table->style != রিক্ত);
 
 		ctx.ctx = c->select_ctx;
 		ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
@@ -760,35 +760,35 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 
 		style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 				table->style);
-		if (style == NULL) {
-			free(col_info.spans);
-			return false;
+		যদি (style == রিক্ত) {
+			মুক্ত(col_info.spans);
+			প্রত্যাগম false;
 		}
 
-		row_group = box_create(NULL, style, true, table->href,
-				table->target, NULL, NULL, c->bctx);
-		if (row_group == NULL) {
+		row_group = box_create(রিক্ত, style, true, table->href,
+				table->target, রিক্ত, রিক্ত, c->bctx);
+		যদি (row_group == রিক্ত) {
 			css_computed_style_destroy(style);
-			free(col_info.spans);
-			return false;
+			মুক্ত(col_info.spans);
+			প্রত্যাগম false;
 		}
 		row_group->type = BOX_TABLE_ROW_GROUP;
 
 		style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 				row_group->style);
-		if (style == NULL) {
+		যদি (style == রিক্ত) {
 			box_free(row_group);
-			free(col_info.spans);
-			return false;
+			মুক্ত(col_info.spans);
+			প্রত্যাগম false;
 		}
 
-		row = box_create(NULL, style, true, row_group->href,
-				row_group->target, NULL, NULL, c->bctx);
-		if (row == NULL) {
+		row = box_create(রিক্ত, style, true, row_group->href,
+				row_group->target, রিক্ত, রিক্ত, c->bctx);
+		যদি (row == রিক্ত) {
 			css_computed_style_destroy(style);
 			box_free(row_group);
-			free(col_info.spans);
-			return false;
+			মুক্ত(col_info.spans);
+			প্রত্যাগম false;
 		}
 		row->type = BOX_TABLE_ROW;
 
@@ -801,45 +801,45 @@ box_normalise_table(struct box *table, const struct box *root, html_content * c)
 		table->rows = 1;
 	}
 
-	if (box_normalise_table_spans(table, root, col_info.spans, c) == false) {
-		free(col_info.spans);
-		return false;
+	যদি (box_normalise_table_spans(table, মূল, col_info.spans, c) == false) {
+		মুক্ত(col_info.spans);
+		প্রত্যাগম false;
 	}
 
-	free(col_info.spans);
+	মুক্ত(col_info.spans);
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "table %p done", table);
 #endif
 
-	return true;
+	প্রত্যাগম true;
 }
 
-static bool box_normalise_flex(
-		struct box *flex_container,
-		const struct box *root,
+স্থির bool box_normalise_flex(
+		সংরচনা box *flex_container,
+		ধ্রুব সংরচনা box *মূল,
 		html_content *c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *implied_flex_item;
+	সংরচনা box *child;
+	সংরচনা box *next_child;
+	সংরচনা box *implied_flex_item;
 	css_computed_style *style;
 	nscss_select_ctx ctx;
 
-	assert(flex_container != NULL);
-	assert(root != NULL);
+	প্রতিজ্ঞা(flex_container != রিক্ত);
+	প্রতিজ্ঞা(মূল != রিক্ত);
 
-	ctx.root_style = root->style;
+	ctx.মূল_style = মূল->style;
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "flex_container %p, flex_container->type %u",
 			flex_container, flex_container->type);
 #endif
 
-	assert(flex_container->type == BOX_FLEX ||
+	প্রতিজ্ঞা(flex_container->type == BOX_FLEX ||
 	       flex_container->type == BOX_INLINE_FLEX);
 
-	for (child = flex_container->children; child != NULL; child = next_child) {
+	প্রতি (child = flex_container->children; child != রিক্ত; child = next_child) {
 #ifdef BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO, "child %p, child->type = %d",
 				child, child->type);
@@ -847,20 +847,20 @@ static bool box_normalise_flex(
 
 		next_child = child->next;	/* child may be destroyed */
 
-		switch (child->type) {
-		case BOX_FLEX:
+		বিকল্প (child->type) {
+		পক্ষ BOX_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
-				return false;
-			break;
-		case BOX_BLOCK:
+			যদি (box_normalise_flex(child, মূল, c) == false)
+				প্রত্যাগম false;
+			ভঙ্গ;
+		পক্ষ BOX_BLOCK:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE_CONTAINER:
+			যদি (box_normalise_block(child, মূল, c) == false)
+				প্রত্যাগম false;
+			ভঙ্গ;
+		পক্ষ BOX_INLINE_CONTAINER:
 			/* insert implied flex item */
-			assert(flex_container->style != NULL);
+			প্রতিজ্ঞা(flex_container->style != রিক্ত);
 
 			ctx.ctx = c->select_ctx;
 			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
@@ -869,69 +869,69 @@ static bool box_normalise_flex(
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					flex_container->style);
-			if (style == NULL)
-				return false;
+			যদি (style == রিক্ত)
+				প্রত্যাগম false;
 
-			implied_flex_item = box_create(NULL, style, true,
+			implied_flex_item = box_create(রিক্ত, style, true,
 					flex_container->href,
 					flex_container->target,
-					NULL, NULL, c->bctx);
-			if (implied_flex_item == NULL) {
+					রিক্ত, রিক্ত, c->bctx);
+			যদি (implied_flex_item == রিক্ত) {
 				css_computed_style_destroy(style);
-				return false;
+				প্রত্যাগম false;
 			}
 			implied_flex_item->type = BOX_BLOCK;
 
-			if (child->prev == NULL)
+			যদি (child->prev == রিক্ত)
 				flex_container->children = implied_flex_item;
-			else
+			অন্যথা
 				child->prev->next = implied_flex_item;
 
 			implied_flex_item->prev = child->prev;
 
-			while (child != NULL &&
+			যাবত্ (child != রিক্ত &&
 					child->type == BOX_INLINE_CONTAINER) {
 				box_add_child(implied_flex_item, child);
 
 				next_child = child->next;
-				child->next = NULL;
+				child->next = রিক্ত;
 				child = next_child;
 			}
 
-			implied_flex_item->last->next = NULL;
+			implied_flex_item->last->next = রিক্ত;
 			implied_flex_item->next = next_child = child;
-			if (implied_flex_item->next != NULL)
+			যদি (implied_flex_item->next != রিক্ত)
 				implied_flex_item->next->prev = implied_flex_item;
-			else
+			অন্যথা
 				flex_container->last = implied_flex_item;
 			implied_flex_item->parent = flex_container;
 
-			if (box_normalise_block(implied_flex_item,
-					root, c) == false)
-				return false;
-			break;
+			যদি (box_normalise_block(implied_flex_item,
+					মূল, c) == false)
+				প্রত্যাগম false;
+			ভঙ্গ;
 
-		case BOX_TABLE:
-			if (box_normalise_table(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+		পক্ষ BOX_TABLE:
+			যদি (box_normalise_table(child, মূল, c) == false)
+				প্রত্যাগম false;
+			ভঙ্গ;
+		পক্ষ BOX_INLINE:
+		পক্ষ BOX_INLINE_END:
+		পক্ষ BOX_INLINE_FLEX:
+		পক্ষ BOX_INLINE_BLOCK:
+		পক্ষ BOX_FLOAT_বাম:
+		পক্ষ BOX_FLOAT_ডান:
+		পক্ষ BOX_BR:
+		পক্ষ BOX_TEXT:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
+			প্রতিজ্ঞা(0);
+			ভঙ্গ;
+		পক্ষ BOX_TABLE_ROW_GROUP:
+		পক্ষ BOX_TABLE_ROW:
+		পক্ষ BOX_TABLE_CELL:
 			/* insert implied table */
-			assert(flex_container->style != NULL);
+			প্রতিজ্ঞা(flex_container->style != রিক্ত);
 
 			ctx.ctx = c->select_ctx;
 			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
@@ -940,139 +940,139 @@ static bool box_normalise_flex(
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					flex_container->style);
-			if (style == NULL)
-				return false;
+			যদি (style == রিক্ত)
+				প্রত্যাগম false;
 
-			implied_flex_item = box_create(NULL, style, true,
+			implied_flex_item = box_create(রিক্ত, style, true,
 					flex_container->href,
 					flex_container->target,
-					NULL, NULL, c->bctx);
-			if (implied_flex_item == NULL) {
+					রিক্ত, রিক্ত, c->bctx);
+			যদি (implied_flex_item == রিক্ত) {
 				css_computed_style_destroy(style);
-				return false;
+				প্রত্যাগম false;
 			}
 			implied_flex_item->type = BOX_TABLE;
 
-			if (child->prev == NULL)
+			যদি (child->prev == রিক্ত)
 				flex_container->children = implied_flex_item;
-			else
+			অন্যথা
 				child->prev->next = implied_flex_item;
 
 			implied_flex_item->prev = child->prev;
 
-			while (child != NULL && (
+			যাবত্ (child != রিক্ত && (
 					child->type == BOX_TABLE_ROW_GROUP ||
 					child->type == BOX_TABLE_ROW ||
 					child->type == BOX_TABLE_CELL)) {
 				box_add_child(implied_flex_item, child);
 
 				next_child = child->next;
-				child->next = NULL;
+				child->next = রিক্ত;
 				child = next_child;
 			}
 
-			implied_flex_item->last->next = NULL;
+			implied_flex_item->last->next = রিক্ত;
 			implied_flex_item->next = next_child = child;
-			if (implied_flex_item->next != NULL)
+			যদি (implied_flex_item->next != রিক্ত)
 				implied_flex_item->next->prev = implied_flex_item;
-			else
+			অন্যথা
 				flex_container->last = implied_flex_item;
 			implied_flex_item->parent = flex_container;
 
-			if (box_normalise_table(implied_flex_item,
-					root, c) == false)
-				return false;
-			break;
-		default:
-			assert(0);
+			যদি (box_normalise_table(implied_flex_item,
+					মূল, c) == false)
+				প্রত্যাগম false;
+			ভঙ্গ;
+		স্বভাব:
+			প্রতিজ্ঞা(0);
 		}
 	}
 
-	return true;
+	প্রত্যাগম true;
 }
 
-static bool
-box_normalise_inline_container(struct box *cont,
-			       const struct box *root,
+স্থির bool
+box_normalise_inline_container(সংরচনা box *cont,
+			       ধ্রুব সংরচনা box *মূল,
 			       html_content * c)
 {
-	struct box *child;
-	struct box *next_child;
+	সংরচনা box *child;
+	সংরচনা box *next_child;
 
-	assert(cont != NULL);
-	assert(cont->type == BOX_INLINE_CONTAINER);
+	প্রতিজ্ঞা(cont != রিক্ত);
+	প্রতিজ্ঞা(cont->type == BOX_INLINE_CONTAINER);
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "cont %p", cont);
 #endif
 
-	for (child = cont->children; child != NULL; child = next_child) {
+	প্রতি (child = cont->children; child != রিক্ত; child = next_child) {
 		next_child = child->next;
-		switch (child->type) {
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_BR:
-		case BOX_TEXT:
+		বিকল্প (child->type) {
+		পক্ষ BOX_INLINE:
+		পক্ষ BOX_INLINE_END:
+		পক্ষ BOX_BR:
+		পক্ষ BOX_TEXT:
 			/* ok */
-			break;
-		case BOX_INLINE_BLOCK:
+			ভঙ্গ;
+		পক্ষ BOX_INLINE_BLOCK:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE_FLEX:
+			যদি (box_normalise_block(child, মূল, c) == false)
+				প্রত্যাগম false;
+			ভঙ্গ;
+		পক্ষ BOX_INLINE_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
-				return false;
-			break;
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
+			যদি (box_normalise_flex(child, মূল, c) == false)
+				প্রত্যাগম false;
+			ভঙ্গ;
+		পক্ষ BOX_FLOAT_বাম:
+		পক্ষ BOX_FLOAT_ডান:
 			/* ok */
-			assert(child->children != NULL);
+			প্রতিজ্ঞা(child->children != রিক্ত);
 
-			switch (child->children->type) {
-			case BOX_BLOCK:
-				if (box_normalise_block(child->children, root,
+			বিকল্প (child->children->type) {
+			পক্ষ BOX_BLOCK:
+				যদি (box_normalise_block(child->children, মূল,
 						c) == false)
-					return false;
-				break;
-			case BOX_TABLE:
-				if (box_normalise_table(child->children, root,
+					প্রত্যাগম false;
+				ভঙ্গ;
+			পক্ষ BOX_TABLE:
+				যদি (box_normalise_table(child->children, মূল,
 						c) == false)
-					return false;
-				break;
-			case BOX_FLEX:
-				if (box_normalise_flex(child->children, root,
+					প্রত্যাগম false;
+				ভঙ্গ;
+			পক্ষ BOX_FLEX:
+				যদি (box_normalise_flex(child->children, মূল,
 						c) == false)
-					return false;
-				break;
-			default:
-				assert(0);
+					প্রত্যাগম false;
+				ভঙ্গ;
+			স্বভাব:
+				প্রতিজ্ঞা(0);
 			}
 
-			if (child->children == NULL) {
+			যদি (child->children == রিক্ত) {
 				/* the child has destroyed itself: remove float */
-				if (child->prev == NULL)
+				যদি (child->prev == রিক্ত)
 					child->parent->children = child->next;
-				else
+				অন্যথা
 					child->prev->next = child->next;
-				if (child->next != NULL)
+				যদি (child->next != রিক্ত)
 					child->next->prev = child->prev;
-				else
+				অন্যথা
 					child->parent->last = child->prev;
 
 				box_free(child);
 			}
-			break;
-		case BOX_FLEX:
-		case BOX_BLOCK:
-		case BOX_INLINE_CONTAINER:
-		case BOX_TABLE:
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
-		default:
-			assert(0);
+			ভঙ্গ;
+		পক্ষ BOX_FLEX:
+		পক্ষ BOX_BLOCK:
+		পক্ষ BOX_INLINE_CONTAINER:
+		পক্ষ BOX_TABLE:
+		পক্ষ BOX_TABLE_ROW_GROUP:
+		পক্ষ BOX_TABLE_ROW:
+		পক্ষ BOX_TABLE_CELL:
+		স্বভাব:
+			প্রতিজ্ঞা(0);
 		}
 	}
 
@@ -1080,32 +1080,32 @@ box_normalise_inline_container(struct box *cont,
 	NSLOG(netsurf, INFO, "cont %p done", cont);
 #endif
 
-	return true;
+	প্রত্যাগম true;
 }
 
 /* Exported function documented in html/box_normalise.h */
 bool
-box_normalise_block(struct box *block, const struct box *root, html_content *c)
+box_normalise_block(সংরচনা box *block, ধ্রুব সংরচনা box *মূল, html_content *c)
 {
-	struct box *child;
-	struct box *next_child;
-	struct box *table;
+	সংরচনা box *child;
+	সংরচনা box *next_child;
+	সংরচনা box *table;
 	css_computed_style *style;
 	nscss_select_ctx ctx;
 
-	assert(block != NULL);
-	assert(root != NULL);
+	প্রতিজ্ঞা(block != রিক্ত);
+	প্রতিজ্ঞা(মূল != রিক্ত);
 
-	ctx.root_style = root->style;
+	ctx.মূল_style = মূল->style;
 
 #ifdef BOX_NORMALISE_DEBUG
 	NSLOG(netsurf, INFO, "block %p, block->type %u", block, block->type);
 #endif
 
-	assert(block->type == BOX_BLOCK || block->type == BOX_INLINE_BLOCK ||
+	প্রতিজ্ঞা(block->type == BOX_BLOCK || block->type == BOX_INLINE_BLOCK ||
 			block->type == BOX_TABLE_CELL);
 
-	for (child = block->children; child != NULL; child = next_child) {
+	প্রতি (child = block->children; child != রিক্ত; child = next_child) {
 #ifdef BOX_NORMALISE_DEBUG
 		NSLOG(netsurf, INFO, "child %p, child->type = %d", child,
 		      child->type);
@@ -1113,42 +1113,42 @@ box_normalise_block(struct box *block, const struct box *root, html_content *c)
 
 		next_child = child->next;	/* child may be destroyed */
 
-		switch (child->type) {
-		case BOX_FLEX:
+		বিকল্প (child->type) {
+		পক্ষ BOX_FLEX:
 			/* ok */
-			if (box_normalise_flex(child, root, c) == false)
-				return false;
-			break;
-		case BOX_BLOCK:
+			যদি (box_normalise_flex(child, মূল, c) == false)
+				প্রত্যাগম false;
+			ভঙ্গ;
+		পক্ষ BOX_BLOCK:
 			/* ok */
-			if (box_normalise_block(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE_CONTAINER:
-			if (box_normalise_inline_container(child, root, c) == false)
-				return false;
-			break;
-		case BOX_TABLE:
-			if (box_normalise_table(child, root, c) == false)
-				return false;
-			break;
-		case BOX_INLINE:
-		case BOX_INLINE_END:
-		case BOX_INLINE_FLEX:
-		case BOX_INLINE_BLOCK:
-		case BOX_FLOAT_LEFT:
-		case BOX_FLOAT_RIGHT:
-		case BOX_BR:
-		case BOX_TEXT:
+			যদি (box_normalise_block(child, মূল, c) == false)
+				প্রত্যাগম false;
+			ভঙ্গ;
+		পক্ষ BOX_INLINE_CONTAINER:
+			যদি (box_normalise_inline_container(child, মূল, c) == false)
+				প্রত্যাগম false;
+			ভঙ্গ;
+		পক্ষ BOX_TABLE:
+			যদি (box_normalise_table(child, মূল, c) == false)
+				প্রত্যাগম false;
+			ভঙ্গ;
+		পক্ষ BOX_INLINE:
+		পক্ষ BOX_INLINE_END:
+		পক্ষ BOX_INLINE_FLEX:
+		পক্ষ BOX_INLINE_BLOCK:
+		পক্ষ BOX_FLOAT_বাম:
+		পক্ষ BOX_FLOAT_ডান:
+		পক্ষ BOX_BR:
+		পক্ষ BOX_TEXT:
 			/* should have been wrapped in inline
 			   container by convert_xml_to_box() */
-			assert(0);
-			break;
-		case BOX_TABLE_ROW_GROUP:
-		case BOX_TABLE_ROW:
-		case BOX_TABLE_CELL:
+			প্রতিজ্ঞা(0);
+			ভঙ্গ;
+		পক্ষ BOX_TABLE_ROW_GROUP:
+		পক্ষ BOX_TABLE_ROW:
+		পক্ষ BOX_TABLE_CELL:
 			/* insert implied table */
-			assert(block->style != NULL);
+			প্রতিজ্ঞা(block->style != রিক্ত);
 
 			ctx.ctx = c->select_ctx;
 			ctx.quirks = (c->quirks == DOM_DOCUMENT_QUIRKS_MODE_FULL);
@@ -1157,50 +1157,50 @@ box_normalise_block(struct box *block, const struct box *root, html_content *c)
 
 			style = nscss_get_blank_style(&ctx, &c->unit_len_ctx,
 					block->style);
-			if (style == NULL)
-				return false;
+			যদি (style == রিক্ত)
+				প্রত্যাগম false;
 
-			table = box_create(NULL, style, true, block->href,
-					block->target, NULL, NULL, c->bctx);
-			if (table == NULL) {
+			table = box_create(রিক্ত, style, true, block->href,
+					block->target, রিক্ত, রিক্ত, c->bctx);
+			যদি (table == রিক্ত) {
 				css_computed_style_destroy(style);
-				return false;
+				প্রত্যাগম false;
 			}
 			table->type = BOX_TABLE;
 
-			if (child->prev == NULL)
+			যদি (child->prev == রিক্ত)
 				block->children = table;
-			else
+			অন্যথা
 				child->prev->next = table;
 
 			table->prev = child->prev;
 
-			while (child != NULL && (
+			যাবত্ (child != রিক্ত && (
 					child->type == BOX_TABLE_ROW_GROUP ||
 					child->type == BOX_TABLE_ROW ||
 					child->type == BOX_TABLE_CELL)) {
 				box_add_child(table, child);
 
 				next_child = child->next;
-				child->next = NULL;
+				child->next = রিক্ত;
 				child = next_child;
 			}
 
-			table->last->next = NULL;
+			table->last->next = রিক্ত;
 			table->next = next_child = child;
-			if (table->next != NULL)
+			যদি (table->next != রিক্ত)
 				table->next->prev = table;
-			else
+			অন্যথা
 				block->last = table;
 			table->parent = block;
 
-			if (box_normalise_table(table, root, c) == false)
-				return false;
-			break;
-		default:
-			assert(0);
+			যদি (box_normalise_table(table, মূল, c) == false)
+				প্রত্যাগম false;
+			ভঙ্গ;
+		স্বভাব:
+			প্রতিজ্ঞা(0);
 		}
 	}
 
-	return true;
+	প্রত্যাগম true;
 }

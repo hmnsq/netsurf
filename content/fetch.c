@@ -31,34 +31,34 @@
  * fetches are stored in the ::queue_ring waiting for use.
  */
 
-#include <stdlib.h>
-#include <assert.h>
-#include <errno.h>
-#include <stdbool.h>
-#include <string.h>
-#include <strings.h>
-#include <time.h>
-#include <libwapcaplet/libwapcaplet.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <assert.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <stdbool.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <strings.h>
+#অন্তর্ভাব <time.h>
+#অন্তর্ভাব <libwapcaplet/libwapcaplet.h>
 
-#include "utils/config.h"
-#include "utils/corestrings.h"
-#include "utils/nsoption.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "utils/nsurl.h"
-#include "utils/ring.h"
-#include "netsurf/misc.h"
-#include "desktop/gui_internal.h"
+#অন্তর্ভাব "utils/config.h"
+#অন্তর্ভাব "utils/corestrings.h"
+#অন্তর্ভাব "utils/nsoption.h"
+#অন্তর্ভাব "utils/log.h"
+#অন্তর্ভাব "utils/messages.h"
+#অন্তর্ভাব "utils/nsurl.h"
+#অন্তর্ভাব "utils/ring.h"
+#অন্তর্ভাব "netsurf/misc.h"
+#অন্তর্ভাব "desktop/gui_internal.h"
 
-#include "content/fetch.h"
-#include "content/fetchers.h"
-#include "content/fetchers/resource.h"
-#include "content/fetchers/about/about.h"
-#include "content/fetchers/curl.h"
-#include "content/fetchers/data.h"
-#include "content/fetchers/file/file.h"
-#include "javascript/fetcher.h"
-#include "content/urldb.h"
+#অন্তর্ভাব "content/fetch.h"
+#অন্তর্ভাব "content/fetchers.h"
+#অন্তর্ভাব "content/fetchers/resource.h"
+#অন্তর্ভাব "content/fetchers/about/about.h"
+#অন্তর্ভাব "content/fetchers/curl.h"
+#অন্তর্ভাব "content/fetchers/data.h"
+#অন্তর্ভাব "content/fetchers/file/file.h"
+#অন্তর্ভাব "javascript/fetcher.h"
+#অন্তর্ভাব "content/urldb.h"
 
 /** The maximum number of fetchers that can be added */
 #define MAX_FETCHERS 10
@@ -76,48 +76,48 @@
 /**
  * Information about a fetcher for a given scheme.
  */
-typedef struct scheme_fetcher_s {
+প্রকারনির্দেশ সংরচনা scheme_fetcher_s {
 	lwc_string *scheme; /**< The scheme. */
 
-	struct fetcher_operation_table ops; /**< The fetchers operations. */
-	int refcount; /**< When zero the fetcher is no longer in use. */
+	সংরচনা fetcher_operation_table ops; /**< The fetchers operations. */
+	পূর্ণাঙ্ক refcount; /**< When zero the fetcher is no longer in use. */
 } scheme_fetcher;
 
-static scheme_fetcher fetchers[MAX_FETCHERS];
+স্থির scheme_fetcher fetchers[MAX_FETCHERS];
 
 /** Information for a single fetch. */
-struct fetch {
+সংরচনা fetch {
 	fetch_callback callback;/**< Callback function. */
 	nsurl *url;		/**< URL. */
 	nsurl *referer;		/**< Referer URL. */
 	bool verifiable;	/**< Transaction is verifiable */
-	void *p;		/**< Private data for callback. */
+	শূন্য *p;		/**< Private data for callback. */
 	lwc_string *host;	/**< Host part of URL, interned */
 	http_response_code http_code;	/**< HTTP response code, or 0. */
-	int fetcherd;           /**< Fetcher descriptor for this fetch */
-	void *fetcher_handle;	/**< The handle for the fetcher. */
+	পূর্ণাঙ্ক fetcherd;           /**< Fetcher descriptor for this fetch */
+	শূন্য *fetcher_handle;	/**< The handle for the fetcher. */
 	bool fetch_is_active;	/**< This fetch is active. */
-	fetch_msg_type last_msg;/**< The last message sent for this fetch */
-	struct fetch *r_prev;	/**< Previous active fetch in ::fetch_ring. */
-	struct fetch *r_next;	/**< Next active fetch in ::fetch_ring. */
+	fetch_বার্তা_type last_বার্তা;/**< The last message sent for this fetch */
+	সংরচনা fetch *r_prev;	/**< Previous active fetch in ::fetch_ring. */
+	সংরচনা fetch *r_next;	/**< Next active fetch in ::fetch_ring. */
 };
 
-static struct fetch *fetch_ring = NULL;	/**< Ring of active fetches. */
-static struct fetch *queue_ring = NULL;	/**< Ring of queued fetches */
+স্থির সংরচনা fetch *fetch_ring = রিক্ত;	/**< Ring of active fetches. */
+স্থির সংরচনা fetch *queue_ring = রিক্ত;	/**< Ring of queued fetches */
 
 /******************************************************************************
  * fetch internals							      *
  ******************************************************************************/
 
-static inline void fetch_ref_fetcher(int fetcherd)
+স্থির অন্তঃস্থ শূন্য fetch_ref_fetcher(পূর্ণাঙ্ক fetcherd)
 {
 	fetchers[fetcherd].refcount++;
 }
 
-static inline void fetch_unref_fetcher(int fetcherd)
+স্থির অন্তঃস্থ শূন্য fetch_unref_fetcher(পূর্ণাঙ্ক fetcherd)
 {
 	fetchers[fetcherd].refcount--;
-	if (fetchers[fetcherd].refcount == 0) {
+	যদি (fetchers[fetcherd].refcount == 0) {
 		fetchers[fetcherd].ops.finalise(fetchers[fetcherd].scheme);
 		lwc_string_unref(fetchers[fetcherd].scheme);
 	}
@@ -126,26 +126,26 @@ static inline void fetch_unref_fetcher(int fetcherd)
 /**
  * Find a suitable fetcher for a scheme.
  */
-static int get_fetcher_for_scheme(lwc_string *scheme)
+স্থির পূর্ণাঙ্ক get_fetcher_for_scheme(lwc_string *scheme)
 {
-	int fetcherd;
+	পূর্ণাঙ্ক fetcherd;
 	bool match;
 
-	for (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
-		if ((fetchers[fetcherd].refcount > 0) &&
+	প্রতি (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
+		যদি ((fetchers[fetcherd].refcount > 0) &&
 		    (lwc_string_isequal(fetchers[fetcherd].scheme,
 					scheme, &match) == lwc_error_ok) &&
 		    (match == true)) {
-			return fetcherd;
+			প্রত্যাগম fetcherd;
 	       }
 	}
-	return -1;
+	প্রত্যাগম -1;
 }
 
 /**
  * Dispatch a single job
  */
-static bool fetch_dispatch_job(struct fetch *fetch)
+স্থির bool fetch_dispatch_job(সংরচনা fetch *fetch)
 {
 	RING_REMOVE(queue_ring, fetch);
 	NSLOG(fetch, DEBUG,
@@ -153,13 +153,13 @@ static bool fetch_dispatch_job(struct fetch *fetch)
 	      fetch->fetcher_handle,
 	      nsurl_access(fetch->url));
 
-	if (!fetchers[fetch->fetcherd].ops.start(fetch->fetcher_handle)) {
-		RING_INSERT(queue_ring, fetch); /* Put it back on the end of the queue */
-		return false;
-	} else {
-		RING_INSERT(fetch_ring, fetch);
+	যদি (!fetchers[fetch->fetcherd].ops.start(fetch->fetcher_handle)) {
+		RING_ঢোকাও(queue_ring, fetch); /* Put it back on the end of the queue */
+		প্রত্যাগম false;
+	} অন্যথা {
+		RING_ঢোকাও(fetch_ring, fetch);
 		fetch->fetch_is_active = true;
-		return true;
+		প্রত্যাগম true;
 	}
 }
 
@@ -170,56 +170,56 @@ static bool fetch_dispatch_job(struct fetch *fetch)
  * We don't check the overall dispatch size here because we're not called unless
  * there is room in the fetch queue for us.
  */
-static bool fetch_choose_and_dispatch(void)
+স্থির bool fetch_choose_and_dispatch(শূন্য)
 {
 	bool same_host;
-	struct fetch *queueitem;
+	সংরচনা fetch *queueitem;
 	queueitem = queue_ring;
-	do {
+	কুরু {
 		/* We can dispatch the selected item if there is room in the
 		 * fetch ring
 		 */
-		int countbyhost;
-		RING_COUNTBYLWCHOST(struct fetch, fetch_ring, countbyhost,
+		পূর্ণাঙ্ক countbyhost;
+		RING_COUNTBYLWCHOST(সংরচনা fetch, fetch_ring, countbyhost,
 				    queueitem->host);
-		if (countbyhost < nsoption_int(max_fetchers_per_host)) {
+		যদি (countbyhost < nsoption_int(max_fetchers_per_host)) {
 			/* We can dispatch this item in theory */
-			return fetch_dispatch_job(queueitem);
+			প্রত্যাগম fetch_dispatch_job(queueitem);
 		}
 		/* skip over other items with the same host */
 		same_host = true;
-		while (same_host == true && queueitem->r_next != queue_ring) {
-			if (lwc_string_isequal(queueitem->host,
+		যাবত্ (same_host == true && queueitem->r_next != queue_ring) {
+			যদি (lwc_string_isequal(queueitem->host,
 					       queueitem->r_next->host, &same_host) ==
 			    lwc_error_ok && same_host == true) {
 				queueitem = queueitem->r_next;
 			}
 		}
 		queueitem = queueitem->r_next;
-	} while (queueitem != queue_ring);
-	return false;
+	} যাবত্ (queueitem != queue_ring);
+	প্রত্যাগম false;
 }
 
-static void dump_rings(void)
+স্থির শূন্য dump_rings(শূন্য)
 {
-	struct fetch *q;
-	struct fetch *f;
+	সংরচনা fetch *q;
+	সংরচনা fetch *f;
 
 	q = queue_ring;
-	if (q) {
-		do {
+	যদি (q) {
+		কুরু {
 			NSLOG(fetch, DEBUG, "queue_ring: %s",
 			      nsurl_access(q->url));
 			q = q->r_next;
-		} while (q != queue_ring);
+		} যাবত্ (q != queue_ring);
 	}
 	f = fetch_ring;
-	if (f) {
-		do {
+	যদি (f) {
+		কুরু {
 			NSLOG(fetch, DEBUG, "fetch_ring: %s",
 			      nsurl_access(f->url));
 			f = f->r_next;
-		} while (f != fetch_ring);
+		} যাবত্ (f != fetch_ring);
 	}
 }
 
@@ -228,13 +228,13 @@ static void dump_rings(void)
  *
  * @return true if there are active fetchers that require polling else false.
  */
-static bool fetch_dispatch_jobs(void)
+স্থির bool fetch_dispatch_jobs(শূন্য)
 {
-	int all_active;
-	int all_queued;
+	পূর্ণাঙ্ক all_active;
+	পূর্ণাঙ্ক all_queued;
 
-	RING_GETSIZE(struct fetch, queue_ring, all_queued);
-	RING_GETSIZE(struct fetch, fetch_ring, all_active);
+	RING_GETSIZE(সংরচনা fetch, queue_ring, all_queued);
+	RING_GETSIZE(সংরচনা fetch, fetch_ring, all_active);
 
 	NSLOG(fetch, DEBUG,
 	      "queue_ring %i, fetch_ring %i",
@@ -242,7 +242,7 @@ static bool fetch_dispatch_jobs(void)
 	      all_active);
 	dump_rings();
 
-	while ((all_queued != 0) &&
+	যাবত্ ((all_queued != 0) &&
 	       (all_active < nsoption_int(max_fetchers)) &&
 	       fetch_choose_and_dispatch()) {
 			all_queued--;
@@ -256,24 +256,24 @@ static bool fetch_dispatch_jobs(void)
 	NSLOG(fetch, DEBUG, "Fetch ring is now %d elements.", all_active);
 	NSLOG(fetch, DEBUG, "Queue ring is now %d elements.", all_queued);
 
-	return (all_active > 0);
+	প্রত্যাগম (all_active > 0);
 }
 
-static void fetcher_poll(void *unused)
+স্থির শূন্য fetcher_poll(শূন্য *unused)
 {
-	int fetcherd;
+	পূর্ণাঙ্ক fetcherd;
 
-	if (fetch_dispatch_jobs()) {
+	যদি (fetch_dispatch_jobs()) {
 		NSLOG(fetch, DEBUG, "Polling fetchers");
-		for (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
-			if (fetchers[fetcherd].refcount > 0) {
+		প্রতি (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
+			যদি (fetchers[fetcherd].refcount > 0) {
 				/* fetcher present */
 				fetchers[fetcherd].ops.poll(fetchers[fetcherd].scheme);
 			}
 		}
 
 		/* schedule active fetchers to run again in 10ms */
-		guit->misc->schedule(SCHEDULE_TIME, fetcher_poll, NULL);
+		guit->misc->schedule(SCHEDULE_TIME, fetcher_poll, রিক্ত);
 	}
 }
 
@@ -282,48 +282,48 @@ static void fetcher_poll(void *unused)
  ******************************************************************************/
 
 /* exported interface documented in content/fetch.h */
-nserror fetcher_init(void)
+nserror fetcher_init(শূন্য)
 {
 	nserror ret;
 
 #ifdef WITH_CURL
 	ret = fetch_curl_register();
-	if (ret != NSERROR_OK) {
-		return ret;
+	যদি (ret != NSERROR_OK) {
+		প্রত্যাগম ret;
 	}
 #endif
 
 	ret = fetch_data_register();
-	if (ret != NSERROR_OK) {
-		return ret;
+	যদি (ret != NSERROR_OK) {
+		প্রত্যাগম ret;
 	}
 
 	ret = fetch_file_register();
-	if (ret != NSERROR_OK) {
-		return ret;
+	যদি (ret != NSERROR_OK) {
+		প্রত্যাগম ret;
 	}
 
 	ret = fetch_resource_register();
-	if (ret != NSERROR_OK) {
-		return ret;
+	যদি (ret != NSERROR_OK) {
+		প্রত্যাগম ret;
 	}
 
 	ret = fetch_about_register();
-	if (ret != NSERROR_OK) {
-		return ret;
+	যদি (ret != NSERROR_OK) {
+		প্রত্যাগম ret;
 	}
 
 	ret = fetch_javascript_register();
 
-	return ret;
+	প্রত্যাগম ret;
 }
 
 /* exported interface documented in content/fetchers.h */
-void fetcher_quit(void)
+শূন্য fetcher_quit(শূন্য)
 {
-	int fetcherd; /* fetcher index */
-	for (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
-		if (fetchers[fetcherd].refcount > 1) {
+	পূর্ণাঙ্ক fetcherd; /* fetcher index */
+	প্রতি (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
+		যদি (fetchers[fetcherd].refcount > 1) {
 			/* fetcher still has reference at quit. This
 			 * should not happen as the fetch should have
 			 * been aborted in llcache shutdown.
@@ -345,7 +345,7 @@ void fetcher_quit(void)
 
 			fetchers[fetcherd].refcount = 1;
 		}
-		if (fetchers[fetcherd].refcount == 1) {
+		যদি (fetchers[fetcherd].refcount == 1) {
 
 			fetch_unref_fetcher(fetcherd);
 		}
@@ -354,22 +354,22 @@ void fetcher_quit(void)
 
 /* exported interface documented in content/fetchers.h */
 nserror
-fetcher_add(lwc_string *scheme, const struct fetcher_operation_table *ops)
+fetcher_add(lwc_string *scheme, ধ্রুব সংরচনা fetcher_operation_table *ops)
 {
-	int fetcherd;
+	পূর্ণাঙ্ক fetcherd;
 
 	/* find unused fetcher descriptor */
-	for (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
-		if (fetchers[fetcherd].refcount == 0) {
-			break;
+	প্রতি (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
+		যদি (fetchers[fetcherd].refcount == 0) {
+			ভঙ্গ;
 		}
 	}
-	if (fetcherd == MAX_FETCHERS) {
-		return NSERROR_INIT_FAILED;
+	যদি (fetcherd == MAX_FETCHERS) {
+		প্রত্যাগম NSERROR_INIT_FAILED;
 	}
 
-	if (!ops->initialise(scheme)) {
-		return NSERROR_INIT_FAILED;
+	যদি (!ops->initialise(scheme)) {
+		প্রত্যাগম NSERROR_INIT_FAILED;
 	}
 
 	fetchers[fetcherd].scheme = scheme;
@@ -377,7 +377,7 @@ fetcher_add(lwc_string *scheme, const struct fetcher_operation_table *ops)
 
 	fetch_ref_fetcher(fetcherd);
 
-	return NSERROR_OK;
+	প্রত্যাগম NSERROR_OK;
 }
 
 /* exported interface documented in content/fetch.h */
@@ -385,21 +385,21 @@ nserror
 fetch_fdset(fd_set *read_fd_set,
 		      fd_set *write_fd_set,
 		      fd_set *except_fd_set,
-		      int *maxfd_out)
+		      পূর্ণাঙ্ক *maxfd_out)
 {
-	int maxfd = -1;
-	int fetcherd; /* fetcher index */
+	পূর্ণাঙ্ক maxfd = -1;
+	পূর্ণাঙ্ক fetcherd; /* fetcher index */
 
-	if (!fetch_dispatch_jobs()) {
+	যদি (!fetch_dispatch_jobs()) {
 		NSLOG(fetch, DEBUG, "No jobs");
 		*maxfd_out = -1;
-		return NSERROR_OK;
+		প্রত্যাগম NSERROR_OK;
 	}
 
 	NSLOG(fetch, DEBUG, "Polling fetchers");
 
-	for (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
-		if (fetchers[fetcherd].refcount > 0) {
+	প্রতি (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
+		যদি (fetchers[fetcherd].refcount > 0) {
 			/* fetcher present */
 			fetchers[fetcherd].ops.poll(fetchers[fetcherd].scheme);
 		}
@@ -409,20 +409,20 @@ fetch_fdset(fd_set *read_fd_set,
 	FD_ZERO(write_fd_set);
 	FD_ZERO(except_fd_set);
 
-	for (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
-		if ((fetchers[fetcherd].refcount > 0) &&
-		    (fetchers[fetcherd].ops.fdset != NULL)) {
+	প্রতি (fetcherd = 0; fetcherd < MAX_FETCHERS; fetcherd++) {
+		যদি ((fetchers[fetcherd].refcount > 0) &&
+		    (fetchers[fetcherd].ops.fdset != রিক্ত)) {
 			/* fetcher present */
-			int fetcher_maxfd;
+			পূর্ণাঙ্ক fetcher_maxfd;
 			fetcher_maxfd = fetchers[fetcherd].ops.fdset(
 				fetchers[fetcherd].scheme, read_fd_set,
 				write_fd_set, except_fd_set);
-			if (fetcher_maxfd > maxfd)
+			যদি (fetcher_maxfd > maxfd)
 				maxfd = fetcher_maxfd;
 		}
 	}
 
-	if (maxfd >= 0) {
+	যদি (maxfd >= 0) {
 		/* change the scheduled poll to happen is a 1000ms as
 		 * we assume fetching an fdset means the fetchers will
 		 * be run by the client waking up on data available on
@@ -436,12 +436,12 @@ fetch_fdset(fd_set *read_fd_set,
 		 * select on. All the other fetchers continue to need
 		 * polling frequently.
 		 */
-		guit->misc->schedule(FDSET_TIMEOUT, fetcher_poll, NULL);
+		guit->misc->schedule(FDSET_TIMEOUT, fetcher_poll, রিক্ত);
 	}
 
 	*maxfd_out = maxfd;
 
-	return NSERROR_OK;
+	প্রত্যাগম NSERROR_OK;
 }
 
 /* exported interface documented in content/fetch.h */
@@ -449,33 +449,33 @@ nserror
 fetch_start(nsurl *url,
 	    nsurl *referer,
 	    fetch_callback callback,
-	    void *p,
+	    শূন্য *p,
 	    bool only_2xx,
-	    const char *post_urlenc,
-	    const struct fetch_multipart_data *post_multipart,
+	    ধ্রুব বর্ণ *post_urlenc,
+	    ধ্রুব সংরচনা fetch_multipart_data *post_multipart,
 	    bool verifiable,
 	    bool downgrade_tls,
-	    const char *headers[],
-	    struct fetch **fetch_out)
+	    ধ্রুব বর্ণ *headers[],
+	    সংরচনা fetch **fetch_out)
 {
-	struct fetch *fetch;
+	সংরচনা fetch *fetch;
 	lwc_string *scheme;
 
-	fetch = calloc(1, sizeof (*fetch));
-	if (fetch == NULL) {
-		return NSERROR_NOMEM;
+	fetch = calloc(1, পরিমাণ (*fetch));
+	যদি (fetch == রিক্ত) {
+		প্রত্যাগম NSERROR_NOMEM;
 	}
 
 	/* The URL we're fetching must have a scheme */
 	scheme = nsurl_get_component(url, NSURL_SCHEME);
-	assert(scheme != NULL);
+	প্রতিজ্ঞা(scheme != রিক্ত);
 
 	/* try and obtain a fetcher for this scheme */
 	fetch->fetcherd = get_fetcher_for_scheme(scheme);
 	lwc_string_unref(scheme);
-	if (fetch->fetcherd == -1) {
-		free(fetch);
-		return NSERROR_NO_FETCH_HANDLER;
+	যদি (fetch->fetcherd == -1) {
+		মুক্ত(fetch);
+		প্রত্যাগম NSERROR_NO_FETCH_HANDLER;
 	}
 
 	NSLOG(fetch, DEBUG, "fetch %p, url '%s'", fetch, nsurl_access(url));
@@ -487,7 +487,7 @@ fetch_start(nsurl *url,
 	fetch->p = p;
 	fetch->host = nsurl_get_component(url, NSURL_HOST);
 
-	if (referer != NULL) {
+	যদি (referer != রিক্ত) {
 		fetch->referer = nsurl_ref(referer);
 	}
 
@@ -496,46 +496,46 @@ fetch_start(nsurl *url,
 						only_2xx, downgrade_tls,
 						post_urlenc, post_multipart,
 						headers);
-	if (fetch->fetcher_handle == NULL) {
+	যদি (fetch->fetcher_handle == রিক্ত) {
 		lwc_string_unref(fetch->host);
 
-		if (fetch->url != NULL)
+		যদি (fetch->url != রিক্ত)
 			nsurl_unref(fetch->url);
 
-		if (fetch->referer != NULL)
+		যদি (fetch->referer != রিক্ত)
 			nsurl_unref(fetch->referer);
 
-		free(fetch);
+		মুক্ত(fetch);
 
 
 	/** \todo The fetchers setup should return nserror and that be
 	 * passed back rather than assuming a bad url
 	 */
-		return NSERROR_BAD_URL;
+		প্রত্যাগম NSERROR_BAD_URL;
 	}
 
 	/* Rah, got it, so ref the fetcher. */
 	fetch_ref_fetcher(fetch->fetcherd);
 
 	/* Dump new fetch in the queue. */
-	RING_INSERT(queue_ring, fetch);
+	RING_ঢোকাও(queue_ring, fetch);
 
 	/* Ask the queue to run. */
-	if (fetch_dispatch_jobs()) {
+	যদি (fetch_dispatch_jobs()) {
 		NSLOG(fetch, DEBUG, "scheduling poll");
 		/* schedule active fetchers to run again in 10ms */
-		guit->misc->schedule(10, fetcher_poll, NULL);
+		guit->misc->schedule(10, fetcher_poll, রিক্ত);
 	}
 
 	*fetch_out = fetch;
-	return NSERROR_OK;
+	প্রত্যাগম NSERROR_OK;
 }
 
 /* exported interface documented in content/fetch.h */
-void fetch_abort(struct fetch *f)
+শূন্য fetch_abort(সংরচনা fetch *f)
 {
-	assert(f);
-	f->last_msg = FETCH__INTERNAL_ABORTED;
+	প্রতিজ্ঞা(f);
+	f->last_বার্তা = FETCH__INTERNAL_ABORTED;
 	NSLOG(fetch, DEBUG,
 	      "fetch %p, fetcher %p, url '%s'", f, f->fetcher_handle,
 	     nsurl_access(f->url));
@@ -543,20 +543,20 @@ void fetch_abort(struct fetch *f)
 }
 
 /* exported interface documented in content/fetch.h */
-void fetch_free(struct fetch *f)
+শূন্য fetch_free(সংরচনা fetch *f)
 {
-	if (f->last_msg < FETCH_MIN_FINISHED_MSG) {
+	যদি (f->last_বার্তা < FETCH_MIN_FINISHED_বার্তা) {
 		/* We didn't finish, so tell our user that an error occurred */
-		fetch_msg msg;
+		fetch_বার্তা বার্তা;
 
-		msg.type = FETCH_ERROR;
-		msg.data.error = "FetchFailedToFinish";
+		বার্তা.type = FETCH_ERROR;
+		বার্তা.data.error = "FetchFailedToFinish";
 
 		NSLOG(fetch, CRITICAL,
 		      "During the fetch of %s, the fetcher did not finish.",
 		      nsurl_access(f->url));
 
-		fetch_send_callback(&msg, f);
+		fetch_send_callback(&বার্তা, f);
 	}
 
 	NSLOG(fetch, DEBUG,
@@ -564,206 +564,206 @@ void fetch_free(struct fetch *f)
 	      f,
 	      f->fetcher_handle);
 
-	fetchers[f->fetcherd].ops.free(f->fetcher_handle);
+	fetchers[f->fetcherd].ops.মুক্ত(f->fetcher_handle);
 
 	fetch_unref_fetcher(f->fetcherd);
 
 	nsurl_unref(f->url);
-	if (f->referer != NULL) {
+	যদি (f->referer != রিক্ত) {
 		nsurl_unref(f->referer);
 	}
 	lwc_string_unref(f->host);
-	free(f);
+	মুক্ত(f);
 }
 
 
 
 /* exported interface documented in content/fetch.h */
-bool fetch_can_fetch(const nsurl *url)
+bool fetch_can_fetch(ধ্রুব nsurl *url)
 {
 	lwc_string *scheme = nsurl_get_component(url, NSURL_SCHEME);
-	int fetcherd;
+	পূর্ণাঙ্ক fetcherd;
 
 	fetcherd = get_fetcher_for_scheme(scheme);
 	lwc_string_unref(scheme);
 
-	if (fetcherd == -1) {
-		return false;
+	যদি (fetcherd == -1) {
+		প্রত্যাগম false;
 	}
 
-	return fetchers[fetcherd].ops.acceptable(url);
+	প্রত্যাগম fetchers[fetcherd].ops.acceptable(url);
 }
 
 /* exported interface documented in content/fetch.h */
-void fetch_change_callback(struct fetch *fetch,
+শূন্য fetch_change_callback(সংরচনা fetch *fetch,
 			   fetch_callback callback,
-			   void *p)
+			   শূন্য *p)
 {
-	assert(fetch);
+	প্রতিজ্ঞা(fetch);
 	fetch->callback = callback;
 	fetch->p = p;
 }
 
 /* exported interface documented in content/fetch.h */
-http_response_code fetch_http_code(struct fetch *fetch)
+http_response_code fetch_http_code(সংরচনা fetch *fetch)
 {
-	return fetch->http_code;
+	প্রত্যাগম fetch->http_code;
 }
 
 
 /* exported interface documented in content/fetch.h */
-struct fetch_multipart_data *
-fetch_multipart_data_clone(const struct fetch_multipart_data *list)
+সংরচনা fetch_multipart_data *
+fetch_multipart_data_clone(ধ্রুব সংরচনা fetch_multipart_data *list)
 {
-	struct fetch_multipart_data *clone, *last = NULL;
-	struct fetch_multipart_data *result = NULL;
+	সংরচনা fetch_multipart_data *clone, *last = রিক্ত;
+	সংরচনা fetch_multipart_data *result = রিক্ত;
 
-	for (; list != NULL; list = list->next) {
-		clone = malloc(sizeof(struct fetch_multipart_data));
-		if (clone == NULL) {
-			if (result != NULL)
+	প্রতি (; list != রিক্ত; list = list->next) {
+		clone = malloc(পরিমাণ(সংরচনা fetch_multipart_data));
+		যদি (clone == রিক্ত) {
+			যদি (result != রিক্ত)
 				fetch_multipart_data_destroy(result);
 
-			return NULL;
+			প্রত্যাগম রিক্ত;
 		}
 
 		clone->file = list->file;
 
 		clone->name = strdup(list->name);
-		if (clone->name == NULL) {
-			free(clone);
-			if (result != NULL)
+		যদি (clone->name == রিক্ত) {
+			মুক্ত(clone);
+			যদি (result != রিক্ত)
 				fetch_multipart_data_destroy(result);
 
-			return NULL;
+			প্রত্যাগম রিক্ত;
 		}
 
-		clone->value = strdup(list->value);
-		if (clone->value == NULL) {
-			free(clone->name);
-			free(clone);
-			if (result != NULL)
+		clone->মান = strdup(list->মান);
+		যদি (clone->মান == রিক্ত) {
+			মুক্ত(clone->name);
+			মুক্ত(clone);
+			যদি (result != রিক্ত)
 				fetch_multipart_data_destroy(result);
 
-			return NULL;
+			প্রত্যাগম রিক্ত;
 		}
 
-		if (clone->file) {
+		যদি (clone->file) {
 			clone->rawfile = strdup(list->rawfile);
-			if (clone->rawfile == NULL) {
-				free(clone->value);
-				free(clone->name);
-				free(clone);
-				if (result != NULL)
+			যদি (clone->rawfile == রিক্ত) {
+				মুক্ত(clone->মান);
+				মুক্ত(clone->name);
+				মুক্ত(clone);
+				যদি (result != রিক্ত)
 					fetch_multipart_data_destroy(result);
 
-				return NULL;
+				প্রত্যাগম রিক্ত;
 			}
-		} else {
-			clone->rawfile = NULL;
+		} অন্যথা {
+			clone->rawfile = রিক্ত;
 		}
 
-		clone->next = NULL;
+		clone->next = রিক্ত;
 
-		if (result == NULL)
+		যদি (result == রিক্ত)
 			result = clone;
-		else
+		অন্যথা
 			last->next = clone;
 
 		last = clone;
 	}
 
-	return result;
+	প্রত্যাগম result;
 }
 
 
 /* exported interface documented in content/fetch.h */
-const char *
-fetch_multipart_data_find(const struct fetch_multipart_data *list,
-			  const char *name)
+ধ্রুব বর্ণ *
+fetch_multipart_data_find(ধ্রুব সংরচনা fetch_multipart_data *list,
+			  ধ্রুব বর্ণ *name)
 {
-	while (list != NULL) {
-		if (strcmp(list->name, name) == 0) {
-			return list->value;
+	যাবত্ (list != রিক্ত) {
+		যদি (strcmp(list->name, name) == 0) {
+			প্রত্যাগম list->মান;
 		}
 		list = list->next;
 	}
 
-	return NULL;
+	প্রত্যাগম রিক্ত;
 }
 
 
 /* exported interface documented in content/fetch.h */
-void fetch_multipart_data_destroy(struct fetch_multipart_data *list)
+শূন্য fetch_multipart_data_destroy(সংরচনা fetch_multipart_data *list)
 {
-	struct fetch_multipart_data *next;
+	সংরচনা fetch_multipart_data *next;
 
-	for (; list != NULL; list = next) {
+	প্রতি (; list != রিক্ত; list = next) {
 		next = list->next;
-		free(list->name);
-		free(list->value);
-		if (list->file) {
+		মুক্ত(list->name);
+		মুক্ত(list->মান);
+		যদি (list->file) {
 			NSLOG(fetch, DEBUG,
 			      "Freeing rawfile: %s", list->rawfile);
-			free(list->rawfile);
+			মুক্ত(list->rawfile);
 		}
-		free(list);
+		মুক্ত(list);
 	}
 }
 
 
 /* exported interface documented in content/fetch.h */
 nserror
-fetch_multipart_data_new_kv(struct fetch_multipart_data **list,
-			    const char *name,
-			    const char *value)
+fetch_multipart_data_new_kv(সংরচনা fetch_multipart_data **list,
+			    ধ্রুব বর্ণ *name,
+			    ধ্রুব বর্ণ *মান)
 {
-	struct fetch_multipart_data *newdata;
+	সংরচনা fetch_multipart_data *newdata;
 
-	assert(list);
+	প্রতিজ্ঞা(list);
 
-	newdata = calloc(1, sizeof(*newdata));
+	newdata = calloc(1, পরিমাণ(*newdata));
 
-	if (newdata == NULL) {
-		return NSERROR_NOMEM;
+	যদি (newdata == রিক্ত) {
+		প্রত্যাগম NSERROR_NOMEM;
 	}
 
 	newdata->name = strdup(name);
-	if (newdata->name == NULL) {
-		free(newdata);
-		return NSERROR_NOMEM;
+	যদি (newdata->name == রিক্ত) {
+		মুক্ত(newdata);
+		প্রত্যাগম NSERROR_NOMEM;
 	}
 
-	newdata->value = strdup(value);
-	if (newdata->value == NULL) {
-		free(newdata->name);
-		free(newdata);
-		return NSERROR_NOMEM;
+	newdata->মান = strdup(মান);
+	যদি (newdata->মান == রিক্ত) {
+		মুক্ত(newdata->name);
+		মুক্ত(newdata);
+		প্রত্যাগম NSERROR_NOMEM;
 	}
 
 	newdata->next = *list;
 	*list = newdata;
 
-	return NSERROR_OK;
+	প্রত্যাগম NSERROR_OK;
 }
 
 
 /* exported interface documented in content/fetch.h */
-void
-fetch_send_callback(const fetch_msg *msg, struct fetch *fetch)
+শূন্য
+fetch_send_callback(ধ্রুব fetch_বার্তা *বার্তা, সংরচনা fetch *fetch)
 {
 	/* Bump the last_msg to the greatest seen msg */
-	if (msg->type > fetch->last_msg)
-		fetch->last_msg = msg->type;
-	fetch->callback(msg, fetch->p);
+	যদি (বার্তা->type > fetch->last_বার্তা)
+		fetch->last_বার্তা = বার্তা->type;
+	fetch->callback(বার্তা, fetch->p);
 }
 
 
 /* exported interface documented in content/fetch.h */
-void fetch_remove_from_queues(struct fetch *fetch)
+শূন্য fetch_remove_from_queues(সংরচনা fetch *fetch)
 {
-	int all_active;
-	int all_queued;
+	পূর্ণাঙ্ক all_active;
+	পূর্ণাঙ্ক all_queued;
 
 	NSLOG(fetch, DEBUG,
 	      "Fetch %p, fetcher %p can be freed",
@@ -771,15 +771,15 @@ void fetch_remove_from_queues(struct fetch *fetch)
 	      fetch->fetcher_handle);
 
 	/* Go ahead and free the fetch properly now */
-	if (fetch->fetch_is_active) {
+	যদি (fetch->fetch_is_active) {
 		RING_REMOVE(fetch_ring, fetch);
-	} else {
+	} অন্যথা {
 		RING_REMOVE(queue_ring, fetch);
 	}
 
 
-	RING_GETSIZE(struct fetch, fetch_ring, all_active);
-	RING_GETSIZE(struct fetch, queue_ring, all_queued);
+	RING_GETSIZE(সংরচনা fetch, fetch_ring, all_active);
+	RING_GETSIZE(সংরচনা fetch, queue_ring, all_queued);
 
 	NSLOG(fetch, DEBUG, "Fetch ring is now %d elements.", all_active);
 	NSLOG(fetch, DEBUG, "Queue ring is now %d elements.", all_queued);
@@ -787,30 +787,30 @@ void fetch_remove_from_queues(struct fetch *fetch)
 
 
 /* exported interface documented in content/fetch.h */
-nserror fetch_set_http_code(struct fetch *fetch, http_response_code http_code)
+nserror fetch_set_http_code(সংরচনা fetch *fetch, http_response_code http_code)
 {
 	NSLOG(fetch, DEBUG, "Setting HTTP code to %d", http_code);
 
 	fetch->http_code = http_code;
 
-	return NSERROR_OK;
+	প্রত্যাগম NSERROR_OK;
 }
 
 
 /* exported interface documented in content/fetch.h */
-void fetch_set_cookie(struct fetch *fetch, const char *data)
+শূন্য fetch_set_cookie(সংরচনা fetch *fetch, ধ্রুব বর্ণ *data)
 {
-	assert(fetch && data);
+	প্রতিজ্ঞা(fetch && data);
 
 	/* If the fetch is unverifiable err on the side of caution and
 	 * do not set the cookie */
 
-	if (fetch->verifiable) {
+	যদি (fetch->verifiable) {
 		/* If the transaction's verifiable, we don't require
 		 * that the request uri and the parent domain match,
 		 * so don't pass in any referer/parent in this case. */
-		urldb_set_cookie(data, fetch->url, NULL);
-	} else if (fetch->referer != NULL) {
+		urldb_set_cookie(data, fetch->url, রিক্ত);
+	} অন্যথা যদি (fetch->referer != রিক্ত) {
 		/* Permit the cookie to be set if the fetch is unverifiable
 		 * and the fetch URI domain matches the referer. */
 		/** \todo Long-term, this needs to be replaced with a

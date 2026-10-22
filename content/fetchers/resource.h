@@ -38,6 +38,6 @@
  *
  * \return NSERROR_OK on successful registration or error code on failure.
  */
-nserror fetch_resource_register(void);
+nserror fetch_resource_register(শূন্য);
 
 #endif

@@ -16,26 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
-#include <assert.h>
-#include <libwapcaplet/libwapcaplet.h>
-#include <dom/dom.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <assert.h>
+#অন্তর্ভাব <libwapcaplet/libwapcaplet.h>
+#অন্তর্ভাব <dom/dom.h>
 
-#include "utils/errors.h"
-#include "utils/corestrings.h"
-#include "utils/utils.h"
-#include "utils/http.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "content/fetch.h"
-#include "content/hlcache.h"
-#include "desktop/system_colour.h"
+#অন্তর্ভাব "utils/errors.h"
+#অন্তর্ভাব "utils/corestrings.h"
+#অন্তর্ভাব "utils/utils.h"
+#অন্তর্ভাব "utils/http.h"
+#অন্তর্ভাব "utils/log.h"
+#অন্তর্ভাব "utils/messages.h"
+#অন্তর্ভাব "content/content_protected.h"
+#অন্তর্ভাব "content/content_factory.h"
+#অন্তর্ভাব "content/fetch.h"
+#অন্তর্ভাব "content/hlcache.h"
+#অন্তর্ভাব "desktop/system_colour.h"
 
-#include "css/css.h"
-#include "css/hints.h"
-#include "css/internal.h"
+#অন্তর্ভাব "css/css.h"
+#অন্তর্ভাব "css/hints.h"
+#অন্তর্ভাব "css/internal.h"
 
 /* Define to trace import fetches */
 #undef NSCSS_IMPORT_TRACE
@@ -43,7 +43,7 @@
 /** Screen DPI in fixed point units: defaults to 90, which RISC OS uses */
 css_fixed nscss_screen_dpi = F_90;
 
-struct content_css_data;
+সংরচনা content_css_data;
 
 /**
  * Type of callback called when a CSS object has finished
@@ -51,68 +51,68 @@ struct content_css_data;
  * \param css  CSS object that has completed
  * \param pw   Client-specific data
  */
-typedef void (*nscss_done_callback)(struct content_css_data *css, void *pw);
+প্রকারনির্দেশ শূন্য (*nscss_done_callback)(সংরচনা content_css_data *css, শূন্য *pw);
 
 /**
  * CSS content data
  */
-struct content_css_data
+সংরচনা content_css_data
 {
 	css_stylesheet *sheet;		/**< Stylesheet object */
-	char *charset;			/**< Character set of stylesheet */
-	struct nscss_import *imports;	/**< Array of imported sheets */
-	uint32_t import_count;		/**< Number of sheets imported */
+	বর্ণ *charset;			/**< Character set of stylesheet */
+	সংরচনা nscss_import *imports;	/**< Array of imported sheets */
+	uint32_t import_গুনতি;		/**< Number of sheets imported */
 	uint32_t next_to_register;	/**< Index of next import to register */
 	nscss_done_callback done;	/**< Completion callback */
-	void *pw;			/**< Client data */
+	শূন্য *pw;			/**< Client data */
 };
 
 /**
  * CSS content data
  */
-typedef struct nscss_content
+প্রকারনির্দেশ সংরচনা nscss_content
 {
-	struct content base;		/**< Underlying content object */
+	সংরচনা content base;		/**< Underlying content object */
 
-	struct content_css_data data;	/**< CSS data */
+	সংরচনা content_css_data data;	/**< CSS data */
 } nscss_content;
 
 /**
  * Context for import fetches
  */
-typedef struct {
-	struct content_css_data *css;		/**< Object containing import */
+প্রকারনির্দেশ সংরচনা {
+	সংরচনা content_css_data *css;		/**< Object containing import */
 	uint32_t index;				/**< Index into parent sheet's
 						 *   imports array */
 } nscss_import_ctx;
 
-static bool nscss_convert(struct content *c);
-static void nscss_destroy(struct content *c);
-static nserror nscss_clone(const struct content *old, struct content **newc);
-static bool nscss_matches_quirks(const struct content *c, bool quirks);
-static content_type nscss_content_type(void);
+স্থির bool nscss_convert(সংরচনা content *c);
+স্থির শূন্য nscss_destroy(সংরচনা content *c);
+স্থির nserror nscss_clone(ধ্রুব সংরচনা content *old, সংরচনা content **newc);
+স্থির bool nscss_matches_quirks(ধ্রুব সংরচনা content *c, bool quirks);
+স্থির content_type nscss_content_type(শূন্য);
 
-static nserror nscss_create_css_data(struct content_css_data *c,
-		const char *url, const char *charset, bool quirks,
-		nscss_done_callback done, void *pw);
-static css_error nscss_process_css_data(struct content_css_data *c, const char *data,
-		unsigned int size);
-static css_error nscss_convert_css_data(struct content_css_data *c);
-static void nscss_destroy_css_data(struct content_css_data *c);
+স্থির nserror nscss_create_css_data(সংরচনা content_css_data *c,
+		ধ্রুব বর্ণ *url, ধ্রুব বর্ণ *charset, bool quirks,
+		nscss_done_callback done, শূন্য *pw);
+স্থির css_error nscss_process_css_data(সংরচনা content_css_data *c, ধ্রুব বর্ণ *data,
+		unsigned পূর্ণাঙ্ক size);
+স্থির css_error nscss_convert_css_data(সংরচনা content_css_data *c);
+স্থির শূন্য nscss_destroy_css_data(সংরচনা content_css_data *c);
 
-static void nscss_content_done(struct content_css_data *css, void *pw);
-static css_error nscss_handle_import(void *pw, css_stylesheet *parent,
+স্থির শূন্য nscss_content_done(সংরচনা content_css_data *css, শূন্য *pw);
+স্থির css_error nscss_handle_import(শূন্য *pw, css_stylesheet *parent,
 		lwc_string *url);
-static nserror nscss_import(hlcache_handle *handle,
-		const hlcache_event *event, void *pw);
-static css_error nscss_import_complete(nscss_import_ctx *ctx);
+স্থির nserror nscss_import(hlcache_handle *handle,
+		ধ্রুব hlcache_event *event, শূন্য *pw);
+স্থির css_error nscss_import_complete(nscss_import_ctx *ctx);
 
-static css_error nscss_register_imports(struct content_css_data *c);
-static css_error nscss_register_import(struct content_css_data *c,
-		const hlcache_handle *import);
+স্থির css_error nscss_register_imports(সংরচনা content_css_data *c);
+স্থির css_error nscss_register_import(সংরচনা content_css_data *c,
+		ধ্রুব hlcache_handle *import);
 
 
-static css_stylesheet *blank_import;
+স্থির css_stylesheet *blank_import;
 
 
 /**
@@ -127,64 +127,64 @@ static css_stylesheet *blank_import;
  * \param c Content to initialise
  * \return NSERROR_OK or error cod eon faliure
  */
-static nserror
-nscss_create(const content_handler *handler,
+স্থির nserror
+nscss_create(ধ্রুব content_handler *handler,
 	     lwc_string *imime_type,
-	     const http_parameter *params,
+	     ধ্রুব http_parameter *params,
 	     llcache_handle *llcache,
-	     const char *fallback_charset,
+	     ধ্রুব বর্ণ *fallback_charset,
 	     bool quirks,
-	     struct content **c)
+	     সংরচনা content **c)
 {
 	nscss_content *result;
-	const char *charset = NULL;
-	const char *xnsbase = NULL;
-	lwc_string *charset_value = NULL;
+	ধ্রুব বর্ণ *charset = রিক্ত;
+	ধ্রুব বর্ণ *xnsbase = রিক্ত;
+	lwc_string *charset_মান = রিক্ত;
 	nserror error;
 
-	result = calloc(1, sizeof(nscss_content));
-	if (result == NULL)
-		return NSERROR_NOMEM;
+	result = calloc(1, পরিমাণ(nscss_content));
+	যদি (result == রিক্ত)
+		প্রত্যাগম NSERROR_NOMEM;
 
 	error = content__init(&result->base, handler, imime_type,
 			params, llcache, fallback_charset, quirks);
-	if (error != NSERROR_OK) {
-		free(result);
-		return error;
+	যদি (error != NSERROR_OK) {
+		মুক্ত(result);
+		প্রত্যাগম error;
 	}
 
 	/* Find charset specified on HTTP layer, if any */
 	error = http_parameter_list_find_item(params, corestring_lwc_charset,
-			&charset_value);
-	if (error != NSERROR_OK || lwc_string_length(charset_value) == 0) {
+			&charset_মান);
+	যদি (error != NSERROR_OK || lwc_string_length(charset_মান) == 0) {
 		/* No charset specified, use fallback, if any */
 		/** \todo libcss will take this as gospel, which is wrong */
 		charset = fallback_charset;
-	} else {
-		charset = lwc_string_data(charset_value);
+	} অন্যথা {
+		charset = lwc_string_data(charset_মান);
 	}
 
 	/* Compute base URL for stylesheet */
 	xnsbase = llcache_handle_get_header(llcache, "X-NS-Base");
-	if (xnsbase == NULL) {
+	যদি (xnsbase == রিক্ত) {
 		xnsbase = nsurl_access(content_get_url(&result->base));
 	}
 
 	error = nscss_create_css_data(&result->data,
 			xnsbase, charset, result->base.quirks,
 			nscss_content_done, result);
-	if (error != NSERROR_OK) {
-		content_broadcast_error(&result->base, NSERROR_NOMEM, NULL);
-		lwc_string_unref(charset_value);
-		free(result);
-		return error;
+	যদি (error != NSERROR_OK) {
+		content_broadcast_error(&result->base, NSERROR_NOMEM, রিক্ত);
+		lwc_string_unref(charset_মান);
+		মুক্ত(result);
+		প্রত্যাগম error;
 	}
 
-	lwc_string_unref(charset_value);
+	lwc_string_unref(charset_মান);
 
-	*c = (struct content *) result;
+	*c = (সংরচনা content *) result;
 
-	return NSERROR_OK;
+	প্রত্যাগম NSERROR_OK;
 }
 
 /**
@@ -198,9 +198,9 @@ nscss_create(const content_handler *handler,
  * \param pw       Client data for \a done
  * \return NSERROR_OK on success, NSERROR_NOMEM on memory exhaustion
  */
-static nserror nscss_create_css_data(struct content_css_data *c,
-		const char *url, const char *charset, bool quirks,
-		nscss_done_callback done, void *pw)
+স্থির nserror nscss_create_css_data(সংরচনা content_css_data *c,
+		ধ্রুব বর্ণ *url, ধ্রুব বর্ণ *charset, bool quirks,
+		nscss_done_callback done, শূন্য *pw)
 {
 	css_error error;
 	css_stylesheet_params params;
@@ -208,35 +208,35 @@ static nserror nscss_create_css_data(struct content_css_data *c,
 	c->pw = pw;
 	c->done = done;
 	c->next_to_register = (uint32_t) -1;
-	c->import_count = 0;
-	c->imports = NULL;
-	if (charset != NULL)
+	c->import_গুনতি = 0;
+	c->imports = রিক্ত;
+	যদি (charset != রিক্ত)
 		c->charset = strdup(charset);
-	else
-		c->charset = NULL;
+	অন্যথা
+		c->charset = রিক্ত;
 
 	params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
 	params.level = CSS_LEVEL_DEFAULT;
 	params.charset = charset;
 	params.url = url;
-	params.title = NULL;
+	params.title = রিক্ত;
 	params.allow_quirks = quirks;
 	params.inline_style = false;
 	params.resolve = nscss_resolve_url;
-	params.resolve_pw = NULL;
+	params.resolve_pw = রিক্ত;
 	params.import = nscss_handle_import;
 	params.import_pw = c;
 	params.color = ns_system_colour;
-	params.color_pw = NULL;
-	params.font = NULL;
-	params.font_pw = NULL;
+	params.color_pw = রিক্ত;
+	params.font = রিক্ত;
+	params.font_pw = রিক্ত;
 
 	error = css_stylesheet_create(&params, &c->sheet);
-	if (error != CSS_OK) {
-		return NSERROR_NOMEM;
+	যদি (error != CSS_OK) {
+		প্রত্যাগম NSERROR_NOMEM;
 	}
 
-	return NSERROR_OK;
+	প্রত্যাগম NSERROR_OK;
 }
 
 /**
@@ -247,18 +247,18 @@ static nserror nscss_create_css_data(struct content_css_data *c,
  * \param size  Number of bytes to process
  * \return true on success, false on failure
  */
-static bool
-nscss_process_data(struct content *c, const char *data, unsigned int size)
+স্থির bool
+nscss_process_data(সংরচনা content *c, ধ্রুব বর্ণ *data, unsigned পূর্ণাঙ্ক size)
 {
 	nscss_content *css = (nscss_content *) c;
 	css_error error;
 
 	error = nscss_process_css_data(&css->data, data, size);
-	if (error != CSS_OK && error != CSS_NEEDDATA) {
-		content_broadcast_error(c, NSERROR_CSS, NULL);
+	যদি (error != CSS_OK && error != CSS_NEEDDATA) {
+		content_broadcast_error(c, NSERROR_CSS, রিক্ত);
 	}
 
-	return (error == CSS_OK || error == CSS_NEEDDATA);
+	প্রত্যাগম (error == CSS_OK || error == CSS_NEEDDATA);
 }
 
 /**
@@ -269,11 +269,11 @@ nscss_process_data(struct content *c, const char *data, unsigned int size)
  * \param size  Number of bytes to process
  * \return CSS_OK on success, appropriate error otherwise
  */
-static css_error nscss_process_css_data(struct content_css_data *c,
-		const char *data, unsigned int size)
+স্থির css_error nscss_process_css_data(সংরচনা content_css_data *c,
+		ধ্রুব বর্ণ *data, unsigned পূর্ণাঙ্ক size)
 {
-	return css_stylesheet_append_data(c->sheet,
-			(const uint8_t *) data, size);
+	প্রত্যাগম css_stylesheet_append_data(c->sheet,
+			(ধ্রুব uint8_t *) data, size);
 }
 
 /**
@@ -282,18 +282,18 @@ static css_error nscss_process_css_data(struct content_css_data *c,
  * \param c  Content to convert
  * \return true on success, false on failure
  */
-bool nscss_convert(struct content *c)
+bool nscss_convert(সংরচনা content *c)
 {
 	nscss_content *css = (nscss_content *) c;
 	css_error error;
 
 	error = nscss_convert_css_data(&css->data);
-	if (error != CSS_OK) {
-		content_broadcast_error(c, NSERROR_CSS, NULL);
-		return false;
+	যদি (error != CSS_OK) {
+		content_broadcast_error(c, NSERROR_CSS, রিক্ত);
+		প্রত্যাগম false;
 	}
 
-	return true;
+	প্রত্যাগম true;
 }
 
 /**
@@ -302,37 +302,37 @@ bool nscss_convert(struct content *c)
  * \param c  CSS data to convert
  * \return CSS error
  */
-static css_error nscss_convert_css_data(struct content_css_data *c)
+স্থির css_error nscss_convert_css_data(সংরচনা content_css_data *c)
 {
 	css_error error;
 
 	error = css_stylesheet_data_done(c->sheet);
 
 	/* Process pending imports */
-	if (error == CSS_IMPORTS_PENDING) {
+	যদি (error == CSS_IMPORTS_PENDING) {
 		/* We must not have registered any imports yet */
-		assert(c->next_to_register == (uint32_t) -1);
+		প্রতিজ্ঞা(c->next_to_register == (uint32_t) -1);
 
 		/* Start registering, until we find one that
 		 * hasn't finished fetching */
 		c->next_to_register = 0;
 		error = nscss_register_imports(c);
-	} else if (error == CSS_OK) {
+	} অন্যথা যদি (error == CSS_OK) {
 		/* No imports, and no errors, so complete conversion */
 		c->done(c, c->pw);
-	} else {
-		const char *url;
+	} অন্যথা {
+		ধ্রুব বর্ণ *url;
 
-		if (css_stylesheet_get_url(c->sheet, &url) == CSS_OK) {
+		যদি (css_stylesheet_get_url(c->sheet, &url) == CSS_OK) {
 			NSLOG(netsurf, INFO, "Failed converting %p %s (%d)",
 			      c, url, error);
-		} else {
+		} অন্যথা {
 			NSLOG(netsurf, INFO, "Failed converting %p (%d)", c,
 			      error);
 		}
 	}
 
-	return error;
+	প্রত্যাগম error;
 }
 
 /**
@@ -340,7 +340,7 @@ static css_error nscss_convert_css_data(struct content_css_data *c)
  *
  * \param c  Content to clean up
  */
-void nscss_destroy(struct content *c)
+শূন্য nscss_destroy(সংরচনা content *c)
 {
 	nscss_content *css = (nscss_content *) c;
 
@@ -352,44 +352,44 @@ void nscss_destroy(struct content *c)
  *
  * \param c  CSS data to clean up
  */
-static void nscss_destroy_css_data(struct content_css_data *c)
+স্থির শূন্য nscss_destroy_css_data(সংরচনা content_css_data *c)
 {
 	uint32_t i;
 
-	for (i = 0; i < c->import_count; i++) {
-		if (c->imports[i].c != NULL) {
+	প্রতি (i = 0; i < c->import_গুনতি; i++) {
+		যদি (c->imports[i].c != রিক্ত) {
 			hlcache_handle_release(c->imports[i].c);
 		}
-		c->imports[i].c = NULL;
+		c->imports[i].c = রিক্ত;
 	}
 
-	free(c->imports);
+	মুক্ত(c->imports);
 
-	if (c->sheet != NULL) {
+	যদি (c->sheet != রিক্ত) {
 		css_stylesheet_destroy(c->sheet);
-		c->sheet = NULL;
+		c->sheet = রিক্ত;
 	}
 
-	free(c->charset);
+	মুক্ত(c->charset);
 }
 
-nserror nscss_clone(const struct content *old, struct content **newc)
+nserror nscss_clone(ধ্রুব সংরচনা content *old, সংরচনা content **newc)
 {
-	const nscss_content *old_css = (const nscss_content *) old;
+	ধ্রুব nscss_content *old_css = (ধ্রুব nscss_content *) old;
 	nscss_content *new_css;
-	const uint8_t *data;
+	ধ্রুব uint8_t *data;
 	size_t size;
 	nserror error;
 
-	new_css = calloc(1, sizeof(nscss_content));
-	if (new_css == NULL)
-		return NSERROR_NOMEM;
+	new_css = calloc(1, পরিমাণ(nscss_content));
+	যদি (new_css == রিক্ত)
+		প্রত্যাগম NSERROR_NOMEM;
 
 	/* Clone content */
 	error = content__clone(old, &new_css->base);
-	if (error != NSERROR_OK) {
+	যদি (error != NSERROR_OK) {
 		content_destroy(&new_css->base);
-		return error;
+		প্রত্যাগম error;
 	}
 
 	/* Simply replay create/process/convert */
@@ -398,60 +398,60 @@ nserror nscss_clone(const struct content *old, struct content **newc)
 			old_css->data.charset,
 			new_css->base.quirks,
 			nscss_content_done, new_css);
-	if (error != NSERROR_OK) {
+	যদি (error != NSERROR_OK) {
 		content_destroy(&new_css->base);
-		return error;
+		প্রত্যাগম error;
 	}
 
 	data = content__get_source_data(&new_css->base, &size);
-	if (size > 0) {
-		if (nscss_process_data(&new_css->base,
-				       (char *)data,
-				       (unsigned int)size) == false) {
+	যদি (size > 0) {
+		যদি (nscss_process_data(&new_css->base,
+				       (বর্ণ *)data,
+				       (unsigned পূর্ণাঙ্ক)size) == false) {
 			content_destroy(&new_css->base);
-			return NSERROR_CLONE_FAILED;
+			প্রত্যাগম NSERROR_CLONE_FAILED;
 		}
 	}
 
-	if (old->status == CONTENT_STATUS_READY ||
+	যদি (old->status == CONTENT_STATUS_READY ||
 			old->status == CONTENT_STATUS_DONE) {
-		if (nscss_convert(&new_css->base) == false) {
+		যদি (nscss_convert(&new_css->base) == false) {
 			content_destroy(&new_css->base);
-			return NSERROR_CLONE_FAILED;
+			প্রত্যাগম NSERROR_CLONE_FAILED;
 		}
 	}
 
-	*newc = (struct content *) new_css;
+	*newc = (সংরচনা content *) new_css;
 
-	return NSERROR_OK;
+	প্রত্যাগম NSERROR_OK;
 }
 
-bool nscss_matches_quirks(const struct content *c, bool quirks)
+bool nscss_matches_quirks(ধ্রুব সংরচনা content *c, bool quirks)
 {
-	return c->quirks == quirks;
-}
-
-/* exported interface documented in netsurf/css.h */
-css_stylesheet *nscss_get_stylesheet(struct hlcache_handle *h)
-{
-	nscss_content *c = (nscss_content *) hlcache_handle_get_content(h);
-
-	assert(c != NULL);
-
-	return c->data.sheet;
+	প্রত্যাগম c->quirks == quirks;
 }
 
 /* exported interface documented in netsurf/css.h */
-struct nscss_import *nscss_get_imports(hlcache_handle *h, uint32_t *n)
+css_stylesheet *nscss_get_stylesheet(সংরচনা hlcache_handle *h)
 {
 	nscss_content *c = (nscss_content *) hlcache_handle_get_content(h);
 
-	assert(c != NULL);
-	assert(n != NULL);
+	প্রতিজ্ঞা(c != রিক্ত);
 
-	*n = c->data.import_count;
+	প্রত্যাগম c->data.sheet;
+}
 
-	return c->data.imports;
+/* exported interface documented in netsurf/css.h */
+সংরচনা nscss_import *nscss_get_imports(hlcache_handle *h, uint32_t *n)
+{
+	nscss_content *c = (nscss_content *) hlcache_handle_get_content(h);
+
+	প্রতিজ্ঞা(c != রিক্ত);
+	প্রতিজ্ঞা(n != রিক্ত);
+
+	*n = c->data.import_গুনতি;
+
+	প্রত্যাগম c->data.imports;
 }
 
 /**
@@ -459,9 +459,9 @@ struct nscss_import *nscss_get_imports(hlcache_handle *h, uint32_t *n)
  *
  * \return CONTENT_CSS
  */
-content_type nscss_content_type(void)
+content_type nscss_content_type(শূন্য)
 {
-	return CONTENT_CSS;
+	প্রত্যাগম CONTENT_CSS;
 }
 
 /*****************************************************************************
@@ -474,29 +474,29 @@ content_type nscss_content_type(void)
  * \param css  CSS object
  * \param pw   Private data
  */
-void nscss_content_done(struct content_css_data *css, void *pw)
+শূন্য nscss_content_done(সংরচনা content_css_data *css, শূন্য *pw)
 {
-	struct content *c = pw;
+	সংরচনা content *c = pw;
 	uint32_t i;
 	size_t size;
 	css_error error;
 
 	/* Retrieve the size of this sheet */
 	error = css_stylesheet_size(css->sheet, &size);
-	if (error != CSS_OK) {
-		content_broadcast_error(c, NSERROR_CSS, NULL);
+	যদি (error != CSS_OK) {
+		content_broadcast_error(c, NSERROR_CSS, রিক্ত);
 		content_set_error(c);
-		return;
+		প্রত্যাগম;
 	}
 	c->size += size;
 
 	/* Add on the size of the imported sheets */
-	for (i = 0; i < css->import_count; i++) {
-		if (css->imports[i].c != NULL) {
-			struct content *import = hlcache_handle_get_content(
+	প্রতি (i = 0; i < css->import_গুনতি; i++) {
+		যদি (css->imports[i].c != রিক্ত) {
+			সংরচনা content *import = hlcache_handle_get_content(
 					css->imports[i].c);
 
-			if (import != NULL) {
+			যদি (import != রিক্ত) {
 				c->size += import->size;
 			}
 		}
@@ -519,83 +519,83 @@ void nscss_content_done(struct content_css_data *css, void *pw)
  * \param url     URL of the imported sheet
  * \return CSS_OK on success, appropriate error otherwise
  */
-css_error nscss_handle_import(void *pw, css_stylesheet *parent,
+css_error nscss_handle_import(শূন্য *pw, css_stylesheet *parent,
 		lwc_string *url)
 {
 	content_type accept = CONTENT_CSS;
-	struct content_css_data *c = pw;
+	সংরচনা content_css_data *c = pw;
 	nscss_import_ctx *ctx;
 	hlcache_child_context child;
-	struct nscss_import *imports;
-	const char *referer;
+	সংরচনা nscss_import *imports;
+	ধ্রুব বর্ণ *referer;
 	css_error error;
 	nserror nerror;
 
 	nsurl *ns_url;
 	nsurl *ns_ref;
 
-	assert(parent == c->sheet);
+	প্রতিজ্ঞা(parent == c->sheet);
 
 	error = css_stylesheet_get_url(c->sheet, &referer);
-	if (error != CSS_OK) {
-		return error;
+	যদি (error != CSS_OK) {
+		প্রত্যাগম error;
 	}
 
-	ctx = malloc(sizeof(*ctx));
-	if (ctx == NULL)
-		return CSS_NOMEM;
+	ctx = malloc(পরিমাণ(*ctx));
+	যদি (ctx == রিক্ত)
+		প্রত্যাগম CSS_NOMEM;
 
 	ctx->css = c;
-	ctx->index = c->import_count;
+	ctx->index = c->import_গুনতি;
 
 	/* Increase space in table */
-	imports = realloc(c->imports, (c->import_count + 1) *
-			sizeof(struct nscss_import));
-	if (imports == NULL) {
-		free(ctx);
-		return CSS_NOMEM;
+	imports = realloc(c->imports, (c->import_গুনতি + 1) *
+			পরিমাণ(সংরচনা nscss_import));
+	যদি (imports == রিক্ত) {
+		মুক্ত(ctx);
+		প্রত্যাগম CSS_NOMEM;
 	}
 	c->imports = imports;
 
 	/** \todo fallback charset */
-	child.charset = NULL;
+	child.charset = রিক্ত;
 	error = css_stylesheet_quirks_allowed(c->sheet, &child.quirks);
-	if (error != CSS_OK) {
-		free(ctx);
-		return error;
+	যদি (error != CSS_OK) {
+		মুক্ত(ctx);
+		প্রত্যাগম error;
 	}
 
 	/* Create content */
 
 	/** \todo Why aren't we getting a relative url part, to join? */
 	nerror = nsurl_create(lwc_string_data(url), &ns_url);
-	if (nerror != NSERROR_OK) {
-		free(ctx);
-		return CSS_NOMEM;
+	যদি (nerror != NSERROR_OK) {
+		মুক্ত(ctx);
+		প্রত্যাগম CSS_NOMEM;
 	}
 
 	/** \todo Constructing nsurl for referer here is silly, avoid */
 	nerror = nsurl_create(referer, &ns_ref);
-	if (nerror != NSERROR_OK) {
+	যদি (nerror != NSERROR_OK) {
 		nsurl_unref(ns_url);
-		free(ctx);
-		return CSS_NOMEM;
+		মুক্ত(ctx);
+		প্রত্যাগম CSS_NOMEM;
 	}
 
 	/* Avoid importing ourself */
-	if (nsurl_compare(ns_url, ns_ref, NSURL_COMPLETE)) {
-		c->imports[c->import_count].c = NULL;
+	যদি (nsurl_compare(ns_url, ns_ref, NSURL_COMPLETE)) {
+		c->imports[c->import_গুনতি].c = রিক্ত;
 		/* No longer require context as we're not fetching anything */
-		free(ctx);
-		ctx = NULL;
-	} else {
+		মুক্ত(ctx);
+		ctx = রিক্ত;
+	} অন্যথা {
 		nerror = hlcache_handle_retrieve(ns_url,
-				0, ns_ref, NULL, nscss_import, ctx,
+				0, ns_ref, রিক্ত, nscss_import, ctx,
 				&child, accept,
-				&c->imports[c->import_count].c);
-		if (nerror != NSERROR_OK) {
-			free(ctx);
-			return CSS_NOMEM;
+				&c->imports[c->import_গুনতি].c);
+		যদি (nerror != NSERROR_OK) {
+			মুক্ত(ctx);
+			প্রত্যাগম CSS_NOMEM;
 		}
 	}
 
@@ -604,13 +604,13 @@ css_error nscss_handle_import(void *pw, css_stylesheet *parent,
 
 #ifdef NSCSS_IMPORT_TRACE
 	NSLOG(netsurf, INFO, "Import %d '%s' -> (handle: %p ctx: %p)",
-	      c->import_count, lwc_string_data(url),
-	      c->imports[c->import_count].c, ctx);
+	      c->import_গুনতি, lwc_string_data(url),
+	      c->imports[c->import_গুনতি].c, ctx);
 #endif
 
-	c->import_count++;
+	c->import_গুনতি++;
 
-	return CSS_OK;
+	প্রত্যাগম CSS_OK;
 }
 
 /**
@@ -622,7 +622,7 @@ css_error nscss_handle_import(void *pw, css_stylesheet *parent,
  * \return NSERROR_OK on success, appropriate error otherwise
  */
 nserror nscss_import(hlcache_handle *handle,
-		const hlcache_event *event, void *pw)
+		ধ্রুব hlcache_event *event, শূন্য *pw)
 {
 	nscss_import_ctx *ctx = pw;
 	css_error error = CSS_OK;
@@ -631,26 +631,26 @@ nserror nscss_import(hlcache_handle *handle,
 	NSLOG(netsurf, INFO, "Event %d for %p (%p)", event->type, handle, ctx);
 #endif
 
-	assert(ctx->css->imports[ctx->index].c == handle);
+	প্রতিজ্ঞা(ctx->css->imports[ctx->index].c == handle);
 
-	switch (event->type) {
-	case CONTENT_MSG_DONE:
+	বিকল্প (event->type) {
+	পক্ষ CONTENT_বার্তা_DONE:
 		error = nscss_import_complete(ctx);
-		break;
+		ভঙ্গ;
 
-	case CONTENT_MSG_ERROR:
+	পক্ষ CONTENT_বার্তা_ERROR:
 		hlcache_handle_release(handle);
-		ctx->css->imports[ctx->index].c = NULL;
+		ctx->css->imports[ctx->index].c = রিক্ত;
 
 		error = nscss_import_complete(ctx);
 		/* Already released handle */
-		break;
-	default:
-		break;
+		ভঙ্গ;
+	স্বভাব:
+		ভঙ্গ;
 	}
 
 	/* Preserve out-of-memory. Anything else is OK */
-	return error == CSS_NOMEM ? NSERROR_NOMEM : NSERROR_OK;
+	প্রত্যাগম error == CSS_NOMEM ? NSERROR_NOMEM : NSERROR_OK;
 }
 
 /**
@@ -664,7 +664,7 @@ css_error nscss_import_complete(nscss_import_ctx *ctx)
 	css_error error = CSS_OK;
 
 	/* If this import is the next to be registered, do so */
-	if (ctx->css->next_to_register == ctx->index)
+	যদি (ctx->css->next_to_register == ctx->index)
 		error = nscss_register_imports(ctx->css);
 
 #ifdef NSCSS_IMPORT_TRACE
@@ -673,9 +673,9 @@ css_error nscss_import_complete(nscss_import_ctx *ctx)
 #endif
 
 	/* No longer need import context */
-	free(ctx);
+	মুক্ত(ctx);
 
-	return error;
+	প্রত্যাগম error;
 }
 
 /*****************************************************************************
@@ -688,40 +688,40 @@ css_error nscss_import_complete(nscss_import_ctx *ctx)
  * \param c  CSS object containing the imports
  * \return CSS_OK on success, appropriate error otherwise
  */
-css_error nscss_register_imports(struct content_css_data *c)
+css_error nscss_register_imports(সংরচনা content_css_data *c)
 {
 	uint32_t index;
 	css_error error;
 
-	assert(c->next_to_register != (uint32_t) -1);
-	assert(c->next_to_register < c->import_count);
+	প্রতিজ্ঞা(c->next_to_register != (uint32_t) -1);
+	প্রতিজ্ঞা(c->next_to_register < c->import_গুনতি);
 
 	/* Register imported sheets */
-	for (index = c->next_to_register; index < c->import_count; index++) {
+	প্রতি (index = c->next_to_register; index < c->import_গুনতি; index++) {
 		/* Stop registering if we encounter one whose fetch hasn't
 		 * completed yet. We'll resume at this point when it has
 		 * completed.
 		 */
-		if (c->imports[index].c != NULL &&
+		যদি (c->imports[index].c != রিক্ত &&
 			content_get_status(c->imports[index].c) !=
 				CONTENT_STATUS_DONE) {
-			break;
+			ভঙ্গ;
 		}
 
 		error = nscss_register_import(c, c->imports[index].c);
-		if (error != CSS_OK)
-			return error;
+		যদি (error != CSS_OK)
+			প্রত্যাগম error;
 	}
 
 	/* Record identity of the next import to register */
 	c->next_to_register = (uint32_t) index;
 
-	if (c->next_to_register == c->import_count) {
+	যদি (c->next_to_register == c->import_গুনতি) {
 		/* No more imports: notify parent that we're DONE */
 		c->done(c, c->pw);
 	}
 
-	return CSS_OK;
+	প্রত্যাগম CSS_OK;
 }
 
 
@@ -732,46 +732,46 @@ css_error nscss_register_imports(struct content_css_data *c)
  * \param import  Cache handle of import, or NULL for blank
  * \return CSS_OK on success, appropriate error otherwise
  */
-css_error nscss_register_import(struct content_css_data *c,
-		const hlcache_handle *import)
+css_error nscss_register_import(সংরচনা content_css_data *c,
+		ধ্রুব hlcache_handle *import)
 {
 	css_stylesheet *sheet;
 	css_error error;
 
-	if (import != NULL) {
+	যদি (import != রিক্ত) {
 		nscss_content *s =
 			(nscss_content *) hlcache_handle_get_content(import);
 		sheet = s->data.sheet;
-	} else {
+	} অন্যথা {
 		/* Create a blank sheet if needed. */
-		if (blank_import == NULL) {
+		যদি (blank_import == রিক্ত) {
 			css_stylesheet_params params;
 
 			params.params_version = CSS_STYLESHEET_PARAMS_VERSION_1;
 			params.level = CSS_LEVEL_DEFAULT;
-			params.charset = NULL;
+			params.charset = রিক্ত;
 			params.url = "";
-			params.title = NULL;
+			params.title = রিক্ত;
 			params.allow_quirks = false;
 			params.inline_style = false;
 			params.resolve = nscss_resolve_url;
-			params.resolve_pw = NULL;
-			params.import = NULL;
-			params.import_pw = NULL;
+			params.resolve_pw = রিক্ত;
+			params.import = রিক্ত;
+			params.import_pw = রিক্ত;
 			params.color = ns_system_colour;
-			params.color_pw = NULL;
-			params.font = NULL;
-			params.font_pw = NULL;
+			params.color_pw = রিক্ত;
+			params.font = রিক্ত;
+			params.font_pw = রিক্ত;
 
 			error = css_stylesheet_create(&params, &blank_import);
-			if (error != CSS_OK) {
-				return error;
+			যদি (error != CSS_OK) {
+				প্রত্যাগম error;
 			}
 
 			error = css_stylesheet_data_done(blank_import);
-			if (error != CSS_OK) {
+			যদি (error != CSS_OK) {
 				css_stylesheet_destroy(blank_import);
-				return error;
+				প্রত্যাগম error;
 			}
 		}
 
@@ -779,26 +779,26 @@ css_error nscss_register_import(struct content_css_data *c,
 	}
 
 	error = css_stylesheet_register_import(c->sheet, sheet);
-	if (error != CSS_OK) {
-		return error;
+	যদি (error != CSS_OK) {
+		প্রত্যাগম error;
 	}
 
-	return error;
+	প্রত্যাগম error;
 }
 
 /**
  * Clean up after the CSS content handler
  */
-static void nscss_fini(void)
+স্থির শূন্য nscss_fini(শূন্য)
 {
-	if (blank_import != NULL) {
+	যদি (blank_import != রিক্ত) {
 		css_stylesheet_destroy(blank_import);
-		blank_import = NULL;
+		blank_import = রিক্ত;
 	}
 	css_hint_fini();
 }
 
-static const content_handler css_content_handler = {
+স্থির ধ্রুব content_handler css_content_handler = {
 	.fini = nscss_fini,
 	.create = nscss_create,
 	.process_data = nscss_process_data,
@@ -811,23 +811,23 @@ static const content_handler css_content_handler = {
 };
 
 /* exported interface documented in netsurf/css.h */
-nserror nscss_init(void)
+nserror nscss_init(শূন্য)
 {
 	nserror error;
 
 	error = content_factory_register_handler("text/css",
 			&css_content_handler);
-	if (error != NSERROR_OK)
-		goto error;
+	যদি (error != NSERROR_OK)
+		গচ্ছ error;
 
 	error = css_hint_init();
-	if (error != NSERROR_OK)
-		goto error;
+	যদি (error != NSERROR_OK)
+		গচ্ছ error;
 
-	return NSERROR_OK;
+	প্রত্যাগম NSERROR_OK;
 
 error:
 	nscss_fini();
 
-	return error;
+	প্রত্যাগম error;
 }

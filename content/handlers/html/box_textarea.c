@@ -21,243 +21,243 @@
  * Box tree treeview box replacement (implementation).
  */
 
-#include <string.h>
-#include <dom/dom.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <dom/dom.h>
 
-#include "utils/config.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/keypress.h"
-#include "netsurf/misc.h"
-#include "desktop/textarea.h"
+#অন্তর্ভাব "utils/config.h"
+#অন্তর্ভাব "utils/log.h"
+#অন্তর্ভাব "utils/messages.h"
+#অন্তর্ভাব "netsurf/keypress.h"
+#অন্তর্ভাব "netsurf/misc.h"
+#অন্তর্ভাব "desktop/textarea.h"
 
-#include "html/private.h"
-#include "html/interaction.h"
-#include "html/box.h"
-#include "html/box_inspect.h"
-#include "html/box_textarea.h"
-#include "html/font.h"
-#include "html/form_internal.h"
+#অন্তর্ভাব "html/private.h"
+#অন্তর্ভাব "html/interaction.h"
+#অন্তর্ভাব "html/box.h"
+#অন্তর্ভাব "html/box_inspect.h"
+#অন্তর্ভাব "html/box_textarea.h"
+#অন্তর্ভাব "html/font.h"
+#অন্তর্ভাব "html/form_internal.h"
 
 
-nserror box_textarea_keypress(html_content *html, struct box *box, uint32_t key)
+nserror box_textarea_keypress(html_content *html, সংরচনা box *box, uint32_t চাবি)
 {
-	struct form_control *gadget = box->gadget;
-	struct textarea *ta = gadget->data.text.ta;
-	struct form* form = box->gadget->form;
-	struct content *c = (struct content *)html;
+	সংরচনা form_control *gadget = box->gadget;
+	সংরচনা textarea *ta = gadget->data.text.ta;
+	সংরচনা form* form = box->gadget->form;
+	সংরচনা content *c = (সংরচনা content *)html;
 	nserror res = NSERROR_OK;
 
-	assert(ta != NULL);
+	প্রতিজ্ঞা(ta != রিক্ত);
 
-	if (gadget->type == GADGET_TEXTAREA) {
-		if (textarea_keypress(ta, key)) {
-			return NSERROR_OK;
-		} else {
-			return NSERROR_INVALID;
+	যদি (gadget->type == GADGET_TEXTAREA) {
+		যদি (textarea_keypress(ta, চাবি)) {
+			প্রত্যাগম NSERROR_OK;
+		} অন্যথা {
+			প্রত্যাগম NSERROR_INVALID;
 		}
 	}
 
 	/* non textarea input */
-	switch (key) {
-	case NS_KEY_NL:
-	case NS_KEY_CR:
-		if (form) {
+	বিকল্প (চাবি) {
+	পক্ষ NS_চাবি_NL:
+	পক্ষ NS_চাবি_CR:
+		যদি (form) {
 			res = form_submit(content_get_url(c),
 					  html->bw,
 					  form,
-					  NULL);
+					  রিক্ত);
 		}
-		break;
+		ভঙ্গ;
 
-	case NS_KEY_TAB:
+	পক্ষ NS_চাবি_TAB:
 		{
-			struct form_control *next_input;
+			সংরচনা form_control *next_প্রবেশ;
 			/* Find next text entry field that is actually
 			 * displayed (i.e. has an associated box) */
-			for (next_input = gadget->next;
-			     next_input &&
-				     ((next_input->type != GADGET_TEXTBOX &&
-				       next_input->type != GADGET_TEXTAREA &&
-				       next_input->type != GADGET_PASSWORD) ||
-				      !next_input->box);
-			     next_input = next_input->next)
+			প্রতি (next_প্রবেশ = gadget->next;
+			     next_প্রবেশ &&
+				     ((next_প্রবেশ->type != GADGET_TEXTBOX &&
+				       next_প্রবেশ->type != GADGET_TEXTAREA &&
+				       next_প্রবেশ->type != GADGET_PASSWORD) ||
+				      !next_প্রবেশ->box);
+			     next_প্রবেশ = next_প্রবেশ->next)
 				;
 
-			if (next_input != NULL) {
+			যদি (next_প্রবেশ != রিক্ত) {
 				textarea_set_caret(ta, -1);
-				textarea_set_caret(next_input->data.text.ta, 0);
+				textarea_set_caret(next_প্রবেশ->data.text.ta, 0);
 			}
 		}
-		break;
+		ভঙ্গ;
 
-	case NS_KEY_SHIFT_TAB:
+	পক্ষ NS_চাবি_SHIFT_TAB:
 		{
-			struct form_control *prev_input;
+			সংরচনা form_control *prev_প্রবেশ;
 			/* Find previous text entry field that is actually
 			 * displayed (i.e. has an associated box) */
-			for (prev_input = gadget->prev;
-			     prev_input &&
-				     ((prev_input->type != GADGET_TEXTBOX &&
-				       prev_input->type != GADGET_TEXTAREA &&
-				       prev_input->type != GADGET_PASSWORD) ||
-				      !prev_input->box);
-			     prev_input = prev_input->prev)
+			প্রতি (prev_প্রবেশ = gadget->prev;
+			     prev_প্রবেশ &&
+				     ((prev_প্রবেশ->type != GADGET_TEXTBOX &&
+				       prev_প্রবেশ->type != GADGET_TEXTAREA &&
+				       prev_প্রবেশ->type != GADGET_PASSWORD) ||
+				      !prev_প্রবেশ->box);
+			     prev_প্রবেশ = prev_প্রবেশ->prev)
 				;
 
-			if (prev_input != NULL) {
+			যদি (prev_প্রবেশ != রিক্ত) {
 				textarea_set_caret(ta, -1);
-				textarea_set_caret(prev_input->data.text.ta, 0);
+				textarea_set_caret(prev_প্রবেশ->data.text.ta, 0);
 			}
 		}
-		break;
+		ভঙ্গ;
 
-	default:
+	স্বভাব:
 		/* Pass to textarea widget */
-		if (!textarea_keypress(ta, key)) {
+		যদি (!textarea_keypress(ta, চাবি)) {
 			res = NSERROR_INVALID;
 		}
-		break;
+		ভঙ্গ;
 	}
 
-	return res;
+	প্রত্যাগম res;
 }
 
 
 /**
  * Callback for html form textareas.
  */
-static void box_textarea_callback(void *data, struct textarea_msg *msg)
+স্থির শূন্য box_textarea_callback(শূন্য *data, সংরচনা textarea_বার্তা *বার্তা)
 {
-	struct form_textarea_data *d = data;
-	struct form_control *gadget = d->gadget;
-	struct html_content *html = d->gadget->html;
-	struct box *box = gadget->box;
+	সংরচনা form_textarea_data *d = data;
+	সংরচনা form_control *gadget = d->gadget;
+	সংরচনা html_content *html = d->gadget->html;
+	সংরচনা box *box = gadget->box;
 
-	switch (msg->type) {
-	case TEXTAREA_MSG_DRAG_REPORT:
-		if (msg->data.drag == TEXTAREA_DRAG_NONE) {
+	বিকল্প (বার্তা->type) {
+	পক্ষ TEXTAREA_বার্তা_DRAG_REPORT:
+		যদি (বার্তা->data.drag == TEXTAREA_DRAG_NONE) {
 			/* Textarea drag finished */
 			html_drag_type drag_type = HTML_DRAG_NONE;
-			union html_drag_owner drag_owner;
+			সঙ্ঘ html_drag_owner drag_owner;
 			drag_owner.no_owner = true;
 
 			html_set_drag_type(html, drag_type, drag_owner,
-					NULL);
-		} else {
+					রিক্ত);
+		} অন্যথা {
 			/* Textarea drag started */
-			struct rect rect = {
+			সংরচনা rect rect = {
 				.x0 = INT_MIN,
 				.y0 = INT_MIN,
 				.x1 = INT_MAX,
 				.y1 = INT_MAX
 			};
-			union html_drag_owner drag_owner;
+			সঙ্ঘ html_drag_owner drag_owner;
 			drag_owner.textarea = box;
 
-			switch (msg->data.drag) {
-			case TEXTAREA_DRAG_SCROLLBAR:
+			বিকল্প (বার্তা->data.drag) {
+			পক্ষ TEXTAREA_DRAG_SCROLLBAR:
 				html_set_drag_type(html,
 						   HTML_DRAG_TEXTAREA_SCROLLBAR,
 						   drag_owner,
 						   &rect);
-				break;
+				ভঙ্গ;
 
-			case TEXTAREA_DRAG_SELECTION:
+			পক্ষ TEXTAREA_DRAG_SELECTION:
 				html_set_drag_type(html,
 						   HTML_DRAG_TEXTAREA_SELECTION,
 						   drag_owner,
 						   &rect);
-				break;
+				ভঙ্গ;
 
-			default:
+			স্বভাব:
 				NSLOG(netsurf, INFO,
 				      "Drag type %d not handled.",
-				      msg->data.drag);
+				      বার্তা->data.drag);
 				/* This is a logic faliure in the
 				 * front end code so abort.
 				 */
-				assert(0);
-				break;
+				প্রতিজ্ঞা(0);
+				ভঙ্গ;
 			}
 		}
-		break;
+		ভঙ্গ;
 
-	case TEXTAREA_MSG_REDRAW_REQUEST:
+	পক্ষ TEXTAREA_বার্তা_REDRAW_REQUEST:
 	{
 		/* Request redraw of the required textarea rectangle */
-		int x, y;
+		পূর্ণাঙ্ক x, y;
 
-		if (html->reflowing == true) {
+		যদি (html->reflowing == true) {
 			/* Can't redraw during layout, and it will
 			 * be redrawn after layout anyway. */
-			break;
+			ভঙ্গ;
 		}
 
 		box_coords(box, &x, &y);
 
-		content__request_redraw((struct content *)html,
-				x + msg->data.redraw.x0,
-				y + msg->data.redraw.y0,
-				msg->data.redraw.x1 - msg->data.redraw.x0,
-				msg->data.redraw.y1 - msg->data.redraw.y0);
+		content__request_redraw((সংরচনা content *)html,
+				x + বার্তা->data.redraw.x0,
+				y + বার্তা->data.redraw.y0,
+				বার্তা->data.redraw.x1 - বার্তা->data.redraw.x0,
+				বার্তা->data.redraw.y1 - বার্তা->data.redraw.y0);
 	}
-		break;
+		ভঙ্গ;
 
-	case TEXTAREA_MSG_SELECTION_REPORT:
-		if (msg->data.selection.have_selection) {
+	পক্ষ TEXTAREA_বার্তা_SELECTION_REPORT:
+		যদি (বার্তা->data.selection.have_selection) {
 			/* Textarea now has a selection */
-			union html_selection_owner sel_owner;
+			সঙ্ঘ html_selection_owner sel_owner;
 			sel_owner.textarea = box;
 
 			html_set_selection(html, HTML_SELECTION_TEXTAREA,
 					sel_owner,
-					msg->data.selection.read_only);
-		} else {
+					বার্তা->data.selection.read_only);
+		} অন্যথা {
 			/* The textarea now has no selection */
-			union html_selection_owner sel_owner;
+			সঙ্ঘ html_selection_owner sel_owner;
 			sel_owner.none = true;
 
 			html_set_selection(html, HTML_SELECTION_NONE,
 					sel_owner, true);
 		}
-		break;
+		ভঙ্গ;
 
-	case TEXTAREA_MSG_CARET_UPDATE:
-		if (html->bw == NULL)
-			break;
+	পক্ষ TEXTAREA_বার্তা_CARET_UPDATE:
+		যদি (html->bw == রিক্ত)
+			ভঙ্গ;
 
-		if (msg->data.caret.type == TEXTAREA_CARET_HIDE) {
-			union html_focus_owner focus_owner;
+		যদি (বার্তা->data.caret.type == TEXTAREA_CARET_HIDE) {
+			সঙ্ঘ html_focus_owner focus_owner;
 			focus_owner.textarea = box;
 			html_set_focus(html, HTML_FOCUS_TEXTAREA,
-					focus_owner, true, 0, 0, 0, NULL);
-		} else {
-			union html_focus_owner focus_owner;
+					focus_owner, true, 0, 0, 0, রিক্ত);
+		} অন্যথা {
+			সঙ্ঘ html_focus_owner focus_owner;
 			focus_owner.textarea = box;
 			html_set_focus(html, HTML_FOCUS_TEXTAREA,
 					focus_owner, false,
-					msg->data.caret.pos.x,
-					msg->data.caret.pos.y,
-					msg->data.caret.pos.height,
-					msg->data.caret.pos.clip);
+					বার্তা->data.caret.pos.x,
+					বার্তা->data.caret.pos.y,
+					বার্তা->data.caret.pos.height,
+					বার্তা->data.caret.pos.clip);
 		}
-		break;
+		ভঙ্গ;
 
-	case TEXTAREA_MSG_TEXT_MODIFIED:
-		form_gadget_update_value(gadget,
-					 strndup(msg->data.modified.text,
-						 msg->data.modified.len));
-		break;
+	পক্ষ TEXTAREA_বার্তা_TEXT_MODIFIED:
+		form_gadget_update_মান(gadget,
+					 strndup(বার্তা->data.modified.text,
+						 বার্তা->data.modified.len));
+		ভঙ্গ;
 	}
 }
 
 
 /* Exported interface, documented in box_textarea.h */
 bool box_textarea_create_textarea(html_content *html,
-		struct box *box, struct dom_node *node)
+		সংরচনা box *box, সংরচনা dom_গ্রন্থি *গ্রন্থি)
 {
-	dom_string *dom_text = NULL;
+	dom_string *dom_text = রিক্ত;
 	dom_exception err;
 	textarea_setup ta_setup;
 	textarea_flags ta_flags;
@@ -271,67 +271,67 @@ bool box_textarea_create_textarea(html_content *html,
 	};
 	bool read_only = false;
 	bool disabled = false;
-	struct form_control *gadget = box->gadget;
-	const char *text;
+	সংরচনা form_control *gadget = box->gadget;
+	ধ্রুব বর্ণ *text;
 
-	assert(gadget != NULL);
-	assert(gadget->type == GADGET_TEXTAREA ||
+	প্রতিজ্ঞা(gadget != রিক্ত);
+	প্রতিজ্ঞা(gadget->type == GADGET_TEXTAREA ||
 			gadget->type == GADGET_TEXTBOX ||
 			gadget->type == GADGET_PASSWORD);
 
-	if (gadget->type == GADGET_TEXTAREA) {
+	যদি (gadget->type == GADGET_TEXTAREA) {
 		dom_html_text_area_element *textarea =
-				(dom_html_text_area_element *) node;
+				(dom_html_text_area_element *) গ্রন্থি;
 		ta_flags = TEXTAREA_MULTILINE;
 
 		err = dom_html_text_area_element_get_read_only(
 				textarea, &read_only);
-		if (err != DOM_NO_ERR)
-			return false;
+		যদি (err != DOM_NO_ERR)
+			প্রত্যাগম false;
 
 		err = dom_html_text_area_element_get_disabled(
 				textarea, &disabled);
-		if (err != DOM_NO_ERR)
-			return false;
+		যদি (err != DOM_NO_ERR)
+			প্রত্যাগম false;
 
 		/* Get the textarea's initial content */
-		err = dom_html_text_area_element_get_value(textarea, &dom_text);
-		if (err != DOM_NO_ERR)
-			return false;
+		err = dom_html_text_area_element_get_মান(textarea, &dom_text);
+		যদি (err != DOM_NO_ERR)
+			প্রত্যাগম false;
 
-	} else {
-		dom_html_input_element *input = (dom_html_input_element *) node;
+	} অন্যথা {
+		dom_html_প্রবেশ_element *প্রবেশ = (dom_html_প্রবেশ_element *) গ্রন্থি;
 
-		err = dom_html_input_element_get_read_only(
-				input, &read_only);
-		if (err != DOM_NO_ERR)
-			return false;
+		err = dom_html_প্রবেশ_element_get_read_only(
+				প্রবেশ, &read_only);
+		যদি (err != DOM_NO_ERR)
+			প্রত্যাগম false;
 
-		err = dom_html_input_element_get_disabled(
-				input, &disabled);
-		if (err != DOM_NO_ERR)
-			return false;
+		err = dom_html_প্রবেশ_element_get_disabled(
+				প্রবেশ, &disabled);
+		যদি (err != DOM_NO_ERR)
+			প্রত্যাগম false;
 
-		if (gadget->type == GADGET_PASSWORD)
+		যদি (gadget->type == GADGET_PASSWORD)
 			ta_flags = TEXTAREA_PASSWORD;
-		else
+		অন্যথা
 			ta_flags = TEXTAREA_DEFAULT;
 
 		/* Get initial text */
-		err = dom_html_input_element_get_value(input, &dom_text);
-		if (err != DOM_NO_ERR)
-			return false;
+		err = dom_html_প্রবেশ_element_get_মান(প্রবেশ, &dom_text);
+		যদি (err != DOM_NO_ERR)
+			প্রত্যাগম false;
 	}
 
-	if (dom_text != NULL) {
+	যদি (dom_text != রিক্ত) {
 		text = dom_string_data(dom_text);
-	} else {
+	} অন্যথা {
 		/* No initial text, or failed reading it;
 		 * use a blank string */
 		text = "";
 	}
 
-	if (read_only || disabled)
+	যদি (read_only || disabled)
 		ta_flags |= TEXTAREA_READONLY;
 
 	gadget->data.text.data.gadget = gadget;
@@ -339,10 +339,10 @@ bool box_textarea_create_textarea(html_content *html,
 	/* Reset to correct values by layout */
 	ta_setup.width = 200;
 	ta_setup.height = 20;
-	ta_setup.pad_top = 4;
-	ta_setup.pad_right = 4;
+	ta_setup.pad_শীর্ষ = 4;
+	ta_setup.pad_ডান = 4;
 	ta_setup.pad_bottom = 4;
-	ta_setup.pad_left = 4;
+	ta_setup.pad_বাম = 4;
 
 	/* Set remaining data */
 	ta_setup.border_width = 0;
@@ -360,12 +360,12 @@ bool box_textarea_create_textarea(html_content *html,
 	gadget->data.text.ta = textarea_create(ta_flags, &ta_setup,
 			box_textarea_callback, &gadget->data.text.data);
 
-	if (gadget->data.text.ta == NULL) {
-		return false;
+	যদি (gadget->data.text.ta == রিক্ত) {
+		প্রত্যাগম false;
 	}
 
-	if (!textarea_set_text(gadget->data.text.ta, text))
-		return false;
+	যদি (!textarea_set_text(gadget->data.text.ta, text))
+		প্রত্যাগম false;
 
-	return true;
+	প্রত্যাগম true;
 }

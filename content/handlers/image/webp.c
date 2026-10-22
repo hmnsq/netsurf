@@ -24,46 +24,46 @@
  * Image cache handling is performed by the generic NetSurf handler.
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <setjmp.h>
+#অন্তর্ভাব <stdbool.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <setjmp.h>
 
-#include <webp/decode.h>
+#অন্তর্ভাব <webp/decode.h>
 
-#include "utils/utils.h"
-#include "utils/log.h"
-#include "utils/messages.h"
-#include "netsurf/bitmap.h"
-#include "content/llcache.h"
-#include "content/content_protected.h"
-#include "content/content_factory.h"
-#include "desktop/gui_internal.h"
-#include "desktop/bitmap.h"
+#অন্তর্ভাব "utils/utils.h"
+#অন্তর্ভাব "utils/log.h"
+#অন্তর্ভাব "utils/messages.h"
+#অন্তর্ভাব "netsurf/bitmap.h"
+#অন্তর্ভাব "content/llcache.h"
+#অন্তর্ভাব "content/content_protected.h"
+#অন্তর্ভাব "content/content_factory.h"
+#অন্তর্ভাব "desktop/gui_internal.h"
+#অন্তর্ভাব "desktop/bitmap.h"
 
-#include "image/image_cache.h"
+#অন্তর্ভাব "image/image_cache.h"
 
-#include "webp.h"
+#অন্তর্ভাব "webp.h"
 
 /**
  * Content create entry point.
  *
  * create a content object for the webp
  */
-static nserror
-webp_create(const content_handler *handler,
+স্থির nserror
+webp_create(ধ্রুব content_handler *handler,
 	      lwc_string *imime_type,
-	      const struct http_parameter *params,
+	      ধ্রুব সংরচনা http_parameter *params,
 	      llcache_handle *llcache,
-	      const char *fallback_charset,
+	      ধ্রুব বর্ণ *fallback_charset,
 	      bool quirks,
-	      struct content **c)
+	      সংরচনা content **c)
 {
-	struct content *webp_c; /* webp content object */
+	সংরচনা content *webp_c; /* webp content object */
 	nserror res;
 
-	webp_c = calloc(1, sizeof(struct content));
-	if (webp_c == NULL) {
-		return NSERROR_NOMEM;
+	webp_c = calloc(1, পরিমাণ(সংরচনা content));
+	যদি (webp_c == রিক্ত) {
+		প্রত্যাগম NSERROR_NOMEM;
 	}
 
 	res = content__init(webp_c,
@@ -73,31 +73,31 @@ webp_create(const content_handler *handler,
 			    llcache,
 			    fallback_charset,
 			    quirks);
-	if (res != NSERROR_OK) {
-		free(webp_c);
-		return res;
+	যদি (res != NSERROR_OK) {
+		মুক্ত(webp_c);
+		প্রত্যাগম res;
 	}
 
 	*c = webp_c;
 
-	return NSERROR_OK;
+	প্রত্যাগম NSERROR_OK;
 }
 
 /**
  * create a bitmap from webp content.
  */
-static struct bitmap *
-webp_cache_convert(struct content *c)
+স্থির সংরচনা bitmap *
+webp_cache_convert(সংরচনা content *c)
 {
-	const uint8_t *source_data; /* webp source data */
+	ধ্রুব uint8_t *source_data; /* webp source data */
 	size_t source_size; /* length of webp source data */
 	VP8StatusCode webpres;
 	WebPBitstreamFeatures webpfeatures;
-	unsigned int bmap_flags;
-	uint8_t *pixels = NULL;
+	unsigned পূর্ণাঙ্ক bmap_flags;
+	uint8_t *pixels = রিক্ত;
 	uint8_t *decoded;
 	size_t rowstride;
-	struct bitmap *bitmap = NULL;
+	সংরচনা bitmap *bitmap = রিক্ত;
 	bitmap_fmt_t webp_fmt = {
 		.layout = bitmap_fmt.layout,
 	};
@@ -106,17 +106,17 @@ webp_cache_convert(struct content *c)
 
 	webpres = WebPGetFeatures(source_data, source_size, &webpfeatures);
 
-	if (webpres != VP8_STATUS_OK) {
-		return NULL;
+	যদি (webpres != VP8_STATUS_OK) {
+		প্রত্যাগম রিক্ত;
 	}
 
-	if (webpfeatures.has_alpha == 0) {
+	যদি (webpfeatures.has_alpha == 0) {
 		bmap_flags = BITMAP_OPAQUE;
 		/* Image has no alpha. Premultiplied alpha makes no difference.
 		 * Optimisation: Avoid unnecessary conversion by copying format.
 		 */
 		webp_fmt.pma = bitmap_fmt.pma;
-	} else {
+	} অন্যথা {
 		bmap_flags = BITMAP_NONE;
 	}
 
@@ -124,50 +124,50 @@ webp_cache_convert(struct content *c)
 	bitmap = guit->bitmap->create(webpfeatures.width,
 				      webpfeatures.height,
 				      bmap_flags);
-	if (bitmap == NULL) {
+	যদি (bitmap == রিক্ত) {
 		/* empty bitmap could not be created */
-		return NULL;
+		প্রত্যাগম রিক্ত;
 	}
 
 	pixels = guit->bitmap->get_buffer(bitmap);
-	if (pixels == NULL) {
+	যদি (pixels == রিক্ত) {
 		/* bitmap with no buffer available */
 		guit->bitmap->destroy(bitmap);
-		return NULL;
+		প্রত্যাগম রিক্ত;
 	}
 
 	rowstride = guit->bitmap->get_rowstride(bitmap);
 
-	switch (webp_fmt.layout) {
-	default:
+	বিকল্প (webp_fmt.layout) {
+	স্বভাব:
 		/* WebP has no ABGR function, fall back to default. */
 		webp_fmt.layout = BITMAP_LAYOUT_R8G8B8A8;
 		fallthrough;
-	case BITMAP_LAYOUT_R8G8B8A8:
+	পক্ষ BITMAP_LAYOUT_R8G8B8A8:
 		decoded = WebPDecodeRGBAInto(source_data, source_size, pixels,
 				rowstride * webpfeatures.height, rowstride);
-		break;
+		ভঙ্গ;
 
-	case BITMAP_LAYOUT_B8G8R8A8:
+	পক্ষ BITMAP_LAYOUT_B8G8R8A8:
 		decoded = WebPDecodeBGRAInto(source_data, source_size, pixels,
 				rowstride * webpfeatures.height, rowstride);
-		break;
+		ভঙ্গ;
 
-	case BITMAP_LAYOUT_A8R8G8B8:
+	পক্ষ BITMAP_LAYOUT_A8R8G8B8:
 		decoded = WebPDecodeARGBInto(source_data, source_size, pixels,
 				rowstride * webpfeatures.height, rowstride);
-		break;
+		ভঙ্গ;
 	}
-	if (decoded == NULL) {
+	যদি (decoded == রিক্ত) {
 		/* decode failed */
 		guit->bitmap->destroy(bitmap);
-		return NULL;
+		প্রত্যাগম রিক্ত;
 	}
 
 	bitmap_format_to_client(bitmap, &webp_fmt);
 	guit->bitmap->modified(bitmap);
 
-	return bitmap;
+	প্রত্যাগম bitmap;
 }
 
 /**
@@ -180,68 +180,68 @@ webp_cache_convert(struct content *c)
  * \param c The webp content object
  * \return true on successful processing of teh webp content else false
  */
-static bool webp_convert(struct content *c)
+স্থির bool webp_convert(সংরচনা content *c)
 {
-	int res;
-	const uint8_t* data;
+	পূর্ণাঙ্ক res;
+	ধ্রুব uint8_t* data;
 	size_t data_size;
-	int width;
-	int height;
+	পূর্ণাঙ্ক width;
+	পূর্ণাঙ্ক height;
 
 	data = content__get_source_data(c, &data_size);
 
 	res = WebPGetInfo(data, data_size, &width, &height);
-	if (res == 0) {
+	যদি (res == 0) {
 		NSLOG(netsurf, INFO, "WebPGetInfo failed:%p", c);
-		return false;
+		প্রত্যাগম false;
 	}
 
 	c->width = width;
 	c->height = height;
 	c->size = c->width * c->height * 4;
 
-	image_cache_add(c, NULL, webp_cache_convert);
+	image_cache_add(c, রিক্ত, webp_cache_convert);
 
 	content_set_ready(c);
 	content_set_done(c);
 
-	return true;
+	প্রত্যাগম true;
 }
 
 /**
  * Clone content.
  */
-static nserror webp_clone(const struct content *old, struct content **new_c)
+স্থির nserror webp_clone(ধ্রুব সংরচনা content *old, সংরচনা content **new_c)
 {
-	struct content *webp_c; /* cloned webp content */
+	সংরচনা content *webp_c; /* cloned webp content */
 	nserror res;
 
-	webp_c = calloc(1, sizeof(struct content));
-	if (webp_c == NULL) {
-		return NSERROR_NOMEM;
+	webp_c = calloc(1, পরিমাণ(সংরচনা content));
+	যদি (webp_c == রিক্ত) {
+		প্রত্যাগম NSERROR_NOMEM;
 	}
 
 	res = content__clone(old, webp_c);
-	if (res != NSERROR_OK) {
+	যদি (res != NSERROR_OK) {
 		content_destroy(webp_c);
-		return res;
+		প্রত্যাগম res;
 	}
 
 	/* re-convert if the content is ready */
-	if ((old->status == CONTENT_STATUS_READY) ||
+	যদি ((old->status == CONTENT_STATUS_READY) ||
 	    (old->status == CONTENT_STATUS_DONE)) {
-		if (webp_convert(webp_c) == false) {
+		যদি (webp_convert(webp_c) == false) {
 			content_destroy(webp_c);
-			return NSERROR_CLONE_FAILED;
+			প্রত্যাগম NSERROR_CLONE_FAILED;
 		}
 	}
 
 	*new_c = webp_c;
 
-	return NSERROR_OK;
+	প্রত্যাগম NSERROR_OK;
 }
 
-static const content_handler webp_content_handler = {
+স্থির ধ্রুব content_handler webp_content_handler = {
 	.create = webp_create,
 	.data_complete = webp_convert,
 	.destroy = image_cache_destroy,
@@ -253,7 +253,7 @@ static const content_handler webp_content_handler = {
 	.no_share = false,
 };
 
-static const char *webp_types[] = {
+স্থির ধ্রুব বর্ণ *webp_types[] = {
 	"image/webp"
 };
 

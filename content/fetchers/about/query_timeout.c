@@ -21,20 +21,20 @@
  * content generator for the about scheme query timeout page
  */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdint.h>
-#include <stdlib.h>
+#অন্তর্ভাব <stdbool.h>
+#অন্তর্ভাব <stddef.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <stdint.h>
+#অন্তর্ভাব <stdlib.h>
 
-#include "utils/errors.h"
-#include "utils/messages.h"
-#include "content/fetch.h"
+#অন্তর্ভাব "utils/errors.h"
+#অন্তর্ভাব "utils/messages.h"
+#অন্তর্ভাব "content/fetch.h"
 
-#include "private.h"
-#include "query.h"
-#include "query_timeout.h"
+#অন্তর্ভাব "private.h"
+#অন্তর্ভাব "query.h"
+#অন্তর্ভাব "query_timeout.h"
 
 /**
  * Handler to generate about scheme timeout query page
@@ -42,41 +42,41 @@
  * \param ctx The fetcher context.
  * \return true if handled false if aborted.
  */
-bool fetch_about_query_timeout_handler(struct fetch_about_context *ctx)
+bool fetch_about_query_timeout_handler(সংরচনা fetch_about_context *ctx)
 {
 	nserror res;
-	char *url_s;
+	বর্ণ *url_s;
 	size_t url_l;
-	const char *reason = "";
-	const char *title;
-	struct nsurl *siteurl = NULL;
-	char *description = NULL;
-	const struct fetch_multipart_data *curmd; /* mutipart data iterator */
+	ধ্রুব বর্ণ *reason = "";
+	ধ্রুব বর্ণ *title;
+	সংরচনা nsurl *siteurl = রিক্ত;
+	বর্ণ *description = রিক্ত;
+	ধ্রুব সংরচনা fetch_multipart_data *curmd; /* mutipart data iterator */
 
 	/* extract parameters from multipart post data */
 	curmd = fetch_about_get_multipart(ctx);
-	while (curmd != NULL) {
-		if (strcmp(curmd->name, "siteurl") == 0) {
-			res = nsurl_create(curmd->value, &siteurl);
-			if (res != NSERROR_OK) {
-				return fetch_about_srverror(ctx);
+	যাবত্ (curmd != রিক্ত) {
+		যদি (strcmp(curmd->name, "siteurl") == 0) {
+			res = nsurl_create(curmd->মান, &siteurl);
+			যদি (res != NSERROR_OK) {
+				প্রত্যাগম fetch_about_srverror(ctx);
 			}
-		} else if (strcmp(curmd->name, "reason") == 0) {
-			reason = curmd->value;
+		} অন্যথা যদি (strcmp(curmd->name, "reason") == 0) {
+			reason = curmd->মান;
 		}
 		curmd = curmd->next;
 	}
 
-	if (siteurl == NULL) {
-		return fetch_about_srverror(ctx);
+	যদি (siteurl == রিক্ত) {
+		প্রত্যাগম fetch_about_srverror(ctx);
 	}
 
 	/* content is going to return ok */
 	fetch_about_set_http_code(ctx, 200);
 
 	/* content type */
-	if (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8")) {
-		goto fetch_about_query_timeout_handler_aborted;
+	যদি (fetch_about_send_header(ctx, "Content-Type: text/html; charset=utf-8")) {
+		গচ্ছ fetch_about_query_timeout_handler_aborted;
 	}
 
 	title = messages_get("TimeoutTitle");
@@ -89,30 +89,30 @@ bool fetch_about_query_timeout_handler(struct fetch_about_context *ctx)
 			"<body class=\"ns-even-bg ns-even-fg ns-border\" id =\"timeout\">\n"
 			"<h1 class=\"ns-border ns-odd-fg-bad\">%s</h1>\n",
 			title, title);
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_timeout_handler_aborted;
+	যদি (res != NSERROR_OK) {
+		গচ্ছ fetch_about_query_timeout_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
 			 "<form method=\"post\""
 			 " enctype=\"multipart/form-data\">");
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_timeout_handler_aborted;
+	যদি (res != NSERROR_OK) {
+		গচ্ছ fetch_about_query_timeout_handler_aborted;
 	}
 
 	res = get_query_description(siteurl,
 				    "TimeoutDescription",
 				    &description);
-	if (res == NSERROR_OK) {
+	যদি (res == NSERROR_OK) {
 		res = fetch_about_ssenddataf(ctx, "<div><p>%s</p></div>", description);
-		free(description);
-		if (res != NSERROR_OK) {
-			goto fetch_about_query_timeout_handler_aborted;
+		মুক্ত(description);
+		যদি (res != NSERROR_OK) {
+			গচ্ছ fetch_about_query_timeout_handler_aborted;
 		}
 	}
 	res = fetch_about_ssenddataf(ctx, "<div><p>%s</p></div>", reason);
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_timeout_handler_aborted;
+	যদি (res != NSERROR_OK) {
+		গচ্ছ fetch_about_query_timeout_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx,
@@ -124,35 +124,35 @@ bool fetch_about_query_timeout_handler(struct fetch_about_context *ctx)
 			 "</div>",
 			 messages_get("Backtoprevious"),
 			 messages_get("TryAgain"));
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_timeout_handler_aborted;
+	যদি (res != NSERROR_OK) {
+		গচ্ছ fetch_about_query_timeout_handler_aborted;
 	}
 
 	res = nsurl_get(siteurl, NSURL_COMPLETE, &url_s, &url_l);
-	if (res != NSERROR_OK) {
+	যদি (res != NSERROR_OK) {
 		url_s = strdup("");
 	}
 	res = fetch_about_ssenddataf(ctx,
 			 "<input type=\"hidden\" name=\"siteurl\" value=\"%s\">",
 			 url_s);
-	free(url_s);
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_timeout_handler_aborted;
+	মুক্ত(url_s);
+	যদি (res != NSERROR_OK) {
+		গচ্ছ fetch_about_query_timeout_handler_aborted;
 	}
 
 	res = fetch_about_ssenddataf(ctx, "</form></body>\n</html>\n");
-	if (res != NSERROR_OK) {
-		goto fetch_about_query_timeout_handler_aborted;
+	যদি (res != NSERROR_OK) {
+		গচ্ছ fetch_about_query_timeout_handler_aborted;
 	}
 
 	fetch_about_send_finished(ctx);
 
 	nsurl_unref(siteurl);
 
-	return true;
+	প্রত্যাগম true;
 
 fetch_about_query_timeout_handler_aborted:
 	nsurl_unref(siteurl);
 
-	return false;
+	প্রত্যাগম false;
 }

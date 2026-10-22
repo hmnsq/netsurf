@@ -23,61 +23,61 @@
  * \todo should this should use the general hashmap instead of its own
  */
 
-#include <assert.h>
-#include <stdbool.h>
-#include <string.h>
-#include <strings.h>
+#অন্তর্ভাব <assert.h>
+#অন্তর্ভাব <stdbool.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <strings.h>
 
-#include <dom/dom.h>
+#অন্তর্ভাব <dom/dom.h>
 
-#include "utils/log.h"
-#include "utils/corestrings.h"
-#include "content/content_protected.h"
-#include "content/hlcache.h"
+#অন্তর্ভাব "utils/log.h"
+#অন্তর্ভাব "utils/corestrings.h"
+#অন্তর্ভাব "content/content_protected.h"
+#অন্তর্ভাব "content/hlcache.h"
 
-#include "html/box.h"
-#include "html/box_construct.h"
-#include "html/private.h"
-#include "html/imagemap.h"
+#অন্তর্ভাব "html/box.h"
+#অন্তর্ভাব "html/box_construct.h"
+#অন্তর্ভাব "html/private.h"
+#অন্তর্ভাব "html/imagemap.h"
 
 #define HASH_SIZE 31 /* fixed size hash table */
 
-typedef enum {
+প্রকারনির্দেশ গণনা {
 	IMAGEMAP_DEFAULT,
 	IMAGEMAP_RECT,
 	IMAGEMAP_CIRCLE,
 	IMAGEMAP_POLY
 } imagemap_entry_type;
 
-struct mapentry {
+সংরচনা mapentry {
 	imagemap_entry_type type;	/**< type of shape */
 	nsurl *url;			/**< absolute url to go to */
-	char *target;			/**< target frame (if any) */
-	union {
-		struct {
-			int x;		/**< x coordinate of centre */
-			int y;		/**< y coordinate of center */
-			int r;		/**< radius of circle */
+	বর্ণ *target;			/**< target frame (if any) */
+	সঙ্ঘ {
+		সংরচনা {
+			পূর্ণাঙ্ক x;		/**< x coordinate of centre */
+			পূর্ণাঙ্ক y;		/**< y coordinate of center */
+			পূর্ণাঙ্ক r;		/**< radius of circle */
 		} circle;
-		struct {
-			int x0;		/**< left hand edge */
-			int y0;		/**< top edge */
-			int x1;		/**< right hand edge */
-			int y1;		/**< bottom edge */
+		সংরচনা {
+			পূর্ণাঙ্ক x0;		/**< left hand edge */
+			পূর্ণাঙ্ক y0;		/**< top edge */
+			পূর্ণাঙ্ক x1;		/**< right hand edge */
+			পূর্ণাঙ্ক y1;		/**< bottom edge */
 		} rect;
-		struct {
-			int num;	/**< number of points */
-			float *xcoords;	/**< x coordinates */
-			float *ycoords;	/**< y coordinates */
+		সংরচনা {
+			পূর্ণাঙ্ক অঙ্ক;	/**< number of points */
+			ভিন্ন *xcoords;	/**< x coordinates */
+			ভিন্ন *ycoords;	/**< y coordinates */
 		} poly;
 	} bounds;
-	struct mapentry *next;		/**< next entry in list */
+	সংরচনা mapentry *next;		/**< next entry in list */
 };
 
-struct imagemap {
-	char *key;		/**< key for this entry */
-	struct mapentry *list;	/**< pointer to linked list of entries */
-	struct imagemap *next;	/**< next entry in this hash chain */
+সংরচনা imagemap {
+	বর্ণ *চাবি;		/**< key for this entry */
+	সংরচনা mapentry *list;	/**< pointer to linked list of entries */
+	সংরচনা imagemap *next;	/**< next entry in this hash chain */
 };
 
 /**
@@ -86,18 +86,18 @@ struct imagemap {
  * \param c The containing content
  * \return true on success, false otherwise
  */
-static bool imagemap_create(html_content *c)
+স্থির bool imagemap_create(html_content *c)
 {
-	assert(c != NULL);
+	প্রতিজ্ঞা(c != রিক্ত);
 
-	if (c->imagemaps == NULL) {
-		c->imagemaps = calloc(HASH_SIZE, sizeof(struct imagemap *));
-		if (c->imagemaps == NULL) {
-			return false;
+	যদি (c->imagemaps == রিক্ত) {
+		c->imagemaps = calloc(HASH_SIZE, পরিমাণ(সংরচনা imagemap *));
+		যদি (c->imagemaps == রিক্ত) {
+			প্রত্যাগম false;
 		}
 	}
 
-	return true;
+	প্রত্যাগম true;
 }
 
 /**
@@ -106,17 +106,17 @@ static bool imagemap_create(html_content *c)
  * \param key The key to hash.
  * \return The hashed value.
  */
-static unsigned int imagemap_hash(const char *key)
+স্থির unsigned পূর্ণাঙ্ক imagemap_hash(ধ্রুব বর্ণ *চাবি)
 {
-	unsigned int z = 0;
+	unsigned পূর্ণাঙ্ক z = 0;
 
-	if (key == 0) return 0;
+	যদি (চাবি == 0) প্রত্যাগম 0;
 
-	for (; *key != 0; key++) {
-		z += *key & 0x1f;
+	প্রতি (; *চাবি != 0; চাবি++) {
+		z += *চাবি & 0x1f;
 	}
 
-	return (z % (HASH_SIZE - 1)) + 1;
+	প্রত্যাগম (z % (HASH_SIZE - 1)) + 1;
 }
 
 /**
@@ -127,38 +127,38 @@ static unsigned int imagemap_hash(const char *key)
  * \param list List of map regions
  * \return true on succes, false otherwise
  */
-static bool
-imagemap_add(html_content *c, dom_string *key, struct mapentry *list)
+স্থির bool
+imagemap_add(html_content *c, dom_string *চাবি, সংরচনা mapentry *list)
 {
-	struct imagemap *map;
-	unsigned int slot;
+	সংরচনা imagemap *map;
+	unsigned পূর্ণাঙ্ক slot;
 
-	assert(c != NULL);
-	assert(key != NULL);
-	assert(list != NULL);
+	প্রতিজ্ঞা(c != রিক্ত);
+	প্রতিজ্ঞা(চাবি != রিক্ত);
+	প্রতিজ্ঞা(list != রিক্ত);
 
-	if (imagemap_create(c) == false)
-		return false;
+	যদি (imagemap_create(c) == false)
+		প্রত্যাগম false;
 
-	map = calloc(1, sizeof(*map));
-	if (map == NULL)
-		return false;
+	map = calloc(1, পরিমাণ(*map));
+	যদি (map == রিক্ত)
+		প্রত্যাগম false;
 
 	/* \todo Stop relying on NULL termination of dom_string */
-	map->key = strdup(dom_string_data(key));
-	if (map->key == NULL) {
-		free(map);
-		return false;
+	map->চাবি = strdup(dom_string_data(চাবি));
+	যদি (map->চাবি == রিক্ত) {
+		মুক্ত(map);
+		প্রত্যাগম false;
 	}
 
 	map->list = list;
 
-	slot = imagemap_hash(map->key);
+	slot = imagemap_hash(map->চাবি);
 
 	map->next = c->imagemaps[slot];
 	c->imagemaps[slot] = map;
 
-	return true;
+	প্রত্যাগম true;
 }
 
 /**
@@ -166,29 +166,29 @@ imagemap_add(html_content *c, dom_string *key, struct mapentry *list)
  *
  * \param list Pointer to head of list
  */
-static void imagemap_freelist(struct mapentry *list)
+স্থির শূন্য imagemap_freelist(সংরচনা mapentry *list)
 {
-	struct mapentry *entry, *prev;
+	সংরচনা mapentry *entry, *prev;
 
-	assert(list != NULL);
+	প্রতিজ্ঞা(list != রিক্ত);
 
 	entry = list;
 
-	while (entry != NULL) {
+	যাবত্ (entry != রিক্ত) {
 		prev = entry;
 
 		nsurl_unref(entry->url);
 
-		if (entry->target)
-			free(entry->target);
+		যদি (entry->target)
+			মুক্ত(entry->target);
 
-		if (entry->type == IMAGEMAP_POLY) {
-			free(entry->bounds.poly.xcoords);
-			free(entry->bounds.poly.ycoords);
+		যদি (entry->type == IMAGEMAP_POLY) {
+			মুক্ত(entry->bounds.poly.xcoords);
+			মুক্ত(entry->bounds.poly.ycoords);
 		}
 
 		entry = entry->next;
-		free(prev);
+		মুক্ত(prev);
 	}
 }
 
@@ -197,30 +197,30 @@ static void imagemap_freelist(struct mapentry *list)
  *
  * \param c The containing content
  */
-void imagemap_destroy(html_content *c)
+শূন্য imagemap_destroy(html_content *c)
 {
-	unsigned int i;
+	unsigned পূর্ণাঙ্ক i;
 
-	assert(c != NULL);
+	প্রতিজ্ঞা(c != রিক্ত);
 
 	/* no imagemaps -> return */
-	if (c->imagemaps == NULL)
-		return;
+	যদি (c->imagemaps == রিক্ত)
+		প্রত্যাগম;
 
-	for (i = 0; i != HASH_SIZE; i++) {
-		struct imagemap *map, *next;
+	প্রতি (i = 0; i != HASH_SIZE; i++) {
+		সংরচনা imagemap *map, *next;
 
 		map = c->imagemaps[i];
-		while (map != NULL) {
+		যাবত্ (map != রিক্ত) {
 			next = map->next;
 			imagemap_freelist(map->list);
-			free(map->key);
-			free(map);
+			মুক্ত(map->চাবি);
+			মুক্ত(map);
 			map = next;
 		}
 	}
 
-	free(c->imagemaps);
+	মুক্ত(c->imagemaps);
 }
 
 /**
@@ -228,32 +228,32 @@ void imagemap_destroy(html_content *c)
  *
  * \param c The containing content
  */
-void imagemap_dump(html_content *c)
+শূন্য imagemap_dump(html_content *c)
 {
-	unsigned int i;
+	unsigned পূর্ণাঙ্ক i;
 
-	int j;
+	পূর্ণাঙ্ক j;
 
-	assert(c != NULL);
+	প্রতিজ্ঞা(c != রিক্ত);
 
-	if (c->imagemaps == NULL)
-		return;
+	যদি (c->imagemaps == রিক্ত)
+		প্রত্যাগম;
 
-	for (i = 0; i != HASH_SIZE; i++) {
-		struct imagemap *map;
-		struct mapentry *entry;
+	প্রতি (i = 0; i != HASH_SIZE; i++) {
+		সংরচনা imagemap *map;
+		সংরচনা mapentry *entry;
 
 		map = c->imagemaps[i];
-		while (map != NULL) {
-			NSLOG(netsurf, INFO, "Imagemap: %s", map->key);
+		যাবত্ (map != রিক্ত) {
+			NSLOG(netsurf, INFO, "Imagemap: %s", map->চাবি);
 
-			for (entry = map->list; entry; entry = entry->next) {
-				switch (entry->type) {
-				case IMAGEMAP_DEFAULT:
+			প্রতি (entry = map->list; entry; entry = entry->next) {
+				বিকল্প (entry->type) {
+				পক্ষ IMAGEMAP_DEFAULT:
 					NSLOG(netsurf, INFO, "\tDefault: %s",
 					      nsurl_access(entry->url));
-					break;
-				case IMAGEMAP_RECT:
+					ভঙ্গ;
+				পক্ষ IMAGEMAP_RECT:
 					NSLOG(netsurf, INFO,
 					      "\tRectangle: %s: [(%d,%d),(%d,%d)]",
 					      nsurl_access(entry->url),
@@ -261,27 +261,27 @@ void imagemap_dump(html_content *c)
 					      entry->bounds.rect.y0,
 					      entry->bounds.rect.x1,
 					      entry->bounds.rect.y1);
-					break;
-				case IMAGEMAP_CIRCLE:
+					ভঙ্গ;
+				পক্ষ IMAGEMAP_CIRCLE:
 					NSLOG(netsurf, INFO,
 					      "\tCircle: %s: [(%d,%d),%d]",
 					      nsurl_access(entry->url),
 					      entry->bounds.circle.x,
 					      entry->bounds.circle.y,
 					      entry->bounds.circle.r);
-					break;
-				case IMAGEMAP_POLY:
+					ভঙ্গ;
+				পক্ষ IMAGEMAP_POLY:
 					NSLOG(netsurf, INFO,
 					      "\tPolygon: %s:",
 					      nsurl_access(entry->url));
-					for (j = 0; j != entry->bounds.poly.num;
+					প্রতি (j = 0; j != entry->bounds.poly.অঙ্ক;
 							j++) {
 						fprintf(stderr, "(%d,%d) ",
-							(int)entry->bounds.poly.xcoords[j],
-							(int)entry->bounds.poly.ycoords[j]);
+							(পূর্ণাঙ্ক)entry->bounds.poly.xcoords[j],
+							(পূর্ণাঙ্ক)entry->bounds.poly.ycoords[j]);
 					}
 					fprintf(stderr,"\n");
-					break;
+					ভঙ্গ;
 				}
 			}
 			map = map->next;
@@ -299,88 +299,88 @@ void imagemap_dump(html_content *c)
  * \param tagtype  The type of tag
  * \return false on memory exhaustion, true otherwise
  */
-static bool
-imagemap_addtolist(const struct html_content *c,
-		   dom_node *n,
+স্থির bool
+imagemap_addtolist(ধ্রুব সংরচনা html_content *c,
+		   dom_গ্রন্থি *n,
 		   nsurl *base_url,
-		   struct mapentry **entry,
+		   সংরচনা mapentry **entry,
 		   dom_string *tagtype)
 {
 	dom_exception exc;
-	dom_string *href = NULL, *target = NULL, *shape = NULL;
-	dom_string *coords = NULL;
-	struct mapentry *new_map, *temp;
+	dom_string *href = রিক্ত, *target = রিক্ত, *shape = রিক্ত;
+	dom_string *coords = রিক্ত;
+	সংরচনা mapentry *new_map, *temp;
 	bool ret = true;
 
-	if (dom_string_caseless_isequal(tagtype, corestring_dom_area)) {
+	যদি (dom_string_caseless_isequal(tagtype, corestring_dom_area)) {
 		bool nohref = false;
 		exc = dom_element_has_attribute(n,
 				corestring_dom_nohref, &nohref);
-		if ((exc != DOM_NO_ERR) || nohref)
+		যদি ((exc != DOM_NO_ERR) || nohref)
 			/* Skip <area nohref="anything" /> */
-			goto ok_out;
+			গচ্ছ ok_out;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_href, &href);
-	if (exc != DOM_NO_ERR || href == NULL) {
+	যদি (exc != DOM_NO_ERR || href == রিক্ত) {
 		/* No href="" attribute, skip this element */
-		goto ok_out;
+		গচ্ছ ok_out;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_target, &target);
-	if (exc != DOM_NO_ERR) {
-		goto ok_out;
+	যদি (exc != DOM_NO_ERR) {
+		গচ্ছ ok_out;
 	}
 
 	exc = dom_element_get_attribute(n, corestring_dom_shape, &shape);
-	if (exc != DOM_NO_ERR) {
-		goto ok_out;
+	যদি (exc != DOM_NO_ERR) {
+		গচ্ছ ok_out;
 	}
 
 	/* If there's no shape, we default to rectangles */
-	if (shape == NULL)
+	যদি (shape == রিক্ত)
 		shape = dom_string_ref(corestring_dom_rect);
 
-	if (!dom_string_caseless_lwc_isequal(shape, corestring_lwc_default)) {
+	যদি (!dom_string_caseless_lwc_isequal(shape, corestring_lwc_default)) {
 		/* If not 'default' and there's no 'coords' give up */
 		exc = dom_element_get_attribute(n, corestring_dom_coords,
 						&coords);
-		if (exc != DOM_NO_ERR || coords == NULL) {
-			goto ok_out;
+		যদি (exc != DOM_NO_ERR || coords == রিক্ত) {
+			গচ্ছ ok_out;
 		}
 	}
 
-	new_map = calloc(1, sizeof(*new_map));
-	if (new_map == NULL) {
-		goto bad_out;
+	new_map = calloc(1, পরিমাণ(*new_map));
+	যদি (new_map == রিক্ত) {
+		গচ্ছ bad_out;
 	}
 
-	if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_rect) ||
+	যদি (dom_string_caseless_lwc_isequal(shape, corestring_lwc_rect) ||
 	    dom_string_caseless_lwc_isequal(shape, corestring_lwc_rectangle))
 		new_map->type = IMAGEMAP_RECT;
-	else if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_circle))
+	অন্যথা যদি (dom_string_caseless_lwc_isequal(shape, corestring_lwc_circle))
 		new_map->type = IMAGEMAP_CIRCLE;
-	else if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_poly) ||
+	অন্যথা যদি (dom_string_caseless_lwc_isequal(shape, corestring_lwc_poly) ||
 		 dom_string_caseless_lwc_isequal(shape, corestring_lwc_polygon))
 		new_map->type = IMAGEMAP_POLY;
-	else if (dom_string_caseless_lwc_isequal(shape, corestring_lwc_default))
+	অন্যথা যদি (dom_string_caseless_lwc_isequal(shape, corestring_lwc_default))
 		new_map->type = IMAGEMAP_DEFAULT;
-	else
-		goto bad_out;
+	অন্যথা
+		গচ্ছ bad_out;
 
-	if (box_extract_link(c, href, base_url, &new_map->url) == false)
-		goto bad_out;
+	যদি (box_extract_link(c, href, base_url, &new_map->url) == false)
+		গচ্ছ bad_out;
 
-	if (new_map->url == NULL) {
+	যদি (new_map->url == রিক্ত) {
 		/* non-fatal error -> ignore this */
-		goto ok_free_map_out;
+		গচ্ছ ok_free_map_out;
 	}
 
-	if (target != NULL) {
+	যদি (target != রিক্ত) {
 		/* Copy target dom string into the map data */
 		new_map->target = malloc(dom_string_byte_length(target) + 1);
-		if (new_map->target == NULL)
-			goto bad_out;
+		যদি (new_map->target == রিক্ত)
+			গচ্ছ bad_out;
 
 		memcpy(new_map->target,
 		       dom_string_data(target),
@@ -389,139 +389,139 @@ imagemap_addtolist(const struct html_content *c,
 		new_map->target[dom_string_byte_length(target)] = 0;
 	}
 
-	if (new_map->type != IMAGEMAP_DEFAULT) {
-		int x, y;
-		float *xcoords, *ycoords;
+	যদি (new_map->type != IMAGEMAP_DEFAULT) {
+		পূর্ণাঙ্ক x, y;
+		ভিন্ন *xcoords, *ycoords;
 		/* coordinates are a comma-separated list of values */
-		char *val = strtok((char *)dom_string_data(coords), ",");
-		int num = 1;
+		বর্ণ *val = strtok((বর্ণ *)dom_string_data(coords), ",");
+		পূর্ণাঙ্ক অঙ্ক = 1;
 
-		switch (new_map->type) {
-		case IMAGEMAP_RECT:
+		বিকল্প (new_map->type) {
+		পক্ষ IMAGEMAP_RECT:
 			/* (left, top, right, bottom) */
-			while (val != NULL && num <= 4) {
-				switch (num) {
-				case 1:
+			যাবত্ (val != রিক্ত && অঙ্ক <= 4) {
+				বিকল্প (অঙ্ক) {
+				পক্ষ 1:
 					new_map->bounds.rect.x0 = atoi(val);
-					break;
-				case 2:
+					ভঙ্গ;
+				পক্ষ 2:
 					new_map->bounds.rect.y0 = atoi(val);
-					break;
-				case 3:
+					ভঙ্গ;
+				পক্ষ 3:
 					new_map->bounds.rect.x1 = atoi(val);
-					break;
-				case 4:
+					ভঙ্গ;
+				পক্ষ 4:
 					new_map->bounds.rect.y1 = atoi(val);
-					break;
+					ভঙ্গ;
 				}
 
-				num++;
-				val = strtok(NULL, ",");
+				অঙ্ক++;
+				val = strtok(রিক্ত, ",");
 			}
-			break;
-		case IMAGEMAP_CIRCLE:
+			ভঙ্গ;
+		পক্ষ IMAGEMAP_CIRCLE:
 			/* (x, y, radius ) */
-			while (val != NULL && num <= 3) {
-				switch (num) {
-				case 1:
+			যাবত্ (val != রিক্ত && অঙ্ক <= 3) {
+				বিকল্প (অঙ্ক) {
+				পক্ষ 1:
 					new_map->bounds.circle.x = atoi(val);
-					break;
-				case 2:
+					ভঙ্গ;
+				পক্ষ 2:
 					new_map->bounds.circle.y = atoi(val);
-					break;
-				case 3:
+					ভঙ্গ;
+				পক্ষ 3:
 					new_map->bounds.circle.r = atoi(val);
-					break;
+					ভঙ্গ;
 				}
 
-				num++;
-				val = strtok(NULL, ",");
+				অঙ্ক++;
+				val = strtok(রিক্ত, ",");
 			}
-			break;
-		case IMAGEMAP_POLY:
-			new_map->bounds.poly.xcoords = NULL;
-			new_map->bounds.poly.ycoords = NULL;
+			ভঙ্গ;
+		পক্ষ IMAGEMAP_POLY:
+			new_map->bounds.poly.xcoords = রিক্ত;
+			new_map->bounds.poly.ycoords = রিক্ত;
 
-			while (val != NULL) {
+			যাবত্ (val != রিক্ত) {
 				x = atoi(val);
 
-				val = strtok(NULL, ",");
-				if (val == NULL)
-					break;
+				val = strtok(রিক্ত, ",");
+				যদি (val == রিক্ত)
+					ভঙ্গ;
 
 				y = atoi(val);
 
 				xcoords = realloc(new_map->bounds.poly.xcoords,
-						num * sizeof(float));
-				if (xcoords == NULL) {
-					goto bad_out;
+						অঙ্ক * পরিমাণ(ভিন্ন));
+				যদি (xcoords == রিক্ত) {
+					গচ্ছ bad_out;
 				}
 				new_map->bounds.poly.xcoords = xcoords;
 
 				ycoords = realloc(new_map->bounds.poly.ycoords,
-					num * sizeof(float));
-				if (ycoords == NULL) {
-					goto bad_out;
+					অঙ্ক * পরিমাণ(ভিন্ন));
+				যদি (ycoords == রিক্ত) {
+					গচ্ছ bad_out;
 				}
 				new_map->bounds.poly.ycoords = ycoords;
 
-				new_map->bounds.poly.xcoords[num - 1] = x;
-				new_map->bounds.poly.ycoords[num - 1] = y;
+				new_map->bounds.poly.xcoords[অঙ্ক - 1] = x;
+				new_map->bounds.poly.ycoords[অঙ্ক - 1] = y;
 
-				num++;
-				val = strtok(NULL, ",");
+				অঙ্ক++;
+				val = strtok(রিক্ত, ",");
 			}
 
-			new_map->bounds.poly.num = num - 1;
+			new_map->bounds.poly.অঙ্ক = অঙ্ক - 1;
 
-			break;
-		default:
-			break;
+			ভঙ্গ;
+		স্বভাব:
+			ভঙ্গ;
 		}
 	}
 
-	new_map->next = NULL;
+	new_map->next = রিক্ত;
 
-	if (*entry) {
+	যদি (*entry) {
 		/* add to END of list */
-		for (temp = (*entry); temp->next != NULL; temp = temp->next)
+		প্রতি (temp = (*entry); temp->next != রিক্ত; temp = temp->next)
 			;
 		temp->next = new_map;
-	} else {
+	} অন্যথা {
 		(*entry) = new_map;
 	}
 
 	/* All good, linked in, let's clean up */
-	goto ok_out;
+	গচ্ছ ok_out;
 
 bad_out:
 	ret = false;
 ok_free_map_out:
-	if (new_map != NULL) {
-		if (new_map->url != NULL)
+	যদি (new_map != রিক্ত) {
+		যদি (new_map->url != রিক্ত)
 			nsurl_unref(new_map->url);
-		if (new_map->type == IMAGEMAP_POLY &&
-				new_map->bounds.poly.ycoords != NULL)
-			free(new_map->bounds.poly.ycoords);
-		if (new_map->type == IMAGEMAP_POLY &&
-				new_map->bounds.poly.xcoords != NULL)
-			free(new_map->bounds.poly.xcoords);
-		if (new_map->target != NULL)
-			free(new_map->target);
+		যদি (new_map->type == IMAGEMAP_POLY &&
+				new_map->bounds.poly.ycoords != রিক্ত)
+			মুক্ত(new_map->bounds.poly.ycoords);
+		যদি (new_map->type == IMAGEMAP_POLY &&
+				new_map->bounds.poly.xcoords != রিক্ত)
+			মুক্ত(new_map->bounds.poly.xcoords);
+		যদি (new_map->target != রিক্ত)
+			মুক্ত(new_map->target);
 
-		free(new_map);
+		মুক্ত(new_map);
 	}
 ok_out:
-	if (href != NULL)
+	যদি (href != রিক্ত)
 		dom_string_unref(href);
-	if (target != NULL)
+	যদি (target != রিক্ত)
 		dom_string_unref(target);
-	if (shape != NULL)
+	যদি (shape != রিক্ত)
 		dom_string_unref(shape);
-	if (coords != NULL)
+	যদি (coords != রিক্ত)
 		dom_string_unref(coords);
 
-	return ret;
+	প্রত্যাগম ret;
 }
 
 /**
@@ -533,46 +533,46 @@ ok_out:
  * \param tname The sub-tags to consider on this pass
  * \return false on memory exhaustion, true otherwise
  */
-static bool
-imagemap_extract_map_entries(dom_node *node, html_content *c,
-			     struct mapentry **entry, dom_string *tname)
+স্থির bool
+imagemap_extract_map_entries(dom_গ্রন্থি *গ্রন্থি, html_content *c,
+			     সংরচনা mapentry **entry, dom_string *tname)
 {
 	dom_nodelist *nlist;
 	dom_exception exc;
 	unsigned long ent;
-	uint32_t tag_count;
+	uint32_t tag_গুনতি;
 
-	exc = dom_element_get_elements_by_tag_name(node, tname, &nlist);
-	if (exc != DOM_NO_ERR) {
-		return false;
+	exc = dom_element_get_elements_by_tag_name(গ্রন্থি, tname, &nlist);
+	যদি (exc != DOM_NO_ERR) {
+		প্রত্যাগম false;
 	}
 
-	exc = dom_nodelist_get_length(nlist, &tag_count);
-	if (exc != DOM_NO_ERR) {
+	exc = dom_nodelist_get_length(nlist, &tag_গুনতি);
+	যদি (exc != DOM_NO_ERR) {
 		dom_nodelist_unref(nlist);
-		return false;
+		প্রত্যাগম false;
 	}
 
-	for (ent = 0; ent < tag_count; ++ent) {
-		dom_node *subnode;
+	প্রতি (ent = 0; ent < tag_গুনতি; ++ent) {
+		dom_গ্রন্থি *subnode;
 
 		exc = dom_nodelist_item(nlist, ent, &subnode);
-		if (exc != DOM_NO_ERR) {
+		যদি (exc != DOM_NO_ERR) {
 			dom_nodelist_unref(nlist);
-			return false;
+			প্রত্যাগম false;
 		}
-		if (imagemap_addtolist(c, subnode, c->base_url,
+		যদি (imagemap_addtolist(c, subnode, c->base_url,
 				       entry, tname) == false) {
-			dom_node_unref(subnode);
+			dom_গ্রন্থি_unref(subnode);
 			dom_nodelist_unref(nlist);
-			return false;
+			প্রত্যাগম false;
 		}
-		dom_node_unref(subnode);
+		dom_গ্রন্থি_unref(subnode);
 	}
 
 	dom_nodelist_unref(nlist);
 
-	return true;
+	প্রত্যাগম true;
 }
 
 /**
@@ -583,13 +583,13 @@ imagemap_extract_map_entries(dom_node *node, html_content *c,
  * \param entry List of map entries
  * \return false on memory exhaustion, true otherwise
  */
-static bool imagemap_extract_map(dom_node *node, html_content *c,
-		struct mapentry **entry)
+স্থির bool imagemap_extract_map(dom_গ্রন্থি *গ্রন্থি, html_content *c,
+		সংরচনা mapentry **entry)
 {
-	if (imagemap_extract_map_entries(node, c, entry,
+	যদি (imagemap_extract_map_entries(গ্রন্থি, c, entry,
 			corestring_dom_area) == false)
-		return false;
-	return imagemap_extract_map_entries(node, c, entry,
+		প্রত্যাগম false;
+	প্রত্যাগম imagemap_extract_map_entries(গ্রন্থি, c, entry,
 			corestring_dom_a);
 }
 
@@ -611,55 +611,55 @@ imagemap_extract(html_content *c)
 	exc = dom_document_get_elements_by_tag_name(c->document,
 						    corestring_dom_map,
 						    &nlist);
-	if (exc != DOM_NO_ERR) {
-		return NSERROR_DOM;
+	যদি (exc != DOM_NO_ERR) {
+		প্রত্যাগম NSERROR_DOM;
 	}
 
 	exc = dom_nodelist_get_length(nlist, &maybe_maps);
-	if (exc != DOM_NO_ERR) {
+	যদি (exc != DOM_NO_ERR) {
 		ret = NSERROR_DOM;
-		goto out_nlist;
+		গচ্ছ out_nlist;
 	}
 
-	for (mapnr = 0; mapnr < maybe_maps; ++mapnr) {
-		dom_node *node;
+	প্রতি (mapnr = 0; mapnr < maybe_maps; ++mapnr) {
+		dom_গ্রন্থি *গ্রন্থি;
 		dom_string *name;
-		exc = dom_nodelist_item(nlist, mapnr, &node);
-		if (exc != DOM_NO_ERR) {
+		exc = dom_nodelist_item(nlist, mapnr, &গ্রন্থি);
+		যদি (exc != DOM_NO_ERR) {
 			ret = NSERROR_DOM;
-			goto out_nlist;
+			গচ্ছ out_nlist;
 		}
 
-		exc = dom_element_get_attribute(node, corestring_dom_id,
+		exc = dom_element_get_attribute(গ্রন্থি, corestring_dom_id,
 						&name);
-		if (exc != DOM_NO_ERR) {
-			dom_node_unref(node);
+		যদি (exc != DOM_NO_ERR) {
+			dom_গ্রন্থি_unref(গ্রন্থি);
 			ret = NSERROR_DOM;
-			goto out_nlist;
+			গচ্ছ out_nlist;
 		}
 
-		if (name == NULL) {
-			exc = dom_element_get_attribute(node,
+		যদি (name == রিক্ত) {
+			exc = dom_element_get_attribute(গ্রন্থি,
 							corestring_dom_name,
 							&name);
-			if (exc != DOM_NO_ERR) {
-				dom_node_unref(node);
+			যদি (exc != DOM_NO_ERR) {
+				dom_গ্রন্থি_unref(গ্রন্থি);
 				ret = NSERROR_DOM;
-				goto out_nlist;
+				গচ্ছ out_nlist;
 			}
 		}
 
-		if (name != NULL) {
-			struct mapentry *entry = NULL;
-			if (imagemap_extract_map(node, c, &entry) == false) {
-				if (entry != NULL) {
+		যদি (name != রিক্ত) {
+			সংরচনা mapentry *entry = রিক্ত;
+			যদি (imagemap_extract_map(গ্রন্থি, c, &entry) == false) {
+				যদি (entry != রিক্ত) {
 					imagemap_freelist(entry);
 				}
 
 				dom_string_unref(name);
-				dom_node_unref(node);
+				dom_গ্রন্থি_unref(গ্রন্থি);
 				ret = NSERROR_NOMEM; /** @todo check this */
-				goto out_nlist;
+				গচ্ছ out_nlist;
 			}
 
 			/* imagemap_extract_map may not extract anything,
@@ -667,26 +667,26 @@ imagemap_extract(html_content *c)
 			 * error as it just means that we've encountered
 			 * an incorrectly defined <map>...</map> block
 			 */
-			if ((entry != NULL) &&
+			যদি ((entry != রিক্ত) &&
 			    (imagemap_add(c, name, entry) == false)) {
 				imagemap_freelist(entry);
 
 				dom_string_unref(name);
-				dom_node_unref(node);
+				dom_গ্রন্থি_unref(গ্রন্থি);
 				ret = NSERROR_NOMEM; /** @todo check this */
-				goto out_nlist;
+				গচ্ছ out_nlist;
 			}
 		}
 
 		dom_string_unref(name);
-		dom_node_unref(node);
+		dom_গ্রন্থি_unref(গ্রন্থি);
 	}
 
 out_nlist:
 
 	dom_nodelist_unref(nlist);
 
-	return ret;
+	প্রত্যাগম ret;
 }
 
 /**
@@ -702,24 +702,24 @@ out_nlist:
  * \param click_y Y coordinate of click
  * \return 1 if point is in polygon, 0 if outside. 0 or 1 if on boundary
  */
-static int
-imagemap_point_in_poly(int num, float *xpt, float *ypt, unsigned long x,
+স্থির পূর্ণাঙ্ক
+imagemap_point_in_poly(পূর্ণাঙ্ক অঙ্ক, ভিন্ন *xpt, ভিন্ন *ypt, unsigned long x,
 		unsigned long y, unsigned long click_x,	unsigned long click_y)
 {
-	int i, j, c = 0;
+	পূর্ণাঙ্ক i, j, c = 0;
 
-	assert(xpt != NULL);
-	assert(ypt != NULL);
+	প্রতিজ্ঞা(xpt != রিক্ত);
+	প্রতিজ্ঞা(ypt != রিক্ত);
 
-	for (i = 0, j = num - 1; i < num; j = i++) {
-		if ((((ypt[i] + y <= click_y) && (click_y < ypt[j] + y)) ||
+	প্রতি (i = 0, j = অঙ্ক - 1; i < অঙ্ক; j = i++) {
+		যদি ((((ypt[i] + y <= click_y) && (click_y < ypt[j] + y)) ||
 		     ((ypt[j] + y <= click_y) && (click_y < ypt[i] + y))) &&
 		     (click_x < (xpt[j] - xpt[i]) *
 		     (click_y - (ypt[i] + y)) / (ypt[j] - ypt[i]) + xpt[i] + x))
 			c = !c;
 	}
 
-	return c;
+	প্রত্যাগম c;
 }
 
 /**
@@ -734,78 +734,78 @@ imagemap_point_in_poly(int num, float *xpt, float *ypt, unsigned long x,
  * \param target   Pointer to location to receive target pointer (if any)
  * \return The url associated with this area, or NULL if not found
  */
-nsurl *imagemap_get(struct html_content *c, const char *key,
+nsurl *imagemap_get(সংরচনা html_content *c, ধ্রুব বর্ণ *চাবি,
 		unsigned long x, unsigned long y,
 		unsigned long click_x, unsigned long click_y,
-		const char **target)
+		ধ্রুব বর্ণ **target)
 {
-	unsigned int slot = 0;
-	struct imagemap *map;
-	struct mapentry *entry;
+	unsigned পূর্ণাঙ্ক slot = 0;
+	সংরচনা imagemap *map;
+	সংরচনা mapentry *entry;
 	unsigned long cx, cy;
 
-	assert(c != NULL);
+	প্রতিজ্ঞা(c != রিক্ত);
 
-	if (key == NULL)
-		return NULL;
+	যদি (চাবি == রিক্ত)
+		প্রত্যাগম রিক্ত;
 
-	if (c->imagemaps == NULL)
-		return NULL;
+	যদি (c->imagemaps == রিক্ত)
+		প্রত্যাগম রিক্ত;
 
-	slot = imagemap_hash(key);
+	slot = imagemap_hash(চাবি);
 
-	for (map = c->imagemaps[slot]; map != NULL; map = map->next) {
-		if (map->key != NULL && strcasecmp(map->key, key) == 0)
-			break;
+	প্রতি (map = c->imagemaps[slot]; map != রিক্ত; map = map->next) {
+		যদি (map->চাবি != রিক্ত && strcasecmp(map->চাবি, চাবি) == 0)
+			ভঙ্গ;
 	}
 
-	if (map == NULL || map->list == NULL)
-		return NULL;
+	যদি (map == রিক্ত || map->list == রিক্ত)
+		প্রত্যাগম রিক্ত;
 
-	for (entry = map->list; entry; entry = entry->next) {
-		switch (entry->type) {
-		case IMAGEMAP_DEFAULT:
+	প্রতি (entry = map->list; entry; entry = entry->next) {
+		বিকল্প (entry->type) {
+		পক্ষ IMAGEMAP_DEFAULT:
 			/* just return the URL. no checks required */
-			if (target)
+			যদি (target)
 				*target = entry->target;
-			return entry->url;
-			break;
-		case IMAGEMAP_RECT:
-			if (click_x >= x + entry->bounds.rect.x0 &&
+			প্রত্যাগম entry->url;
+			ভঙ্গ;
+		পক্ষ IMAGEMAP_RECT:
+			যদি (click_x >= x + entry->bounds.rect.x0 &&
 				    click_x <= x + entry->bounds.rect.x1 &&
 				    click_y >= y + entry->bounds.rect.y0 &&
 				    click_y <= y + entry->bounds.rect.y1) {
-				if (target)
+				যদি (target)
 					*target = entry->target;
-				return entry->url;
+				প্রত্যাগম entry->url;
 			}
-			break;
-		case IMAGEMAP_CIRCLE:
+			ভঙ্গ;
+		পক্ষ IMAGEMAP_CIRCLE:
 			cx = x + entry->bounds.circle.x - click_x;
 			cy = y + entry->bounds.circle.y - click_y;
-			if ((cx * cx + cy * cy) <=
+			যদি ((cx * cx + cy * cy) <=
 				(unsigned long) (entry->bounds.circle.r *
 					entry->bounds.circle.r)) {
-				if (target)
+				যদি (target)
 					*target = entry->target;
-				return entry->url;
+				প্রত্যাগম entry->url;
 			}
-			break;
-		case IMAGEMAP_POLY:
-			if (imagemap_point_in_poly(entry->bounds.poly.num,
+			ভঙ্গ;
+		পক্ষ IMAGEMAP_POLY:
+			যদি (imagemap_point_in_poly(entry->bounds.poly.অঙ্ক,
 					entry->bounds.poly.xcoords,
 					entry->bounds.poly.ycoords, x, y,
 					click_x, click_y)) {
-				if (target)
+				যদি (target)
 					*target = entry->target;
-				return entry->url;
+				প্রত্যাগম entry->url;
 			}
-			break;
+			ভঙ্গ;
 		}
 	}
 
-	if (target)
-		*target = NULL;
+	যদি (target)
+		*target = রিক্ত;
 
-	return NULL;
+	প্রত্যাগম রিক্ত;
 }
