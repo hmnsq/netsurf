@@ -21,86 +21,86 @@
  * content generator for the about scheme web search
  */
 
-#include <stdbool.h>
-#include <stdint.h>
-#include <sys/types.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <stdbool.h>
+#ضمن <stdint.h>
+#ضمن <sys/types.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#include "utils/errors.h"
-#include "utils/nsurl.h"
-#include "utils/url.h"
+#ضمن "utils/errors.h"
+#ضمن "utils/nsurl.h"
+#ضمن "utils/url.h"
 
-#include "content/fetch.h"
-#include "desktop/searchweb.h"
+#ضمن "content/fetch.h"
+#ضمن "desktop/searchweb.h"
 
-#include "private.h"
-#include "websearch.h"
+#ضمن "private.h"
+#ضمن "websearch.h"
 
-static nserror
-process_query_section(const char *str, size_t len, char **term)
+ساكن nserror
+process_query_section(ثابت حرف *str, size_t len, حرف **term)
 {
-	if (len < 3) {
-		return NSERROR_BAD_PARAMETER;
+	إذا (len < 3) {
+		أرجع NSERROR_BAD_PARAMETER;
 	}
-	if (str[0] != 'q' || str[1] != '=') {
-		return NSERROR_BAD_PARAMETER;
+	إذا (str[0] != 'q' || str[1] != '=') {
+		أرجع NSERROR_BAD_PARAMETER;
 	}
-	return url_unescape(str + 2, len - 2, NULL, term);
+	أرجع url_unescape(str + 2, len - 2, عدم, term);
 }
 
-static nserror
-searchterm_from_query(struct nsurl *url, char **term)
+ساكن nserror
+searchterm_from_query(بنية nsurl *url, حرف **term)
 {
 	nserror res;
-	char *querystr;
+	حرف *querystr;
 	size_t querylen;
 	size_t kvstart;/* key value start */
 	size_t kvlen; /* key value end */
 
 	res = nsurl_get(url, NSURL_QUERY, &querystr, &querylen);
-	if (res != NSERROR_OK) {
-		return res;
+	إذا (res != NSERROR_OK) {
+		أرجع res;
 	}
 
-	for (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
+	لكل (kvlen = 0, kvstart = 0; kvstart < querylen; kvstart += kvlen) {
 		/* get query section length */
 		kvlen = 0;
-		while (((kvstart + kvlen) < querylen) &&
+		طالما (((kvstart + kvlen) < querylen) &&
 		       (querystr[kvstart + kvlen] != '&')) {
 			kvlen++;
 		}
 
 		res = process_query_section(querystr + kvstart, kvlen, term);
-		if (res == NSERROR_OK) {
-			break;
+		إذا (res == NSERROR_OK) {
+			اكسر;
 		}
 		kvlen++; /* account for & separator */
 	}
-	free(querystr);
+	حرر(querystr);
 
-	return res;
+	أرجع res;
 }
 
-bool fetch_about_websearch_handler(struct fetch_about_context *ctx)
+bool fetch_about_websearch_handler(بنية fetch_about_context *ctx)
 {
 	nserror res;
 	nsurl *url;
-	char *term;
+	حرف *term;
 
 	res = searchterm_from_query(fetch_about_get_url(ctx), &term);
-	if (res != NSERROR_OK) {
-		return false;
+	إذا (res != NSERROR_OK) {
+		أرجع false;
 	}
 
-	res = search_web_omni(term, SEARCH_WEB_OMNI_SEARCHONLY, &url);
-	free(term);
-	if (res != NSERROR_OK) {
-		return false;
+	res = بحث_web_omni(term, بحث_WEB_OMNI_SEARCHONLY, &url);
+	حرر(term);
+	إذا (res != NSERROR_OK) {
+		أرجع false;
 	}
 
 	fetch_about_redirect(ctx, nsurl_access(url));
 	nsurl_unref(url);
 
-	return true;
+	أرجع true;
 }
